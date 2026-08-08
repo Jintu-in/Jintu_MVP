@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b1120",
+  // Brand colour, not the navy the architecture doc's manifest sketched —
+  // this tints the Android status bar and should read as Jintu.
+  themeColor: "#43b4c8",
   width: "device-width",
   initialScale: 1,
 };

@@ -9,7 +9,7 @@ const WEEKS = [
 export default function LandingPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-sm font-medium tracking-wide text-ink-400 uppercase">
+      <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Placement sprints · Data roles
       </p>
 
@@ -29,13 +29,13 @@ export default function LandingPage() {
       </p>
 
       <section className="mt-12" aria-labelledby="weeks-heading">
-        <h2 id="weeks-heading" className="text-sm font-semibold tracking-wide text-ink-400 uppercase">
+        <h2 id="weeks-heading" className="text-sm font-semibold tracking-wide text-ink-500 uppercase">
           What you build
         </h2>
         <ul className="mt-4 divide-y divide-ink-100 border-y border-ink-100">
           {WEEKS.map(({ week, title, artifact }) => (
             <li key={week} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4">
-              <span className="w-14 shrink-0 font-mono text-sm text-ink-400">{week}</span>
+              <span className="w-14 shrink-0 font-mono text-sm text-ink-500">{week}</span>
               <span className="font-medium text-ink-900">{title}</span>
               <span className="ml-auto text-sm text-ink-500">{artifact}</span>
             </li>
