@@ -10,7 +10,7 @@ export default function LandingPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <p className="text-sm font-medium tracking-wide text-ink-400 uppercase">
-        Jintu · Placement sprints
+        Placement sprints · Data roles
       </p>
 
       <h1 className="mt-4 text-4xl leading-tight font-semibold text-balance text-ink-900 sm:text-5xl">
@@ -55,9 +55,6 @@ export default function LandingPage() {
         </p>
       </section>
 
-      <footer className="mt-16 border-t border-ink-100 pt-6 text-sm text-ink-400">
-        <p>Open to applicants aged 18 and over.</p>
-      </footer>
     </main>
   );
 }
