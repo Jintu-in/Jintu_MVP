@@ -32,12 +32,19 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Test
+        run: pnpm test
+
       - name: Build
         run: pnpm build
 
       # Static, no database required — see scripts/assert-schema-rules.mjs.
       - name: Schema rules (ARCHITECTURE.md §7)
         run: pnpm schema:rules
+
+      # docs/LEGAL.md §3 — banned outcome claims in user-facing text.
+      - name: Advertising claims
+        run: pnpm claims
 
   database:
     name: migrations · schema guarantees

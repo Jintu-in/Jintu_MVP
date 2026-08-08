@@ -1,3 +1,5 @@
+import { WaitlistForm } from "@/components/waitlist-form";
+
 const WEEKS = [
   { week: "01–02", title: "SQL, for real problems", artifact: "Query set, auto-graded" },
   { week: "03", title: "Cleaning messy data", artifact: "Cleaned dataset + notes" },
@@ -55,6 +57,9 @@ export default function LandingPage() {
         </p>
       </section>
 
+      <section className="mt-12">
+        <WaitlistForm />
+      </section>
     </main>
   );
 }
