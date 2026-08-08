@@ -70,14 +70,44 @@ for (const t of tables) {
 }
 
 // ── Rule 3 — Law 2: no third-party content columns ───────────────────────────
-const FORBIDDEN_COLUMNS = ["transcript", "summary", "full_text", "content"];
-for (const col of FORBIDDEN_COLUMNS) {
-  const re = new RegExp(`^\\s*${col}\\s+(text|varchar|jsonb|json)\\b`, "gim");
-  if (re.test(sql))
-    fail(
-      "law-2-no-stored-content",
-      `a "${col}" column is defined — Law 2 permits URLs and metadata only`,
-    );
+//
+// Scoped, because a blanket ban on these words produces false positives that
+// get guards switched off. ARCHITECTURE.md §7 scopes the rule to `resources`,
+// and §3 itself specifies a `tracks.summary` column — our own one-line blurb
+// about our own track, which Law 2 has nothing to say about.
+//
+// So the rule follows the semantics rather than a hardcoded table name: any
+// table that points at someone else's content (it has an external_url) may
+// not also store that content. "transcript" and "full_text" are banned
+// everywhere, because there is no innocent use of either.
+const CONTENT_COLUMNS = ["transcript", "summary", "full_text", "content"];
+const ALWAYS_FORBIDDEN = ["transcript", "full_text"];
+
+/** Split into `create table <name> ( ... );` blocks so rules can be per-table. */
+const tableBlocks = [
+  ...sql.matchAll(
+    /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?(\w+)"?\s*\(([\s\S]*?)\n\s*\);/gi,
+  ),
+].map((m) => ({ name: m[1], body: m[2] ?? "" }));
+
+const declaresColumn = (body, col) =>
+  new RegExp(`^\\s*"?${col}"?\\s+(text|varchar|jsonb|json)\\b`, "im").test(body);
+
+for (const { name, body } of tableBlocks) {
+  const referencesThirdParty = /^\s*"?external_url"?\s/im.test(body);
+  const banned = referencesThirdParty ? CONTENT_COLUMNS : ALWAYS_FORBIDDEN;
+
+  for (const col of banned) {
+    if (declaresColumn(body, col))
+      fail(
+        "law-2-no-stored-content",
+        `"${name}.${col}" — ${
+          referencesThirdParty
+            ? `${name} links to third-party content, so it may not also store it`
+            : `a "${col}" column has no innocent use`
+        }. Law 2 permits URLs and metadata only.`,
+      );
+  }
 }
 
 // ── Rule 4 — policies must use (select auth.uid()) ───────────────────────────
