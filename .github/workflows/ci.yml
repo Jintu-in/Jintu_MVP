@@ -46,6 +46,10 @@ jobs:
       - name: Advertising claims
         run: pnpm claims
 
+      # docs/LEGAL.md §1 — YouTube may only be embedded via the nocookie player.
+      - name: Embed rules
+        run: pnpm embeds
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest
