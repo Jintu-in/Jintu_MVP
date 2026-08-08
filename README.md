@@ -42,6 +42,19 @@ docs/             # ARCHITECTURE.md, LEGAL.md, decisions/
 
 The rest of the tree is built out phase by phase; see ARCHITECTURE.md §6.
 
+## Environment
+
+```bash
+cp apps/web/.env.example apps/web/.env.local   # then fill in the two Supabase values
+```
+
+It goes in `apps/web`, not the repo root — Next loads env files from the app
+directory. The root `.env.example` is the full catalogue for the whole system,
+including variables only edge functions will use.
+
+`/` and `/privacy` render without any of this. `/learn/[track]` and the
+waitlist form need Supabase, and fail with a named error if it is missing.
+
 ## Database
 
 SQL migrations in `supabase/migrations/` are the schema source of truth. No
