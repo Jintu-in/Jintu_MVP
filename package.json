@@ -11,9 +11,11 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
-    "test": "turbo test"
+    "test": "turbo test",
+    "icons": "node assets/brand/generate-icons.mjs"
   },
   "devDependencies": {
+    "sharp": "^0.35.3",
     "turbo": "^2.10.9",
     "typescript": "^5.9.3"
   }
