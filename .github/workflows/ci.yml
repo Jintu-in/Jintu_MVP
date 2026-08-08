@@ -42,6 +42,10 @@ jobs:
       - name: Schema rules (ARCHITECTURE.md §7)
         run: pnpm schema:rules
 
+      # docs/LEGAL.md §3 — banned outcome claims in user-facing text.
+      - name: Advertising claims
+        run: pnpm claims
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest
