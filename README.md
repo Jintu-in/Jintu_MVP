@@ -28,12 +28,38 @@ pnpm build
 apps/
   web/            # the single Next.js 16 app (student + TPO + admin)
 packages/
-  config/         # shared eslint, tsconfig, tailwind preset  ← you are here
-supabase/         # migrations, edge functions — schema source of truth
+  config/         # shared eslint, tsconfig, tailwind preset
+  db/             # generated Supabase types
+supabase/         # migrations, tests, edge functions — schema source of truth
+scripts/          # repo guards run in CI
+assets/brand/     # logo source + icon generator (`pnpm icons`)
 docs/             # ARCHITECTURE.md, LEGAL.md, decisions/
 ```
 
 The rest of the tree is built out phase by phase; see ARCHITECTURE.md §6.
+
+## Database
+
+SQL migrations in `supabase/migrations/` are the schema source of truth. No
+ORM — see ARCHITECTURE.md §1 for why Prisma and Drizzle are rejected.
+
+```bash
+pnpm db:start      # local Postgres via Docker, applies all migrations
+pnpm db:reset      # re-apply from scratch
+pnpm db:verify     # assert the schema guarantees against the real catalog
+pnpm schema:rules  # static §7 checks — no database needed
+pnpm db:new <name> # new migration
+```
+
+Two guards run in CI and both must stay green:
+
+| Guard | Needs a DB? | Catches |
+|---|---|---|
+| `pnpm schema:rules` | no | a table with no RLS or no policy, a Law 2 content column, bare `auth.uid()` |
+| `pnpm db:verify` | yes | the same, read from the Postgres catalog after migrations actually ran |
+
+The static one runs in milliseconds on every PR; the runtime one proves the
+database did what the SQL said. Neither is redundant.
 
 ## Shared config
 
