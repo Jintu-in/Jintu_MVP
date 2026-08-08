@@ -1,0 +1,102 @@
+-- Local development seed. Applied by `supabase db reset`.
+-- Never run against production: these are illustrative rows, not curriculum.
+--
+-- Note the ORDER. The path is created as a draft, filled in, and published
+-- last. That is not stylistic — the immutability triggers reject inserts into
+-- a published path, so seeding in any other order fails loudly. If you are
+-- writing a script that adds content to a live path, this is the shape it has
+-- to take too: new draft version, fill, publish.
+
+begin;
+
+insert into public.tracks (id, slug, title, summary, is_published) values
+  (
+    '11111111-1111-4111-8111-111111111111',
+    'data-analyst-fresher',
+    'Data Analyst — first job',
+    'Six weeks of real analyst work: SQL against messy data, one findings memo, one dashboard, and a recorded walkthrough.',
+    true
+  );
+
+insert into public.paths (id, track_id, version, status) values
+  (
+    '22222222-2222-4222-8222-222222222222',
+    '11111111-1111-4111-8111-111111111111',
+    1,
+    'draft'
+  );
+
+insert into public.modules (id, path_id, week_no, title, objective) values
+  ('33333333-3333-4333-8333-000000000001', '22222222-2222-4222-8222-222222222222', 1,
+   'SQL that answers a question',
+   'Write joins and aggregates against a real schema without reaching for a tutorial.'),
+  ('33333333-3333-4333-8333-000000000002', '22222222-2222-4222-8222-222222222222', 2,
+   'Window functions and cohorts',
+   'Compute retention and running totals in SQL rather than exporting to a spreadsheet.'),
+  ('33333333-3333-4333-8333-000000000003', '22222222-2222-4222-8222-222222222222', 3,
+   'Cleaning data you did not create',
+   'Find and document what is wrong with a dataset before analysing it.'),
+  ('33333333-3333-4333-8333-000000000004', '22222222-2222-4222-8222-222222222222', 4,
+   'An analysis that answers something',
+   'Turn a vague business question into a defensible finding with stated caveats.'),
+  ('33333333-3333-4333-8333-000000000005', '22222222-2222-4222-8222-222222222222', 5,
+   'A dashboard someone else can read',
+   'Build a dashboard that survives being handed to a stranger with no explanation.'),
+  ('33333333-3333-4333-8333-000000000006', '22222222-2222-4222-8222-222222222222', 6,
+   'Explaining your work out loud',
+   'Walk through a finding in five minutes and answer the obvious follow-up.');
+
+-- Law 2: URL and metadata only. `title` is our own label for the link. There
+-- is nowhere here to put what the video says, and that is the point.
+insert into public.resources
+  (module_id, kind, provider, external_url, youtube_video_id, title, duration_sec, position)
+values
+  ('33333333-3333-4333-8333-000000000001', 'docs', 'web',
+   'https://www.postgresql.org/docs/current/tutorial-join.html',
+   null, 'PostgreSQL manual — joins', null, 0),
+  ('33333333-3333-4333-8333-000000000001', 'dataset', 'web',
+   'https://github.com/devrimgunduz/pagila',
+   null, 'Pagila sample database', null, 1),
+  ('33333333-3333-4333-8333-000000000002', 'docs', 'web',
+   'https://www.postgresql.org/docs/current/tutorial-window.html',
+   null, 'PostgreSQL manual — window functions', null, 0),
+  ('33333333-3333-4333-8333-000000000003', 'article', 'web',
+   'https://vita.had.co.nz/papers/tidy-data.pdf',
+   null, 'Tidy Data (Wickham)', null, 0);
+
+insert into public.rubrics (id, name, criteria, max_score) values
+  (
+    '44444444-4444-4444-8444-000000000001',
+    'sql-correctness-v1',
+    '[
+      {"key": "returns_expected_rows", "label": "Returns the expected result set", "weight": 3},
+      {"key": "no_cartesian", "label": "No accidental cross join", "weight": 1},
+      {"key": "readable", "label": "Aliases and formatting a reviewer can follow", "weight": 1}
+    ]'::jsonb,
+    5
+  ),
+  (
+    '44444444-4444-4444-8444-000000000002',
+    'written-finding-v1',
+    '[
+      {"key": "answers_question", "label": "Answers the question actually asked", "weight": 3},
+      {"key": "states_caveats", "label": "States what would change the conclusion", "weight": 2},
+      {"key": "evidence", "label": "Every number is traceable to a query", "weight": 2}
+    ]'::jsonb,
+    7
+  );
+
+insert into public.assignments (module_id, kind, spec, rubric_id, weight) values
+  ('33333333-3333-4333-8333-000000000001', 'sql',
+   '{"prompt": "Return the ten customers with the highest lifetime rental revenue.", "dataset": "pagila"}'::jsonb,
+   '44444444-4444-4444-8444-000000000001', 1),
+  ('33333333-3333-4333-8333-000000000004', 'artifact_link',
+   '{"prompt": "One page: what you found, how confident you are, and what would change your mind."}'::jsonb,
+   '44444444-4444-4444-8444-000000000002', 2);
+
+-- Publish last. Everything above is now frozen.
+update public.paths
+  set status = 'published', published_at = now()
+  where id = '22222222-2222-4222-8222-222222222222';
+
+commit;

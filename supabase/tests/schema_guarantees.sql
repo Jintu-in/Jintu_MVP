@@ -75,5 +75,48 @@ begin
     raise exception 'public_colleges exposes TPO contact details to anon.';
   end if;
 
+  -- ── Law 2: the resources table cannot hold content ────────────────────────
+  select string_agg(column_name, ', ' order by column_name) into offenders
+  from information_schema.columns
+  where table_schema = 'public'
+    and table_name = 'resources'
+    and column_name in ('transcript', 'summary', 'full_text', 'content', 'body', 'text');
+
+  if offenders is not null then
+    raise exception 'Law 2: resources has content column(s): %. URLs and metadata only.', offenders;
+  end if;
+
+  -- ── Published curriculum is immutable ─────────────────────────────────────
+  select string_agg(t.tbl, ', ' order by t.tbl) into offenders
+  from (values ('paths'), ('modules'), ('resources'), ('assignments')) as t(tbl)
+  where not exists (
+    select 1 from pg_trigger g
+    where g.tgrelid = ('public.' || t.tbl)::regclass
+      and not g.tgisinternal
+  );
+
+  if offenders is not null then
+    raise exception 'No immutability trigger on: %. A published path could be rewritten under a running cohort.', offenders;
+  end if;
+
+  -- ── The free curriculum really is public ──────────────────────────────────
+  -- §6 makes /learn/[track] the top of the funnel: indexable, no account.
+  -- If the anon grant regresses, the funnel silently closes and the only
+  -- symptom is traffic that never converts.
+  select string_agg(t.tbl, ', ' order by t.tbl) into offenders
+  from (values ('tracks'), ('paths'), ('modules'), ('resources')) as t(tbl)
+  where not exists (
+    select 1
+    from pg_policy p
+    join pg_roles r on r.oid = any (p.polroles)
+    where p.polrelid = ('public.' || t.tbl)::regclass
+      and p.polcmd = 'r'
+      and r.rolname = 'anon'
+  );
+
+  if offenders is not null then
+    raise exception 'Published curriculum is not readable by anon on: %.', offenders;
+  end if;
+
   raise notice 'All schema guarantees hold.';
 end $$;
