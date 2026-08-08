@@ -1,0 +1,43 @@
+node_modules/
+.pnpm-store/
+
+# build output
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# turbo
+.turbo/
+
+# env — only .env.example is committed
+.env
+.env.*
+!.env.example
+
+# supabase local stack
+supabase/.branches/
+supabase/.temp/
+
+# test + coverage
+coverage/
+playwright-report/
+test-results/
+
+# editor / os
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# generated service worker (built by serwist)
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
