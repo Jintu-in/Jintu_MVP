@@ -5,7 +5,8 @@
 ## The three laws
 
 Tick or strike through with a reason. A PR that violates one gets rejected —
-see [ARCHITECTURE.md §0](../docs/ARCHITECTURE.md).
+see [ARCHITECTURE.md §0](../docs/ARCHITECTURE.md). For what each law means at a
+keyboard, see [LEGAL.md](../docs/LEGAL.md).
 
 - [ ] **Law 1 — no unbounded AI consumption.** Every LLM call is attached to a
       discrete countable event, writes an `ai_usage` row with cost in paise, and
