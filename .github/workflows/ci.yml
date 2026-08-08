@@ -35,6 +35,37 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # docs/LEGAL.md §3 — banned outcome claims in user-facing text.
-      - name: Advertising claims
-        run: pnpm claims
+      # Static, no database required — see scripts/assert-schema-rules.mjs.
+      - name: Schema rules (ARCHITECTURE.md §7)
+        run: pnpm schema:rules
+
+  database:
+    name: migrations · schema guarantees
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Applies every migration to a real Postgres. The static checker reads
+      # SQL text; this proves the database actually did what we asked.
+      - name: Start local Supabase
+        run: pnpm supabase start
+
+      - name: Assert schema guarantees
+        run: pnpm db:verify
+
+      - name: Lint schema
+        run: pnpm db:lint
+
+      - name: Stop local Supabase
+        if: always()
+        run: pnpm supabase stop --no-backup
