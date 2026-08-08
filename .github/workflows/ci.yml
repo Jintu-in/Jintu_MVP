@@ -34,3 +34,7 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      # docs/LEGAL.md §3 — banned outcome claims in user-facing text.
+      - name: Advertising claims
+        run: pnpm claims

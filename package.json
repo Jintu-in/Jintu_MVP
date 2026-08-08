@@ -12,7 +12,8 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "icons": "node assets/brand/generate-icons.mjs"
+    "icons": "node assets/brand/generate-icons.mjs",
+    "claims": "node scripts/assert-claims.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.3",

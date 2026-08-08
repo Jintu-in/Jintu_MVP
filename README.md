@@ -7,6 +7,10 @@ artifacts, peer review, and a shareable proof-of-readiness profile.
 especially §0, the three architectural laws. They are not style preferences;
 they are what keeps the margin viable and the company out of court.
 
+**Read [`docs/LEGAL.md`](docs/LEGAL.md) before writing marketing copy**, adding
+a column that stores text from someone else's site, or shipping anything that
+collects a phone number.
+
 ## Requirements
 
 - Node `>=20.9.0` (Next 16 floor)
