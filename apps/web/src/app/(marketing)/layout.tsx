@@ -31,7 +31,8 @@ export default function MarketingLayout({
       <div className="flex-1">{children}</div>
 
       <footer className="border-t border-ink-100">
-        <div className="mx-auto max-w-3xl px-6 py-6 text-sm text-ink-400">
+        {/* ink-500, not ink-400: this is a legal notice and ink-400 is 3.39:1 */}
+        <div className="mx-auto max-w-3xl px-6 py-6 text-sm text-ink-500">
           <p>Open to applicants aged 18 and over.</p>
         </div>
       </footer>
