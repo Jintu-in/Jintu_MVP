@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { AnalyticsProvider } from "@/components/analytics-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +26,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-IN">
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        {/*
+          Hard-coded false until auth exists to read consents.analytics.
+          Nobody has agreed to analytics yet, so PostHog must not initialise
+          and must not set a cookie. When auth lands, pass the real value —
+          do not default it to true.
+        */}
+        <AnalyticsProvider consented={false}>{children}</AnalyticsProvider>
+      </body>
     </html>
   );
 }

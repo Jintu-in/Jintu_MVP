@@ -41,3 +41,18 @@ export function getPublicEnv() {
 
   return parsed.data;
 }
+
+/**
+ * Observability config. Unlike Supabase, every one of these is optional and
+ * absence is a supported state — Sentry and PostHog are simply off. Returning
+ * undefined rather than throwing is what lets the app run locally, and in CI,
+ * with no accounts at all.
+ */
+export function getObservabilityEnv() {
+  return {
+    sentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined,
+    posthogKey: process.env.NEXT_PUBLIC_POSTHOG_KEY || undefined,
+    posthogHost: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
+    environment: process.env.NEXT_PUBLIC_VERCEL_ENV || "development",
+  };
+}
