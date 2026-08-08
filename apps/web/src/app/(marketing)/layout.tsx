@@ -25,6 +25,17 @@ export default function MarketingLayout({
               Jintu
             </span>
           </Link>
+
+          {/* The free curriculum is the top of the funnel (§6) — it needs to be
+              reachable from every page, not just findable via search. */}
+          <nav className="ml-auto">
+            <Link
+              href="/learn/data-analyst-fresher"
+              className="text-sm font-medium text-brand-700 hover:text-brand-800"
+            >
+              Free curriculum
+            </Link>
+          </nav>
         </div>
       </header>
 

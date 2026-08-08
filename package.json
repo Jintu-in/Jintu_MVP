@@ -23,7 +23,8 @@
     "db:verify": "supabase db query --local --file supabase/tests/schema_guarantees.sql",
     "schema:rules": "node scripts/assert-schema-rules.mjs",
     "claims": "node scripts/assert-claims.mjs",
-    "fn:deploy": "supabase functions deploy"
+    "fn:deploy": "supabase functions deploy",
+    "embeds": "node scripts/assert-embeds.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.3",
