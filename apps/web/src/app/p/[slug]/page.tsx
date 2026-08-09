@@ -52,85 +52,101 @@ export default async function ProfilePage({
   const entries = Object.entries(profile.breakdown).sort((a, b) => b[1] - a[1]);
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
-      <header>
-        <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
-          Proof of readiness
-        </p>
-        <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900">
-          {profile.headline ?? "Completed a Jintu placement sprint."}
-        </h1>
-        {profile.publishedAt ? (
-          <p className="mt-2 text-sm text-ink-500">
-            Published{" "}
-            <time dateTime={profile.publishedAt}>
-              {new Date(profile.publishedAt).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </time>
+    <div className="flex min-h-dvh flex-col">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-10">
+        <header>
+          <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
+            Proof of readiness
           </p>
-        ) : null}
-      </header>
-
-      {profile.overall !== null ? (
-        <section className="mt-10 rounded-card border-2 border-brand-600 p-6" aria-labelledby="score">
-          <h2 id="score" className="text-sm font-semibold tracking-wide text-ink-500 uppercase">
-            Readiness
-          </h2>
-          <p className="mt-1">
-            <span className="text-5xl font-semibold text-ink-900">{profile.overall}</span>
-            <span className="ml-1 text-ink-500">/ 100</span>
-          </p>
-
-          {entries.length > 0 ? (
-            <dl className="mt-6 space-y-3">
-              {entries.map(([key, value]) => (
-                <div key={key}>
-                  <div className="flex items-baseline justify-between text-sm">
-                    <dt className="text-ink-700">{LABELS[key] ?? key}</dt>
-                    <dd className="font-mono text-ink-600">{value}</dd>
-                  </div>
-                  {/* aria-hidden: the number above is the accessible value;
-                      this bar is decoration, not a second control. */}
-                  <div aria-hidden className="mt-1 h-1.5 rounded-full bg-ink-100">
-                    <div
-                      className="h-1.5 rounded-full bg-brand-500"
-                      style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </dl>
+          <h1 className="mt-2 text-3xl leading-tight font-semibold text-balance text-ink-900">
+            {profile.headline ?? "Completed a Jintu placement sprint."}
+          </h1>
+          {profile.publishedAt ? (
+            <p className="mt-2 text-sm text-ink-500">
+              Published{" "}
+              <time dateTime={profile.publishedAt}>
+                {new Date(profile.publishedAt).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </time>
+            </p>
           ) : null}
+        </header>
+
+        {profile.overall !== null ? (
+          <section
+            className="mt-8 rounded-card border border-ink-100 bg-white p-6"
+            aria-labelledby="score"
+          >
+            <h2
+              id="score"
+              className="text-sm font-semibold tracking-wide text-ink-500 uppercase"
+            >
+              Readiness
+            </h2>
+            <p className="mt-1 flex items-baseline gap-1.5">
+              <span className="font-mono text-5xl font-semibold tabular-nums text-ink-900">
+                {profile.overall}
+              </span>
+              <span className="text-ink-500">/ 100</span>
+            </p>
+
+            {entries.length > 0 ? (
+              <dl className="mt-6 space-y-3">
+                {entries.map(([key, value]) => (
+                  <div key={key}>
+                    <div className="flex items-baseline justify-between text-sm">
+                      <dt className="text-ink-700">{LABELS[key] ?? key}</dt>
+                      <dd className="font-mono tabular-nums text-ink-600">{value}</dd>
+                    </div>
+                    {/* aria-hidden: the number above is the accessible value;
+                        this bar is decoration, not a second control. */}
+                    <div aria-hidden className="mt-1 h-1.5 rounded-full bg-ink-100">
+                      <div
+                        className="h-1.5 rounded-full bg-brand-500"
+                        style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+          </section>
+        ) : (
+          <p className="mt-8 rounded-card border border-ink-100 bg-white p-6 text-ink-600">
+            This profile has no readiness score yet.
+          </p>
+        )}
+
+        <section
+          className="mt-4 rounded-card border border-ink-100 border-l-4 border-l-brand-500 bg-white p-6"
+          aria-labelledby="what"
+        >
+          <h2 id="what" className="font-semibold text-ink-900">
+            What this score is
+          </h2>
+          <p className="mt-2 text-pretty text-ink-600">
+            A measure of work actually submitted and graded against{" "}
+            <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
+              rubrics published before the sprint began
+            </Link>
+            . It is not a prediction that this person will be hired, and Jintu
+            makes no such claim.
+          </p>
         </section>
-      ) : (
-        <p className="mt-10 rounded-card border border-ink-200 p-6 text-ink-600">
-          This profile has no readiness score yet.
-        </p>
-      )}
+      </main>
 
-      <section className="mt-8 rounded-card bg-ink-50 p-6" aria-labelledby="what">
-        <h2 id="what" className="font-semibold text-ink-900">
-          What this score is
-        </h2>
-        <p className="mt-2 text-pretty text-ink-600">
-          A measure of work actually submitted and graded against{" "}
-          <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
-            rubrics published before the sprint began
+      <footer className="border-t border-ink-100 bg-white">
+        <div className="mx-auto flex max-w-2xl items-center gap-2 px-5 py-6 text-sm text-ink-500">
+          <Link href="/" className="font-semibold text-ink-900 hover:text-brand-800">
+            Jintu
           </Link>
-          . It is not a prediction that this person will be hired, and Jintu
-          makes no such claim.
-        </p>
-      </section>
-
-      <footer className="mt-12 border-t border-ink-100 pt-6 text-sm text-ink-500">
-        <Link href="/" className="hover:text-brand-800">
-          Jintu
-        </Link>{" "}
-        · placement sprints
+          <span aria-hidden>·</span>
+          <span>placement sprints</span>
+        </div>
       </footer>
-    </main>
+    </div>
   );
 }
