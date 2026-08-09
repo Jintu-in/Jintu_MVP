@@ -1,0 +1,68 @@
+<!--
+  The first email a new account ever gets.
+
+  This is the one Supabase actually sends when `enable_confirmations` is on
+  and the address has never been seen before — NOT the magic-link template.
+  That distinction cost an evening: sign-in was wired to ask for a six-digit
+  code, the magic-link template was written to carry one, and the email that
+  turned up was the stock "Confirm your email address" with a link and no
+  code in it.
+
+  So this template carries `{{ .Token }}` too. With it in place the flow works
+  whether or not confirmations are switched off, which means one fewer setting
+  that has to be right for a student to get in.
+
+  The link is second, not first, and deliberately so. A confirmation link is a
+  single-use token in an inbox, and Gmail's and most corporate scanners'
+  prefetchers will spend it before the human taps it — which surfaces as
+  `otp_expired` on a link that arrived thirty seconds ago. A code cannot be
+  consumed by a machine that merely looked at the message.
+
+  Inline styles only: Gmail strips <style> blocks, and a table is still the
+  only layout primitive that behaves across mail clients. This is not how the
+  rest of the app is written and it should not be — it is how email is.
+-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background:#f7f7f7;padding:24px 0;font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans',sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+             style="max-width:480px;background:#ffffff;border:1px solid #ededed;border-radius:12px;padding:32px;">
+        <tr>
+          <td>
+            <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:1px;
+                      text-transform:uppercase;color:#17758a;">
+              Jintu
+            </p>
+            <p style="margin:8px 0 0;font-size:20px;font-weight:600;color:#231f20;">
+              Your sign-in code
+            </p>
+            <p style="margin:12px 0 0;font-size:15px;line-height:1.5;color:#585556;">
+              Enter this in the tab you left open to finish setting up your
+              account. It expires in an hour, and it only works once.
+            </p>
+
+            <p style="margin:24px 0;font-family:ui-monospace,Menlo,monospace;font-size:32px;
+                      letter-spacing:8px;font-weight:600;color:#231f20;text-align:center;
+                      background:#f7f7f7;border-radius:8px;padding:16px 0;">
+              {{ .Token }}
+            </p>
+
+            <p style="margin:0;font-size:15px;line-height:1.5;color:#585556;">
+              Or
+              <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/onboarding"
+                 style="color:#17758a;font-weight:500;">
+                confirm with one tap</a>.
+            </p>
+
+            <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #ededed;
+                      font-size:13px;line-height:1.5;color:#706d6e;">
+              If you did not ask for this, no account has been created and you
+              can ignore this email. Nobody can sign in without the code above.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

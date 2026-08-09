@@ -10,6 +10,7 @@ import {
 const validOnboarding = {
   fullName: "Asha",
   collegeName: "NIT Trichy",
+  phone: "98765 43210",
   batchYear: "2027",
   isAdultConfirmed: true,
   analytics: false,
@@ -18,25 +19,38 @@ const validOnboarding = {
 };
 
 describe("otpRequestInput", () => {
-  it("normalises what people type into E.164", () => {
-    const r = otpRequestInput.safeParse({ phone: "98765 43210" });
+  it("accepts an email address", () => {
+    const r = otpRequestInput.safeParse({ email: "asha@example.com" });
     expect(r.success).toBe(true);
-    expect(r.data?.phone).toBe("+919876543210");
+    expect(r.data?.email).toBe("asha@example.com");
   });
 
-  it("rejects a number that is not an Indian mobile", () => {
-    expect(otpRequestInput.safeParse({ phone: "+14155550123" }).success).toBe(false);
+  // Phones autocapitalise the first letter of a field, and Supabase treats
+  // the address as a key. "Asha@Example.com" and "asha@example.com" must not
+  // become two accounts for the same person.
+  it("lowercases and trims, so one person is one account", () => {
+    const r = otpRequestInput.safeParse({ email: "  Asha@Example.COM " });
+    expect(r.data?.email).toBe("asha@example.com");
   });
+
+  it.each([["asha"], ["asha@"], ["@example.com"], ["asha example.com"], [""]])(
+    "rejects %s",
+    (email) => {
+      expect(otpRequestInput.safeParse({ email }).success).toBe(false);
+    },
+  );
 });
 
 describe("otpVerifyInput", () => {
   it("accepts a six-digit code", () => {
-    const r = otpVerifyInput.safeParse({ phone: "9876543210", token: "123456" });
+    const r = otpVerifyInput.safeParse({ email: "asha@example.com", token: "123456" });
     expect(r.success).toBe(true);
   });
 
   it.each([["12345"], ["1234567"], ["12a456"], [""]])("rejects the code %s", (token) => {
-    expect(otpVerifyInput.safeParse({ phone: "9876543210", token }).success).toBe(false);
+    expect(
+      otpVerifyInput.safeParse({ email: "asha@example.com", token }).success,
+    ).toBe(false);
   });
 });
 
@@ -46,6 +60,20 @@ describe("onboardingInput", () => {
     expect(r.success).toBe(true);
     expect(r.data?.batchYear).toBe(2027);
   });
+
+  // The number moved here when sign-in became email, and it is required:
+  // deadline nudges are the product, and profiles.phone is NOT NULL.
+  it("normalises the mobile number into E.164", () => {
+    const r = onboardingInput.safeParse(validOnboarding);
+    expect(r.data?.phone).toBe("+919876543210");
+  });
+
+  it.each([["+14155550123"], ["1234567890"], ["98765"], [""]])(
+    "rejects the mobile number %s",
+    (phone) => {
+      expect(onboardingInput.safeParse({ ...validOnboarding, phone }).success).toBe(false);
+    },
+  );
 
   // Law 3. A profile row cannot exist without this, enforced again by a CHECK
   // constraint in the database — the form must not be the only thing stopping it.

@@ -18,28 +18,32 @@ const BUTTON =
   "mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-brand-700 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500";
 
 /**
- * Phone-first sign-in. One component holding both steps rather than two
- * routes: the phone number has to survive into the verify step, and putting
- * it in the URL would write it into browser history and every referrer header
- * on the page.
+ * Sign-in by emailed code. One component holding both steps rather than two
+ * routes: the address has to survive into the verify step, and putting it in
+ * the URL would write it into browser history and every referrer header on
+ * the page.
+ *
+ * Why email and not SMS is in @jintu/contracts auth.ts. The shape of this
+ * form does not change if that decision reverses — it is one field and a
+ * six-digit code either way.
  */
 export function JoinForm({ next }: { next: Route }) {
   const id = useId();
   const router = useRouter();
-  const [phone, setPhone] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   const request = useAction(requestOtp, {
-    onSuccess: ({ data }) => setPhone(data?.phone ?? null),
+    onSuccess: ({ data }) => setEmail(data?.email ?? null),
   });
   const verify = useAction(verifyOtp, {
     onSuccess: () => router.replace(next),
   });
 
-  if (phone) {
+  if (email) {
     return (
       <form
         noValidate
-        action={(fd) => verify.execute({ phone, token: String(fd.get("token") ?? "") })}
+        action={(fd) => verify.execute({ email, token: String(fd.get("token") ?? "") })}
       >
         <Steps current={2} label="Verify code" />
 
@@ -47,16 +51,16 @@ export function JoinForm({ next }: { next: Route }) {
           Enter the code
         </h1>
         <p className="mt-2 text-ink-600">
-          Sent to {phone}.{" "}
+          Sent to {email}.{" "}
           <button
             type="button"
             onClick={() => {
-              setPhone(null);
+              setEmail(null);
               request.reset();
             }}
             className="text-brand-700 underline hover:text-brand-800"
           >
-            Wrong number?
+            Wrong address?
           </button>
         </p>
 
@@ -70,9 +74,10 @@ export function JoinForm({ next }: { next: Route }) {
           autoComplete="one-time-code"
           maxLength={6}
           autoFocus
-          // One field, not six boxes: six inputs break SMS autofill on Android
-          // and paste, and every one of them needs its own label to be usable
-          // without sight. The tracking is what makes it read as six digits.
+          // One field, not six boxes: six inputs break paste — which is how
+          // a code gets out of an email and into a form — and every one of
+          // them needs its own label to be usable without sight. The tracking
+          // is what makes it read as six digits.
           className={cn(FIELD, "mt-1.5 text-center font-mono text-xl tracking-[0.5em]")}
         />
         {firstError(verify.result?.validationErrors as FieldErrors, "token") ? (
@@ -96,48 +101,44 @@ export function JoinForm({ next }: { next: Route }) {
   return (
     <form
       noValidate
-      action={(fd) => request.execute({ phone: String(fd.get("phone") ?? "") })}
+      action={(fd) => request.execute({ email: String(fd.get("email") ?? "") })}
     >
-      <Steps current={1} label="Your number" />
+      <Steps current={1} label="Your email" />
 
       <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
-        Enter your phone number
+        Enter your email address
       </h1>
-      <p className="mt-2 text-ink-600">
-        We send a six-digit code by SMS. No password to forget.
+      <p className="mt-2 text-pretty text-ink-600">
+        We send a six-digit code. No password to forget.
       </p>
 
-      <label htmlFor={`${id}-phone`} className="mt-6 block text-sm font-medium text-ink-700">
-        Mobile number
+      <label htmlFor={`${id}-email`} className="mt-6 block text-sm font-medium text-ink-700">
+        Email address
       </label>
-      {/* The +91 is display only — the field submits the ten digits and the
-          contract normalises them. It still accepts a pasted +91… number. */}
-      <div className="mt-1.5 flex h-12 w-full items-center rounded-lg border border-ink-200 bg-white focus-within:border-brand-700 focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-brand-700">
-        <span
-          id={`${id}-cc`}
-          className="flex h-full items-center border-r border-ink-100 px-3 text-ink-600"
-        >
-          +91
-        </span>
-        <input
-          id={`${id}-phone`}
-          name="phone"
-          type="tel"
-          inputMode="numeric"
-          autoComplete="tel"
-          placeholder="98765 43210"
-          // The prefix is only painted next to the field, so name it here too —
-          // otherwise the country code is information only sighted users get.
-          aria-describedby={`${id}-cc`}
-          autoFocus
-          className="h-full min-w-0 flex-1 rounded-r-lg bg-transparent px-3 text-ink-900 focus-visible:outline-none"
-        />
-      </div>
-      {firstError(request.result?.validationErrors as FieldErrors, "phone") ? (
-        <p className="mt-1.5 text-sm text-risk-600">
-          {firstError(request.result?.validationErrors as FieldErrors, "phone")}
+      <input
+        id={`${id}-email`}
+        name="email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        autoCapitalize="off"
+        spellCheck={false}
+        placeholder="you@example.com"
+        autoFocus
+        aria-invalid={
+          firstError(request.result?.validationErrors as FieldErrors, "email") ? true : undefined
+        }
+        className={cn(FIELD, "mt-1.5")}
+      />
+      {firstError(request.result?.validationErrors as FieldErrors, "email") ? (
+        <p className="mt-1.5 text-sm text-pretty text-risk-600">
+          {firstError(request.result?.validationErrors as FieldErrors, "email")}
         </p>
       ) : null}
+      <p className="mt-1.5 text-sm text-pretty text-ink-500">
+        Use an address you will still have after you graduate — a college
+        address you lose access to is an account you cannot get back into.
+      </p>
       {request.result?.serverError ? (
         <p role="alert" className="mt-3 text-pretty text-sm text-risk-600">
           {request.result.serverError}
