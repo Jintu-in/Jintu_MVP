@@ -323,6 +323,204 @@ const TRACKS = [
   },
 ];
 
+// Roles that are not engineering. The sprint shape is the same — six weeks,
+// six artifacts, a rubric published up front — because the thing being sold
+// is evidence of work, and that is not specific to writing code.
+TRACKS.push(
+  {
+    slug: "product-manager-fresher",
+    title: "Associate Product Manager",
+    summary:
+      "Six weeks producing what a PM is actually judged on: a written problem, a spec engineers can build from, a launch plan, and a decision you can defend.",
+    weeks: [
+      ["The problem, before the feature", "Write the problem down so that two people would recognise the same thing."],
+      ["Talking to users without leading them", "Run five conversations and separate what people said from what you hoped."],
+      ["A spec someone can build from", "Write acceptance criteria a developer would not have to interpret."],
+      ["Prioritising out loud", "Rank a backlog and defend the thing you chose not to do."],
+      ["Measuring the thing you shipped", "Define one metric that would tell you this was a mistake."],
+      ["Say no, in writing", "Turn down a request in a way the requester still respects."],
+    ],
+    resources: [
+      [1, "article", "https://www.atlassian.com/agile/product-management", "Atlassian — product management"],
+      [2, "article", "https://www.nngroup.com/articles/ten-usability-heuristics/", "Nielsen Norman — ten usability heuristics"],
+      [5, "docs", "https://support.google.com/analytics/answer/9304153", "GA4 — set up analytics"],
+    ],
+    assignments: [
+      [3, "artifact_link", "written-finding-v1", 2, "A one-page spec for a real feature in a product you use, with acceptance criteria and the three questions you would need answered before work starts."],
+      [4, "artifact_link", "written-finding-v1", 2, "A prioritised backlog of eight items with the reasoning for the bottom two, not the top two."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: the request you declined, why, and what would change your mind."],
+    ],
+  },
+  {
+    slug: "ux-designer-fresher",
+    title: "UX Designer",
+    summary:
+      "Six weeks of design that survives contact with a user: flows, a usable prototype, an accessibility pass, and a redesign you can justify.",
+    weeks: [
+      ["Flows before screens", "Map what someone is trying to finish, not what screens exist."],
+      ["Heuristics as a checklist", "Review a real product against ten heuristics and rank what you found."],
+      ["Prototyping enough to test", "Build the smallest thing that answers the question you actually have."],
+      ["Testing with five people", "Watch five people use it and separate what they did from what they said."],
+      ["Accessibility as a requirement", "Pass a keyboard-only run and meet contrast on every piece of text."],
+      ["Defend the redesign", "Show the before and after and name the trade-off you accepted."],
+    ],
+    resources: [
+      [2, "article", "https://www.nngroup.com/articles/ten-usability-heuristics/", "Nielsen Norman — ten usability heuristics"],
+      [3, "docs", "https://help.figma.com/hc/en-us", "Figma — help centre"],
+      [5, "docs", "https://www.w3.org/WAI/WCAG22/quickref/", "W3C — WCAG 2.2 quick reference"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A heuristic review of one real product: at least eight findings, each with severity and the heuristic it breaks."],
+      [4, "artifact_link", "working-software-v1", 2, "A clickable prototype plus notes from five sessions, including the thing everyone got stuck on."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes on the redesign: what you changed after testing, and what you deliberately left alone."],
+    ],
+  },
+  {
+    slug: "digital-marketing-fresher",
+    title: "Digital Marketing Analyst",
+    summary:
+      "Six weeks of marketing you can measure: a technical site audit, analytics that answer a question, a campaign, and a report with a number in it.",
+    weeks: [
+      ["How search actually sees a page", "Audit a real site and list what a crawler cannot reach."],
+      ["Content that answers the query", "Write for the question someone typed, not the keyword you want to rank for."],
+      ["Analytics that answer a question", "Set up tracking that could change a decision, and skip the rest."],
+      ["Running a small campaign", "Spend a small budget deliberately and state the hypothesis first."],
+      ["Attribution, honestly", "Explain what your numbers cannot tell you about what caused what."],
+      ["Report it to someone busy", "One page: what you did, what happened, what you would do next."],
+    ],
+    resources: [
+      [1, "docs", "https://developers.google.com/search/docs/fundamentals/seo-starter-guide", "Google — SEO starter guide"],
+      [1, "docs", "https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data", "Google — structured data"],
+      [3, "docs", "https://support.google.com/analytics/answer/9304153", "GA4 — set up analytics"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A technical audit of a real site: findings ranked by impact, each with the evidence you used."],
+      [5, "artifact_link", "written-finding-v1", 2, "A campaign write-up stating the hypothesis, the spend, the result, and what the numbers cannot prove."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: the number you would report to a founder, and the caveat you would say out loud."],
+    ],
+  },
+  {
+    slug: "machine-learning-fresher",
+    title: "Machine Learning Engineer",
+    summary:
+      "Six weeks from a notebook to something that runs: a real dataset, an honest baseline, a model you can explain, and an evaluation that would catch you being wrong.",
+    weeks: [
+      ["The dataset, and what is wrong with it", "Describe a real dataset's biases and gaps before modelling anything."],
+      ["A baseline worth beating", "Build the dumbest model that works, and record its score."],
+      ["Features and leakage", "Find the leak that makes your score look better than it is."],
+      ["Evaluation that would catch you", "Choose a metric that punishes the failure you care about."],
+      ["Explaining a prediction", "Explain one prediction to someone who does not trust the model."],
+      ["Serve it", "Put it behind an interface someone else can call."],
+    ],
+    resources: [
+      [1, "docs", "https://numpy.org/doc/stable/user/absolute_beginners.html", "NumPy — absolute beginner's guide"],
+      [2, "docs", "https://scikit-learn.org/stable/getting_started.html", "scikit-learn — getting started"],
+      [4, "docs", "https://developers.google.com/machine-learning/crash-course", "Google — Machine Learning Crash Course"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A notebook with a baseline and its score, plus a paragraph on what would make this dataset unsuitable."],
+      [4, "artifact_link", "working-software-v1", 2, "A model that beats the baseline, with the evaluation and the leak you checked for."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: explain one prediction, and say where you would not trust this model."],
+    ],
+  },
+  {
+    slug: "security-analyst-fresher",
+    title: "Security Analyst",
+    summary:
+      "Six weeks of finding and reporting real weaknesses: threat modelling, a hands-on assessment of software you are allowed to test, and a report someone will act on.",
+    weeks: [
+      ["Threat modelling a small system", "Describe who would attack this, and what they would get."],
+      ["The common ten, concretely", "Reproduce three classic weaknesses in a deliberately vulnerable app."],
+      ["Testing methodically", "Work through a checklist instead of poking at what you already know."],
+      ["Secrets, identity and blast radius", "Reduce what one leaked credential would cost."],
+      ["Reporting so it gets fixed", "Write a finding with impact, reproduction and a fix a developer can apply."],
+      ["Disclose responsibly", "Explain why scope and permission are the difference between research and an offence."],
+    ],
+    resources: [
+      [2, "docs", "https://owasp.org/www-project-top-ten/", "OWASP Top Ten"],
+      [3, "docs", "https://owasp.org/www-project-web-security-testing-guide/", "OWASP Web Security Testing Guide"],
+      [4, "docs", "https://cheatsheetseries.owasp.org/", "OWASP Cheat Sheet Series"],
+    ],
+    assignments: [
+      [3, "artifact_link", "written-finding-v1", 2, "An assessment of a deliberately vulnerable application you are permitted to test. Three findings with reproduction steps."],
+      [5, "artifact_link", "written-finding-v1", 2, "One finding written as a report: impact, reproduction, suggested fix, and how you would verify the fix."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: the finding, and why you tested only what you had permission to test."],
+    ],
+  },
+  {
+    slug: "technical-writer-fresher",
+    title: "Technical Writer",
+    summary:
+      "Six weeks producing documentation people finish reading: a task-based guide, an API reference, a rewrite of something bad, and evidence it worked.",
+    weeks: [
+      ["Who is reading, and what for", "Separate a tutorial from a reference and stop writing both at once."],
+      ["A guide someone can finish", "Write a task guide and watch one person complete it without help."],
+      ["Documenting an interface", "Document endpoints so a developer never has to read the source."],
+      ["Editing for the reader", "Cut a page by a third without losing anything the reader needed."],
+      ["Working with engineers", "Get a technical review without becoming a bottleneck."],
+      ["Show it worked", "Test your own docs on someone and report what they got stuck on."],
+    ],
+    resources: [
+      [1, "docs", "https://diataxis.fr/", "Diátaxis — a documentation framework"],
+      [2, "docs", "https://www.writethedocs.org/guide/", "Write the Docs — guide"],
+      [4, "docs", "https://developers.google.com/style", "Google — developer documentation style guide"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A task guide for real software, plus notes from watching one person follow it start to finish."],
+      [4, "artifact_link", "written-finding-v1", 2, "A rewrite of a page of existing documentation, with the original alongside and the reason for each cut."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: what your reader got stuck on, and the edit that fixed it."],
+    ],
+  },
+  {
+    slug: "finance-analyst-fresher",
+    title: "Finance Analyst",
+    summary:
+      "Six weeks of analysis with a number at the end: reading a real filing, building a model, checking your own assumptions, and a recommendation you can defend.",
+    weeks: [
+      ["Reading a real filing", "Find the three numbers that matter in a published annual report."],
+      ["A model that is not a guess", "Build a forecast where every assumption is a named, changeable cell."],
+      ["Getting your own data", "Pull the numbers yourself instead of waiting for someone to send them."],
+      ["Sensitivity and being wrong", "Show which assumption breaks the conclusion first."],
+      ["Presenting to someone sceptical", "Make the case in one page with the risk stated up front."],
+      ["Defend the recommendation", "Answer the hardest question about your own model."],
+    ],
+    resources: [
+      [1, "docs", "https://www.sebi.gov.in/", "SEBI — Securities and Exchange Board of India"],
+      [1, "docs", "https://www.rbi.org.in/", "Reserve Bank of India"],
+      [3, "docs", "https://pandas.pydata.org/docs/user_guide/index.html", "pandas — user guide"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A three-year forecast for a listed company, with every assumption in its own labelled cell and sourced from the filing."],
+      [4, "artifact_link", "written-finding-v1", 2, "A sensitivity analysis showing which single assumption moves the conclusion most."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: the recommendation, and the assumption you are least comfortable with."],
+    ],
+  },
+  {
+    slug: "support-engineer-fresher",
+    title: "Support Engineer",
+    summary:
+      "Six weeks of the work support actually does: reproducing a bug from a vague report, reading logs, writing a fix or an escalation, and measuring whether it helped.",
+    weeks: [
+      ["Reproducing from a vague report", "Turn 'it does not work' into steps someone else can follow."],
+      ["Reading the request and response", "Diagnose a failure from a status code and a header, not a guess."],
+      ["Logs and evidence", "Find the line that proves what happened, and say what it does not prove."],
+      ["Escalating well", "Write a handover an engineer can act on without asking you anything."],
+      ["Documenting the answer once", "Turn a repeated question into a page and stop answering it."],
+      ["Measure whether it helped", "Pick a metric that would show your fix worked, and check it."],
+    ],
+    resources: [
+      [2, "docs", "https://developer.mozilla.org/en-US/docs/Web/HTTP", "MDN — HTTP"],
+      [4, "article", "https://www.atlassian.com/incident-management/kpis/common-metrics", "Atlassian — incident metrics"],
+      [5, "docs", "https://developers.google.com/style", "Google — developer documentation style guide"],
+    ],
+    assignments: [
+      [2, "artifact_link", "written-finding-v1", 2, "A reproduction of a real reported bug in an open-source project: steps, expected, actual, environment."],
+      [4, "artifact_link", "written-finding-v1", 2, "An escalation write-up for that bug, containing everything an engineer needs and nothing they do not."],
+      [6, "recording", "walkthrough-v1", 1, "Five minutes: the repeated question you documented, and how you would know the page worked."],
+    ],
+  },
+);
+
 // ── emit ─────────────────────────────────────────────────────────────────────
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 const out = [];
