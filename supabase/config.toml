@@ -296,8 +296,10 @@ port = 587
 user = "apikey"
 pass = "env(SENDGRID_API_KEY)"
 # Must be an address verified under SendGrid > Sender Authentication > Single
-# Sender Verification. Unverified, every send is rejected at the API.
-admin_email = "sauravlpu11@gmail.com"
+# Sender Verification, and must match it exactly — SendGrid rejects any send
+# whose From is not a verified identity, which surfaces through Supabase as a
+# bare 500 "Error sending magic link email" with nothing naming the address.
+admin_email = "mainhujintu@gmail.com"
 sender_name = "Jintu"
 
 # Resend, if you would rather. Same shape, one restriction worse until the
