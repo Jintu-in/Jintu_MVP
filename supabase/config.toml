@@ -156,11 +156,21 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+# Production, not localhost. `supabase config push` sends this whole file to
+# the linked project, so a localhost site_url here becomes the live project's
+# site_url — which is the URL every auth email links to.
+site_url = "https://jintu.in"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "https://jintu.in",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000",
+  # `next dev` falls back to 3001 when 3000 is taken, and a redirect URL that
+  # is not on this list fails closed.
+  "http://localhost:3001",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -217,9 +227,13 @@ web3 = 30
 # secret = ""
 
 [auth.email]
-# Phone-first: email is transactional only (Resend), never an auth factor.
-# ARCHITECTURE.md §1 — phone OTP is the correct primary for India.
-enable_signup = false
+# Email OTP is the sign-in factor for now. ARCHITECTURE.md §1 calls for phone
+# OTP and that is still the right end state, but every A2P SMS to an Indian
+# number needs TRAI DLT registration first — a registered entity, PAN and GST
+# paperwork, weeks of waiting — and none of that work carries over to
+# WhatsApp, which needs Meta business verification instead. See
+# packages/contracts/src/auth.ts.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
@@ -234,15 +248,28 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Use a production-ready SMTP server
+# Your own SMTP is not optional here, for two reasons. Supabase's built-in
+# sender is rate-limited to a handful of messages an hour — twenty students
+# signing up the same evening will hit that wall — and since 3 June 2026 new
+# projects cannot customise auth email templates while on it, which means the
+# template above never takes effect and no code is ever sent.
+#
+# Fill in RESEND_API_KEY in .env, uncomment, and `supabase config push`.
 # [auth.email.smtp]
 # enabled = true
-# host = "smtp.sendgrid.net"
+# host = "smtp.resend.com"
 # port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# user = "resend"
+# pass = "env(RESEND_API_KEY)"
+# admin_email = "hello@jintu.in"
+# sender_name = "Jintu"
+
+# The six-digit code lives in this template and nowhere else. Supabase's stock
+# magic-link email contains a link and no `{{ .Token }}`, so without this the
+# sign-in form asks for a code that was never sent.
+[auth.email.template.magic_link]
+subject = "Your Jintu sign-in code"
+content_path = "./supabase/templates/magic-link.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
@@ -256,8 +283,11 @@ otp_expiry = 3600
 # content_path = "./templates/password_changed_notification.html"
 
 [auth.sms]
-# Allow/disallow new user signups via SMS to your project.
-enable_signup = true
+# Off until DLT registration is done. The Phone provider is already disabled on
+# the linked project; this keeps the declared config saying the same thing, so
+# `config push` does not quietly switch on a provider with no SMS credentials
+# behind it.
+enable_signup = false
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = true
 # Template for sending OTP to users

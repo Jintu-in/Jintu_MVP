@@ -51,9 +51,15 @@ export default function PrivacyPage() {
 
         <Section title="What we collect, and why">
           <dl className="space-y-4">
+            <Item term="Your email address">
+              To sign you in. There is no password — we send a six-digit code
+              to that address, and holding it is how we know it is you.
+            </Item>
             <Item term="Your mobile number">
-              To contact you about the cohort and, once you enrol, to sign you
-              in. There is no password — the number is how we know it is you.
+              To reach you about your cohort: deadlines, a submission you have
+              missed, a peer review waiting on you. It is not how you sign in.
+              Reminders on WhatsApp specifically are a separate choice below,
+              and declining them changes nothing about your place.
             </Item>
             <Item term="Your name and college (optional)">
               To address you properly and to group you with the right batch.
