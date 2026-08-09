@@ -1,15 +1,20 @@
 # @jintu/db
 
-Generated Supabase types. **`src/types.ts` is not committed yet** — it cannot
-be, because generating it requires a linked Supabase project:
+Generated Supabase types. `src/types.ts` is committed and is generated from
+the linked project, not hand-written:
 
 ```bash
 pnpm supabase link --project-ref <ref>   # ap-south-1 project
-pnpm db:types                            # writes src/types.ts
+pnpm db:types                            # rewrites src/types.ts
 ```
 
-Nothing imports this package until those types exist. The skeleton is here so
-that `pnpm db:types` has somewhere to write on the first run.
+It is committed rather than generated at install time so that a clone, and
+CI, can typecheck without a Supabase project or a database. The consequence is
+that it goes stale silently — regenerate it in the same commit as any
+migration, per the steps below.
+
+Note `pnpm db:types` writes to `packages/db/src/`, which must exist first; the
+redirect creates the file but not its directory.
 
 The SQL migrations in [`supabase/migrations/`](../../supabase/migrations) are
 the schema source of truth — not this package, and not an ORM. Per
