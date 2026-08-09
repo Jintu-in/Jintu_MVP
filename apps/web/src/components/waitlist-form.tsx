@@ -128,7 +128,7 @@ export function WaitlistForm() {
           "mt-6 w-full rounded-card px-4 py-3 font-medium text-white transition-colors",
           "bg-brand-700 hover:bg-brand-800",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
-          "disabled:cursor-not-allowed disabled:bg-ink-300",
+          "disabled:cursor-not-allowed disabled:bg-ink-500",
         )}
       >
         {pending ? "Joining…" : "Join the waitlist"}

@@ -114,7 +114,7 @@ export function OnboardingForm() {
         disabled={status === "executing"}
         className={cn(
           "mt-8 w-full rounded-card px-4 py-3 font-medium text-white",
-          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-300",
+          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
         )}
       >
         {status === "executing" ? "Saving…" : "Create my account"}

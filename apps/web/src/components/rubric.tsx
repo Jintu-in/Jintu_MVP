@@ -14,7 +14,7 @@ export function Rubric({ rubric }: { rubric: RubricType }) {
 
   return (
     <details className="mt-3 rounded-card border border-ink-200 bg-white">
-      <summary className="cursor-pointer px-4 py-2.5 text-sm font-medium text-ink-700 marker:text-ink-400 hover:text-brand-800">
+      <summary className="cursor-pointer px-4 py-2.5 text-sm font-medium text-ink-700 marker:text-ink-500 hover:text-brand-800">
         How this is graded · {rubric.max_score} points
       </summary>
 

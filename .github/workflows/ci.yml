@@ -50,6 +50,11 @@ jobs:
       - name: Embed rules
         run: pnpm embeds
 
+      # Colour tokens used where they are not legible. The palette annotates
+      # every ratio, but a comment does not stop anyone writing text-brand-500.
+      - name: Contrast
+        run: pnpm contrast
+
       # A committed .env.example must never contain a real credential.
       - name: Env templates
         run: pnpm env:templates

@@ -13,20 +13,24 @@
 
 @theme {
   /* ── Brand ────────────────────────────────────────────────────────────────
-   * Anchored on #43b4c8, sampled from the logo. Note the ceiling: the brand
-   * colour itself is 2.44:1 on white, so it is a FILL, never text and never a
-   * lone UI boundary. Reach for brand-700 when something must be legible.
+   * Anchored on #43b4c8. Note the ceiling: the brand colour itself is 2.44:1
+   * on white, so it is a FILL — never text, never a lone UI boundary, and
+   * never the background under white text. Reach for brand-700 when something
+   * must be legible. `pnpm contrast` fails the build if that is ignored.
+   *
+   * On a brand-500 fill, put ink-900 on it (6.68:1), not white (2.44:1).
    */
-  --color-brand-50: #f0f9fb; /*  1.07:1 — tinted surface */
-  --color-brand-100: #e1f3f6; /*  1.14:1 — tinted surface */
-  --color-brand-200: #bfe6ec; /*  1.33:1 — surface, dividers on white */
-  --color-brand-300: #92d4df; /*  1.65:1 — fill */
-  --color-brand-400: #69c3d3; /*  2.03:1 — fill */
+  --color-brand-50: #effafc; /*  1.06:1 — tinted surface */
+  --color-brand-100: #d3f0f6; /*  1.20:1 — tinted surface */
+  --color-brand-200: #a9e2ec; /*  1.42:1 — surface, dividers on white */
+  --color-brand-300: #74cfde; /*  1.79:1 — fill */
+  --color-brand-400: #56c2d5; /*  2.08:1 — fill */
   --color-brand-500: #43b4c8; /*  2.44:1 — THE brand colour. Fill only. */
-  --color-brand-600: #3696a7; /*  3.46:1 — large text, icons, borders */
-  --color-brand-700: #2a7a89; /*  4.95:1 — links, buttons, white text on it */
-  --color-brand-800: #1e5e6c; /*  7.31:1 — text */
-  --color-brand-900: #144651; /* 10.37:1 — text */
+  --color-brand-600: #3499ab; /*  3.34:1 — large text (18pt+), icons, borders */
+  --color-brand-700: #17758a; /*  5.32:1 — links, buttons, white text on it */
+  --color-brand-800: #175e6e; /*  7.34:1 — text, button hover */
+  --color-brand-900: #17505c; /*  8.98:1 — text */
+  --color-brand-950: #0b333d; /* 13.50:1 — text on a brand-50 surface */
 
   /* ── Ink ──────────────────────────────────────────────────────────────────
    * A warm neutral drawn from the mark's own dark (#554c4c), not the navy the

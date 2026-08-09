@@ -78,7 +78,7 @@ export function JoinForm({ next }: { next: Route }) {
           disabled={verify.status === "executing"}
           className={cn(
             "mt-5 w-full rounded-card px-4 py-3 font-medium text-white",
-            "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-300",
+            "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
           )}
         >
           {verify.status === "executing" ? "Checking…" : "Continue"}
@@ -127,7 +127,7 @@ export function JoinForm({ next }: { next: Route }) {
         disabled={request.status === "executing"}
         className={cn(
           "mt-5 w-full rounded-card px-4 py-3 font-medium text-white",
-          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-300",
+          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
         )}
       >
         {request.status === "executing" ? "Sending…" : "Send code"}
