@@ -12,52 +12,86 @@ import {
 import { actionClient } from "@/lib/safe-action";
 import { createClient } from "@/lib/supabase/server";
 
-/** Step 1 — send a code. */
+/**
+ * Step 1 — send a code.
+ *
+ * By email rather than SMS; the reasoning is in @jintu/contracts auth.ts.
+ * `shouldCreateUser` is left at its default of true because this one form is
+ * both sign-in and sign-up: an account exists from the moment someone proves
+ * they hold the address, and the profile — with the 18+ gate on it — is
+ * created separately at onboarding.
+ */
 export const requestOtp = actionClient
   .inputSchema(otpRequestInput)
   .action(async ({ parsedInput }) => {
     const supabase = await createClient();
-    const { error } = await supabase.auth.signInWithOtp({ phone: parsedInput.phone });
+    const { error } = await supabase.auth.signInWithOtp({ email: parsedInput.email });
 
     if (error) {
       // The operational cause goes to the log, where whoever can fix it will
-      // look. It does not go to the student: "enable an SMS provider in the
-      // Supabase dashboard" is not a sentence someone signing up can act on,
-      // and the raw provider errors are worse — Twilio's read as though the
-      // person mistyped their own number.
+      // look. It does not go to the student: "configure SMTP in the
+      // dashboard" is not a sentence anyone signing up can act on, and
+      // `over_email_send_rate_limit` is worse — it reads as an accusation.
       console.error("[auth] otp send failed", error.status, error.code, error.message);
 
-      // Supabase's own limit, not the carrier's. Distinguished because the
-      // remedy is "wait", and the student should not be told to check a number
-      // that was fine.
+      // Supabase's built-in sender allows about two auth emails an hour, so
+      // this is the failure a project without custom SMTP hits first and
+      // hits constantly. It is a quota, not the student doing anything wrong,
+      // and telling them to wait is the only true and useful thing to say.
       if (error.status === 429 || /rate limit/i.test(error.message)) {
         throw new Error(
-          "We have sent too many codes in the last few minutes. Wait a moment and try again — this is our limit, not yours.",
+          "We have sent too many codes in the last hour. Wait a few minutes and try again — this is our limit, not yours.",
         );
       }
 
-      throw new Error(
-        "We could not send the code just now. Try again in a moment, and tell us if it keeps failing.",
-      );
+      throw new Error("We could not send the code just now. Try again in a moment.");
     }
 
-    return { sent: true, phone: parsedInput.phone };
+    return { sent: true, email: parsedInput.email };
   });
 
-/** Step 2 — verify it. Establishes the session via cookies. */
+/**
+ * Step 2 — verify it. Establishes the session via cookies.
+ *
+ * type "email" covers the six-digit code sent by `signInWithOtp({ email })`.
+ * Note that the code only reaches the student if the Magic Link email
+ * template contains `{{ .Token }}` — the stock template is a link and nothing
+ * else, and a template that never renders the code produces a flow where the
+ * email arrives and every code entered is wrong.
+ */
 export const verifyOtp = actionClient
   .inputSchema(otpVerifyInput)
   .action(async ({ parsedInput }) => {
     const supabase = await createClient();
-    const { error } = await supabase.auth.verifyOtp({
-      phone: parsedInput.phone,
-      token: parsedInput.token,
-      type: "sms",
-    });
+
+    // Which type a code carries is decided by the project, not by this app.
+    // With email confirmations on, an address Supabase has never seen gets a
+    // signup confirmation and its code verifies as "signup"; a returning
+    // address, or any address with confirmations off, gets a magic link and
+    // verifies as "email". The app cannot know which without first knowing
+    // whether the account existed — which is exactly the thing it is trying
+    // to find out.
+    //
+    // So try both. The alternative is a flow that works only while one
+    // dashboard toggle is in one position, and silently rejects every code
+    // the day somebody flips it.
+    let error = null;
+    for (const type of ["email", "signup"] as const) {
+      const result = await supabase.auth.verifyOtp({
+        email: parsedInput.email,
+        token: parsedInput.token,
+        type,
+      });
+      if (!result.error) {
+        error = null;
+        break;
+      }
+      error = result.error;
+    }
 
     if (error) {
       // Deliberately the same message for a wrong code and an expired one:
-      // distinguishing them tells an attacker which numbers have live codes.
+      // distinguishing them tells an attacker which addresses have live codes.
       throw new Error("That code is not valid. Ask for a new one.");
     }
 
@@ -82,20 +116,39 @@ export const completeOnboarding = actionClient
     } = await supabase.auth.getUser();
 
     if (userError || !user) throw new Error("Your session expired. Sign in again.");
-    if (!user.phone) throw new Error("This account has no phone number on it.");
 
+    // The phone comes from this form, not from `user.phone`. Sign-in is by
+    // email, so `user.phone` is always null — reading it here is what used to
+    // make this step fail with "this account has no phone number on it".
+    //
+    // `profiles.phone` is unique, so the same number cannot be attached to two
+    // accounts. That surfaces below as 23505, and it is not the same case as a
+    // profile that already exists.
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
-      phone: `+${user.phone.replace(/^\+/, "")}`,
+      phone: parsedInput.phone,
       full_name: parsedInput.fullName ?? null,
       batch_year: parsedInput.batchYear ?? null,
       is_adult_confirmed: parsedInput.isAdultConfirmed,
     });
 
-    // 23505 = the profile already exists, which means onboarding was completed
-    // in another tab or the user came back to the URL. Not an error.
-    if (profileError && profileError.code !== "23505") {
-      throw new Error(`Could not create your profile: ${profileError.message}`);
+    if (profileError) {
+      // 23505 now has two causes and they are not the same event. On the
+      // primary key it means onboarding was completed in another tab or the
+      // user came back to the URL — harmless, carry on. On phone it means
+      // somebody else's account already holds this number, which the person
+      // filling in the form needs told, because only they can fix it.
+      const duplicatePhone =
+        profileError.code === "23505" && /phone/i.test(profileError.message);
+
+      if (duplicatePhone) {
+        throw new Error(
+          "That mobile number is already on another account. Sign in with the email you used before, or message us if you think this is wrong.",
+        );
+      }
+      if (profileError.code !== "23505") {
+        throw new Error(`Could not create your profile: ${profileError.message}`);
+      }
     }
 
     // core_service is not in this list and is not a checkbox: it is what the
