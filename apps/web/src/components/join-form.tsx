@@ -5,10 +5,17 @@ import { useAction } from "next-safe-action/hooks";
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { requestOtp, verifyOtp } from "@/actions/auth";
+import { Steps } from "@/components/steps";
 import { cn } from "@/lib/utils";
 
 type FieldErrors = Record<string, { _errors?: string[] } | undefined>;
 const firstError = (e: FieldErrors | undefined, f: string) => e?.[f]?._errors?.[0];
+
+const FIELD =
+  "h-12 w-full rounded-lg border border-ink-200 bg-white px-3 text-ink-900 focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700";
+
+const BUTTON =
+  "mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-brand-700 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500";
 
 /**
  * Phone-first sign-in. One component holding both steps rather than two
@@ -33,10 +40,13 @@ export function JoinForm({ next }: { next: Route }) {
       <form
         noValidate
         action={(fd) => verify.execute({ phone, token: String(fd.get("token") ?? "") })}
-        className="rounded-card border border-ink-200 p-6"
       >
-        <h1 className="text-xl font-semibold text-ink-900">Enter the code</h1>
-        <p className="mt-1 text-sm text-ink-500">
+        <Steps current={2} label="Verify code" />
+
+        <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+          Enter the code
+        </h1>
+        <p className="mt-2 text-ink-600">
           Sent to {phone}.{" "}
           <button
             type="button"
@@ -44,13 +54,13 @@ export function JoinForm({ next }: { next: Route }) {
               setPhone(null);
               request.reset();
             }}
-            className="underline hover:text-brand-800"
+            className="text-brand-700 underline hover:text-brand-800"
           >
             Wrong number?
           </button>
         </p>
 
-        <label htmlFor={`${id}-token`} className="mt-5 block text-sm font-medium text-ink-700">
+        <label htmlFor={`${id}-token`} className="mt-6 block text-sm font-medium text-ink-700">
           Six-digit code
         </label>
         <input
@@ -60,10 +70,13 @@ export function JoinForm({ next }: { next: Route }) {
           autoComplete="one-time-code"
           maxLength={6}
           autoFocus
-          className="mt-1 block w-full rounded-card border border-ink-300 px-3 py-2 font-mono text-lg tracking-[0.4em] text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700"
+          // One field, not six boxes: six inputs break SMS autofill on Android
+          // and paste, and every one of them needs its own label to be usable
+          // without sight. The tracking is what makes it read as six digits.
+          className={cn(FIELD, "mt-1.5 text-center font-mono text-xl tracking-[0.5em]")}
         />
         {firstError(verify.result?.validationErrors as FieldErrors, "token") ? (
-          <p className="mt-1 text-sm text-risk-600">
+          <p className="mt-1.5 text-sm text-risk-600">
             {firstError(verify.result?.validationErrors as FieldErrors, "token")}
           </p>
         ) : null}
@@ -73,14 +86,7 @@ export function JoinForm({ next }: { next: Route }) {
           </p>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={verify.status === "executing"}
-          className={cn(
-            "mt-5 w-full rounded-card px-4 py-3 font-medium text-white",
-            "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
-          )}
-        >
+        <button type="submit" disabled={verify.status === "executing"} className={BUTTON}>
           {verify.status === "executing" ? "Checking…" : "Continue"}
         </button>
       </form>
@@ -91,28 +97,44 @@ export function JoinForm({ next }: { next: Route }) {
     <form
       noValidate
       action={(fd) => request.execute({ phone: String(fd.get("phone") ?? "") })}
-      className="rounded-card border border-ink-200 p-6"
     >
-      <h1 className="text-xl font-semibold text-ink-900">Sign in</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        We send a code by SMS. No password to forget.
+      <Steps current={1} label="Your number" />
+
+      <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+        Enter your phone number
+      </h1>
+      <p className="mt-2 text-ink-600">
+        We send a six-digit code by SMS. No password to forget.
       </p>
 
-      <label htmlFor={`${id}-phone`} className="mt-5 block text-sm font-medium text-ink-700">
+      <label htmlFor={`${id}-phone`} className="mt-6 block text-sm font-medium text-ink-700">
         Mobile number
       </label>
-      <input
-        id={`${id}-phone`}
-        name="phone"
-        type="tel"
-        inputMode="numeric"
-        autoComplete="tel"
-        placeholder="98765 43210"
-        autoFocus
-        className="mt-1 block w-full rounded-card border border-ink-300 px-3 py-2 text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700"
-      />
+      {/* The +91 is display only — the field submits the ten digits and the
+          contract normalises them. It still accepts a pasted +91… number. */}
+      <div className="mt-1.5 flex h-12 w-full items-center rounded-lg border border-ink-200 bg-white focus-within:border-brand-700 focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-brand-700">
+        <span
+          id={`${id}-cc`}
+          className="flex h-full items-center border-r border-ink-100 px-3 text-ink-600"
+        >
+          +91
+        </span>
+        <input
+          id={`${id}-phone`}
+          name="phone"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          placeholder="98765 43210"
+          // The prefix is only painted next to the field, so name it here too —
+          // otherwise the country code is information only sighted users get.
+          aria-describedby={`${id}-cc`}
+          autoFocus
+          className="h-full min-w-0 flex-1 rounded-r-lg bg-transparent px-3 text-ink-900 focus-visible:outline-none"
+        />
+      </div>
       {firstError(request.result?.validationErrors as FieldErrors, "phone") ? (
-        <p className="mt-1 text-sm text-risk-600">
+        <p className="mt-1.5 text-sm text-risk-600">
           {firstError(request.result?.validationErrors as FieldErrors, "phone")}
         </p>
       ) : null}
@@ -122,18 +144,11 @@ export function JoinForm({ next }: { next: Route }) {
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={request.status === "executing"}
-        className={cn(
-          "mt-5 w-full rounded-card px-4 py-3 font-medium text-white",
-          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
-        )}
-      >
+      <button type="submit" disabled={request.status === "executing"} className={BUTTON}>
         {request.status === "executing" ? "Sending…" : "Send code"}
       </button>
 
-      <p className="mt-3 text-xs text-ink-500">
+      <p className="mt-3 text-sm text-ink-500">
         Jintu is open to people aged 18 and over. We ask you to confirm that on
         the next step.
       </p>

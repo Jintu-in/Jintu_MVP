@@ -22,10 +22,7 @@ export function WaitlistForm() {
 
   if (result?.data?.joined) {
     return (
-      <div
-        role="status"
-        className="rounded-card border border-brand-200 bg-brand-50 p-6"
-      >
+      <div role="status" className="rounded-card border border-brand-200 bg-brand-50 p-6">
         <p className="font-semibold text-ink-900">You&rsquo;re on the list.</p>
         <p className="mt-2 text-pretty text-ink-600">
           We&rsquo;ll message you when the next cohort opens. Twenty places,
@@ -49,9 +46,11 @@ export function WaitlistForm() {
           consentWhatsapp: formData.get("consentWhatsapp") === "on",
         });
       }}
-      className="rounded-card border border-ink-200 p-6"
+      className="rounded-card border border-ink-100 bg-white p-6"
     >
-      <h2 className="text-lg font-semibold text-ink-900">Join the waitlist</h2>
+      <h2 className="text-xl font-semibold tracking-tight text-ink-900">
+        Join the waitlist
+      </h2>
       <p className="mt-1 text-sm text-ink-500">
         Twenty places in the first cohort.
       </p>
@@ -125,7 +124,7 @@ export function WaitlistForm() {
         type="submit"
         disabled={pending}
         className={cn(
-          "mt-6 w-full rounded-card px-4 py-3 font-medium text-white transition-colors",
+          "mt-6 flex h-12 w-full items-center justify-center rounded-lg font-medium text-white transition-colors",
           "bg-brand-700 hover:bg-brand-800",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
           "disabled:cursor-not-allowed disabled:bg-ink-500",
@@ -179,13 +178,13 @@ function Field({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy || undefined}
         className={cn(
-          "mt-1 block w-full rounded-card border px-3 py-2 text-ink-900",
-          "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
-          error ? "border-risk-600" : "border-ink-300",
+          "mt-1.5 block h-12 w-full rounded-lg border bg-white px-3 text-ink-900",
+          "focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
+          error ? "border-risk-600" : "border-ink-200",
         )}
       />
       {hint ? (
-        <p id={`${id}-hint`} className="mt-1 text-xs text-ink-500">
+        <p id={`${id}-hint`} className="mt-1.5 text-xs text-ink-500">
           {hint}
         </p>
       ) : null}

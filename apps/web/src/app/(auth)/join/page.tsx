@@ -1,5 +1,4 @@
 import type { Metadata, Route } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { safeNextPath } from "@jintu/contracts";
 import { JoinForm } from "@/components/join-form";
@@ -31,13 +30,8 @@ export default async function JoinPage({
   if (user) redirect(target);
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-16">
+    <main className="mx-auto max-w-md px-5 py-10">
       <JoinForm next={target} />
-      <p className="mt-6 text-center text-sm text-ink-500">
-        <Link href="/" className="hover:text-brand-800">
-          Back to Jintu
-        </Link>
-      </p>
     </main>
   );
 }
