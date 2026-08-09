@@ -23,6 +23,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com" }],
   },
   typedRoutes: true,
+  // sandbox/run-sql.mjs is spawned as a child process, so nothing imports it
+  // and the tracer would not find it. Its one dependency has to come along
+  // explicitly for the same reason: file tracing follows the module graph,
+  // and this file is not in it.
+  outputFileTracingIncludes: {
+    "/**": ["./sandbox/**", "../../node_modules/.pnpm/@electric-sql+pglite@*/**"],
+  },
 };
 
 export default withSerwist(nextConfig);

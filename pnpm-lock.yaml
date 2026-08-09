@@ -26,12 +26,18 @@ importers:
 
   apps/web:
     dependencies:
+      '@electric-sql/pglite':
+        specifier: ^0.5.4
+        version: 0.5.4
       '@jintu/analytics':
         specifier: workspace:^
         version: link:../../packages/analytics
       '@jintu/contracts':
         specifier: workspace:^
         version: link:../../packages/contracts
+      '@jintu/grading':
+        specifier: workspace:^
+        version: link:../../packages/grading
       '@sentry/nextjs':
         specifier: ^10.69.0
         version: 10.69.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.10.0(@opentelemetry/api@1.9.1))(next@16.3.0(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.109.2)

@@ -11,8 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.4",
     "@jintu/analytics": "workspace:^",
     "@jintu/contracts": "workspace:^",
+    "@jintu/grading": "workspace:^",
     "@sentry/nextjs": "^10.69.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.2",

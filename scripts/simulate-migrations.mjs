@@ -149,6 +149,76 @@ async function allows(label, sql) {
   }
 }
 
+console.log("\n── answer keys produce the answers they claim ──────────────");
+// An `expected` result that no query can produce marks every correct
+// submission wrong, and does it silently — the students see a diff against
+// something that was never right. So each key's reference query is run
+// against its own fixture, in a throwaway database, and compared.
+{
+  const keys = await db.query(`
+    select k.assignment_id, k.setup, k.reference_sql, k.expected, k.order_matters
+    from public.assignment_answer_keys k`);
+
+  record(keys.rows.length > 0, "there is at least one answer key to check");
+
+  for (const key of keys.rows) {
+    // A separate PGlite instance per key: the fixtures create tables with
+    // ordinary names and would collide.
+    const fixture = await PGlite.create();
+    try {
+      await fixture.exec(key.setup);
+      const produced = await fixture.query(key.reference_sql);
+
+      const asText = (rows, columns) =>
+        rows.map((r) =>
+          columns.map((c) => {
+            const v = r[c];
+            if (v === null || v === undefined) return "null";
+            const n = Number(v);
+            return !Number.isNaN(n) && String(v).trim() !== "" ? `n:${n}` : `s:${v}`;
+          }).join("|"),
+        );
+
+      const columns = key.expected.columns.map((c) => c.toLowerCase());
+      const actualCols = (produced.fields ?? []).map((f) => f.name.toLowerCase());
+      const lower = (r) =>
+        Object.fromEntries(Object.entries(r).map(([k2, v]) => [k2.toLowerCase(), v]));
+
+      const expectedRows = asText(key.expected.rows.map(lower), columns);
+      const actualRows = asText(produced.rows.map(lower), columns);
+      const sameOrder = key.order_matters
+        ? expectedRows.join("\n") === actualRows.join("\n")
+        : [...expectedRows].sort().join("\n") === [...actualRows].sort().join("\n");
+
+      record(
+        columns.join(",") === actualCols.join(",") && sameOrder,
+        `answer key ${key.assignment_id} matches its reference query`,
+        `expected ${JSON.stringify(expectedRows)} got ${JSON.stringify(actualRows)}`,
+      );
+    } catch (e) {
+      record(false, `answer key ${key.assignment_id} runs at all`, e.message.split("\n")[0]);
+    } finally {
+      await fixture.close();
+    }
+  }
+
+  // The answer key is the answer, and `assignments` beside it is anon-readable.
+  await db.exec(`grant usage on schema public to authenticated;
+                 grant select on all tables in schema public to authenticated;`);
+  await db.exec("begin; set local role authenticated; set local jintu.uid = '55555555-5555-4555-8555-000000000001';");
+  const leaked = await db.query(`select assignment_id from public.assignment_answer_keys`);
+  await db.exec("rollback;");
+  record(
+    leaked.rows.length === 0,
+    "a signed-in student cannot read the answer keys",
+    `leaked ${leaked.rows.length} row(s)`,
+  );
+
+  await rejects(
+    "changing the answer key of a published assignment",
+    `update public.assignment_answer_keys set expected = '{"columns":[],"rows":[]}'::jsonb;`,
+  );
+}
 console.log("\n── published curriculum is immutable ───────────────────────");
 await rejects(
   "insert a module into a published path",
@@ -472,6 +542,244 @@ console.log("\n── data isolation between students ────────�
     readTheirs.rows.every((r) => String(r.name).startsWith(USER_1)),
     "a student cannot read another student's uploaded file",
     readTheirs.rows.map((r) => r.name).join(", "),
+  );
+}
+
+
+console.log("\n── the weekly loop ─────────────────────────────────────────");
+// Allocation, peer grades, readiness and rollover are plpgsql, which means
+// static reading proves nothing about them at all. Everything below fires the
+// function and checks the rows it left behind.
+{
+  const USER_3 = "55555555-5555-4555-8555-000000000004";
+  const ENROL_C = "77777777-7777-4777-8777-00000000000c";
+  const SUB_1 = "88888888-8888-4888-8888-000000000001"; // ENROL_A
+  const SUB_2 = "88888888-8888-4888-8888-000000000002"; // ENROL_B
+
+  // A ring of two can only give one review each; a ring of three gives two.
+  const two = await db.query(`select public.allocate_peer_reviews('${ASSIGN_ID}') as n`);
+  const reviewersOfTwo = await db.query(`
+    select submission_id, count(*)::int as n from public.peer_reviews
+    where submission_id in ('${SUB_1}', '${SUB_2}') group by submission_id`);
+  record(
+    reviewersOfTwo.rows.length === 2 && reviewersOfTwo.rows.every((r) => r.n === 1),
+    "a cohort of two allocates one reviewer each, not two",
+    `allocated ${two.rows[0].n}; ${JSON.stringify(reviewersOfTwo.rows)}`,
+  );
+
+  await db.exec(`
+    insert into auth.users (id, phone) values ('${USER_3}', '+919876543214');
+    insert into public.profiles (id, phone, is_adult_confirmed)
+      values ('${USER_3}', '+919876543214', true);
+    insert into public.enrollments (id, cohort_id, user_id)
+      values ('${ENROL_C}', '${COHORT}', '${USER_3}');
+    insert into public.submissions (id, enrollment_id, assignment_id, week_no, payload)
+      values ('88888888-8888-4888-8888-000000000003', '${ENROL_C}', '${ASSIGN_ID}', 1, '{"sql":"select 3"}'::jsonb);
+  `);
+  await db.query(`select public.allocate_peer_reviews('${ASSIGN_ID}')`);
+
+  const perSubmission = await db.query(`
+    select count(*)::int as n from public.peer_reviews group by submission_id`);
+  record(
+    perSubmission.rows.length === 3 && perSubmission.rows.every((r) => r.n === 2),
+    "every submission ends up with exactly two reviewers",
+    JSON.stringify(perSubmission.rows),
+  );
+
+  // A ring hands out as many reviews as it receives. Any allocation that does
+  // not is one where somebody carries someone else's week.
+  const perReviewer = await db.query(`
+    select count(*)::int as n from public.peer_reviews group by reviewer_enrollment_id`);
+  record(
+    perReviewer.rows.length === 3 && perReviewer.rows.every((r) => r.n === 2),
+    "and every student is asked to review exactly two",
+    JSON.stringify(perReviewer.rows),
+  );
+
+  const selfReview = await db.query(`
+    select count(*)::int as n from public.peer_reviews pr
+    join public.submissions s on s.id = pr.submission_id
+    where s.enrollment_id = pr.reviewer_enrollment_id`);
+  record(selfReview.rows[0].n === 0, "nobody was allocated their own work");
+
+  // Re-running must not disturb reviews already assigned or written.
+  const again = await db.query(`select public.allocate_peer_reviews('${ASSIGN_ID}') as n`);
+  record(Number(again.rows[0].n) === 0, "re-allocating allocates nothing new");
+
+  // ── what a reviewer may see ──────────────────────────────────────────────
+  const asUser = async (uid, sql) => {
+    await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}';`);
+    try {
+      return await db.query(sql);
+    } finally {
+      await db.exec("rollback;");
+    }
+  };
+
+  const queue = await asUser(USER_1, `select peer_review_id from public.peer_review_queue`);
+  record(
+    queue.rows.length === 2,
+    "a reviewer can actually read their queue (the view is not invoker-rights)",
+    `saw ${queue.rows.length}, expected 2`,
+  );
+
+  const strangerQueue = await asUser(
+    "55555555-5555-4555-8555-000000000003",
+    `select peer_review_id from public.peer_review_queue`,
+  );
+  record(
+    strangerQueue.rows.length === 0,
+    "someone with no allocation sees an empty queue, not everyone's",
+    `leaked ${strangerQueue.rows.length} row(s)`,
+  );
+
+  // The whole point of the definer view: reviewers still have no route to
+  // `submissions`, so there is no column anywhere that names the author.
+  const throughTable = await asUser(
+    USER_1,
+    `select id from public.submissions where enrollment_id <> '${ENROL_A}'`,
+  );
+  record(
+    throughTable.rows.length === 0,
+    "a reviewer still cannot read the submissions table directly",
+    `leaked ${throughTable.rows.length} row(s)`,
+  );
+
+  // ── a review, once written, is fixed ─────────────────────────────────────
+  const mine = await db.query(`
+    select id, submission_id from public.peer_reviews
+    where reviewer_enrollment_id = '${ENROL_A}' limit 1`);
+  const REVIEW = mine.rows[0].id;
+
+  await rejects(
+    "a reviewer moving their own deadline",
+    `update public.peer_reviews set due_at = now() + interval '30 days' where id = '${REVIEW}';`,
+  );
+  await rejects(
+    "a reviewer re-pointing a review at another submission",
+    `update public.peer_reviews set submission_id = '${SUB_1}' where id = '${REVIEW}';`,
+  );
+
+  await allows(
+    "submitting a review",
+    `update public.peer_reviews
+       set status = 'submitted',
+           scores = '{"returns_expected_rows": 3, "no_cartesian": 1, "readable": 0}'::jsonb,
+           feedback = 'Correct, but select * makes it hard to follow.'
+     where id = '${REVIEW}';`,
+  );
+
+  const peerGrade = await db.query(`
+    select total, feedback from public.gradings
+    where grader_type = 'peer' and submission_id = '${mine.rows[0].submission_id}'`);
+  record(
+    peerGrade.rows.length === 1 && Number(peerGrade.rows[0].total) === 4,
+    "a submitted review becomes an anonymous grading row totalled in SQL",
+    JSON.stringify(peerGrade.rows),
+  );
+
+  await rejects(
+    "re-submitting a review that was already submitted",
+    `update public.peer_reviews set scores = '{"readable": 1}'::jsonb where id = '${REVIEW}';`,
+  );
+
+  // ── readiness ────────────────────────────────────────────────────────────
+  // ENROL_A: one of the path's two assignments submitted (50), one
+  // deterministic grade of 4 against a rubric worth 5 (80), one of two
+  // reviews written (50). 0.4·50 + 0.4·80 + 0.2·50 = 62.
+  const readiness = await db.query(`select public.compute_readiness('${ENROL_A}') as overall`);
+  record(
+    Number(readiness.rows[0].overall) === 62,
+    "readiness weights submission, attainment and reviewing 40/40/20",
+    `got ${readiness.rows[0].overall}, expected 62`,
+  );
+
+  const breakdown = await db.query(`
+    select breakdown from public.readiness_scores
+    where enrollment_id = '${ENROL_A}' order by computed_at desc limit 1`);
+  const b = breakdown.rows[0].breakdown;
+  record(
+    Number(b.submitted?.of) === 2 && Number(b.attainment?.of) === 5,
+    "the breakdown records what each component was out of",
+    JSON.stringify(b),
+  );
+
+  // Recomputing in the same transaction must not collide on
+  // unique (enrollment_id, computed_at) — hence clock_timestamp().
+  await allows(
+    "recomputing a cohort's readiness in one transaction",
+    `select public.compute_cohort_readiness('${COHORT}');`,
+  );
+
+  // A peer being generous must not move the author's readiness. If it does,
+  // the number is a popularity score.
+  const before = await db.query(`select public.compute_readiness('${ENROL_B}') as o`);
+  await db.exec(`
+    update public.peer_reviews
+       set status = 'submitted', scores = '{"returns_expected_rows": 3, "no_cartesian": 1, "readable": 1}'::jsonb
+     where submission_id = '${SUB_2}' and status = 'pending';`);
+  const after = await db.query(`select public.compute_readiness('${ENROL_B}') as o`);
+  record(
+    Number(before.rows[0].o) === Number(after.rows[0].o),
+    "peer scores received do not move the author's readiness",
+    `${before.rows[0].o} → ${after.rows[0].o}`,
+  );
+
+  // ── rollover ─────────────────────────────────────────────────────────────
+  const C_PLANNED = "66666666-6666-4666-8666-00000000000a";
+  const C_OPEN = "66666666-6666-4666-8666-00000000000b";
+  const C_RUNNING = "66666666-6666-4666-8666-00000000000c";
+  const C_EARLY = "66666666-6666-4666-8666-00000000000d";
+  const USER_4 = "55555555-5555-4555-8555-000000000005";
+
+  await db.exec(`
+    insert into public.cohorts (id, path_id, mode, starts_on, ends_on, capacity, status) values
+      ('${C_PLANNED}', '${PATH_ID}', 'public', current_date + 7,  current_date + 49, 20, 'planned'),
+      ('${C_EARLY}',   '${PATH_ID}', 'public', current_date + 60, current_date + 102, 20, 'planned'),
+      ('${C_OPEN}',    '${PATH_ID}', 'public', current_date - 1,  current_date + 41, 20, 'open'),
+      ('${C_RUNNING}', '${PATH_ID}', 'public', current_date - 50, current_date - 1,  20, 'running');
+    insert into auth.users (id, phone) values ('${USER_4}', '+919876543215');
+    insert into public.profiles (id, phone, is_adult_confirmed)
+      values ('${USER_4}', '+919876543215', true);
+    insert into public.enrollments (cohort_id, user_id) values ('${C_RUNNING}', '${USER_4}');
+  `);
+
+  await db.query(`select * from public.roll_cohorts()`);
+  const statuses = await db.query(`
+    select id, status from public.cohorts
+    where id in ('${C_PLANNED}', '${C_EARLY}', '${C_OPEN}', '${C_RUNNING}')`);
+  const status = Object.fromEntries(statuses.rows.map((r) => [r.id, r.status]));
+  record(status[C_PLANNED] === "open", "a cohort inside the enrolment window opens", status[C_PLANNED]);
+  record(status[C_EARLY] === "planned", "one outside it stays planned", status[C_EARLY]);
+  record(status[C_OPEN] === "running", "a cohort whose start date passed starts", status[C_OPEN]);
+  record(status[C_RUNNING] === "finished", "a cohort past its end date finishes", status[C_RUNNING]);
+
+  const completed = await db.query(`
+    select status, completed_at from public.enrollments where cohort_id = '${C_RUNNING}'`);
+  record(
+    completed.rows[0]?.status === "completed" && completed.rows[0]?.completed_at !== null,
+    "and its students are marked completed, by the calendar and not by hand",
+    JSON.stringify(completed.rows),
+  );
+
+  const noop = await db.query(`select * from public.roll_cohorts()`);
+  record(noop.rows.length === 0, "a second rollover the same day changes nothing", `${noop.rows.length} row(s)`);
+
+  // ── these are privileged operations ──────────────────────────────────────
+  // Every function above reads rows belonging to other students. A student who
+  // could call one could allocate themselves a review of anyone's work, or
+  // write their own readiness score.
+  const callable = await db.query(`
+    select p.proname from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname in ('allocate_peer_reviews', 'compute_readiness',
+                        'compute_cohort_readiness', 'roll_cohorts')
+      and has_function_privilege('authenticated', p.oid, 'execute')`);
+  record(
+    callable.rows.length === 0,
+    "no signed-in user can call the loop functions directly",
+    callable.rows.map((r) => r.proname).join(", "),
   );
 }
 

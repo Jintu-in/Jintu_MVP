@@ -124,6 +124,31 @@ export function getSupabaseEnvStatus() {
 }
 
 /**
+ * The service-role credentials, for the two things that cannot run as the
+ * signed-in student: writing a grade, and calling the loop functions that
+ * read several students' rows at once.
+ *
+ * Absence is a supported state and returns null rather than throwing. Without
+ * it submissions land and simply stay ungraded, which is what the dashboard
+ * already renders and what every environment without the key — CI, a fresh
+ * clone, a preview deploy — should do. A build that fell over because grading
+ * was not configured would be a worse outcome than one that does not grade.
+ *
+ * Nothing here is NEXT_PUBLIC_, and it must never become so: this key bypasses
+ * every RLS policy in the database.
+ */
+export function getServiceEnv() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // Supabase issues `sb_secret_…` on new projects and the legacy JWT
+  // service-role key on older ones. Take either.
+  const secret =
+    process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !secret) return null;
+  return { url, secretKey: secret };
+}
+
+/**
  * Observability config. Unlike Supabase, every one of these is optional and
  * absence is a supported state — Sentry and PostHog are simply off. Returning
  * undefined rather than throwing is what lets the app run locally, and in CI,

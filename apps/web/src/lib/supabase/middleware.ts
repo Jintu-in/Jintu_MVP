@@ -2,8 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getPublicEnv } from "@/lib/env";
 
-/** Routes that require a session. Everything else is public. */
-const PROTECTED = ["/onboarding", "/account", "/dashboard"];
+/**
+ * Routes that require a session. Everything else is public.
+ *
+ * This list is a redirect, not the access control — every page behind it also
+ * checks `getUser()`, and RLS decides what any of them can read. Its job is to
+ * send someone to sign-in instead of showing them an empty page.
+ */
+const PROTECTED = ["/onboarding", "/account", "/dashboard", "/week", "/review", "/feedback"];
 
 /**
  * Refreshes the auth session on every request and gates the private routes.
