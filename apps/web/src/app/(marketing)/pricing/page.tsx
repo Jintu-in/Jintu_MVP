@@ -91,7 +91,7 @@ export default function PricingPage() {
         <ul className="mt-3 space-y-2">
           {NOT_INCLUDED.map((item) => (
             <li key={item} className="flex gap-2.5 text-pretty text-ink-600">
-              <span aria-hidden className="mt-0.5 text-ink-400">
+              <span aria-hidden className="mt-0.5 text-ink-500">
                 –
               </span>
               {item}
