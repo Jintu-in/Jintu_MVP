@@ -154,7 +154,7 @@ function Status({ tone, children }: { tone: "done" | "waiting"; children: React.
       className={cn(
         "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5",
         "text-xs font-medium",
-        tone === "done" ? "bg-ok-600/10 text-ok-600" : "bg-warn-600/10 text-warn-600",
+        tone === "done" ? "bg-ok-600/10 text-ok-800" : "bg-warn-600/10 text-warn-800",
       )}
     >
       <span

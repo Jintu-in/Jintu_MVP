@@ -70,7 +70,7 @@ export default function LandingPage() {
               key={stat.label}
               className={cn("flex-1", i > 0 && "border-l border-brand-950/20 pl-4")}
             >
-              <dt className="text-xs font-medium tracking-wide text-brand-950/80 uppercase">
+              <dt className="text-xs font-medium tracking-wide text-brand-950 uppercase">
                 {stat.label}
               </dt>
               <dd className="mt-0.5 font-semibold text-brand-950">{stat.value}</dd>
