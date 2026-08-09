@@ -57,7 +57,9 @@ export default function LandingPage() {
         </p>
       </section>
 
-      <section className="mt-12">
+      {/* scroll-mt so the heading is not hidden under the header when the
+          pricing page links here. */}
+      <section id="waitlist" className="mt-12 scroll-mt-20">
         <WaitlistForm />
       </section>
     </main>

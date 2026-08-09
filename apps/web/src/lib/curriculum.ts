@@ -27,13 +27,29 @@ export type Resource = {
   health: "ok" | "degraded" | "dead";
 };
 
+export type RubricCriterion = { key: string; label: string; weight: number };
+
+export type Rubric = {
+  name: string;
+  max_score: number;
+  criteria: RubricCriterion[];
+};
+
+export type Assignment = {
+  id: string;
+  kind: "sql" | "artifact_link" | "file" | "recording";
+  spec: { prompt?: string };
+  /** Null only if an assignment was authored without one — visible in the UI. */
+  rubrics: Rubric | null;
+};
+
 export type Module = {
   id: string;
   week_no: number;
   title: string;
   objective: string;
   resources: Resource[];
-  assignments: { id: string; kind: string; spec: { prompt?: string } }[];
+  assignments: Assignment[];
 };
 
 export type TrackPage = {
@@ -42,6 +58,13 @@ export type TrackPage = {
   summary: string;
   version: number;
   modules: Module[];
+};
+
+export type TrackSummary = {
+  slug: string;
+  title: string;
+  summary: string;
+  weeks: number;
 };
 
 export async function getPublishedTrack(slug: string): Promise<TrackPage | null> {
@@ -74,7 +97,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     .select(
       `id, week_no, title, objective,
        resources ( id, kind, provider, external_url, youtube_video_id, title, duration_sec, position, health ),
-       assignments ( id, kind, spec )`,
+       assignments ( id, kind, spec, rubrics ( name, max_score, criteria ) )`,
     )
     .eq("path_id", path.id)
     .order("week_no", { ascending: true });
@@ -98,9 +121,30 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
   };
 }
 
-export async function listPublishedTrackSlugs(): Promise<string[]> {
+export async function listPublishedTracks(): Promise<TrackSummary[]> {
   const supabase = createPublicClient();
-  const { data, error } = await supabase.from("tracks").select("slug");
+
+  // No is_published filter: RLS already returns only published tracks, and
+  // only their published paths. Counting modules through that join therefore
+  // counts the live curriculum rather than whatever is half-written in a draft.
+  const { data, error } = await supabase
+    .from("tracks")
+    .select("slug, title, summary, paths ( modules ( id ) )")
+    .order("title", { ascending: true });
+
   if (error) throw describeSupabaseError("listing published tracks", error);
-  return (data ?? []).map((t) => t.slug as string);
+
+  type Row = {
+    slug: string;
+    title: string;
+    summary: string;
+    paths: { modules: { id: string }[] | null }[] | null;
+  };
+
+  return ((data ?? []) as unknown as Row[]).map((t) => ({
+    slug: t.slug,
+    title: t.title,
+    summary: t.summary,
+    weeks: (t.paths ?? []).reduce((n, p) => n + (p.modules?.length ?? 0), 0),
+  }));
 }

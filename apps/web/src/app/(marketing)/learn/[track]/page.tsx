@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Rubric } from "@/components/rubric";
 import { YouTubeEmbed } from "@/components/youtube-embed";
 import { getPublishedTrack, type Module, type Resource } from "@/lib/curriculum";
 
@@ -120,9 +121,12 @@ function ModuleSection({ module }: { module: Module }) {
           <h3 className="text-sm font-semibold tracking-wide text-brand-800 uppercase">
             What you submit
           </h3>
-          <ul className="mt-2 space-y-1 text-pretty text-ink-700">
+          <ul className="mt-2 space-y-4 text-pretty text-ink-700">
             {module.assignments.map((a) => (
-              <li key={a.id}>{a.spec?.prompt ?? a.kind}</li>
+              <li key={a.id}>
+                <p>{a.spec?.prompt ?? a.kind}</p>
+                {a.rubrics ? <Rubric rubric={a.rubrics} /> : null}
+              </li>
             ))}
           </ul>
         </div>
