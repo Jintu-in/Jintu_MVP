@@ -26,16 +26,29 @@ begin
   end if;
 
   -- ── RLS with no policy denies everyone; that is a bug, not a lockdown ──────
+  --
+  -- Unless denying everyone is the point. A cost ledger, an outbound message
+  -- log and an append-only audit trail are written by edge functions holding
+  -- the service role, which bypasses RLS entirely — a policy on those tables
+  -- would only ever grant a client access it must not have.
+  --
+  -- The exemption is declared in the table's own comment, which is the same
+  -- marker scripts/assert-schema-rules.mjs reads. Two guards checking the same
+  -- rule against two different lists is how one of them ends up wrong, and the
+  -- one that gets edited is whichever is failing that afternoon.
   select string_agg(c.relname, ', ' order by c.relname) into offenders
   from pg_class c
   join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public'
     and c.relkind = 'r'
     and c.relrowsecurity
-    and not exists (select 1 from pg_policy p where p.polrelid = c.oid);
+    and not exists (select 1 from pg_policy p where p.polrelid = c.oid)
+    and coalesce(obj_description(c.oid, 'pg_class'), '') !~* 'service-role only';
 
   if offenders is not null then
-    raise exception 'Tables with RLS but no policy: %', offenders;
+    raise exception
+      'Tables with RLS but no policy: %. If that is intended, say so in a table comment containing "service-role only".',
+      offenders;
   end if;
 
   -- ── Law 3: a minor's profile must be unrepresentable ──────────────────────
