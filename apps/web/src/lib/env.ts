@@ -20,16 +20,40 @@ const publicEnv = z.object({
       message:
         "must be your project URL, e.g. https://abcdefgh.supabase.co (or http://127.0.0.1:54321 for local Supabase)",
     }),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  // Supabase is migrating from JWT `anon` keys to `sb_publishable_…`. New
+  // projects issue the latter and may have legacy keys disabled entirely, so
+  // accept either and let the caller not care which one it got.
+  supabaseKey: z.string().min(1),
 });
+
+/** Reject anything that would put an RLS-bypassing key in the browser. */
+function assertNotASecretKey(name: string, value: string) {
+  if (/^sb_secret_/.test(value)) {
+    throw new Error(
+      `${name} holds a Supabase SECRET key (sb_secret_…).\n\n` +
+        `Secret keys bypass every RLS policy in the database, and anything\n` +
+        `named NEXT_PUBLIC_* is inlined into the browser bundle. Use the\n` +
+        `publishable key here and keep the secret one in a server-only\n` +
+        `variable with no NEXT_PUBLIC_ prefix.`,
+    );
+  }
+}
 
 export function getPublicEnv() {
   // Referenced as literals on purpose: Next inlines NEXT_PUBLIC_* only at
   // literal `process.env.X` sites. Destructuring or dynamic lookup silently
   // yields undefined in the browser bundle.
+  const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (publishable) assertNotASecretKey("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", publishable);
+  if (anon) assertNotASecretKey("NEXT_PUBLIC_SUPABASE_ANON_KEY", anon);
+
   const raw: Record<string, string | undefined> = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    // Publishable wins: on a project that has both, the legacy JWT is the one
+    // being retired.
+    supabaseKey: publishable || anon,
   };
 
   const parsed = publicEnv.safeParse(raw);
@@ -42,9 +66,15 @@ export function getPublicEnv() {
   const lines = parsed.error.issues.map((issue) => {
     const name = String(issue.path[0] ?? "(unknown)");
     const value = raw[name];
+    // `supabaseKey` is synthesised from two possible variables, so report the
+    // names someone can actually set rather than the internal field name.
+    const shown =
+      name === "supabaseKey"
+        ? "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY)"
+        : name;
     return value === undefined || value === ""
-      ? `  - ${name} is not set`
-      : `  - ${name}: ${issue.message}`;
+      ? `  - ${shown} is not set`
+      : `  - ${shown}: ${issue.message}`;
   });
 
   throw new Error(
