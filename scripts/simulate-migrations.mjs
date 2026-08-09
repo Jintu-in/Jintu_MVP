@@ -209,6 +209,95 @@ await allows(
    values ('+919876543211', true, true, false, 'v1');`,
 );
 
+console.log("\n── sprint loop ─────────────────────────────────────────────");
+const COHORT = "66666666-6666-4666-8666-000000000001";
+const ENROL_A = "77777777-7777-4777-8777-00000000000a";
+const ENROL_B = "77777777-7777-4777-8777-00000000000b";
+const USER_2 = "55555555-5555-4555-8555-000000000002";
+const ASSIGNMENT = await db.query(
+  `select id from public.assignments where kind = 'sql' limit 1`,
+);
+const ASSIGN_ID = ASSIGNMENT.rows[0]?.id;
+
+await db.exec(`
+  insert into auth.users (id, phone) values ('${USER_2}', '+919876543212');
+  insert into public.profiles (id, phone, is_adult_confirmed)
+    values ('${USER_2}', '+919876543212', true);
+  insert into public.cohorts (id, path_id, mode, starts_on, ends_on, capacity, status)
+    values ('${COHORT}', '${PATH_ID}', 'public', date '2026-09-01', date '2026-10-13', 20, 'open');
+  insert into public.enrollments (id, cohort_id, user_id)
+    values ('${ENROL_A}', '${COHORT}', '${USER_1}'),
+           ('${ENROL_B}', '${COHORT}', '${USER_2}');
+  insert into public.submissions (id, enrollment_id, assignment_id, week_no, payload)
+    values ('88888888-8888-4888-8888-000000000001', '${ENROL_A}', '${ASSIGN_ID}', 1, '{"sql":"select 1"}'::jsonb);
+`);
+record(true, "cohort, enrolments and a submission insert cleanly");
+
+// A student marking their own work is not peer review.
+await rejects(
+  "assigning a student their own submission to review",
+  `insert into public.peer_reviews (submission_id, reviewer_enrollment_id, due_at)
+   values ('88888888-8888-4888-8888-000000000001', '${ENROL_A}', now() + interval '3 days');`,
+);
+await allows(
+  "assigning a different student as reviewer",
+  `insert into public.peer_reviews (submission_id, reviewer_enrollment_id, due_at)
+   values ('88888888-8888-4888-8888-000000000001', '${ENROL_B}', now() + interval '3 days');`,
+);
+
+// Law 1: an AI grade that cannot be costed, or a free grade that charges.
+await rejects(
+  "an AI grading with no model recorded",
+  `insert into public.gradings (submission_id, grader_type, scores, total, cost_paise)
+   values ('88888888-8888-4888-8888-000000000001', 'ai', '{}'::jsonb, 4, 120);`,
+);
+await rejects(
+  "a deterministic grading that claims an AI cost",
+  `insert into public.gradings (submission_id, grader_type, scores, total, cost_paise)
+   values ('88888888-8888-4888-8888-000000000001', 'deterministic', '{}'::jsonb, 4, 120);`,
+);
+await allows(
+  "a deterministic grading at zero cost",
+  `insert into public.gradings (submission_id, grader_type, scores, total)
+   values ('88888888-8888-4888-8888-000000000001', 'deterministic', '{"returns_expected_rows":3}'::jsonb, 4);`,
+);
+
+// docs/LEGAL.md §3.1: only document_verified outcomes may ever be published.
+await rejects(
+  "publish consent on a self-reported outcome",
+  `insert into public.outcomes (enrollment_id, event, source, publish_consent_at)
+   values ('${ENROL_A}', 'offer', 'self_reported', now());`,
+);
+await allows(
+  "publish consent on a document-verified outcome",
+  `insert into public.outcomes (enrollment_id, event, source, publish_consent_at)
+   values ('${ENROL_A}', 'offer', 'document_verified', now());`,
+);
+
+await rejects(
+  "a public profile with no published_at",
+  `insert into public.public_profiles (slug, enrollment_id, visibility)
+   values ('asha-r', '${ENROL_A}', 'public');`,
+);
+await allows(
+  "a private profile by default",
+  `insert into public.public_profiles (slug, enrollment_id)
+   values ('asha-r', '${ENROL_A}');`,
+);
+
+// The reviewer-facing view must not expose who wrote the work.
+const queueCols = await db.query(`
+  select column_name from information_schema.columns
+  where table_schema='public' and table_name='peer_review_queue'`);
+const leaked = queueCols.rows
+  .map((r) => r.column_name)
+  .filter((c) => /enrollment|user_id|reviewer/.test(c));
+record(
+  leaked.length === 0,
+  "peer_review_queue exposes no column identifying the author",
+  leaked.join(", "),
+);
+
 console.log("\n── RLS ─────────────────────────────────────────────────────");
 const noRls = await db.query(`
   select c.relname from pg_class c
@@ -221,15 +310,20 @@ record(
   noRls.rows.map((r) => r.relname).join(", "),
 );
 
+// Cost ledgers, audit logs and crawler output are correctly unreachable from
+// any client: RLS on with no policy denies everyone, and the service role
+// bypasses RLS. The exemption is read from the table comment so it has to be
+// declared in the schema, not inferred from a table that simply forgot one.
 const noPolicy = await db.query(`
   select c.relname from pg_class c
   join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
     and not exists (select 1 from pg_policy p where p.polrelid = c.oid)
+    and coalesce(obj_description(c.oid, 'pg_class'), '') not ilike '%service-role only%'
   order by c.relname`);
 record(
   noPolicy.rows.length === 0,
-  "every table with RLS has at least one policy",
+  "every table with RLS has a policy, or is declared service-role only",
   noPolicy.rows.map((r) => r.relname).join(", "),
 );
 
