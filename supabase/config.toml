@@ -156,15 +156,20 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-# Production, not localhost. `supabase config push` sends this whole file to
-# the linked project, so a localhost site_url here becomes the live project's
-# site_url — which is the URL every auth email links to.
-site_url = "https://jintu.in"
+# The deployed origin, not localhost. `supabase config push` sends this whole
+# file to the linked project, so a localhost site_url here becomes the live
+# project's site_url — the URL every auth email links to.
+#
+# jintu.in is not registered yet. Deliberately NOT allow-listed until it is:
+# an entry here is a domain auth will redirect to, and pointing that at a name
+# somebody else could buy tomorrow is an open redirect with our own sign-in
+# tokens attached. Change this line and add it below on the day it is bought.
+site_url = "https://jintu-mvp.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "https://jintu.in",
+  "https://jintu-mvp.vercel.app",
   "http://127.0.0.1:3000",
   "http://localhost:3000",
   # `next dev` falls back to 3001 when 3000 is taken, and a redirect URL that
@@ -264,15 +269,24 @@ otp_expiry = 3600
 # projects cannot customise auth email templates while on it, which means the
 # template above never takes effect and no code is ever sent.
 #
-# Fill in RESEND_API_KEY in .env, uncomment, and `supabase config push`.
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.resend.com"
-# port = 587
-# user = "resend"
-# pass = "env(RESEND_API_KEY)"
-# admin_email = "hello@jintu.in"
-# sender_name = "Jintu"
+# ⚠ Set RESEND_API_KEY in .env BEFORE the next `supabase config push`. Pushing
+# this block with the variable empty enables SMTP with a blank password, and
+# then no auth email is sent at all.
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 587
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+# Resend's shared sender, which needs no domain. It only delivers to the
+# address the Resend account is registered under — enough to prove the flow
+# end to end, not enough to run a cohort.
+#
+# On the day jintu.in is bought and verified in Resend, this becomes
+# hello@jintu.in and the restriction disappears. That is the only line that
+# has to change.
+admin_email = "onboarding@resend.dev"
+sender_name = "Jintu"
 
 # ── Auth emails ──────────────────────────────────────────────────────────────
 # Every template below carries `{{ .Token }}`. Supabase's stock templates carry
