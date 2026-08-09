@@ -24,7 +24,8 @@
     "schema:rules": "node scripts/assert-schema-rules.mjs",
     "claims": "node scripts/assert-claims.mjs",
     "fn:deploy": "supabase functions deploy",
-    "embeds": "node scripts/assert-embeds.mjs"
+    "embeds": "node scripts/assert-embeds.mjs",
+    "env:templates": "node scripts/assert-env-examples.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.3",
