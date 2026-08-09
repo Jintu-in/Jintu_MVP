@@ -62,7 +62,7 @@ export function OnboardingForm() {
       }
     >
       <div className="space-y-4">
-        <Field id={`${id}-name`} name="fullName" label="Name" optional autoComplete="name" />
+        <Field id={`${id}-name`} name="fullName" label="Full name" optional autoComplete="name" />
         <Field
           id={`${id}-college`}
           name="collegeName"
@@ -94,9 +94,9 @@ export function OnboardingForm() {
         <legend className="text-sm font-semibold text-ink-900">
           Optional — none of these affect your place
         </legend>
-        <div className="mt-3 space-y-4">
+        <div className="mt-3 space-y-3">
           {OPTIONAL.map((o) => (
-            <Check key={o.name} id={`${id}-${o.name}`} name={o.name} detail={o.detail}>
+            <Check key={o.name} id={`${id}-${o.name}`} name={o.name} detail={o.detail} boxed>
               {o.label}
             </Check>
           ))}
@@ -113,14 +113,15 @@ export function OnboardingForm() {
         type="submit"
         disabled={status === "executing"}
         className={cn(
-          "mt-8 w-full rounded-card px-4 py-3 font-medium text-white",
+          "mt-8 flex h-12 w-full items-center justify-center rounded-lg font-medium text-white",
           "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
         )}
       >
         {status === "executing" ? "Saving…" : "Create my account"}
       </button>
 
-      <p className="mt-3 text-xs text-ink-500">
+      <p className="mt-3 text-sm text-ink-500">
         You can change or withdraw any of the optional choices at any time, as
         easily as you gave them. See the{" "}
         <Link href="/privacy" className="underline hover:text-brand-800">
@@ -159,13 +160,13 @@ function Field({
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
         className={cn(
-          "mt-1 block w-full rounded-card border px-3 py-2 text-ink-900",
-          "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
-          error ? "border-risk-600" : "border-ink-300",
+          "mt-1.5 block h-12 w-full rounded-lg border bg-white px-3 text-ink-900",
+          "focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
+          error ? "border-risk-600" : "border-ink-200",
         )}
       />
       {error ? (
-        <p id={`${id}-error`} className="mt-1 text-sm text-risk-600">
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-risk-600">
           {error}
         </p>
       ) : null}
@@ -178,16 +179,20 @@ function Check({
   name,
   detail,
   error,
+  boxed,
   children,
 }: {
   id: string;
   name: string;
   detail?: string;
   error?: string;
+  /** Optional purposes sit in their own card, so they read as separable from
+   *  the required confirmation above them rather than as one block of terms. */
+  boxed?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className={cn(boxed && "rounded-card border border-ink-100 bg-white p-4")}>
       <div className="flex gap-2.5">
         {/* Never defaultChecked — see the note at the top of this file. */}
         <input

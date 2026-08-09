@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { OnboardingForm } from "@/components/onboarding-form";
+import { Steps } from "@/components/steps";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -27,12 +28,17 @@ export default async function OnboardingPage() {
   if (profile) redirect("/account");
 
   return (
-    <main className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-2xl font-semibold text-ink-900">Two things before we start</h1>
+    <main className="mx-auto max-w-md px-5 py-10">
+      <Steps current={3} label="Your profile" />
+
+      <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+        Two things before we start
+      </h1>
       <p className="mt-2 text-pretty text-ink-600">
         One is required by law. The rest are yours to choose, and you can change
         them whenever you like.
       </p>
+
       <div className="mt-8">
         <OnboardingForm />
       </div>

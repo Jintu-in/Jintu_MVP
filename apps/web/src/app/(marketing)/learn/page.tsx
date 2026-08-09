@@ -27,11 +27,11 @@ export default async function LearnIndexPage() {
   const tracks = await listPublishedTracks();
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
+    <main className="mx-auto max-w-3xl px-5 py-12">
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Free curriculum
       </p>
-      <h1 className="mt-3 text-4xl leading-tight font-semibold text-balance text-ink-900">
+      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
         The whole syllabus, before you pay anything.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
@@ -41,7 +41,7 @@ export default async function LearnIndexPage() {
       </p>
 
       {tracks.length === 0 ? (
-        <p className="mt-12 rounded-card border border-ink-200 p-6 text-ink-600">
+        <p className="mt-12 rounded-card border border-ink-100 bg-white p-6 text-ink-600">
           No tracks are published yet.
         </p>
       ) : (
@@ -50,7 +50,7 @@ export default async function LearnIndexPage() {
             <li key={track.slug}>
               <Link
                 href={`/learn/${track.slug}`}
-                className="group block rounded-card border border-ink-200 p-6 hover:border-brand-600"
+                className="group block rounded-card border border-ink-100 bg-white p-6 hover:border-brand-600"
               >
                 <div className="flex flex-wrap items-baseline gap-x-3">
                   <h2 className="text-xl font-semibold text-ink-900 group-hover:text-brand-800">

@@ -6,8 +6,11 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* The page ground is the warm off-white, not white: cards, the app bar and
+     the footer are white and have to read as raised off something. Anything
+     that was a tinted panel on a white page is now a white card on this. */
   body {
-    background-color: var(--color-white);
+    background-color: var(--color-ink-50);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
   }

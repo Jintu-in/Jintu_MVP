@@ -31,11 +31,11 @@ const NOT_INCLUDED = [
 
 export default function PricingPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
+    <main className="mx-auto max-w-3xl px-5 py-12">
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Pricing
       </p>
-      <h1 className="mt-3 text-4xl leading-tight font-semibold text-balance text-ink-900">
+      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
         The syllabus is free. The cohort is not.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
@@ -47,7 +47,7 @@ export default function PricingPage() {
         The cohort is what makes you finish.
       </p>
 
-      <section className="mt-10 rounded-card border-2 border-brand-600 p-6">
+      <section className="mt-10 rounded-card border-2 border-brand-600 bg-white p-6">
         <div className="flex flex-wrap items-baseline gap-x-3">
           <span className="text-4xl font-semibold text-ink-900">₹999</span>
           <span className="text-ink-500">one time, per cohort</span>
@@ -74,7 +74,7 @@ export default function PricingPage() {
         <div className="mt-6">
           <Link
             href="/#waitlist"
-            className="inline-block rounded-card bg-brand-700 px-5 py-3 font-medium text-white hover:bg-brand-800"
+            className="inline-flex h-12 items-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800"
           >
             Join the waitlist
           </Link>
@@ -100,7 +100,10 @@ export default function PricingPage() {
         </ul>
       </section>
 
-      <section className="mt-10 rounded-card bg-ink-50 p-6" aria-labelledby="refunds">
+      <section
+        className="mt-10 rounded-card border border-ink-100 bg-white p-6"
+        aria-labelledby="refunds"
+      >
         <h2 id="refunds" className="font-semibold text-ink-900">
           Refunds
         </h2>
