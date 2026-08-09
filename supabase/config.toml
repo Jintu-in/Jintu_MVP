@@ -269,24 +269,43 @@ otp_expiry = 3600
 # projects cannot customise auth email templates while on it, which means the
 # template above never takes effect and no code is ever sent.
 #
-# ⚠ Set RESEND_API_KEY in .env BEFORE the next `supabase config push`. Pushing
-# this block with the variable empty enables SMTP with a blank password, and
+# ⚠ Set SENDGRID_API_KEY in .env BEFORE the next `supabase config push`.
+# Pushing this with the variable empty enables SMTP with a blank password, and
 # then no auth email is sent at all.
+#
+# SendGrid rather than Resend, and it is the domain that decides it. Neither
+# provider will send from an address on a domain you have not proved you own,
+# and jintu.in is not registered yet — so the question is what each does in
+# the meantime:
+#
+#   Resend   onboarding@resend.dev delivers ONLY to the address the Resend
+#            account is registered under. Enough to watch the flow work once.
+#   SendGrid Single Sender Verification verifies one address — a Gmail address
+#            is fine — and then sends to anyone. A cohort can sign up.
+#
+# The second is the difference between a demo and a usable sign-in, so it wins
+# until the domain lands. `user` really is the literal string "apikey";
+# SendGrid uses it for every account and the key goes in the password.
+#
+# When jintu.in is bought: verify the domain (in either provider), change
+# admin_email, and delete the sender-verification caveat. Nothing else moves.
 [auth.email.smtp]
 enabled = true
-host = "smtp.resend.com"
+host = "smtp.sendgrid.net"
 port = 587
-user = "resend"
-pass = "env(RESEND_API_KEY)"
-# Resend's shared sender, which needs no domain. It only delivers to the
-# address the Resend account is registered under — enough to prove the flow
-# end to end, not enough to run a cohort.
-#
-# On the day jintu.in is bought and verified in Resend, this becomes
-# hello@jintu.in and the restriction disappears. That is the only line that
-# has to change.
-admin_email = "onboarding@resend.dev"
+user = "apikey"
+pass = "env(SENDGRID_API_KEY)"
+# Must be an address verified under SendGrid > Sender Authentication > Single
+# Sender Verification. Unverified, every send is rejected at the API.
+admin_email = "sauravlpu11@gmail.com"
 sender_name = "Jintu"
+
+# Resend, if you would rather. Same shape, one restriction worse until the
+# domain exists.
+# host = "smtp.resend.com"
+# user = "resend"
+# pass = "env(RESEND_API_KEY)"
+# admin_email = "onboarding@resend.dev"
 
 # ── Auth emails ──────────────────────────────────────────────────────────────
 # Every template below carries `{{ .Token }}`. Supabase's stock templates carry
