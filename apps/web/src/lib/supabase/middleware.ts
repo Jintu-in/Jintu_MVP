@@ -51,7 +51,23 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  // Supabase redirects auth failures to site_url with the reason in the query
+  // string — so a dead sign-in link lands a student on the marketing page,
+  // which renders a sales pitch and says nothing about what just happened.
+  // The message belongs where they can act on it.
+  //
+  // Not on /join already, or this redirects to itself forever.
+  const authError = searchParams.get("error_code") ?? searchParams.get("error");
+  if (authError && pathname !== "/join") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/join";
+    url.search = "";
+    url.searchParams.set("error", authError);
+    return NextResponse.redirect(url);
+  }
+
   const needsAuth = PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   if (needsAuth && !user) {

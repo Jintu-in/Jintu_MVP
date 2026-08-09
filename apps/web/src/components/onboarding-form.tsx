@@ -53,6 +53,7 @@ export function OnboardingForm() {
         execute({
           fullName: String(fd.get("fullName") ?? ""),
           collegeName: String(fd.get("collegeName") ?? ""),
+          phone: String(fd.get("phone") ?? ""),
           batchYear: String(fd.get("batchYear") ?? ""),
           isAdultConfirmed: fd.get("isAdultConfirmed") === "on",
           analytics: fd.get("analytics") === "on",
@@ -78,6 +79,22 @@ export function OnboardingForm() {
           inputMode="numeric"
           placeholder="2027"
           error={firstError(errors, "batchYear")}
+        />
+        {/* Required, and the only required field here besides the 18+ box.
+            Sign-in is by email, so this is the one place the number is asked
+            for — and the sentence under it is not decoration: DPDP wants the
+            purpose stated where the data is collected, not only in a notice
+            nobody opens. */}
+        <Field
+          id={`${id}-phone`}
+          name="phone"
+          label="Mobile number"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          placeholder="98765 43210"
+          error={firstError(errors, "phone")}
+          hint="For deadline reminders and so we can reach you about your cohort. Indian mobile numbers only."
         />
       </div>
 
@@ -139,6 +156,7 @@ function Field({
   label,
   optional,
   error,
+  hint,
   ...input
 }: {
   id: string;
@@ -146,7 +164,16 @@ function Field({
   label: string;
   optional?: boolean;
   error?: string;
+  /** Why we are asking. Rendered under the field and named by aria-describedby. */
+  hint?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
+  // Both the hint and the error are described-by, in that order, so a screen
+  // reader gets the purpose as well as the problem rather than one replacing
+  // the other.
+  const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-medium text-ink-700">
@@ -158,15 +185,20 @@ function Field({
         id={id}
         name={name}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : undefined}
+        aria-describedby={describedBy || undefined}
         className={cn(
           "mt-1.5 block h-12 w-full rounded-lg border bg-white px-3 text-ink-900",
           "focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
           error ? "border-risk-600" : "border-ink-200",
         )}
       />
+      {hint ? (
+        <p id={`${id}-hint`} className="mt-1.5 text-sm text-pretty text-ink-500">
+          {hint}
+        </p>
+      ) : null}
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-sm text-risk-600">
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-pretty text-risk-600">
           {error}
         </p>
       ) : null}
