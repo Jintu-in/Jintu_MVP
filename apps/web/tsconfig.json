@@ -4,7 +4,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // src/sw.ts runs in a ServiceWorkerGlobalScope, not the DOM. Without
+    // these, `self`, `clients` and the Serwist types do not resolve.
+    "lib": ["DOM", "DOM.Iterable", "ES2023", "WebWorker"],
+    "types": ["@serwist/next/typings"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
