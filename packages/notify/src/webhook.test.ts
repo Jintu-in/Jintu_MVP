@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeSecret, verifyWebhook } from "./webhook";
+import { decodeSecret, verifyWebhook } from "./webhook.ts";
 
 /**
  * The send-sms hook is a public endpoint that spends money. These tests are

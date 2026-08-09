@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { handleSendSmsHook } from "./hook";
-import type { Notifier } from "./types";
-import { decodeSecret } from "./webhook";
+import { handleSendSmsHook } from "./hook.ts";
+import type { Notifier } from "./types.ts";
+import { decodeSecret } from "./webhook.ts";
 
 const SECRET = `v1,whsec_${btoa("sixteen-byte-key")}`;
 const ID = "msg_1";

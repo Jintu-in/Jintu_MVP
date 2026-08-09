@@ -156,15 +156,20 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-# Production, not localhost. `supabase config push` sends this whole file to
-# the linked project, so a localhost site_url here becomes the live project's
-# site_url — which is the URL every auth email links to.
-site_url = "https://jintu.in"
+# The deployed origin, not localhost. `supabase config push` sends this whole
+# file to the linked project, so a localhost site_url here becomes the live
+# project's site_url — the URL every auth email links to.
+#
+# jintu.in is not registered yet. Deliberately NOT allow-listed until it is:
+# an entry here is a domain auth will redirect to, and pointing that at a name
+# somebody else could buy tomorrow is an open redirect with our own sign-in
+# tokens attached. Change this line and add it below on the day it is bought.
+site_url = "https://jintu-mvp.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "https://jintu.in",
+  "https://jintu-mvp.vercel.app",
   "http://127.0.0.1:3000",
   "http://localhost:3000",
   # `next dev` falls back to 3001 when 3000 is taken, and a redirect URL that
@@ -264,15 +269,45 @@ otp_expiry = 3600
 # projects cannot customise auth email templates while on it, which means the
 # template above never takes effect and no code is ever sent.
 #
-# Fill in RESEND_API_KEY in .env, uncomment, and `supabase config push`.
-# [auth.email.smtp]
-# enabled = true
+# ⚠ Set SENDGRID_API_KEY in .env BEFORE the next `supabase config push`.
+# Pushing this with the variable empty enables SMTP with a blank password, and
+# then no auth email is sent at all.
+#
+# SendGrid rather than Resend, and it is the domain that decides it. Neither
+# provider will send from an address on a domain you have not proved you own,
+# and jintu.in is not registered yet — so the question is what each does in
+# the meantime:
+#
+#   Resend   onboarding@resend.dev delivers ONLY to the address the Resend
+#            account is registered under. Enough to watch the flow work once.
+#   SendGrid Single Sender Verification verifies one address — a Gmail address
+#            is fine — and then sends to anyone. A cohort can sign up.
+#
+# The second is the difference between a demo and a usable sign-in, so it wins
+# until the domain lands. `user` really is the literal string "apikey";
+# SendGrid uses it for every account and the key goes in the password.
+#
+# When jintu.in is bought: verify the domain (in either provider), change
+# admin_email, and delete the sender-verification caveat. Nothing else moves.
+[auth.email.smtp]
+enabled = true
+host = "smtp.sendgrid.net"
+port = 587
+user = "apikey"
+pass = "env(SENDGRID_API_KEY)"
+# Must be an address verified under SendGrid > Sender Authentication > Single
+# Sender Verification, and must match it exactly — SendGrid rejects any send
+# whose From is not a verified identity, which surfaces through Supabase as a
+# bare 500 "Error sending magic link email" with nothing naming the address.
+admin_email = "mainhujintu@gmail.com"
+sender_name = "Jintu"
+
+# Resend, if you would rather. Same shape, one restriction worse until the
+# domain exists.
 # host = "smtp.resend.com"
-# port = 587
 # user = "resend"
 # pass = "env(RESEND_API_KEY)"
-# admin_email = "hello@jintu.in"
-# sender_name = "Jintu"
+# admin_email = "onboarding@resend.dev"
 
 # ── Auth emails ──────────────────────────────────────────────────────────────
 # Every template below carries `{{ .Token }}`. Supabase's stock templates carry
