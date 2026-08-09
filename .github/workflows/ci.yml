@@ -54,6 +54,15 @@ jobs:
       - name: Env templates
         run: pnpm env:templates
 
+      # Applies migrations to an in-process Postgres and fires the triggers.
+      # No Docker, so it runs in the fast job.
+      - name: Simulate migrations
+        run: pnpm db:simulate
+
+      # Every guard must have a script and a CI step. Merges keep dropping them.
+      - name: Guards are wired
+        run: pnpm guards
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest
