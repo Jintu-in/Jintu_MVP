@@ -18,12 +18,27 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mdx", ".json"]);
+// .mjs and .sql matter as much as .tsx here: a track summary lives in SQL and
+// renders on /learn exactly like a hard-coded string would.
+const EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".mdx", ".json", ".sql"]);
 const SKIP_DIRS = new Set(["node_modules", ".next", ".turbo", "dist", "coverage"]);
 
 // Scanned by default: everything a student could read. docs/ is excluded
 // because LEGAL.md necessarily quotes the banned phrases in order to ban them.
-const DEFAULT_TARGETS = ["apps/web/src", "apps/web/public", "packages/notify"];
+// Curriculum content is user-facing text that happens to be stored as data.
+// A track summary and an assignment prompt are rendered on /learn with the
+// same prominence as anything in a component, and until these targets were
+// added a track called "100% placement guaranteed" passed CI — demonstrated,
+// not assumed. docs/ stays out: LEGAL.md has to quote the banned phrases in
+// order to ban them.
+const DEFAULT_TARGETS = [
+  "apps/web/src",
+  "apps/web/public",
+  "packages/notify",
+  "supabase/migrations",
+  "supabase/seed.sql",
+  "scripts/generate-courses.mjs",
+];
 
 const ABSOLUTE = [
   { re: /100\s*%\s*placement/i, label: '"100% placement"' },
@@ -54,7 +69,23 @@ function walk(dir, out = []) {
 }
 
 const targets = process.argv.length > 2 ? process.argv.slice(2) : DEFAULT_TARGETS;
-const files = targets.flatMap((t) => walk(path.resolve(ROOT, t)));
+
+/**
+ * A target may be a directory or a single file. `walk` only reads
+ * directories, so a file target scanned nothing and reported success — the
+ * same silent-pass this guard exists to prevent, one level up.
+ */
+const files = targets.flatMap((t) => {
+  const full = path.resolve(ROOT, t);
+  try {
+    if (statSync(full).isFile()) {
+      return EXTENSIONS.has(path.extname(full)) ? [full] : [];
+    }
+  } catch {
+    return []; // not present yet — packages/notify arrives in Phase 2
+  }
+  return walk(full);
+});
 const violations = [];
 
 for (const file of files) {
