@@ -65,7 +65,10 @@ export type TrackSummary = {
   slug: string;
   title: string;
   summary: string;
+  /** Counted through the published path, so a half-written draft never shows. */
   weeks: number;
+  resources: number;
+  artifacts: number;
 };
 
 export async function getPublishedTrack(slug: string): Promise<TrackPage | null> {
@@ -143,13 +146,24 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
     slug: string;
     title: string;
     summary: string;
-    paths: { modules: { id: string }[] | null }[] | null;
+    paths:
+      | {
+          modules:
+            | { id: string; resources: { id: string }[] | null; assignments: { id: string }[] | null }[]
+            | null;
+        }[]
+      | null;
   };
 
-  return ((data ?? []) as unknown as Row[]).map((t) => ({
-    slug: t.slug,
-    title: t.title,
-    summary: t.summary,
-    weeks: (t.paths ?? []).reduce((n, p) => n + (p.modules?.length ?? 0), 0),
-  }));
+  return ((data ?? []) as unknown as Row[]).map((t) => {
+    const modules = (t.paths ?? []).flatMap((p) => p.modules ?? []);
+    return {
+      slug: t.slug,
+      title: t.title,
+      summary: t.summary,
+      weeks: modules.length,
+      resources: modules.reduce((n, m) => n + (m.resources?.length ?? 0), 0),
+      artifacts: modules.reduce((n, m) => n + (m.assignments?.length ?? 0), 0),
+    };
+  });
 }
