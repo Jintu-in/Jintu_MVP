@@ -297,6 +297,65 @@ record(
   "peer_review_queue exposes no column identifying the author",
   leaked.join(", "),
 );
+console.log("\n── data isolation between students ─────────────────────────");
+// Everything above runs as the owner, which bypasses RLS entirely. These
+// assertions switch to the `authenticated` role so the policies actually
+// apply — otherwise "RLS is enabled" is a fact about the catalog and not
+// about who can read whose work.
+{
+  await db.exec(`
+    grant usage on schema public to authenticated;
+    grant select, insert, update on all tables in schema public to authenticated;
+    insert into public.submissions (id, enrollment_id, assignment_id, week_no, payload)
+      values ('88888888-8888-4888-8888-000000000002', '${ENROL_B}', '${ASSIGN_ID}', 1, '{"sql":"select 2"}'::jsonb);
+  `);
+
+  const asUser = async (uid, sql) => {
+    await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}';`);
+    try {
+      return await db.query(sql);
+    } finally {
+      await db.exec("rollback;");
+    }
+  };
+
+  const mine = await asUser(USER_1, "select id from public.submissions");
+  record(
+    mine.rows.length === 1,
+    "a student sees only their own submission",
+    `saw ${mine.rows.length}, expected 1`,
+  );
+
+  const theirs = await asUser(
+    USER_1,
+    `select id from public.submissions where enrollment_id = '${ENROL_B}'`,
+  );
+  record(
+    theirs.rows.length === 0,
+    "a student cannot read another student's submission",
+    `leaked ${theirs.rows.length} row(s)`,
+  );
+
+  const otherConsents = await asUser(USER_2, "select purpose from public.consents");
+  record(
+    otherConsents.rows.length === 0,
+    "a student cannot read another student's consents",
+    `leaked ${otherConsents.rows.length} row(s)`,
+  );
+
+  // The waitlist has an insert policy and deliberately no select policy: the
+  // anon key is public, so a readable waitlist is a downloadable phone list.
+  const waitlist = await asUser(USER_1, "select phone from public.waitlist_signups");
+  record(
+    waitlist.rows.length === 0,
+    "the waitlist phone list is not readable by a signed-in user",
+    `leaked ${waitlist.rows.length} row(s)`,
+  );
+
+  // Published curriculum is meant to be readable by everyone.
+  const tracks = await asUser(USER_1, "select slug from public.tracks");
+  record(tracks.rows.length > 0, "published curriculum is still readable while signed in");
+}
 
 console.log("\n── RLS ─────────────────────────────────────────────────────");
 const noRls = await db.query(`
