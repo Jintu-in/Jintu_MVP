@@ -24,9 +24,11 @@
     "schema:rules": "node scripts/assert-schema-rules.mjs",
     "claims": "node scripts/assert-claims.mjs",
     "fn:deploy": "supabase functions deploy",
-    "embeds": "node scripts/assert-embeds.mjs"
+    "embeds": "node scripts/assert-embeds.mjs",
+    "db:simulate": "node scripts/simulate-migrations.mjs"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.4",
     "sharp": "^0.35.3",
     "supabase": "^2.113.0",
     "turbo": "^2.10.9",

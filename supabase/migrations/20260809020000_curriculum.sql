@@ -212,23 +212,34 @@ create or replace function public.reject_published_path_change()
   set search_path = ''
 as $$
 begin
+  -- DELETE first and on its own: NEW is unassigned during a delete, and SQL
+  -- does not promise to short-circuit AND, so a condition mentioning
+  -- new.status can fail even when guarded by `tg_op = 'UPDATE'`.
+  if tg_op = 'DELETE' then
+    if old.status = 'published' then
+      raise exception
+        'Path % is published and immutable. Archive it instead of deleting it.', old.id
+        using errcode = 'restrict_violation';
+    end if;
+    return old;
+  end if;
+
+  -- UPDATE from here down, so NEW is safe to read.
+  if old.status is distinct from 'published' then
+    return new;
+  end if;
+
   -- Archiving is the one permitted transition: it retires a version without
   -- rewriting what it said.
-  if tg_op = 'UPDATE'
-     and old.status = 'published'
-     and new.status = 'archived'
+  if new.status = 'archived'
      and (to_jsonb(new) - 'status') = (to_jsonb(old) - 'status')
   then
     return new;
   end if;
 
-  if old.status = 'published' then
-    raise exception
-      'Path % is published and immutable. Create a new version instead.', old.id
-      using errcode = 'restrict_violation';
-  end if;
-
-  return case tg_op when 'DELETE' then old else new end;
+  raise exception
+    'Path % is published and immutable. Create a new version instead.', old.id
+    using errcode = 'restrict_violation';
 end;
 $$;
 
@@ -242,34 +253,56 @@ create or replace function public.reject_published_content_change()
   set search_path = ''
 as $$
 declare
-  target_path uuid;
+  target_path   uuid;
+  owning_module uuid;
   parent_status text;
 begin
-  target_path := case tg_table_name
-    when 'modules' then coalesce(new.path_id, old.path_id)
-    else (
-      select m.path_id from public.modules m
-      where m.id = coalesce(new.module_id, old.module_id)
-    )
-  end;
+  -- Every NEW/OLD field reference below sits in its own statement, guarded by
+  -- the table and the operation it is valid for.
+  --
+  -- plpgsql resolves record fields when the *statement* runs, not per branch
+  -- of an expression. A CASE with `new.path_id` in one arm and
+  -- `new.module_id` in another therefore fails on `modules` — where NEW has
+  -- no module_id — even though that arm is never taken. Likewise NEW is
+  -- unassigned during DELETE and OLD during INSERT, so neither may appear in
+  -- an expression that also runs for the other operation.
+  if tg_table_name = 'modules' then
+    if tg_op = 'DELETE' then
+      target_path := old.path_id;
+    else
+      target_path := new.path_id;
+    end if;
+  else
+    if tg_op = 'DELETE' then
+      owning_module := old.module_id;
+    else
+      owning_module := new.module_id;
+    end if;
+
+    select m.path_id into target_path
+    from public.modules m where m.id = owning_module;
+  end if;
 
   select p.status into parent_status
   from public.paths p where p.id = target_path;
 
-  if parent_status <> 'published' then
-    return case tg_op when 'DELETE' then old else new end;
+  if parent_status is distinct from 'published' then
+    if tg_op = 'DELETE' then
+      return old;
+    end if;
+    return new;
   end if;
 
   -- Link health is the one thing that must stay writable on a published
   -- path. The check-link-health cron (§6) marks dead resources so a human
   -- can fix them; freezing these two columns would break that job and leave
   -- students clicking 404s in a curriculum nobody is allowed to touch.
-  if tg_op = 'UPDATE'
-     and tg_table_name = 'resources'
-     and (to_jsonb(new) - 'health' - 'last_checked_at')
-       = (to_jsonb(old) - 'health' - 'last_checked_at')
-  then
-    return new;
+  if tg_op = 'UPDATE' and tg_table_name = 'resources' then
+    if (to_jsonb(new) - 'health' - 'last_checked_at')
+     = (to_jsonb(old) - 'health' - 'last_checked_at')
+    then
+      return new;
+    end if;
   end if;
 
   raise exception

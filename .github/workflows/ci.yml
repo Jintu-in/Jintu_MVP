@@ -50,6 +50,11 @@ jobs:
       - name: Embed rules
         run: pnpm embeds
 
+      # Applies migrations to an in-process Postgres and fires the triggers.
+      # No Docker: this runs in the fast job so schema bugs fail in seconds.
+      - name: Simulate migrations
+        run: pnpm db:simulate
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest
