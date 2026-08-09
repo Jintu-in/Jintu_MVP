@@ -325,19 +325,27 @@ message_service_sid = "env(SUPABASE_AUTH_SMS_TWILIO_MESSAGE_SERVICE_SID)"
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
 auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 
-# The escape hatch, and the cheaper route once volume matters. Supabase calls
-# this hook instead of a built-in provider, so delivery becomes an edge
-# function we write and any aggregator will do. Supabase still owns the OTP;
-# the hook only carries the message.
+# ── Delivery over WhatsApp instead of SMS ────────────────────────────────────
+# Supabase calls this hook in place of a built-in provider. It still owns the
+# one-time code — generating, hashing, expiring and verifying it — and the
+# hook only carries the message, which is why nothing in the sign-in forms or
+# actions knows the channel is not SMS.
 #
-# Worth reaching for when per-message cost starts mattering: the Indian
-# aggregators undercut Twilio's international routing by roughly an order of
-# magnitude. Not worth reaching for on day one, when the whole cohort is fifty
-# people and the DLT paperwork is the same either way.
+# This is what removes TRAI DLT from the critical path. DLT governs SMS and
+# voice on telecom networks; WhatsApp is OTT and outside it. The cost is Meta
+# business verification, a phone number dedicated to the API, and an
+# AUTHENTICATION-category template — work the Phase 2 deadline nudges need
+# anyway, unlike DLT, which would be bought for authentication alone.
+#
+# The same hook is the route to MSG91 or Gupshup later: swap the Notifier in
+# supabase/functions/send-sms/index.ts, deploy, change nothing else.
+#
+# Enable after `pnpm fn:deploy send-sms`, with the project ref substituted.
+# Pointing this at a function that is not deployed makes every sign-in fail.
 # [auth.hook.send_sms]
 # enabled = true
-# uri = "https://<project-ref>.supabase.co/functions/v1/send-sms"
-# secrets = "env(SUPABASE_AUTH_SMS_HOOK_SECRET)"
+# uri = "https://nejtogeezerebdeflhfa.supabase.co/functions/v1/send-sms"
+# secrets = "env(SEND_SMS_HOOK_SECRET)"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]
