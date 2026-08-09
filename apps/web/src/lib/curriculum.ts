@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/public";
+import { describeSupabaseError } from "@/lib/supabase/errors";
 
 /**
  * Read side of the public curriculum.
@@ -52,7 +53,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     .eq("slug", slug)
     .maybeSingle();
 
-  if (trackError) throw new Error(`track lookup failed: ${trackError.message}`);
+  if (trackError) throw describeSupabaseError("looking up the track", trackError);
   if (!track) return null;
 
   // Highest published version wins. RLS has already excluded drafts, so the
@@ -65,7 +66,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     .limit(1)
     .maybeSingle();
 
-  if (pathError) throw new Error(`path lookup failed: ${pathError.message}`);
+  if (pathError) throw describeSupabaseError("looking up the published path", pathError);
   if (!path) return null;
 
   const { data: modules, error: modulesError } = await supabase
@@ -78,7 +79,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     .eq("path_id", path.id)
     .order("week_no", { ascending: true });
 
-  if (modulesError) throw new Error(`module lookup failed: ${modulesError.message}`);
+  if (modulesError) throw describeSupabaseError("loading the weekly modules", modulesError);
 
   return {
     slug: track.slug,
@@ -100,6 +101,6 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
 export async function listPublishedTrackSlugs(): Promise<string[]> {
   const supabase = createPublicClient();
   const { data, error } = await supabase.from("tracks").select("slug");
-  if (error) throw new Error(`track list failed: ${error.message}`);
+  if (error) throw describeSupabaseError("listing published tracks", error);
   return (data ?? []).map((t) => t.slug as string);
 }

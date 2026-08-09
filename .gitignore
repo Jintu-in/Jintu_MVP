@@ -44,3 +44,4 @@ pnpm-debug.log*
 public/sw.js
 public/sw.js.map
 public/swe-worker-*.js
+supabase/.bundle/

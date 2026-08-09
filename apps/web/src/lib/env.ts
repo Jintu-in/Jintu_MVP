@@ -11,35 +11,61 @@ import { z } from "zod";
  */
 
 const publicEnv = z.object({
+  // Messages omit the variable name: the formatter below prepends it, and
+  // repeating it reads as "FOO: FOO must be ...".
   NEXT_PUBLIC_SUPABASE_URL: z
     .string()
-    .min(1, "NEXT_PUBLIC_SUPABASE_URL is not set")
+    .min(1)
     .refine((v) => v.startsWith("https://") || v.startsWith("http://127.0.0.1"), {
-      message: "NEXT_PUBLIC_SUPABASE_URL must be an https URL (or local Supabase)",
+      message:
+        "must be your project URL, e.g. https://abcdefgh.supabase.co (or http://127.0.0.1:54321 for local Supabase)",
     }),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z
-    .string()
-    .min(1, "NEXT_PUBLIC_SUPABASE_ANON_KEY is not set"),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
 });
 
 export function getPublicEnv() {
   // Referenced as literals on purpose: Next inlines NEXT_PUBLIC_* only at
   // literal `process.env.X` sites. Destructuring or dynamic lookup silently
   // yields undefined in the browser bundle.
-  const parsed = publicEnv.safeParse({
+  const raw: Record<string, string | undefined> = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  };
+
+  const parsed = publicEnv.safeParse(raw);
+  if (parsed.success) return parsed.data;
+
+  // Name the variable. Zod's type check fires before any custom message, so
+  // a missing var reports as "expected string, received undefined" with no
+  // clue which one — which is useless at 1am and is the whole reason this
+  // function exists instead of reading process.env inline.
+  const lines = parsed.error.issues.map((issue) => {
+    const name = String(issue.path[0] ?? "(unknown)");
+    const value = raw[name];
+    return value === undefined || value === ""
+      ? `  - ${name} is not set`
+      : `  - ${name}: ${issue.message}`;
   });
 
-  if (!parsed.success) {
-    throw new Error(
-      `Environment is not configured:\n` +
-        parsed.error.issues.map((i) => `  - ${i.message}`).join("\n") +
-        `\nCopy .env.example to .env.local and fill it in.`,
-    );
-  }
-
-  return parsed.data;
+  throw new Error(
+    [
+      "Supabase is not configured, so this page cannot load data.",
+      "",
+      ...lines,
+      "",
+      "Fix: cp apps/web/.env.example apps/web/.env.local  — then fill in the",
+      "two values from your Supabase project under Settings > API (Project URL",
+      "and the anon public key) and restart the dev server; Next reads env",
+      "files once at boot.",
+      "",
+      "The file must sit in apps/web, next to next.config.ts. Next loads env",
+      "files from the app directory — one at the monorepo root is read by",
+      "nothing.",
+      "",
+      "The marketing pages at / and /privacy do not need this; only /learn",
+      "and the waitlist form talk to the database.",
+    ].join("\n"),
+  );
 }
 
 /**
