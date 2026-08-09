@@ -41,7 +41,10 @@ npm-debug.log*
 pnpm-debug.log*
 
 # generated service worker (built by serwist)
-public/sw.js
-public/sw.js.map
-public/swe-worker-*.js
+# Leading **/ matters: a pattern containing a slash is anchored to the repo
+# root, so bare `public/sw.js` never matched apps/web/public/sw.js and the
+# built service worker showed up as an untracked file.
+**/public/sw.js
+**/public/sw.js.map
+**/public/swe-worker-*.js
 supabase/.bundle/
