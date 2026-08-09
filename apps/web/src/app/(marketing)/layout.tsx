@@ -28,12 +28,18 @@ export default function MarketingLayout({
 
           {/* The free curriculum is the top of the funnel (§6) — it needs to be
               reachable from every page, not just findable via search. */}
-          <nav className="ml-auto">
+          <nav className="ml-auto flex items-center gap-5">
             <Link
-              href="/learn/data-analyst-fresher"
+              href="/learn"
               className="text-sm font-medium text-brand-700 hover:text-brand-800"
             >
               Free curriculum
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-sm font-medium text-ink-600 hover:text-ink-900"
+            >
+              Pricing
             </Link>
           </nav>
         </div>
