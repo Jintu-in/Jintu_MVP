@@ -206,7 +206,17 @@ password_requirements = ""
 
 [auth.rate_limit]
 # Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+#
+# 2 is the default and it is the built-in sender's ceiling, not a choice — a
+# single person testing sign-in twice exhausts it, and every request after
+# that fails with `over_email_send_rate_limit` before an email is attempted.
+# It reads as "email OTP is broken" and is in fact a quota.
+#
+# This raise only takes effect once auth.email.smtp is enabled; on the
+# built-in sender the cap holds regardless of what is written here. 100/hour
+# is comfortable for a 50-student cohort signing up the same evening and low
+# enough that a loop hitting the endpoint is contained.
+email_sent = 100
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.

@@ -28,15 +28,23 @@ export const requestOtp = actionClient
     const { error } = await supabase.auth.signInWithOtp({ email: parsedInput.email });
 
     if (error) {
-      // Two causes account for almost all of these, and neither is obvious
-      // from the raw message: the Email provider being off, and the project
-      // having no custom SMTP so the built-in sender is rate-limited to a
-      // handful of messages an hour.
-      throw new Error(
-        `Could not send the code: ${error.message}. ` +
-          `If this mentions rate limits, the project is still on Supabase's ` +
-          `built-in email sender — configure SMTP in the dashboard.`,
-      );
+      // The operational cause goes to the log, where whoever can fix it will
+      // look. It does not go to the student: "configure SMTP in the
+      // dashboard" is not a sentence anyone signing up can act on, and
+      // `over_email_send_rate_limit` is worse — it reads as an accusation.
+      console.error("[auth] otp send failed", error.status, error.code, error.message);
+
+      // Supabase's built-in sender allows about two auth emails an hour, so
+      // this is the failure a project without custom SMTP hits first and
+      // hits constantly. It is a quota, not the student doing anything wrong,
+      // and telling them to wait is the only true and useful thing to say.
+      if (error.status === 429 || /rate limit/i.test(error.message)) {
+        throw new Error(
+          "We have sent too many codes in the last hour. Wait a few minutes and try again — this is our limit, not yours.",
+        );
+      }
+
+      throw new Error("We could not send the code just now. Try again in a moment.");
     }
 
     return { sent: true, email: parsedInput.email };
