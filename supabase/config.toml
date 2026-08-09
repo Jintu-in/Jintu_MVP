@@ -264,17 +264,41 @@ otp_expiry = 3600
 # admin_email = "hello@jintu.in"
 # sender_name = "Jintu"
 
-# The six-digit code lives in this template and nowhere else. Supabase's stock
-# magic-link email contains a link and no `{{ .Token }}`, so without this the
-# sign-in form asks for a code that was never sent.
+# ── Auth emails ──────────────────────────────────────────────────────────────
+# Every template below carries `{{ .Token }}`. Supabase's stock templates carry
+# a link and no code, so a sign-in form that asks for six digits gets an email
+# that never contains any — the failure looks like a bug in the app and is a
+# missing variable in a template nobody thought to read.
+#
+# Which of these Supabase actually sends is not obvious, and getting it wrong
+# is how the first round of testing produced a "Confirm your email address"
+# email with a link in it:
+#
+#   * enable_confirmations = true  + address never seen  ->  confirmation
+#   * enable_confirmations = false + any address         ->  magic_link
+#
+# Both are customised, so the flow works either way and one fewer setting has
+# to be right for a student to get in.
+[auth.email.template.confirmation]
+subject = "Your Jintu sign-in code"
+content_path = "./supabase/templates/confirm-signup.html"
+
 [auth.email.template.magic_link]
 subject = "Your Jintu sign-in code"
 content_path = "./supabase/templates/magic-link.html"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# The address is the credential here, so changing it is closer to changing a
+# password than to editing a contact detail.
+[auth.email.template.email_change]
+subject = "Confirm your new Jintu email address"
+content_path = "./supabase/templates/email-change.html"
+
+# Deliberately left stock:
+#   * recovery — there are no passwords to recover
+#   * invite — nobody is invited; enrolment is created by ops after payment
+#   * reauthentication — only used by secure_password_change, which is off
+# A branded template for an email we never send is a file that goes stale
+# without anyone noticing.
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
