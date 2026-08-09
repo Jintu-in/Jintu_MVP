@@ -260,14 +260,28 @@ otp_expiry = 3600
 enable_signup = true
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = true
-# Template for sending OTP to users
+# The message body. Two things about it are not stylistic:
+#
+#   * TRAI requires the text to match a template registered on the DLT portal
+#     CHARACTER FOR CHARACTER, with variables in the registered positions. An
+#     edit here that is not mirrored there is not a worse message, it is an
+#     undelivered one — carriers reject on template mismatch.
+#   * "Do not share it with anyone" is the line that makes an OTP-relay scam
+#     harder. Keep it.
 template = "{{ .Code }} is your Jintu verification code. It expires in 10 minutes. Do not share it with anyone."
 # Controls the minimum amount of time that must pass before sending another sms otp.
 max_frequency = "5s"
 
-# Use pre-defined map of phone number to OTP for testing.
+# Fixed codes for fixed numbers, so the whole sign-in flow can be exercised
+# with no SMS provider, no DLT registration and no cost. This is how to test
+# today; it is not how to run a cohort.
+#
+# Left commented deliberately. `supabase config push` sends this file to the
+# linked project, and a test number on production is a permanent backdoor into
+# whichever account owns that number. Add one in the dashboard while testing,
+# take it out before anyone real signs up.
 # [auth.sms.test_otp]
-# 4152127777 = "123456"
+# 919876543210 = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]
@@ -286,13 +300,44 @@ max_frequency = "5s"
 # enabled = true
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
-# Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# ── The SMS provider ─────────────────────────────────────────────────────────
+# Supabase Auth does not send SMS. It owns the OTP — generating it, storing the
+# hash, expiring it, verifying it — and hands the message to a provider you
+# bring. With no provider configured, `signInWithOtp({ phone })` returns
+# "provider disabled" and no code is ever sent, which is the state this project
+# was in.
+#
+# Supported: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# Anything else — MSG91, Gupshup, Kaleyra, the cheap Indian aggregators — needs
+# the send_sms hook below instead.
+#
+# Before any of them delivers to an Indian number: TRAI DLT registration. A
+# registered entity with PAN and GST, a header (sender ID), and the template
+# above, each approved separately on the operator portals. It is paperwork and
+# waiting, not a switch, and no provider can skip it.
 [auth.sms.twilio]
 enabled = false
-account_sid = ""
-message_service_sid = ""
+# Both of these identify the account rather than authenticate it, so they are
+# not secrets — but they differ per environment, which is reason enough to
+# keep them out of a committed file.
+account_sid = "env(SUPABASE_AUTH_SMS_TWILIO_ACCOUNT_SID)"
+message_service_sid = "env(SUPABASE_AUTH_SMS_TWILIO_MESSAGE_SERVICE_SID)"
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
 auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+
+# The escape hatch, and the cheaper route once volume matters. Supabase calls
+# this hook instead of a built-in provider, so delivery becomes an edge
+# function we write and any aggregator will do. Supabase still owns the OTP;
+# the hook only carries the message.
+#
+# Worth reaching for when per-message cost starts mattering: the Indian
+# aggregators undercut Twilio's international routing by roughly an order of
+# magnitude. Not worth reaching for on day one, when the whole cohort is fifty
+# people and the DLT paperwork is the same either way.
+# [auth.hook.send_sms]
+# enabled = true
+# uri = "https://<project-ref>.supabase.co/functions/v1/send-sms"
+# secrets = "env(SUPABASE_AUTH_SMS_HOOK_SECRET)"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]

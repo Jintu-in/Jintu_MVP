@@ -20,12 +20,24 @@ export const requestOtp = actionClient
     const { error } = await supabase.auth.signInWithOtp({ phone: parsedInput.phone });
 
     if (error) {
-      // The most common cause by far is the Phone provider being switched off
-      // on the project, which reads as an opaque 422 otherwise.
+      // The operational cause goes to the log, where whoever can fix it will
+      // look. It does not go to the student: "enable an SMS provider in the
+      // Supabase dashboard" is not a sentence someone signing up can act on,
+      // and the raw provider errors are worse — Twilio's read as though the
+      // person mistyped their own number.
+      console.error("[auth] otp send failed", error.status, error.code, error.message);
+
+      // Supabase's own limit, not the carrier's. Distinguished because the
+      // remedy is "wait", and the student should not be told to check a number
+      // that was fine.
+      if (error.status === 429 || /rate limit/i.test(error.message)) {
+        throw new Error(
+          "We have sent too many codes in the last few minutes. Wait a moment and try again — this is our limit, not yours.",
+        );
+      }
+
       throw new Error(
-        `Could not send the code: ${error.message}. ` +
-          `If this says the provider is disabled, enable Phone auth and an SMS ` +
-          `provider in the Supabase dashboard.`,
+        "We could not send the code just now. Try again in a moment, and tell us if it keeps failing.",
       );
     }
 
