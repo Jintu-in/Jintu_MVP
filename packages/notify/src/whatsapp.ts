@@ -1,4 +1,4 @@
-import type { Notifier, SendResult } from "./types";
+import type { Notifier, SendResult } from "./types.ts";
 
 /**
  * WhatsApp Cloud API, for one-time codes.

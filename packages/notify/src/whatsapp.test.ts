@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createWhatsAppNotifier } from "./whatsapp";
+import { createWhatsAppNotifier } from "./whatsapp.ts";
 
 const config = {
   phoneNumberId: "1234567890",

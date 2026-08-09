@@ -9,7 +9,11 @@
     //
     // DOM, not @types/node: pulling in Node's types here would make
     // `node:crypto` resolve and quietly undo the point.
-    "lib": ["ES2023", "DOM"]
+    "lib": ["ES2023", "DOM"],
+    // Deno needs the extension in the specifier; TS rejects it by default.
+    // Safe here because the base config sets noEmit — nothing rewrites these
+    // paths, so what Deno reads is what is written.
+    "allowImportingTsExtensions": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

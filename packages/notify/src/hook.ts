@@ -1,5 +1,5 @@
-import type { Notifier } from "./types";
-import { verifyWebhook, type WebhookHeaders } from "./webhook";
+import type { Notifier } from "./types.ts";
+import { verifyWebhook, type WebhookHeaders } from "./webhook.ts";
 
 /**
  * The Supabase send-sms hook, as a function of its inputs.
