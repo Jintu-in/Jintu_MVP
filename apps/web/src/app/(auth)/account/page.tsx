@@ -59,7 +59,7 @@ export default async function AccountPage() {
   const noticeVersion = consents?.[0]?.notice_version ?? null;
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
+    <main className="mx-auto max-w-2xl px-5 py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-4">
         <h1 className="text-2xl font-semibold text-ink-900">
           {profile.full_name ?? "Your account"}
@@ -109,7 +109,10 @@ export default async function AccountPage() {
         </p>
       </section>
 
-      <section className="mt-10 rounded-card bg-ink-50 p-6" aria-labelledby="rights">
+      <section
+        className="mt-10 rounded-card border border-ink-100 bg-white p-6"
+        aria-labelledby="rights"
+      >
         <h2 id="rights" className="font-semibold text-ink-900">
           Your data
         </h2>
