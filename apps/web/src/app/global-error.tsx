@@ -45,6 +45,11 @@ export default function GlobalError({
             >
               Reload
             </button>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
+                the rule prevents a full page load on internal navigation, and
+                a full page load is the entire point here: this boundary is
+                reached when the app shell itself failed, so a client-side
+                transition would re-mount the thing that just crashed. */}
             <a
               href="/"
               className="flex h-12 items-center justify-center rounded-lg px-5 font-medium text-brand-700 hover:text-brand-800"
