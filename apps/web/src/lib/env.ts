@@ -99,6 +99,31 @@ export function getPublicEnv() {
 }
 
 /**
+ * Non-throwing view of the Supabase config, for the health endpoint.
+ *
+ * getPublicEnv throws, which is right for a page that cannot work without
+ * configuration and wrong for the one endpoint whose job is to report that
+ * configuration is missing. This lives here rather than in the route because
+ * the eslint rule confines process.env reads to this module — and it caught
+ * me putting them in the route, which is exactly what it is for.
+ *
+ * Returns presence and shape only. Never a value: the endpoint is public.
+ */
+export function getSupabaseEnvStatus() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  return {
+    urlSet: Boolean(url),
+    urlLooksLikeUrl: Boolean(url?.startsWith("https://") || url?.startsWith("http://127.0.0.1")),
+    publishableSet: Boolean(publishable),
+    anonSet: Boolean(anon),
+    configured: Boolean(url && (publishable || anon)),
+  };
+}
+
+/**
  * Observability config. Unlike Supabase, every one of these is optional and
  * absence is a supported state — Sentry and PostHog are simply off. Returning
  * undefined rather than throwing is what lets the app run locally, and in CI,

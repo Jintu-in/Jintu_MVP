@@ -32,6 +32,29 @@ that check is the last line of defence, not the first.
 Redeploy after adding them — environment variables are read at build and boot,
 not per request.
 
+## Diagnosing a broken deploy
+
+```bash
+curl -s https://<your-domain>/api/health
+```
+
+Reports which variables are present and whether the database is reachable —
+presence only, never values, so it is safe to hit from anywhere. Returns 503
+when something is wrong, so uptime monitoring notices without parsing a body.
+
+It deliberately does not report whether the secret key is set. That variable
+is server-only, and confirming it from an unauthenticated endpoint tells an
+attacker the service role is configured and worth hunting for.
+
+The three failures it distinguishes, which otherwise all present as a 500 with
+an opaque digest:
+
+| `checks` says | Means |
+|---|---|
+| `not set` | The variable is missing from this environment |
+| `is not a URL` | The project *ref* was pasted where the URL belongs |
+| `tables do not exist` | Env is fine; migrations have not been applied |
+
 ## Which pages need the database
 
 | Route | Needs Supabase | Rendering |
