@@ -60,6 +60,26 @@ waitlist form need Supabase, and fail with a named error if it is missing.
 SQL migrations in `supabase/migrations/` are the schema source of truth. No
 ORM — see ARCHITECTURE.md §1 for why Prisma and Drizzle are rejected.
 
+### Applying migrations to a hosted project
+
+```bash
+pnpm supabase login
+pnpm supabase link --project-ref <ref>
+pnpm db:push
+```
+
+**No Docker or CLI login?** Bundle the SQL and paste it into the dashboard:
+
+```bash
+pnpm db:bundle --seed     # writes supabase/.bundle/apply-all.sql (gitignored)
+```
+
+Supabase dashboard → SQL Editor → New query → paste → Run. Note that this
+records nothing in `supabase_migrations`, so a later `db push` will try to
+re-apply the same files; repair the history or reset once the CLI works.
+
+### Local stack
+
 ```bash
 pnpm db:start      # local Postgres via Docker, applies all migrations
 pnpm db:reset      # re-apply from scratch
