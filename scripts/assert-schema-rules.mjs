@@ -59,14 +59,51 @@ const rlsEnabled = new Set(
 );
 
 // ── Rule 2 — every table has at least one policy ─────────────────────────────
+// The policy NAME must be consumed explicitly rather than skipped over with a
+// lazy `.*?`. A name like "authors read grades on their own work" contains the
+// word "on", so a lazy match binds there and captures "their" as the table —
+// silently reporting a policied table as unprotected.
 const policied = new Set(
-  [...sql.matchAll(/create\s+policy\s+[^]*?\son\s+(?:public\.)?"?(\w+)"?/gi)].map((m) => m[1]),
+  [
+    ...sql.matchAll(
+      /create\s+policy\s+(?:"(?:[^"]|"")*"|[^\s"]+)\s+on\s+(?:public\.)?"?(\w+)"?/gi,
+    ),
+  ].map((m) => m[1]),
 );
 
+// Some tables are correctly unreachable from any client: cost ledgers, audit
+// logs, crawler output. RLS on with no policy denies everyone, and the service
+// role bypasses RLS, which is exactly right for those. The exemption has to be
+// declared in the schema rather than inferred, so it is visible in review and
+// cannot be acquired by forgetting to write a policy.
+const serviceRoleOnly = new Set(
+  [
+    ...sql.matchAll(
+      /comment\s+on\s+table\s+(?:public\.)?"?(\w+)"?\s+is\s+''/gi,
+    ),
+  ].map((m) => m[1]),
+);
+// Comments are blanked by strip(); re-read the raw text for the marker.
+const rawSql = files
+  .map((f) => readFileSync(path.join(MIGRATIONS, f), "utf8"))
+  .join("\n");
+for (const m of rawSql.matchAll(
+  /comment\s+on\s+table\s+(?:public\.)?"?(\w+)"?\s+is\s+'([^']*(?:''[^']*)*)'/gi,
+)) {
+  if (/service-role only/i.test(m[2] ?? "")) serviceRoleOnly.add(m[1]);
+  else serviceRoleOnly.delete(m[1]);
+}
+
 for (const t of tables) {
-  if (!rlsEnabled.has(t)) fail("rls-enabled", `table "${t}" never enables row level security`);
-  else if (!policied.has(t))
-    fail("rls-policy", `table "${t}" has RLS on but no policy — it is locked to everyone`);
+  if (!rlsEnabled.has(t)) {
+    fail("rls-enabled", `table "${t}" never enables row level security`);
+  } else if (!policied.has(t) && !serviceRoleOnly.has(t)) {
+    fail(
+      "rls-policy",
+      `table "${t}" has RLS on but no policy, so it is unreachable by every client. ` +
+        `If that is intended, say so in a table comment containing "service-role only".`,
+    );
+  }
 }
 
 // ── Rule 3 — Law 2: no third-party content columns ───────────────────────────
@@ -126,10 +163,13 @@ for (const m of sql.matchAll(/auth\.uid\s*\(\s*\)/gi)) {
 // ── Report ───────────────────────────────────────────────────────────────────
 console.log(`Checked ${files.length} migration(s), ${tables.length} table(s).\n`);
 for (const t of tables) {
-  const ok = rlsEnabled.has(t) && policied.has(t);
-  const policies = [...policied].filter((p) => p === t).length;
+  const hasPolicy = policied.has(t);
+  const exempt = serviceRoleOnly.has(t);
+  const ok = rlsEnabled.has(t) && (hasPolicy || exempt);
+  const label = ok ? (exempt && !hasPolicy ? "svc " : "ok  ") : "FAIL";
   console.log(
-    `  ${ok ? "ok  " : "FAIL"}  ${t.padEnd(20)} rls=${rlsEnabled.has(t) ? "on" : "OFF"}  policies=${policies ? "yes" : "none"}`,
+    `  ${label}  ${t.padEnd(20)} rls=${rlsEnabled.has(t) ? "on" : "OFF"}  ` +
+      `policies=${hasPolicy ? "yes" : exempt ? "none (service-role only)" : "none"}`,
   );
 }
 

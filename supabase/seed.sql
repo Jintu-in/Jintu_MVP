@@ -100,3 +100,55 @@ update public.paths
   where id = '22222222-2222-4222-8222-222222222222';
 
 commit;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Demo profile — LOCAL AND DEMO ONLY
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Deliberately fictional and deliberately outcome-free. docs/LEGAL.md §3.1
+-- allows publishing only `document_verified` outcomes with written consent on
+-- file, so a seeded "got an offer at X" row would be a fabricated record that
+-- looks exactly like a real one. There are no outcomes rows here, and there
+-- must not be. Readiness scores are computed data about work, not a claim
+-- about a person's employment.
+
+begin;
+
+insert into auth.users (id, phone)
+  values ('99999999-9999-4999-8999-000000000001', '+919000000001')
+  on conflict do nothing;
+
+insert into public.profiles (id, phone, full_name, is_adult_confirmed)
+  values ('99999999-9999-4999-8999-000000000001', '+919000000001', 'Demo Student', true)
+  on conflict do nothing;
+
+insert into public.cohorts (id, path_id, mode, starts_on, ends_on, capacity, status)
+  values ('aaaaaaaa-aaaa-4aaa-8aaa-000000000001',
+          '22222222-2222-4222-8222-222222222222',
+          'public', date '2026-09-01', date '2026-10-13', 20, 'open')
+  on conflict do nothing;
+
+insert into public.enrollments (id, cohort_id, user_id, status, completed_at)
+  values ('bbbbbbbb-bbbb-4bbb-8bbb-000000000001',
+          'aaaaaaaa-aaaa-4aaa-8aaa-000000000001',
+          '99999999-9999-4999-8999-000000000001',
+          'completed', now())
+  on conflict do nothing;
+
+insert into public.readiness_scores (enrollment_id, overall, breakdown)
+  values ('bbbbbbbb-bbbb-4bbb-8bbb-000000000001', 78, '{
+    "sql": 84,
+    "data_cleaning": 71,
+    "analysis": 80,
+    "communication": 74,
+    "peer_review_participation": 100
+  }'::jsonb)
+  on conflict do nothing;
+
+insert into public.public_profiles (slug, enrollment_id, visibility, published_at, headline)
+  values ('demo-student',
+          'bbbbbbbb-bbbb-4bbb-8bbb-000000000001',
+          'public', now(),
+          'Finished the six-week data analyst sprint. Six artifacts, all graded against published rubrics.')
+  on conflict do nothing;
+
+commit;
