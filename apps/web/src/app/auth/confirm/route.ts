@@ -36,6 +36,9 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient();
+  // The type is in the link, because the template that wrote it knew which
+  // email it was. That is the one advantage this route has over the code
+  // path, which has to try both — see verifyOtp in actions/auth.ts.
   const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
 
   if (error) {

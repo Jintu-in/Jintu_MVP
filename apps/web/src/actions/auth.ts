@@ -55,11 +55,31 @@ export const verifyOtp = actionClient
   .inputSchema(otpVerifyInput)
   .action(async ({ parsedInput }) => {
     const supabase = await createClient();
-    const { error } = await supabase.auth.verifyOtp({
-      email: parsedInput.email,
-      token: parsedInput.token,
-      type: "email",
-    });
+
+    // Which type a code carries is decided by the project, not by this app.
+    // With email confirmations on, an address Supabase has never seen gets a
+    // signup confirmation and its code verifies as "signup"; a returning
+    // address, or any address with confirmations off, gets a magic link and
+    // verifies as "email". The app cannot know which without first knowing
+    // whether the account existed — which is exactly the thing it is trying
+    // to find out.
+    //
+    // So try both. The alternative is a flow that works only while one
+    // dashboard toggle is in one position, and silently rejects every code
+    // the day somebody flips it.
+    let error = null;
+    for (const type of ["email", "signup"] as const) {
+      const result = await supabase.auth.verifyOtp({
+        email: parsedInput.email,
+        token: parsedInput.token,
+        type,
+      });
+      if (!result.error) {
+        error = null;
+        break;
+      }
+      error = result.error;
+    }
 
     if (error) {
       // Deliberately the same message for a wrong code and an expired one:
