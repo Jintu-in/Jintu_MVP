@@ -7,3 +7,14 @@ export {
   // source that Next transpiles. A ".js" specifier type-checks but Turbopack
   // will not map it back to the .ts file.
 } from "./waitlist";
+
+export {
+  OPTIONAL_PURPOSES,
+  consentToggleInput,
+  onboardingInput,
+  otpRequestInput,
+  otpVerifyInput,
+  type OnboardingInput,
+  type OptionalPurpose,
+  safeNextPath,
+} from "./auth";
