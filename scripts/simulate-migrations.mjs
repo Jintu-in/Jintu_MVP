@@ -43,6 +43,43 @@ do $do$ begin
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
   if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role; end if;
 end $do$;
+
+-- Storage. Only the three objects the migrations touch: the bucket registry,
+-- the object table policies attach to, and foldername(), which is how a path
+-- convention becomes an ownership check. Column set matches the real
+-- storage.buckets closely enough for the insert to be meaningful — if a
+-- migration references a column that does not exist here, that is a finding,
+-- not a shim to widen.
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id                 text primary key,
+  name               text not null,
+  public             boolean not null default false,
+  file_size_limit    bigint,
+  allowed_mime_types text[],
+  created_at         timestamptz not null default now()
+);
+create table if not exists storage.objects (
+  id         uuid primary key default gen_random_uuid(),
+  bucket_id  text references storage.buckets (id),
+  name       text,
+  owner      uuid,
+  created_at timestamptz not null default now()
+);
+alter table storage.objects enable row level security;
+-- The real implementation returns the path minus the filename, so the first
+-- element is the top folder. Matching that exactly matters: a shim that
+-- returned every segment would make [1] the same value either way and the
+-- ownership assertions below would pass against a broken policy.
+create or replace function storage.foldername(name text) returns text[]
+  language sql immutable
+  as $fn$
+    select case
+      when array_length(string_to_array(name, '/'), 1) > 1
+        then (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1]
+      else array[]::text[]
+    end
+  $fn$;
 `;
 
 const PATH_ID = "22222222-2222-4222-8222-222222222222";
@@ -355,6 +392,87 @@ console.log("\n── data isolation between students ────────�
   // Published curriculum is meant to be readable by everyone.
   const tracks = await asUser(USER_1, "select slug from public.tracks");
   record(tracks.rows.length > 0, "published curriculum is still readable while signed in");
+
+  // ── submission storage ────────────────────────────────────────────────
+  // The bucket is private and the only thing standing between one student's
+  // uploaded dataset and another's is a path convention plus two policies.
+  // That is exactly the kind of claim that needs firing rather than reading.
+  await db.exec(`
+    grant usage on schema storage to authenticated;
+    grant select, insert on storage.objects to authenticated;
+  `);
+
+  const bucket = await db.query(
+    `select public, file_size_limit from storage.buckets where id = 'submissions'`,
+  );
+  record(
+    bucket.rows[0]?.public === false,
+    "the submissions bucket exists and is private",
+    `public=${bucket.rows[0]?.public}`,
+  );
+
+  const asUserWrite = async (uid, sql) => {
+    await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}';`);
+    try {
+      await db.query(sql);
+      return null;
+    } catch (e) {
+      return e.message.split("\n")[0];
+    } finally {
+      await db.exec("rollback;");
+    }
+  };
+
+  const ownFolder = await asUserWrite(
+    USER_1,
+    `insert into storage.objects (bucket_id, name)
+     values ('submissions', '${USER_1}/${ASSIGN_ID}/cleaned.csv')`,
+  );
+  record(ownFolder === null, "an enrolled student may upload into their own folder", ownFolder);
+
+  const otherFolder = await asUserWrite(
+    USER_1,
+    `insert into storage.objects (bucket_id, name)
+     values ('submissions', '${USER_2}/${ASSIGN_ID}/cleaned.csv')`,
+  );
+  record(
+    otherFolder !== null,
+    "a student cannot upload into another student's folder",
+    "the insert succeeded",
+  );
+
+  // Not enrolled means not uploading — signing up costs one SMS, and without
+  // this the bucket is free storage for anyone who can receive it.
+  const notEnrolled = "55555555-5555-4555-8555-000000000003";
+  await db.exec(`
+    insert into auth.users (id, phone) values ('${notEnrolled}', '+919876543213');
+    insert into public.profiles (id, phone, is_adult_confirmed)
+      values ('${notEnrolled}', '+919876543213', true);
+  `);
+  const unenrolled = await asUserWrite(
+    notEnrolled,
+    `insert into storage.objects (bucket_id, name)
+     values ('submissions', '${notEnrolled}/x/cleaned.csv')`,
+  );
+  record(
+    unenrolled !== null,
+    "an account with no active enrolment cannot upload at all",
+    "the insert succeeded",
+  );
+
+  await db.exec(`
+    insert into storage.objects (bucket_id, name)
+      values ('submissions', '${USER_2}/${ASSIGN_ID}/theirs.csv');
+  `);
+  const readTheirs = await asUser(
+    USER_1,
+    `select name from storage.objects where bucket_id = 'submissions'`,
+  );
+  record(
+    readTheirs.rows.every((r) => String(r.name).startsWith(USER_1)),
+    "a student cannot read another student's uploaded file",
+    readTheirs.rows.map((r) => r.name).join(", "),
+  );
 }
 
 console.log("\n── RLS ─────────────────────────────────────────────────────");
