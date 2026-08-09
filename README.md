@@ -42,10 +42,43 @@ docs/             # ARCHITECTURE.md, LEGAL.md, decisions/
 
 The rest of the tree is built out phase by phase; see ARCHITECTURE.md §6.
 
+## Environment
+
+```bash
+cp apps/web/.env.example apps/web/.env.local   # then fill in the two Supabase values
+```
+
+It goes in `apps/web`, not the repo root — Next loads env files from the app
+directory. The root `.env.example` is the full catalogue for the whole system,
+including variables only edge functions will use.
+
+`/` and `/privacy` render without any of this. `/learn/[track]` and the
+waitlist form need Supabase, and fail with a named error if it is missing.
+
 ## Database
 
 SQL migrations in `supabase/migrations/` are the schema source of truth. No
 ORM — see ARCHITECTURE.md §1 for why Prisma and Drizzle are rejected.
+
+### Applying migrations to a hosted project
+
+```bash
+pnpm supabase login
+pnpm supabase link --project-ref <ref>
+pnpm db:push
+```
+
+**No Docker or CLI login?** Bundle the SQL and paste it into the dashboard:
+
+```bash
+pnpm db:bundle --seed     # writes supabase/.bundle/apply-all.sql (gitignored)
+```
+
+Supabase dashboard → SQL Editor → New query → paste → Run. Note that this
+records nothing in `supabase_migrations`, so a later `db push` will try to
+re-apply the same files; repair the history or reset once the CLI works.
+
+### Local stack
 
 ```bash
 pnpm db:start      # local Postgres via Docker, applies all migrations

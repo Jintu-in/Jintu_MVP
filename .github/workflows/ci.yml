@@ -50,6 +50,10 @@ jobs:
       - name: Embed rules
         run: pnpm embeds
 
+      # A committed .env.example must never contain a real credential.
+      - name: Env templates
+        run: pnpm env:templates
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest
