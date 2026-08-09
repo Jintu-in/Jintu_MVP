@@ -10,7 +10,7 @@
  * both to one copy in the store.
  */
 import sharp from "sharp";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -126,3 +126,67 @@ await emit(`${WEB}/public/icons/512.png`, 512, 0.92, true);
 await emit(`${WEB}/public/icons/maskable-512.png`, 512, 0.62, true);
 // In-page logo keeps its alpha so it can sit on any surface.
 await emit(`${WEB}/public/logo.png`, 512, 1.0, false);
+
+/**
+ * favicon.ico, because browsers request /favicon.ico regardless of what
+ * <link rel="icon"> says — src/app/icon.png alone leaves a 404 in the network
+ * tab of every page load, and some crawlers and feed readers only look there.
+ *
+ * ICO is a container: a 6-byte directory, one 16-byte entry per image, then
+ * the payloads. Since Vista those payloads may be PNG rather than BMP, which
+ * is why this can wrap sharp's output directly instead of encoding BMP.
+ */
+async function emitIco(file, sizes) {
+  const images = [];
+  for (const size of sizes) {
+    const inner = Math.round(size * 0.92);
+    const pad = Math.round((size - inner) / 2);
+    const mark = await sharp(square)
+      .resize(inner, inner, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .toBuffer();
+    images.push(
+      await sharp({
+        create: { width: size, height: size, channels: 4, background: WHITE },
+      })
+        .composite([{ input: mark, top: pad, left: pad }])
+        // Truecolour RGBA, NOT palette. ICO decoders — Turbopack's included —
+        // reject indexed-colour PNG payloads outright ("The PNG is not in RGBA
+        // format"). At 16-48px the palette saving is a few hundred bytes and
+        // not worth an unloadable icon.
+        .ensureAlpha()
+        .png({ compressionLevel: 9, effort: 10, palette: false })
+        .toBuffer(),
+    );
+  }
+
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // 1 = icon
+  header.writeUInt16LE(images.length, 4);
+
+  let offset = 6 + images.length * 16;
+  const entries = images.map((png, i) => {
+    const size = sizes[i];
+    const e = Buffer.alloc(16);
+    // 0 means 256 in this field; none of our sizes hit that, but be explicit.
+    e.writeUInt8(size >= 256 ? 0 : size, 0);
+    e.writeUInt8(size >= 256 ? 0 : size, 1);
+    e.writeUInt8(0, 2); // palette size, 0 for PNG payloads
+    e.writeUInt8(0, 3); // reserved
+    e.writeUInt16LE(1, 4); // colour planes
+    e.writeUInt16LE(32, 6); // bits per pixel
+    e.writeUInt32LE(png.length, 8);
+    e.writeUInt32LE(offset, 12);
+    offset += png.length;
+    return e;
+  });
+
+  await mkdir(path.dirname(file), { recursive: true });
+  const out = Buffer.concat([header, ...entries, ...images]);
+  await writeFile(file, out);
+  console.log(
+    `  ${path.relative(WEB, file).replace(/\\/g, "/")}  ${sizes.join("+")}px  ${out.length}B`,
+  );
+}
+
+await emitIco(`${WEB}/src/app/favicon.ico`, [16, 32, 48]);
