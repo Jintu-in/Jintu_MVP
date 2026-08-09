@@ -53,9 +53,17 @@
    * and ambers, which sit at ~3.2:1 and fail as text: a student misreading
    * "at risk" is a product failure, not a styling one.
    */
-  --color-ok-600: #15803d; /*  5.02:1 */
-  --color-warn-600: #a35708; /*  5.35:1 */
-  --color-risk-600: #c31c1c; /*  5.99:1 */
+  --color-ok-600: #15803d; /*  5.02:1 — fills, dots, borders */
+  --color-warn-600: #a35708; /*  5.35:1 — fills, dots, borders */
+  --color-risk-600: #c31c1c; /*  5.99:1 — error text on the page ground */
+
+  /* The 600s clear AA on the page ground and then fail on their OWN 10% tint,
+   * which is exactly where a status chip puts them: the tint darkens the
+   * surface just enough. ok-600 on bg-ok-600/10 is 4.10:1, warn-600 is 4.37:1.
+   * These are the steps for text sitting on a tint of the same hue. */
+  --color-ok-800: #0f5c2c; /*  7.58:1 on ground, 6.64:1 on ok-600/10 */
+  --color-warn-800: #753f06; /*  7.94:1 on ground, 6.95:1 on warn-600/10 */
+  --color-risk-800: #8c1414; /*  8.81:1 on ground, 7.47:1 on risk-600/10 */
 
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
