@@ -178,9 +178,7 @@ function Status({ tone, children }: { tone: "done" | "waiting"; children: React.
       className={cn(
         "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5",
         "text-xs font-medium",
-        // 700 on a /10 tint, not 600: the tint lifts the background enough
-        // that the 600 steps drop under AA. See the note in the preset.
-        tone === "done" ? "bg-ok-600/10 text-ok-700" : "bg-warn-600/10 text-warn-700",
+        tone === "done" ? "bg-ok-600/10 text-ok-800" : "bg-warn-600/10 text-warn-800",
       )}
     >
       <span
