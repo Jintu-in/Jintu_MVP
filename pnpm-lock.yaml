@@ -149,6 +149,24 @@ importers:
 
   packages/db: {}
 
+  packages/grading:
+    devDependencies:
+      '@electric-sql/pglite':
+        specifier: ^0.5.4
+        version: 0.5.4
+      '@jintu/config':
+        specifier: workspace:*
+        version: link:../config
+      eslint:
+        specifier: ^10.8.1
+        version: 10.8.1(jiti@2.7.0)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.7
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
+
 packages:
 
   '@alloc/quick-lru@5.2.0':
