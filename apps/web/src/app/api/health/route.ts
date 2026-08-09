@@ -48,19 +48,52 @@ export async function GET() {
         : "neither is set — note the NEXT_PUBLIC_ prefix; a bare SUPABASE_PUBLISHABLE_KEY is invisible to the browser and to the build",
   });
 
-  // Only worth trying if there is something to try with.
+  /**
+   * One representative table per migration, not just the first one.
+   *
+   * The earlier version probed `tracks` alone and reported a healthy database
+   * while the deployment was two migrations behind — /p/[slug] was returning
+   * 500 and this endpoint said ok. A health check that goes green on a
+   * half-applied schema is worse than none, because it is the thing you check
+   * before concluding the problem is elsewhere.
+   */
+  const EXPECTED = [
+    { table: "profiles", migration: "init_identity" },
+    { table: "waitlist_signups", migration: "waitlist" },
+    { table: "tracks", migration: "curriculum" },
+    { table: "public_profiles", migration: "sprint_loop" },
+  ] as const;
+
   if (env.configured) {
     try {
       const supabase = createPublicClient();
-      const { error } = await supabase.from("tracks").select("slug").limit(1);
+
+      // A real GET, not { head: true }. A HEAD response has no body, so
+      // PostgREST's PGRST205 code never reaches the client and a missing
+      // table comes back looking like an empty one — which is how the first
+      // version of this reported four healthy tables while three of them did
+      // not exist. `limit(0)` keeps it cheap and reads nobody's data.
+      const results = await Promise.all(
+        EXPECTED.map(async (e) => {
+          const { error } = await supabase.from(e.table).select("*").limit(0);
+          const absent = error?.code === "PGRST205" || error?.code === "42P01";
+          return { ...e, absent, error: absent ? null : (error ?? null) };
+        }),
+      );
+
+      const missing = results.filter((r) => r.absent);
+      const failed = results.filter((r) => r.error);
+
       checks.push({
         name: "database",
-        ok: !error,
-        detail: error
-          ? error.code === "PGRST205" || error.code === "42P01"
-            ? "reachable, but the tables do not exist — migrations have not been applied"
-            : `query failed: ${error.code ?? "?"} ${error.message}`
-          : "reachable, curriculum readable by anon",
+        ok: missing.length === 0 && failed.length === 0,
+        detail: missing.length
+          ? `reachable, but ${missing.length} of ${EXPECTED.length} expected tables are absent — ` +
+            `the ${[...new Set(missing.map((m) => m.migration))].join(", ")} migration(s) ` +
+            `have not been applied to this project`
+          : failed.length
+            ? `query failed: ${failed[0]?.error?.code ?? "?"} ${failed[0]?.error?.message ?? ""}`
+            : `reachable, all ${EXPECTED.length} expected tables present`,
       });
     } catch (e) {
       checks.push({
