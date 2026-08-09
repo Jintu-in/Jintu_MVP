@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmissionForm } from "@/components/submission-form";
+import { countPendingReviews } from "@/lib/review";
 import { getMySprint, type SprintAssignment, type SprintWeek } from "@/lib/sprint";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
     .maybeSingle();
   if (!profile) redirect("/onboarding");
 
-  const sprint = await getMySprint();
+  const [sprint, pendingReviews] = await Promise.all([getMySprint(), countPendingReviews()]);
 
   // Not enrolled is a normal state, not an error: in the concierge phase ops
   // creates enrolments by hand after payment clears.
@@ -96,6 +97,27 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Reviewing is the one part of the week with a deadline that is not the
+          student's own work, and it is 20% of their readiness. It gets a row
+          of its own rather than a line inside a week, because it is allocated
+          across weeks and belongs to none of them. */}
+      {pendingReviews > 0 ? (
+        <Link
+          href="/review"
+          className="group mt-4 flex items-center justify-between gap-4 rounded-card border border-warn-600/20 bg-warn-600/10 p-4 hover:border-warn-600/40"
+        >
+          <p className="text-pretty text-ink-800">
+            <span className="font-medium">
+              {pendingReviews} review{pendingReviews === 1 ? "" : "s"} to write
+            </span>{" "}
+            — someone in your cohort is waiting to hear what you thought.
+          </p>
+          <span aria-hidden className="shrink-0 text-brand-700 group-hover:text-brand-800">
+            →
+          </span>
+        </Link>
+      ) : null}
+
       <ol className="mt-8 space-y-4">
         {sprint.weeks.map((week) => (
           <Week key={week.moduleId} week={week} />
@@ -120,7 +142,9 @@ function Week({ week }: { week: SprintWeek }) {
             Week {String(week.weekNo).padStart(2, "0")}
           </p>
           <h2 id={headingId} className="mt-0.5 text-lg font-semibold text-pretty text-ink-900">
-            {week.title}
+            <Link href={`/week/${week.weekNo}`} className="hover:text-brand-800">
+              {week.title}
+            </Link>
           </h2>
         </div>
         {week.assignments.length > 0 ? (
@@ -208,9 +232,12 @@ function Assignment({ assignment }: { assignment: SprintAssignment }) {
               " · waiting to be graded"
             )}
           </p>
-          {submission.feedback ? (
-            <p className="mt-2 text-pretty text-sm text-ink-700">{submission.feedback}</p>
-          ) : null}
+          <Link
+            href={`/feedback/${submission.id}`}
+            className="mt-2 inline-flex text-sm font-medium text-brand-700 hover:text-brand-800"
+          >
+            {submission.total !== null ? "See how it was marked" : "See its status"} →
+          </Link>
         </div>
       ) : assignment.kind === "sql" || assignment.kind === "artifact_link" ? (
         <SubmissionForm assignmentId={assignment.id} kind={assignment.kind} />

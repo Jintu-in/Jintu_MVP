@@ -86,13 +86,54 @@ insert into public.rubrics (id, name, criteria, max_score) values
     7
   );
 
-insert into public.assignments (module_id, kind, spec, rubric_id, weight) values
-  ('33333333-3333-4333-8333-000000000001', 'sql',
-   '{"prompt": "Return the ten customers with the highest lifetime rental revenue.", "dataset": "pagila"}'::jsonb,
+insert into public.assignments (id, module_id, kind, spec, rubric_id, weight) values
+  ('55555555-5555-4555-8555-100000000001',
+   '33333333-3333-4333-8333-000000000001', 'sql',
+   '{"prompt": "Return the three customers with the highest lifetime rental revenue, highest first, as name and revenue."}'::jsonb,
    '44444444-4444-4444-8444-000000000001', 1),
-  ('33333333-3333-4333-8333-000000000004', 'artifact_link',
+  ('55555555-5555-4555-8555-100000000002',
+   '33333333-3333-4333-8333-000000000004', 'artifact_link',
    '{"prompt": "One page: what you found, how confident you are, and what would change your mind."}'::jsonb,
    '44444444-4444-4444-8444-000000000002', 2);
+
+-- The answer key. Separate table because `assignments` above is anon-readable
+-- and this is the answer — see the comment on the table in
+-- 20260809050000_weekly_loop.sql.
+--
+-- Dollar-quoted so the fixture can contain apostrophes without every string in
+-- it being doubled. `reference_sql` is not decoration: the migration simulator
+-- runs it against `setup` and fails if the result is not `expected`, which is
+-- the only thing standing between a mistyped reference answer and a cohort of
+-- correct submissions all marked wrong.
+insert into public.assignment_answer_keys (assignment_id, setup, reference_sql, expected, order_matters)
+values (
+  '55555555-5555-4555-8555-100000000001',
+  $setup$
+    create table customers (id int primary key, name text, city text);
+    create table rentals (id int primary key, customer_id int references customers (id), amount numeric);
+    insert into customers values (1,'Asha','Chennai'),(2,'Ravi','Pune'),(3,'Meera','Kochi'),(4,'Dev','Indore');
+    insert into rentals values (1,1,120.00),(2,1,80.00),(3,2,300.00),(4,3,50.00),(5,3,25.50),(6,4,410.00),(7,2,15.00);
+  $setup$,
+  $ref$
+    select c.name, sum(r.amount) as revenue
+    from customers c
+    join rentals r on r.customer_id = c.id
+    group by c.name
+    order by revenue desc
+    limit 3
+  $ref$,
+  $json$
+  {
+    "columns": ["name", "revenue"],
+    "rows": [
+      { "name": "Dev",  "revenue": 410 },
+      { "name": "Ravi", "revenue": 315 },
+      { "name": "Asha", "revenue": 200 }
+    ]
+  }
+  $json$::jsonb,
+  true
+);
 
 -- Publish last. Everything above is now frozen.
 update public.paths

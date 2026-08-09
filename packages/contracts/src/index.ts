@@ -20,6 +20,14 @@ export {
 } from "./auth";
 
 export {
+  peerReviewInput,
+  queryResult,
+  sqlAnswerKey,
+  type PeerReviewInput,
+  type SqlAnswerKey,
+} from "./grading";
+
+export {
   URL_REJECTION_MESSAGE,
   artifactSubmissionInput,
   checkArtifactUrl,

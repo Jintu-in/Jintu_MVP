@@ -1,21 +1,30 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { submissionInput } from "@jintu/contracts";
+import { gradeSubmission } from "@/lib/grading/grade";
 import { actionClient } from "@/lib/safe-action";
 import { createClient } from "@/lib/supabase/server";
 
 const UNIQUE_VIOLATION = "23505";
 
 /**
- * Records a submission.
+ * Records a submission, then hands it to the grader.
  *
- * Grading is NOT done here. Deterministic SQL grading needs a sandboxed
- * database with the assignment's dataset, which is the containerised runner
- * in ARCHITECTURE.md §4 — a queue consumer, not a request handler. Doing it
- * inline would put an untrusted query on the critical path of a form POST
- * and hold a web worker open for the length of a student's cartesian join.
- * The row lands as `submitted`; the queue moves it on.
+ * Grading is not on the critical path of the form POST. An untrusted query
+ * there would hold the request open for the length of a student's cartesian
+ * join, so it runs in `after()` — the response is already sent — and the
+ * query itself runs in a separate process that we kill on a deadline
+ * (lib/grading/sandbox.ts).
+ *
+ * `after()` is a stand-in for the queue, not a replacement for it. It is
+ * bounded by the lifetime of the serverless invocation, so a grading that
+ * outlives it is simply lost and the submission stays `submitted`. That is
+ * the honest limit of this phase: ARCHITECTURE.md §4 puts pgmq and the
+ * `grade-submission` edge function in Phase 2, and lib/grading/grade.ts is
+ * written as a queue consumer so that landing it there is a change of
+ * trigger.
  */
 export const submitAssignment = actionClient
   .inputSchema(submissionInput)
@@ -65,12 +74,16 @@ export const submitAssignment = actionClient
         ? { sql: parsedInput.sql }
         : { url: parsedInput.url, note: parsedInput.note ?? null };
 
-    const { error } = await supabase.from("submissions").insert({
-      enrollment_id: enrolment.id,
-      assignment_id: parsedInput.assignmentId,
-      week_no: weekNo,
-      payload,
-    });
+    const { data: inserted, error } = await supabase
+      .from("submissions")
+      .insert({
+        enrollment_id: enrolment.id,
+        assignment_id: parsedInput.assignmentId,
+        week_no: weekNo,
+        payload,
+      })
+      .select("id")
+      .maybeSingle();
 
     if (error) {
       if (error.code === UNIQUE_VIOLATION) {
@@ -82,6 +95,11 @@ export const submitAssignment = actionClient
       }
       throw new Error(`Could not save your submission: ${error.message}`);
     }
+
+    // The insert is subject to RLS and has no select policy problem — the
+    // author may read their own submissions — but a returned row is still not
+    // guaranteed, and grading is not worth failing a saved submission over.
+    if (inserted?.id) after(() => gradeSubmission(inserted.id));
 
     revalidatePath("/dashboard");
     return { submitted: true, weekNo };
