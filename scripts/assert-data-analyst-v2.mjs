@@ -107,9 +107,32 @@ const sqlSpecs = await db.query(`
   where t.slug = 'data-analyst-fresher' and p.version = 2 and a.kind = 'sql'`);
 check(sqlSpecs.rows.length === 2, `two auto-graded SQL assignments (${sqlSpecs.rows.length})`);
 check(
-  sqlSpecs.rows.every((row) => row.spec?.expected?.rows?.length > 0 && typeof row.spec?.orderMatters === "boolean"),
-  "every SQL assignment carries the expected result the grader needs",
+  sqlSpecs.rows.every((row) => !("expected" in (row.spec ?? {})) && !("orderMatters" in (row.spec ?? {}))),
+  "no SQL assignment publishes its answer in the public spec",
 );
+
+// The bug this replaced: expected rows were put in assignments.spec, which
+// anon reads through the public curriculum. The answer key has its own
+// service-role-only table precisely because assignments is public.
+const keys = await db.query(`
+  select k.setup, k.expected, k.order_matters
+  from public.assignment_answer_keys k
+  join public.assignments a on a.id = k.assignment_id
+  join public.modules m on m.id = a.module_id
+  join public.paths p on p.id = m.path_id
+  join public.tracks t on t.id = p.track_id
+  where t.slug = 'data-analyst-fresher' and p.version = 2`);
+check(keys.rows.length === 2, `both SQL assignments have an answer key (${keys.rows.length})`);
+check(
+  keys.rows.every((r) => (r.expected?.rows?.length ?? 0) > 0 && (r.setup ?? "").includes("create table")),
+  "each key carries a fixture and a non-empty expected result",
+);
+
+await db.exec("grant usage on schema public to anon; grant select on all tables in schema public to anon;");
+await db.exec("begin; set local role anon;");
+const leaked = await one("select count(*)::int n from public.assignment_answer_keys");
+await db.exec("rollback;");
+check(leaked.n === 0, `anon cannot read answer keys (${leaked.n} visible)`);
 
 console.log("\n── v1 must be untouched ────────────────────────────────────");
 const after1 = await one(`
