@@ -4,11 +4,11 @@ import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
 
 const DESCRIPTION =
-  "Six weeks. Six artifacts. One proof-of-readiness profile. A cohort-based placement sprint with a free, public curriculum.";
+  "Type what you want to learn. Free curricula, graded artifacts, and a profile that shows what you can actually do.";
 
 export const metadata: Metadata = {
   title: {
-    default: "Jintu — Placement Sprints",
+    default: "Jintu — learn anything, then prove it",
     template: "%s · Jintu",
   },
   description: DESCRIPTION,
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     siteName: "Jintu",
     locale: "en_IN",
     url: "/",
-    title: "Jintu — Placement Sprints",
+    title: "Jintu — learn anything, then prove it",
     description: DESCRIPTION,
   },
   twitter: {
     // Not "summary". That renders a ~120px thumbnail beside the text; the
     // generated image below is 1200×630 and is the whole point of the link.
     card: "summary_large_image",
-    title: "Jintu — Placement Sprints",
+    title: "Jintu — learn anything, then prove it",
     description: DESCRIPTION,
   },
 };

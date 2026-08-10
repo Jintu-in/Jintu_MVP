@@ -59,12 +59,11 @@ export default async function MarketingLayout({
             </span>
           </Link>
 
-          {/* "Curriculum", not "Free curriculum": three links plus the wordmark
-              have to fit a 360px viewport without wrapping. The word free does
-              its work in the hero and the footer, where there is room. */}
+          {/* "Tracks", not "Curriculum": there is more than one now, and three links
+              plus the wordmark have to fit a 360px viewport without wrapping. */}
           <nav className="ml-auto flex items-center gap-4 text-sm">
             <Link href="/learn" className="font-medium text-ink-600 hover:text-ink-900">
-              Curriculum
+              Tracks
             </Link>
             <Link href="/pricing" className="font-medium text-ink-600 hover:text-ink-900">
               Pricing
@@ -122,9 +121,6 @@ export default async function MarketingLayout({
 
           {/* ink-500, not ink-400: this is a legal notice and ink-400 is 3.39:1 */}
           <p className="text-sm text-ink-500">Jintu · Made in India</p>
-          <p className="text-sm text-ink-500">
-            Open to applicants aged 18 and over.
-          </p>
         </div>
       </footer>
     </div>
