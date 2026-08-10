@@ -162,7 +162,7 @@ export default async function MyTracksPage() {
           <Empty
             body="You have not asked for anything yet. If the track you want does not exist, say so on the home page and a person will write it."
             href="/"
-            cta="Ask for a course"
+            cta="Ask for a track"
           />
         )}
       </Section>

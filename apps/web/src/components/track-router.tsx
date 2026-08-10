@@ -244,7 +244,7 @@ function SprintResult({ track }: { track: RouterTrack }) {
           href={`/learn/${track.slug}`}
           className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
         >
-          Read the curriculum — free
+          Read the track — free
         </Link>
         <a
           href="#waitlist"
@@ -343,7 +343,7 @@ function UnbuiltResult({
           disabled={pending}
           className="flex h-11 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
         >
-          {pending ? "Asking…" : signedIn ? "Ask for this course" : "Sign in and ask for this"}
+          {pending ? "Asking…" : signedIn ? "Ask for this track" : "Sign in and ask for this"}
         </button>
         <Link
           href="/learn"

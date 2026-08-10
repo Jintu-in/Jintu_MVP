@@ -36,6 +36,15 @@ export default async function MarketingLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
+      {/* First focusable thing on the page. Invisible until keyboard focus,
+          then a real button — a keyboard or screen-reader user should not have
+          to walk the whole header to reach the content. */}
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-lg focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
       {/* Sticky, because the curriculum page is long and the sign-in and
           curriculum links are the two things a visitor leaves this page for.
           h-16 keeps both tap targets at 44px with room around them. */}
@@ -99,7 +108,7 @@ export default async function MarketingLayout({
         </div>
       </header>
 
-      <div className="flex-1">{children}</div>
+      <div id="content" className="flex-1">{children}</div>
 
       <footer className="border-t border-ink-100 bg-white">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-5 py-10 text-center">
@@ -109,10 +118,19 @@ export default async function MarketingLayout({
 
           <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/learn" className="text-ink-600 hover:text-brand-800">
-              Free curriculum
+              Tracks
             </Link>
             <Link href="/pricing" className="text-ink-600 hover:text-brand-800">
               Pricing
+            </Link>
+            <Link href="/terms" className="text-ink-600 hover:text-brand-800">
+              Terms
+            </Link>
+            <Link href="/refunds" className="text-ink-600 hover:text-brand-800">
+              Refunds
+            </Link>
+            <Link href="/contact" className="text-ink-600 hover:text-brand-800">
+              Contact
             </Link>
             <Link href="/privacy" className="text-ink-600 hover:text-brand-800">
               Privacy notice
