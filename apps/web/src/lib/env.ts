@@ -162,3 +162,50 @@ export function getObservabilityEnv() {
     environment: process.env.NEXT_PUBLIC_VERCEL_ENV || "development",
   };
 }
+
+/**
+ * The origin this deployment actually answers on.
+ *
+ * Everything canonical and social resolves against this: `<link rel=canonical>`,
+ * `og:url`, and the absolute URLs Next builds for generated OG images.
+ *
+ * It used to be `new URL("https://jintu.in")`, hard-coded in the root layout,
+ * and jintu.in does not resolve — verified, the connection fails. Every page
+ * was therefore telling Google that the real version of itself lived at a
+ * hostname with no DNS. A canonical pointing somewhere unreachable is worse
+ * than no canonical at all, because the tag is an instruction, not a hint.
+ *
+ * NEXT_PUBLIC_SITE_URL was already in .env.example and on the checklist in
+ * docs/DEPLOY.md. Nothing read it. This does.
+ *
+ * Must be present at BUILD time, not just runtime: static routes bake their
+ * canonical during `next build`. See the note in docs/DEPLOY.md.
+ *
+ * Never throws on absence — unlike a missing database key, a missing origin
+ * has a sane answer, and failing the build over a URL would be worse than
+ * falling back.
+ */
+export function getSiteUrl(): URL {
+  // Literal read, so Next inlines it. See the note in getPublicEnv.
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) {
+    try {
+      return new URL(configured);
+    } catch {
+      throw new Error(
+        `NEXT_PUBLIC_SITE_URL is not a valid absolute URL: ${JSON.stringify(configured)}\n` +
+          `It needs the scheme, e.g. https://jintu.in — not a bare hostname.`,
+      );
+    }
+  }
+
+  // Vercel sets this at build time. Deliberately not VERCEL_URL, which is the
+  // per-deployment hostname and would make every preview claim to be the
+  // canonical copy of the site.
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (production) return new URL(`https://${production}`);
+
+  // Local. OG tags have to be absolute to be testable at all, and a localhost
+  // origin is at least true here.
+  return new URL(`http://localhost:${process.env.PORT ?? 3000}`);
+}
