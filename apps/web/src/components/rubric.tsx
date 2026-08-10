@@ -1,4 +1,4 @@
-import type { Rubric as RubricType } from "@/lib/curriculum";
+import type { Assignment, Rubric as RubricType } from "@/lib/curriculum";
 
 /**
  * The rubric a submission is graded against, shown before anyone enrols.
@@ -9,7 +9,36 @@ import type { Rubric as RubricType } from "@/lib/curriculum";
  * is what makes that sentence true — the rubrics table is public in RLS for
  * exactly this reason.
  */
-export function Rubric({ rubric }: { rubric: RubricType }) {
+
+/**
+ * How this particular artifact is marked.
+ *
+ * This used to be one hardcoded sentence in the footer below — "Weeks 1-2 are
+ * graded by running your SQL, not by a model" — printed under every rubric on
+ * the page. Under week 4's written-finding-v1 and week 6's walkthrough-v1 it
+ * was simply false: neither is SQL and neither is run. A page whose entire
+ * argument is "we tell you exactly how you are marked" cannot get the
+ * how-you-are-marked line wrong.
+ *
+ * Keyed on the assignment kind rather than stored on the rubric, because the
+ * kind is what actually decides which checker runs. A note on the rubric would
+ * be a second copy of that fact, free to drift — and rubrics are shared across
+ * assignments, so the same rubric could carry a note that is right in one
+ * place and wrong in another.
+ *
+ * Typed as a total Record, so adding a fifth assignment kind fails the build
+ * here rather than shipping a rubric with no explanation under it.
+ */
+const GRADING_NOTE: Record<Assignment["kind"], string> = {
+  sql: "Graded by running your query against a fixed dataset and comparing the result to the expected one. Deterministic — the same query always scores the same.",
+  artifact_link:
+    "Graded by people against the criteria above: two peers, and a mentor spot-check.",
+  file: "Graded by people against the criteria above: two peers, and a mentor spot-check.",
+  recording:
+    "Graded by people against the criteria above: two peers, and a mentor spot-check.",
+};
+
+export function Rubric({ rubric, kind }: { rubric: RubricType; kind: Assignment["kind"] }) {
   const total = rubric.criteria.reduce((n, c) => n + c.weight, 0);
 
   return (
@@ -50,9 +79,19 @@ export function Rubric({ rubric }: { rubric: RubricType }) {
         </table>
 
         <p className="mt-3 text-xs text-ink-500">
-          Rubric <code className="font-mono">{rubric.name}</code>. Weeks 1–2 are
-          graded by running your SQL, not by a model.
+          Rubric <code className="font-mono">{rubric.name}</code>.{" "}
+          {GRADING_NOTE[kind]}
         </p>
+
+        {/*
+          Said once, at the bottom, rather than woven into each note above.
+          It is true of every artifact today because no model grades anything
+          here yet — packages/grading has a deterministic SQL checker and
+          nothing else. The day a rubric_ai checker ships, this sentence stops
+          being true and has to move above, per kind. Leaving it as a blanket
+          claim would make that the easiest thing in the world to forget.
+        */}
+        <p className="mt-1.5 text-xs text-ink-500">No model marks any of it.</p>
       </div>
     </details>
   );

@@ -248,7 +248,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
                           {assignment.spec?.prompt ?? "Details to follow."}
                         </p>
                         {assignment.rubrics ? (
-                          <Rubric rubric={assignment.rubrics} />
+                          <Rubric rubric={assignment.rubrics} kind={assignment.kind} />
                         ) : (
                           // Said out loud rather than hidden: the landing page
                           // promises a rubric you can read before you start, so
