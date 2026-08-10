@@ -50,6 +50,15 @@ export async function generateMetadata({
       description: track.summary,
       type: "article",
     },
+    // Set explicitly rather than inherited. Metadata merges shallowly per
+    // key: leaving `twitter` off does not blend this page's openGraph with
+    // the root's twitter block, it takes the root's whole block — so the
+    // course link would preview with the homepage's title.
+    twitter: {
+      card: "summary_large_image",
+      title: `${track.title} — free curriculum`,
+      description: track.summary,
+    },
   };
 }
 
@@ -182,53 +191,69 @@ function Week({ module, open }: { module: Module; open: boolean }) {
         <div className="border-t border-ink-100 p-4">
           <p className="text-pretty text-ink-700">{module.objective}</p>
 
-          <h3 className="mt-5 text-xs font-semibold tracking-wide text-ink-500 uppercase">
-            Resources
-          </h3>
-          {module.resources.length > 0 ? (
-            <ul className="mt-2 space-y-2">
-              {module.resources.map((resource) => (
-                <li key={resource.id}>
-                  <ResourceItem resource={resource} />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-2 text-sm text-pretty text-ink-500">
-              No links this week — the work is the assignment below.
+          {/*
+            A week with neither resources nor an assignment is not two facts,
+            it is one. Rendering both branches produced "No links this week —
+            the work is the assignment below" immediately followed by "Nothing
+            to submit this week", which contradicted itself in two lines and
+            pointed at an assignment that did not exist.
+          */}
+          {module.resources.length === 0 && module.assignments.length === 0 ? (
+            <p className="mt-5 text-sm text-pretty text-ink-500">
+              This week is still being written. The objective above is settled;
+              the resources and the artifact are not published yet.
             </p>
-          )}
-
-          {module.assignments.length > 0 ? (
-            <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
-              <h3 className="text-xs font-semibold tracking-wide text-brand-800 uppercase">
-                What you submit
-              </h3>
-              <ul className="mt-2 space-y-4">
-                {module.assignments.map((assignment) => (
-                  <li key={assignment.id}>
-                    <p className="text-sm font-medium text-ink-500">
-                      {SUBMIT_LABEL[assignment.kind]}
-                    </p>
-                    <p className="mt-0.5 text-pretty text-ink-800">
-                      {assignment.spec?.prompt ?? "Details to follow."}
-                    </p>
-                    {assignment.rubrics ? (
-                      <Rubric rubric={assignment.rubrics} />
-                    ) : (
-                      // Said out loud rather than hidden: the landing page
-                      // promises a rubric you can read before you start, so a
-                      // missing one is a content bug someone should notice.
-                      <p className="mt-2 text-sm text-ink-500">
-                        The rubric for this one is not published yet.
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
           ) : (
-            <p className="mt-5 text-sm text-ink-500">Nothing to submit this week.</p>
+            <>
+              <h3 className="mt-5 text-xs font-semibold tracking-wide text-ink-500 uppercase">
+                Resources
+              </h3>
+              {module.resources.length > 0 ? (
+                <ul className="mt-2 space-y-2">
+                  {module.resources.map((resource) => (
+                    <li key={resource.id}>
+                      <ResourceItem resource={resource} />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-2 text-sm text-pretty text-ink-500">
+                  No links this week — the work is the assignment below.
+                </p>
+              )}
+
+              {module.assignments.length > 0 ? (
+                <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
+                  <h3 className="text-xs font-semibold tracking-wide text-brand-800 uppercase">
+                    What you submit
+                  </h3>
+                  <ul className="mt-2 space-y-4">
+                    {module.assignments.map((assignment) => (
+                      <li key={assignment.id}>
+                        <p className="text-sm font-medium text-ink-500">
+                          {SUBMIT_LABEL[assignment.kind]}
+                        </p>
+                        <p className="mt-0.5 text-pretty text-ink-800">
+                          {assignment.spec?.prompt ?? "Details to follow."}
+                        </p>
+                        {assignment.rubrics ? (
+                          <Rubric rubric={assignment.rubrics} />
+                        ) : (
+                          // Said out loud rather than hidden: the landing page
+                          // promises a rubric you can read before you start, so
+                          // a missing one is a content bug someone should notice.
+                          <p className="mt-2 text-sm text-ink-500">
+                            The rubric for this one is not published yet.
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className="mt-5 text-sm text-ink-500">Nothing to submit this week.</p>
+              )}
+            </>
           )}
         </div>
       </details>

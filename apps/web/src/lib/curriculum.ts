@@ -127,16 +127,46 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
   };
 }
 
+/**
+ * Title and summary only, for the social preview image.
+ *
+ * Separate from getPublishedTrack because that one fetches every module,
+ * resource, assignment and rubric across three round trips, and an OG image
+ * needs one string. Returns null for an unpublished or unknown slug so the
+ * caller can fall back to the generic card rather than 404 a preview.
+ */
+export async function getTrackCard(
+  slug: string,
+): Promise<{ title: string; summary: string } | null> {
+  const supabase = createPublicClient();
+
+  const { data, error } = await retryRead(() =>
+    supabase.from("tracks").select("title, summary").eq("slug", slug).maybeSingle(),
+  );
+
+  if (error) throw describeSupabaseError("loading the course for its preview image", error);
+  return data ?? null;
+}
+
 export async function listPublishedTracks(): Promise<TrackSummary[]> {
   const supabase = createPublicClient();
 
   // No is_published filter: RLS already returns only published tracks, and
   // only their published paths. Counting modules through that join therefore
   // counts the live curriculum rather than whatever is half-written in a draft.
+  //
+  // The nested `resources ( id )` and `assignments ( id )` are load-bearing,
+  // not decorative: the reducer below counts them. A merge once resolved a
+  // conflict here by keeping a narrower `paths ( modules ( id ) )` alongside
+  // this mapper, and /learn advertised "Artifacts: 0" over a database holding
+  // 56 of them for as long as it took someone to notice. Narrow this select
+  // and the counts silently go to zero again — see the guard below.
   const { data, error } = await retryRead(() =>
     supabase
       .from("tracks")
-      .select("slug, title, summary, paths ( modules ( id ) )")
+      .select(
+        "slug, title, summary, paths ( modules ( id, resources ( id ), assignments ( id ) ) )",
+      )
       .order("title", { ascending: true }),
   );
 
@@ -155,8 +185,28 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
       | null;
   };
 
-  return ((data ?? []) as unknown as Row[]).map((t) => {
+  // The cast is a lie the compiler cannot check — packages/db has no generated
+  // types, so `data` is effectively `any` and TypeScript will happily let the
+  // mapper read a column the query never asked for.
+  const rows = (data ?? []) as unknown as Row[];
+
+  return rows.map((t) => {
     const modules = (t.paths ?? []).flatMap((p) => p.modules ?? []);
+
+    // Absent, not empty. PostgREST returns `[]` for a requested relation with
+    // no rows and omits the key entirely for one that was never requested, so
+    // this distinguishes "no resources exist" from "the select forgot to ask".
+    // Only the second is possible-but-wrong, and it is the failure that shipped.
+    const notRequested = modules.find((m) => !m.resources || !m.assignments);
+    if (notRequested) {
+      throw new Error(
+        "listPublishedTracks: the select did not request resources/assignments, " +
+          "so every course would be counted as having zero of them. Restore the " +
+          "nested selects rather than removing this check — silently rendering 0 " +
+          "is worse than failing here.",
+      );
+    }
+
     return {
       slug: t.slug,
       title: t.title,
