@@ -103,7 +103,7 @@ export default async function CoursePage({
         <span className="text-ink-600">{track.title}</span>
       </nav>
 
-      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
         {track.title}
       </h1>
 
@@ -212,7 +212,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
             <span className="block font-mono text-sm font-normal text-ink-500">
               Week {String(module.week_no).padStart(2, "0")}
             </span>
-            <span className="mt-0.5 block font-semibold text-pretty text-ink-900">
+            <span className="mt-0.5 block font-medium text-pretty text-ink-900">
               {module.title}
             </span>
           </h2>
@@ -252,7 +252,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
             </p>
           ) : (
             <>
-              <h3 className="mt-5 text-xs font-semibold tracking-wide text-ink-500 uppercase">
+              <h3 className="mt-5 text-xs font-medium tracking-wide text-ink-500 uppercase">
                 Resources
               </h3>
               {module.resources.length > 0 ? (
@@ -271,7 +271,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
 
               {module.assignments.length > 0 ? (
                 <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
-                  <h3 className="text-xs font-semibold tracking-wide text-brand-800 uppercase">
+                  <h3 className="text-xs font-medium tracking-wide text-brand-800 uppercase">
                     What you submit
                   </h3>
                   <ul className="mt-2 space-y-4">
@@ -316,7 +316,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
 function EmptyCourse() {
   return (
     <div className="mt-8 rounded-card border border-ink-200 bg-white p-8 text-center">
-      <p className="text-lg font-semibold text-ink-900">
+      <p className="text-lg font-medium text-ink-900">
         This course has no weeks published yet.
       </p>
       <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">

@@ -143,7 +143,7 @@ export function TrackRouter({
 
         Chips rather than a sentence of inline links. Inline text links inside
         13px copy are a ~16px tap target on a phone, which is half what a thumb
-        needs; a bordered chip with h-9 and horizontal padding is a real one,
+        needs; a bordered 48px chip with horizontal padding is a real one,
         and wraps cleanly at 360px instead of reflowing mid-list.
       */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -195,13 +195,13 @@ export function TrackRouter({
   );
 }
 
-/** A tappable example. h-9 plus padding is a real target; 13px inline text is not. */
+/** A tappable example. 48px tall per the project rules; 13px inline text is not a target. */
 function Chip({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-9 items-center rounded-full border border-ink-200 bg-white px-3.5 text-[13px] text-ink-600 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+      className="inline-flex h-12 items-center rounded-full border border-ink-200 bg-white px-3.5 text-[13px] text-ink-600 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
     >
       {children}
     </button>
@@ -242,13 +242,13 @@ function SprintResult({ track }: { track: RouterTrack }) {
       <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
         <Link
           href={`/learn/${track.slug}`}
-          className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
         >
           Read the track — free
         </Link>
         <a
           href="#waitlist"
-          className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+          className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
         >
           Join the waitlist
         </a>
@@ -290,13 +290,13 @@ function UnbuiltResult({
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
           <Link
             href="/tracks"
-            className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
             See it in your tracks
           </Link>
           <Link
             href="/learn"
-            className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+            className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
           >
             Browse what exists
           </Link>
@@ -341,13 +341,13 @@ function UnbuiltResult({
           type="button"
           onClick={onAsk}
           disabled={pending}
-          className="flex h-11 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
+          className="flex h-12 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
         >
           {pending ? "Asking…" : signedIn ? "Ask for this track" : "Sign in and ask for this"}
         </button>
         <Link
           href="/learn"
-          className="flex h-11 items-center justify-center rounded-lg px-4 text-[15px] font-medium text-ink-700 hover:text-brand-800"
+          className="flex h-12 items-center justify-center rounded-lg px-4 text-[15px] font-medium text-ink-700 hover:text-brand-800"
         >
           Browse what exists
         </Link>

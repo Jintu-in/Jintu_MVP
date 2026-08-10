@@ -42,7 +42,7 @@ export default async function ReviewPage({
         <span className="text-ink-600">Week {String(task.weekNo).padStart(2, "0")}</span>
       </nav>
 
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-2 text-2xl font-medium tracking-tight text-balance text-ink-900">
         {task.prompt}
       </h1>
       <p className="mt-2 text-sm text-pretty text-ink-500">

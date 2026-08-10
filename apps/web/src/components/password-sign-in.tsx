@@ -102,7 +102,7 @@ export function PasswordSignIn({
         type="button"
         onClick={onUseCode}
         disabled={busy}
-        className="mt-3 h-11 text-sm text-ink-500 underline hover:text-ink-900"
+        className="mt-3 h-12 text-sm text-ink-500 underline hover:text-ink-900"
       >
         Email me a code instead — also how to get in without your password
       </button>

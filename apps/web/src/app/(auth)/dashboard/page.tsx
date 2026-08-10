@@ -35,7 +35,7 @@ export default async function DashboardPage() {
   if (!sprint) {
     return (
       <main className="mx-auto max-w-2xl px-5 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
+        <h1 className="text-2xl font-medium tracking-tight text-ink-900">
           You are not in a cohort yet
         </h1>
         <div className="mt-5 rounded-card border border-ink-100 bg-white p-6">
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Your sprint
       </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-2 text-3xl font-medium tracking-tight text-balance text-ink-900">
         {sprint.trackTitle}
       </h1>
 
@@ -141,7 +141,7 @@ function Week({ week }: { week: SprintWeek }) {
           <p className="font-mono text-sm text-ink-500">
             Week {String(week.weekNo).padStart(2, "0")}
           </p>
-          <h2 id={headingId} className="mt-0.5 text-lg font-semibold text-pretty text-ink-900">
+          <h2 id={headingId} className="mt-0.5 text-lg font-medium text-pretty text-ink-900">
             <Link href={`/week/${week.weekNo}`} className="hover:text-brand-800">
               {week.title}
             </Link>

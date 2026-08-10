@@ -58,7 +58,7 @@ export default async function VotePage({ params }: { params: Promise<{ slug: str
       <p className="mt-8 text-sm font-medium tracking-wide text-brand-700 uppercase">
         Not built yet
       </p>
-      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
         {proposal.title}
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">{proposal.summary}</p>
@@ -86,7 +86,7 @@ export default async function VotePage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="mt-8 rounded-card border border-ink-100 bg-ink-50 p-6">
-        <p className="font-semibold text-ink-900">In the meantime, one course is finished.</p>
+        <p className="font-medium text-ink-900">In the meantime, one course is finished.</p>
         <p className="mt-2 text-pretty text-ink-600">
           Data Analyst runs six weeks, every week has an artifact, and every
           rubric is published before you start. It is free to work through on
