@@ -26,7 +26,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const REFERENCE = JSON.parse(readFileSync(path.join(ROOT, "scripts", "pagila-expected.json"), "utf8"));
+/**
+ * Fixtures and expected results for the auto-graded SQL weeks, built by
+ * scripts/sql-fixtures.mjs. These go into assignment_answer_keys, which is
+ * service-role only — never into assignments.spec, which anon reads through
+ * the public curriculum.
+ */
+const ANSWER_KEYS = JSON.parse(
+  readFileSync(path.join(ROOT, "scripts", "sql-answer-keys.json"), "utf8"),
+);
 
 const TRACK = "data-analyst-fresher";
 
@@ -133,20 +141,25 @@ const WEEKS = [
       weight: 1,
       spec: {
         prompt:
-          "Return the ten customers with the highest lifetime rental revenue. " +
-          "Columns, in this order and with these names: customer_id, first_name, " +
-          "last_name, lifetime_revenue — where lifetime_revenue is the sum of " +
-          "payment.amount as numeric(10,2). Order by lifetime_revenue descending, " +
-          "then customer_id ascending.",
-        dataset: "pagila",
+          "The database has three tables: store (store_id, city), customer " +
+          "(customer_id, first_name, last_name, store_id) and payment " +
+          "(payment_id, customer_id, amount, paid_on).\n\n" +
+          "Return the ten customers who have paid the most. Columns, in this " +
+          "order and with these names: customer_id, first_name, last_name, " +
+          "lifetime_revenue — where lifetime_revenue is sum(payment.amount) as " +
+          "numeric(10,2). Order by lifetime_revenue descending, then " +
+          "customer_id ascending.",
         // The grader diffs the result set, so the prompt has to pin the column
         // names and the ordering. Version 1 said only "the ten customers with
         // the highest lifetime rental revenue", which is a fine question and an
         // ungradeable one: a correct answer aliasing the sum as `revenue` would
         // have been marked wrong.
-        orderMatters: true,
-        expected: REFERENCE.week1.expected,
+        //
+        // Nothing else belongs here. `spec` is anon-readable through the
+        // public curriculum, so the expected rows live in
+        // assignment_answer_keys, which is service-role only.
       },
+      answerKey: "data-analyst-fresher/1",
     },
   },
   {
@@ -164,17 +177,16 @@ const WEEKS = [
       weight: 1,
       spec: {
         prompt:
+          "Same three tables as week 1: store, customer and payment.\n\n" +
           "For each store, return the three customers who have paid the most. " +
           "Columns, in this order and with these names: store_id, customer_id, " +
-          "total_paid, rank_in_store — where total_paid is the sum of " +
-          "payment.amount as numeric(10,2) and rank_in_store runs 1 to 3 within " +
-          "each store. Break ties on total_paid by customer_id ascending. Order " +
-          "by store_id, then rank_in_store. Use a window function, not a " +
+          "total_paid, rank_in_store — where total_paid is sum(payment.amount) " +
+          "as numeric(10,2) and rank_in_store runs 1 to 3 within each store. " +
+          "Break ties on total_paid by customer_id ascending. Order by " +
+          "store_id, then rank_in_store. Use a window function, not a " +
           "correlated subquery.",
-        dataset: "pagila",
-        orderMatters: true,
-        expected: REFERENCE.week2.expected,
       },
+      answerKey: "data-analyst-fresher/2",
     },
   },
   {
@@ -354,6 +366,31 @@ out.push(`  join public.rubrics r on r.name = x.rubric`);
 out.push(`  on conflict (module_id, kind) do nothing;`);
 out.push("");
 
+// Answer keys, before the publish below. The same immutability trigger that
+// freezes modules covers this table — deliberately, since it is the thing that
+// decides what a submission scores, and changing it mid-sprint would regrade
+// finished work.
+const keyed = WEEKS.filter((w) => w.assignment.answerKey);
+out.push(`  -- The fixture and the expected result the SQL grader runs against.`);
+out.push(`  -- Separate table because it is the answer and \`assignments\` is public.`);
+out.push(`  insert into public.assignment_answer_keys (assignment_id, setup, reference_sql, expected, order_matters)`);
+out.push(`  select a.id, x.setup, x.reference_sql, x.expected::jsonb, x.order_matters`);
+out.push(`  from (values`);
+out.push(
+  keyed
+    .map((w) => {
+      const k = ANSWER_KEYS[w.assignment.answerKey];
+      if (!k) throw new Error(`no answer key for ${w.assignment.answerKey} — run pnpm courses:keys --write`);
+      return `    (${w.week}, ${q(k.setup)}, ${q(k.reference_sql)}, ${j(k.expected)}, ${k.order_matters})`;
+    })
+    .join(",\n"),
+);
+out.push(`  ) as x(week, setup, reference_sql, expected, order_matters)`);
+out.push(`  join public.modules m on m.path_id = v_path and m.week_no = x.week`);
+out.push(`  join public.assignments a on a.module_id = m.id and a.kind = 'sql'`);
+out.push(`  on conflict (assignment_id) do nothing;`);
+out.push("");
+
 out.push(`  -- Refuse to publish a half-built version. Without this, one dropped`);
 out.push(`  -- insert above would go live as another incomplete course, which is`);
 out.push(`  -- the exact failure this version exists to fix.`);
@@ -363,8 +400,16 @@ out.push(`         join public.modules m on m.id = r.module_id`);
 out.push(`         where m.path_id = v_path) <> ${resourceRows.length}`);
 out.push(`     or (select count(*) from public.assignments a`);
 out.push(`         join public.modules m on m.id = a.module_id`);
-out.push(`         where m.path_id = v_path) <> ${WEEKS.length} then`);
-out.push(`    raise exception ${q(`${TRACK} v2 is incomplete — expected ${WEEKS.length} modules, ${resourceRows.length} resources, ${WEEKS.length} assignments. Not publishing.`)};`);
+out.push(`         where m.path_id = v_path) <> ${WEEKS.length}`);
+out.push(`     or (select count(*) from public.assignment_answer_keys k`);
+out.push(`         join public.assignments a on a.id = k.assignment_id`);
+out.push(`         join public.modules m on m.id = a.module_id`);
+out.push(`         where m.path_id = v_path) <> ${keyed.length} then`);
+out.push(
+  `    raise exception ${q(
+    `${TRACK} v2 is incomplete — expected ${WEEKS.length} modules, ${resourceRows.length} resources, ${WEEKS.length} assignments, ${keyed.length} answer keys. Not publishing.`,
+  )};`,
+);
 out.push(`  end if;`);
 out.push("");
 out.push(`  update public.paths set status = 'published', published_at = now()`);
