@@ -28,28 +28,52 @@ export type Viewer = {
 };
 
 export async function getViewer(): Promise<Viewer | null> {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) return null;
+    if (!user) return null;
 
-  // maybeSingle, not single: no row is the normal mid-onboarding state, and
-  // single() would throw on it.
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", user.id)
-    .maybeSingle();
+    // maybeSingle, not single: no row is the normal mid-onboarding state, and
+    // single() would throw on it.
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  return {
-    id: user.id,
-    email: user.email ?? null,
-    fullName: profile?.full_name ?? null,
-    hasProfile: Boolean(profile),
-  };
+    return {
+      id: user.id,
+      email: user.email ?? null,
+      fullName: profile?.full_name ?? null,
+      hasProfile: Boolean(profile),
+    };
+  } catch (error) {
+    /*
+      Never take a page down over the header.
+
+      This is called from the layout wrapping / and /privacy, which are
+      documented as working without a database — the "Supabase is not
+      configured" error even says so. Letting it throw here made that false:
+      an unconfigured or unreachable Supabase would 500 the landing page and
+      the privacy notice, which is a worse outcome than a header that says
+      "Sign in".
+
+      Degrading to signed-out is safe in the direction that matters — it shows
+      less, never more, and it is not a security boundary. Every protected
+      route calls getUser() itself and redirects; this only decides which
+      button to paint.
+
+      Logged rather than swallowed, because the failure mode otherwise is
+      silent: signed-in people would see "Sign in" everywhere with nothing
+      anywhere saying why.
+    */
+    console.error("[session] could not resolve the viewer, rendering as signed out:", error);
+    return null;
+  }
 }
 
 /**

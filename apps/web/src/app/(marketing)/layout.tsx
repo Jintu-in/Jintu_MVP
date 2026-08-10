@@ -17,7 +17,18 @@ import { getViewer, initialsFor } from "@/lib/session";
  * streaming into a hole. That needs `cacheComponents`, which turns data
  * fetching dynamic-by-default across the whole app and would want its own
  * change rather than riding along with a header.
+ *
+ * Declared force-dynamic rather than left for Next to infer from the cookie
+ * read. Inference is not reliable here: createClient() validates the
+ * environment BEFORE it touches cookies, so on a build with no Supabase
+ * project — which is exactly what CI does, on purpose — the env error is
+ * raised during the prerender attempt and Next never gets as far as the
+ * dynamic bail-out. The result was a green local build and a red CI one,
+ * "Export encountered an error on /(marketing)/page: /". Saying it outright
+ * means the two agree.
  */
+export const dynamic = "force-dynamic";
+
 export default async function MarketingLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
