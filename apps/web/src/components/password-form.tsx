@@ -69,7 +69,7 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
         <button
           type="submit"
           disabled={busy}
-          className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
+          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
         >
           {busy ? "Saving…" : hasPassword ? "Change password" : "Set password"}
         </button>

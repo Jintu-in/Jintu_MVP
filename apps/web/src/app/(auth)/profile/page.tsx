@@ -55,12 +55,12 @@ export default async function ProfilePage() {
       <div className="flex items-center gap-4">
         <div
           aria-hidden
-          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-700 text-lg font-semibold text-white"
+          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-700 text-lg font-medium text-white"
         >
           {initials ?? "—"}
         </div>
         <div className="min-w-0">
-          <h1 className="truncate text-2xl font-semibold text-ink-900">
+          <h1 className="truncate text-2xl font-medium text-ink-900">
             {profile.full_name ?? "Your profile"}
           </h1>
           {user.email ? (
@@ -70,7 +70,7 @@ export default async function ProfilePage() {
       </div>
 
       <section className="mt-10" aria-labelledby="details">
-        <h2 id="details" className="text-lg font-semibold text-ink-900">
+        <h2 id="details" className="text-lg font-medium text-ink-900">
           Your details
         </h2>
         <p className="mt-1 text-pretty text-ink-600">
@@ -82,7 +82,7 @@ export default async function ProfilePage() {
       </section>
 
       <section className="mt-10" aria-labelledby="identity">
-        <h2 id="identity" className="text-lg font-semibold text-ink-900">
+        <h2 id="identity" className="text-lg font-medium text-ink-900">
           How you sign in
         </h2>
         <dl className="mt-4 divide-y divide-ink-100 border-y border-ink-100 text-sm">
@@ -105,7 +105,7 @@ export default async function ProfilePage() {
       </section>
 
       <section className="mt-10" aria-labelledby="cohort">
-        <h2 id="cohort" className="text-lg font-semibold text-ink-900">
+        <h2 id="cohort" className="text-lg font-medium text-ink-900">
           Your cohort
         </h2>
         {sprint ? (
@@ -136,7 +136,7 @@ export default async function ProfilePage() {
       </section>
 
       <section className="mt-10 rounded-card border border-ink-100 bg-white p-6" aria-labelledby="more">
-        <h2 id="more" className="font-semibold text-ink-900">
+        <h2 id="more" className="font-medium text-ink-900">
           Consents, and getting your data back
         </h2>
         <p className="mt-2 text-pretty text-ink-600">

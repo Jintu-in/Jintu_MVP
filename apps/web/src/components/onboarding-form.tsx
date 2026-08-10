@@ -99,7 +99,7 @@ export function OnboardingForm() {
       </div>
 
       <fieldset className="mt-8">
-        <legend className="text-sm font-semibold text-ink-900">Required</legend>
+        <legend className="text-sm font-medium text-ink-900">Required</legend>
         <div className="mt-3">
           <Check id={`${id}-adult`} name="isAdultConfirmed" error={firstError(errors, "isAdultConfirmed")}>
             I am 18 years old or older.
@@ -108,7 +108,7 @@ export function OnboardingForm() {
       </fieldset>
 
       <fieldset className="mt-8">
-        <legend className="text-sm font-semibold text-ink-900">
+        <legend className="text-sm font-medium text-ink-900">
           Optional — none of these affect your place
         </legend>
         <div className="mt-3 space-y-3">

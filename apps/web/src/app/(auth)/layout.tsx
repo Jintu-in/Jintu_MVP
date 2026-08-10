@@ -42,7 +42,7 @@ export default async function AuthLayout({
             >
               <path d="M15 6l-6 6 6 6" />
             </svg>
-            <span className="text-lg font-semibold tracking-tight">Jintu</span>
+            <span className="text-lg font-medium tracking-tight">Jintu</span>
           </Link>
 
           {viewer?.hasProfile ? (

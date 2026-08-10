@@ -102,14 +102,14 @@ export default async function MyTracksPage() {
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
                   <Link
                     href="/dashboard"
-                    className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+                    className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
                   >
                     This week&rsquo;s work
                   </Link>
                   {t.slug ? (
                     <Link
                       href={`/learn/${t.slug}`}
-                      className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+                      className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
                     >
                       Full curriculum
                     </Link>
@@ -207,7 +207,7 @@ function Empty({ body, href, cta }: { body: string; href: "/learn" | "/"; cta: s
       <p className="max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-700">{body}</p>
       <Link
         href={href}
-        className="mt-4 inline-flex h-11 items-center rounded-lg border border-ink-200 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+        className="mt-4 inline-flex h-12 items-center rounded-lg border border-ink-200 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
       >
         {cta}
       </Link>

@@ -74,7 +74,7 @@ export function AvatarMenu({
     <details ref={ref} className="relative [&>summary::-webkit-details-marker]:hidden">
       <summary
         aria-label={`Account menu for ${label}`}
-        className="flex size-9 cursor-pointer list-none items-center justify-center rounded-full bg-brand-700 text-sm font-semibold text-white select-none hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+        className="flex size-9 cursor-pointer list-none items-center justify-center rounded-full bg-brand-700 text-sm font-medium text-white select-none hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
       >
         {initials ?? (
           <svg
@@ -96,7 +96,9 @@ export function AvatarMenu({
       <nav
         id={id}
         aria-label="Account"
-        className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-card border border-ink-100 bg-white shadow-lg"
+        // border-ink-200, no shadow: the project rules ban shadows outright, and
+        // the slightly darker hairline is what lifts the menu off the page.
+        className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-card border border-ink-200 bg-white"
       >
         <div className="border-b border-ink-100 px-4 py-3">
           <p className="truncate font-medium text-ink-900">{fullName ?? "Your account"}</p>

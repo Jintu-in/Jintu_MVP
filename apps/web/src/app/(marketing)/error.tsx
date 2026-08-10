@@ -30,7 +30,7 @@ export default function MarketingError({
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-20">
-      <h1 className="text-2xl font-semibold text-ink-900">
+      <h1 className="text-2xl font-medium text-ink-900">
         This page could not load.
       </h1>
       <p className="mt-3 text-pretty text-ink-600">
