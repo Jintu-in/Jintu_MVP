@@ -66,7 +66,13 @@ function match(typed: string, tracks: RouterTrack[]): RouterTrack | null {
   return best?.track ?? null;
 }
 
-export function TrackRouter({ tracks }: { tracks: RouterTrack[] }) {
+export function TrackRouter({
+  tracks,
+  signedIn,
+}: {
+  tracks: RouterTrack[];
+  signedIn: boolean;
+}) {
   const id = useId();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -162,6 +168,7 @@ export function TrackRouter({ tracks }: { tracks: RouterTrack[] }) {
         {result.kind === "sprint" ? <SprintResult track={result.track} /> : null}
         {result.kind === "unbuilt" ? (
           <UnbuiltResult
+            signedIn={signedIn}
             typed={result.typed}
             requestedId={requested}
             pending={status === "executing"}
@@ -227,11 +234,13 @@ function SprintResult({ track }: { track: RouterTrack }) {
  * it would undercut the one thing here that is different.
  */
 function UnbuiltResult({
+  signedIn,
   typed,
   requestedId,
   pending,
   onAsk,
 }: {
+  signedIn: boolean;
   typed: string;
   requestedId: string | null;
   pending: boolean;
@@ -247,6 +256,9 @@ function UnbuiltResult({
           time. It moves under your courses as it goes.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
+          <Link href="/tracks" className="font-medium text-brand-700 underline hover:text-brand-800">
+            See it in your tracks
+          </Link>
           <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
             Browse what exists
           </Link>
@@ -266,6 +278,21 @@ function UnbuiltResult({
         for it and it joins the queue.
       </p>
 
+      {/*
+        Said before the button, not after the attempt.
+        The gate used to be a surprise: press "ask", get a dialog. Telling
+        people up front costs one line and removes the moment where a page
+        appears to reject you. The button still works — pressing it opens the
+        same dialog and sends the request once you are through it — so this is
+        a warning, not a wall.
+      */}
+      {!signedIn ? (
+        <p className="mt-3 text-[13px] text-ink-500">
+          You will need to sign in first — a person writes these and sends them
+          back to you, so we need somewhere to send it.
+        </p>
+      ) : null}
+
       <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
         <button
           type="button"
@@ -273,7 +300,7 @@ function UnbuiltResult({
           disabled={pending}
           className="font-medium text-brand-700 underline hover:text-brand-800 disabled:text-ink-500 disabled:no-underline"
         >
-          {pending ? "Asking…" : "Ask for this course"}
+          {pending ? "Asking…" : signedIn ? "Ask for this course" : "Sign in and ask for this"}
         </button>
         <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
           Browse what exists

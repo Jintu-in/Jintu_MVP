@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MyRequests } from "@/components/my-requests";
 import {
   listCourseProposals,
   listPublishedTracks,
@@ -88,9 +87,6 @@ export default async function CoursesPage() {
       )}
 
       {proposals.length > 0 ? <Proposals proposals={proposals} /> : null}
-
-      {/* Renders nothing unless this visitor has actually asked for something. */}
-      <MyRequests />
     </main>
   );
 }

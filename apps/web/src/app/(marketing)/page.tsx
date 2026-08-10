@@ -2,6 +2,7 @@ import Link from "next/link";
 import { TrackRouter, type RouterTrack } from "@/components/track-router";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { listCourseProposals, listPublishedTracks } from "@/lib/curriculum";
+import { getViewer } from "@/lib/session";
 
 /**
  * The homepage is a router, not a brochure.
@@ -26,9 +27,10 @@ export const dynamic = "force-dynamic";
 export default async function LandingPage() {
   // Independent reads, so they overlap. A proposals failure must not take the
   // page down — it is a count, and the page works without it.
-  const [tracks, proposals] = await Promise.all([
+  const [tracks, proposals, viewer] = await Promise.all([
     listPublishedTracks(),
     listCourseProposals().catch(() => []),
+    getViewer(),
   ]);
 
   // Sorted by how finished a track is, not alphabetically. The router shows
@@ -71,7 +73,7 @@ export default async function LandingPage() {
           honestly whether we can help you finish.
         </p>
 
-        <TrackRouter tracks={routerTracks} />
+        <TrackRouter tracks={routerTracks} signedIn={Boolean(viewer)} />
       </section>
 
       {/* ── three kinds of track ─────────────────────────────────────────── */}
