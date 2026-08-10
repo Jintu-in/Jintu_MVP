@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Free curriculum",
   description:
-    "Every Jintu course, free and public: the weeks, the resources, and the rubric each submission is graded against. No account needed.",
+    "Every Jintu track, free and public: the weeks, the resources, and the rubric each submission is graded against. No account needed.",
   alternates: { canonical: "/learn" },
 };
 
@@ -51,7 +51,7 @@ export default async function CoursesPage() {
         Free curriculum
       </p>
       <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
-        Every course, in full, before you pay anything.
+        Every track, in full, before you pay anything.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
         The weeks, the resources and the rubric your work is graded against —
@@ -64,7 +64,7 @@ export default async function CoursesPage() {
           {/* Counted from what is actually published, so the strip cannot
               claim more curriculum than exists. */}
           <dl className="mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-card border border-ink-100 bg-ink-100">
-            <Stat label="Courses" value={String(tracks.length)} />
+            <Stat label="Tracks" value={String(tracks.length)} />
             <Stat label="Weeks" value={String(totals.weeks)} />
             <Stat label="Artifacts" value={String(totals.artifacts)} />
           </dl>
@@ -78,7 +78,7 @@ export default async function CoursesPage() {
           </ul>
 
           <p className="mt-8 text-sm text-pretty text-ink-500">
-            Working through a course on your own is free and always will be.
+            Working through a track on your own is free and always will be.
             Nothing here is held back for paying students.
           </p>
         </>
@@ -202,7 +202,7 @@ function CourseCard({ track }: { track: TrackSummary }) {
 function EmptyState() {
   return (
     <div className="mt-10 rounded-card border border-ink-200 bg-white p-8 text-center">
-      <p className="text-lg font-semibold text-ink-900">No courses are published yet.</p>
+      <p className="text-lg font-semibold text-ink-900">No tracks are published yet.</p>
       <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">
         The first one is being written. When it goes up it will be here in
         full — every week and every rubric — before anyone is asked to pay for
