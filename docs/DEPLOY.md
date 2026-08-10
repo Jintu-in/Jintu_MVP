@@ -76,4 +76,23 @@ database is a build that cannot be verified.
 - [ ] `/learn` returns 200 and lists at least one track
 - [ ] `/favicon.ico` returns 200
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the real domain, so canonical URLs and
-      OG tags do not point at the wrong host
+      OG tags do not point at the wrong host.
+
+      It must be set as a **build-time** variable, not just a runtime one.
+      `/` and the other static routes are prerendered during `next build`, so
+      whatever the origin resolves to then is baked into their `<link
+      rel=canonical>` and `og:image` forever. Verified: building without it and
+      then setting it at `next start` left the homepage claiming
+      `http://localhost:3000` while the dynamic course pages picked up the new
+      value — a split that is easy to miss because the page you are most likely
+      to spot-check is the one that still looks right.
+
+      If it is unset, `apps/web/src/lib/site.ts` falls back to
+      `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel does provide at build time.
+      That is a safety net, not the plan: it is the *project* production URL, so
+      it stays a `*.vercel.app` host even after a custom domain is attached.
+
+- [ ] The canonical host actually resolves. `jintu.in` did not — every page was
+      telling Google its real self lived at a hostname with no DNS. A canonical
+      is an instruction, not a hint, so pointing one at a dead host is worse
+      than omitting it.

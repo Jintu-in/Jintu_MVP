@@ -1,16 +1,46 @@
 import type { Metadata, Viewport } from "next";
 import { AnalyticsProvider } from "@/components/analytics-provider";
+import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
+
+const DESCRIPTION =
+  "Six weeks. Six artifacts. One proof-of-readiness profile. A cohort-based placement sprint with a free, public curriculum.";
 
 export const metadata: Metadata = {
   title: {
     default: "Jintu — Placement Sprints",
     template: "%s · Jintu",
   },
-  description:
-    "Six weeks. Six artifacts. One proof-of-readiness profile. A cohort-based placement sprint with a free, public curriculum.",
+  description: DESCRIPTION,
   applicationName: "Jintu",
-  metadataBase: new URL("https://jintu.in"),
+  metadataBase: getSiteUrl(),
+  alternates: { canonical: "/" },
+
+  /*
+    Defaults, inherited by every route that does not set its own.
+
+    The homepage had none of this — the rendered <head> carried exactly two
+    tags, `theme-color` and `application-name`. Distribution here is a student
+    forwarding a link into a WhatsApp placement group, and a link with no
+    og:title and no og:image previews as a bare URL, which in that context
+    reads as spam. The preview is the product's first impression far more
+    often than the page is.
+  */
+  openGraph: {
+    type: "website",
+    siteName: "Jintu",
+    locale: "en_IN",
+    url: "/",
+    title: "Jintu — Placement Sprints",
+    description: DESCRIPTION,
+  },
+  twitter: {
+    // Not "summary". That renders a ~120px thumbnail beside the text; the
+    // generated image below is 1200×630 and is the whole point of the link.
+    card: "summary_large_image",
+    title: "Jintu — Placement Sprints",
+    description: DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {

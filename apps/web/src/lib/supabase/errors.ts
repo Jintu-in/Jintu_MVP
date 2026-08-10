@@ -25,11 +25,13 @@ export function describeSupabaseError(context: string, error: PostgrestError): E
   }
 
   // PGRST205: PostgREST cannot see the table. 42P01: Postgres says it does
-  // not exist. Both mean the same thing in practice here.
-  if (code === "PGRST205" || code === "42P01") {
+  // not exist. PGRST202: same, for a function — an RPC added by a migration
+  // nobody applied. All three mean the same thing in practice here, and the
+  // fix is the same command.
+  if (code === "PGRST205" || code === "42P01" || code === "PGRST202") {
     return new Error(
       [
-        `The database has no tables yet, so ${context} failed.`,
+        `The database is missing something this needs, so ${context} failed.`,
         "",
         "Apply the migrations, either:",
         "  pnpm supabase login && pnpm supabase link --project-ref <ref> && pnpm db:push",
