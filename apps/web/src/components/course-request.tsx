@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useId, useRef, useState } from "react";
+import { NEEDS_ACCOUNT } from "@jintu/contracts";
 import { requestCourse } from "@/actions/course-request";
+import { ShareButton } from "@/components/share-button";
+import { SignInDialog } from "@/components/sign-in-dialog";
 import { browserKey } from "@/lib/browser-key";
 
 const MAX = 600;
@@ -12,18 +16,42 @@ const MAX = 600;
  * The first thing on the site: ask for the course you want.
  *
  * Deliberately almost wordless. The field, two buttons, one line of small
- * print — anything else here is read as instructions, and a box you have to
- * be briefed on is a box nobody uses. The placeholder does the explaining.
+ * print — anything else here is read as instructions, and a box you have to be
+ * briefed on is a box nobody uses. The placeholder does the explaining.
  *
  * It looks like a chat box and it is not one. There is no model behind it and
  * nothing is generated; the text is filed and a person writes the curriculum.
- * The "No AI" line stays even in the trimmed version, because a box shaped
- * like an assistant that quietly turns into a person three hours later teaches
- * people that this site's claims are decorative.
+ *
+ * ── the states ──────────────────────────────────────────────────────────────
+ *
+ *   asking      typing, nothing sent
+ *   signing-in  the dialog is open; the draft is untouched behind it
+ *   sending     the action is in flight
+ *   sent        filed, with the id, so it can be shared
+ *   failed      something we own broke; the text is still there to retry
+ *
+ * The one that matters is `signing-in`. Requesting needs an account, and the
+ * worst version of that is a box that takes your paragraph, sends you to a
+ * sign-in page, and hands you back an empty box. Nothing here navigates: the
+ * code arrives by email and goes into a dialog, so the draft never leaves the
+ * state behind it. On success the request sends itself, because the person
+ * already pressed the button that means "send this".
  */
+
+type State =
+  | { name: "asking" }
+  | { name: "signing-in" }
+  | { name: "sending" }
+  | { name: "sent"; id: string }
+  | { name: "failed"; message: string };
+
 export function CourseRequest() {
   const id = useId();
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+  const [state, setState] = useState<State>({ name: "asking" });
+  const [count, setCount] = useState(0);
+
   /**
    * undefined = not looked yet, null = looked and storage is unavailable.
    *
@@ -34,33 +62,52 @@ export function CourseRequest() {
    * it. A warning that is wrong on first paint is worse than no warning.
    */
   const [key, setKey] = useState<string | null | undefined>(undefined);
-  const [count, setCount] = useState(0);
-  const [sent, setSent] = useState(false);
-
-  const { execute, result, status } = useAction(requestCourse, {
-    onSuccess: () => setSent(true),
-  });
-
-  // Read after mount: localStorage does not exist while this renders on the
-  // server, and reading it during render would make the first client paint
-  // disagree with the HTML that arrived.
   useEffect(() => setKey(browserKey("course-requests")), []);
 
-  const pending = status === "executing";
-  const tooLong = count > MAX;
+  const { execute, reset } = useAction(requestCourse, {
+    onSuccess: ({ data }) => {
+      if (data?.id) setState({ name: "sent", id: data.id });
+      // The header shows who you are and /learn lists your requests. Both are
+      // server-rendered, so without this they keep showing the signed-out view
+      // until something else happens to reload them.
+      router.refresh();
+    },
+    onError: ({ error }) => {
+      if (error.serverError === NEEDS_ACCOUNT) {
+        setState({ name: "signing-in" });
+        return;
+      }
+      setState({
+        name: "failed",
+        message: error.serverError ?? "That did not send. Try again.",
+      });
+    },
+  });
 
-  if (sent) return <Received onAgain={() => setSent(false)} />;
+  const send = () => {
+    if (!key) return;
+    setState({ name: "sending" });
+    execute({ prompt: String(formRef.current?.prompt?.value ?? ""), requesterKey: key });
+  };
+
+  if (state.name === "sent") {
+    return (
+      <Sent
+        id={state.id}
+        onAgain={() => {
+          reset();
+          setState({ name: "asking" });
+        }}
+      />
+    );
+  }
+
+  const busy = state.name === "sending";
+  const tooLong = count > MAX;
 
   return (
     <div className="mt-8">
-      <form
-        ref={formRef}
-        noValidate
-        action={(formData) => {
-          if (!key) return;
-          execute({ prompt: String(formData.get("prompt") ?? ""), requesterKey: key });
-        }}
-      >
+      <form ref={formRef} noValidate action={send}>
         {/* Visually hidden, not absent: the placeholder is a hint, and a hint
             is not a label for anyone using a screen reader. */}
         <label htmlFor={id} className="sr-only">
@@ -91,10 +138,10 @@ export function CourseRequest() {
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button
             type="submit"
-            disabled={pending || !key || count < 10 || tooLong}
+            disabled={busy || !key || count < 10 || tooLong}
             className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
           >
-            {pending ? "Sending…" : "Request a course"}
+            {busy ? "Sending…" : "Request a course"}
           </button>
 
           <Link
@@ -114,30 +161,38 @@ export function CourseRequest() {
             : "A person reads this. No AI."}
       </p>
 
-      {result?.serverError ? (
+      {state.name === "failed" ? (
         <p role="alert" className="mt-2 text-sm text-risk-800">
-          {result.serverError}
+          {state.message}
         </p>
       ) : null}
+
+      <SignInDialog
+        open={state.name === "signing-in"}
+        reason="A person writes these and sends them back to you, so we need somewhere to send it. Your draft is safe — it is still in the box behind this."
+        onClose={() => setState({ name: "asking" })}
+        onSignedIn={send}
+      />
     </div>
   );
 }
 
 /**
- * The reply.
+ * Filed.
  *
- * Commits to reading the request, not to writing the course, and gives a day
- * rather than a deadline — on a page whose own copy says we will never publish
- * a figure we cannot evidence, the first interaction is a poor place to start.
+ * Says wait, then asks whether you would like to see what already exists — in
+ * that order, because the honest answer to "what happens now" is "nothing, for
+ * a bit", and a page that hurries past that to a call-to-action is pretending
+ * otherwise.
  */
-function Received({ onAgain }: { onAgain: () => void }) {
+function Sent({ id, onAgain }: { id: string; onAgain: () => void }) {
   return (
     <div className="mt-8" role="status" aria-live="polite">
       <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
         <p className="font-semibold text-ink-900">Request received.</p>
         <p className="mt-1.5 text-pretty text-ink-700">
-          A person writes these by hand — no AI. Check your courses for the
-          status.
+          A person writes these by hand — no AI — so give it a little time. It
+          moves under your courses as it goes.
         </p>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -145,14 +200,9 @@ function Received({ onAgain }: { onAgain: () => void }) {
             href="/learn"
             className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
-            Check your courses
+            Browse what already exists
           </Link>
-          <a
-            href="#waitlist"
-            className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-5 font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
-          >
-            Tell me when it is up
-          </a>
+          <ShareButton id={id} />
         </div>
       </div>
 

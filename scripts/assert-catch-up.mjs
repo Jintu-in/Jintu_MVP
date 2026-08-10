@@ -100,14 +100,39 @@ if (applyError) {
 }
 
 console.log("\n── the two things that were broken ─────────────────────────");
+
+// Filing needs a session as of 20260810040000. Asserted here rather than
+// assumed, because this suite is the one that answers "will the paste fix the
+// box?" — and after that migration the honest answer is "for somebody signed
+// in". Without this the guard called it as anon and failed on 28000, which is
+// the function working.
+let anonCode = null;
+try {
+  await db.query("select public.request_course($1, $2)", ["A request from nobody at all", BROWSER]);
+} catch (e) {
+  anonCode = e.code ?? null;
+}
+check(anonCode === "28000", `filing without a session is refused with 28000 (${anonCode})`);
+
+const USER = "55555555-5555-4555-8555-0000000000aa";
+await db.query("insert into auth.users (id) values ($1) on conflict (id) do nothing", [USER]);
+await db.query(`set jintu.uid = '${USER}'`);
+
 const filed = await db.query("select public.request_course($1, $2) as id", [
   "Backend engineer at a product company, I know Python",
   BROWSER,
 ]);
-check(Boolean(filed.rows[0]?.id), "the request box can file a request");
+check(Boolean(filed.rows[0]?.id), "and a signed-in person can file one");
 
 const mine = await db.query("select * from public.my_course_requests($1)", [BROWSER]);
 check(mine.rows.length === 1, `and read it back with a status (${mine.rows[0]?.status})`);
+
+const shared = await db.query("select * from public.shared_course_request($1)", [
+  filed.rows[0].id,
+]);
+check(shared.rows.length === 1, "and the shared link resolves");
+
+await db.query("reset jintu.uid");
 
 const proposals = await db.query("select * from public.proposed_courses()");
 check(Array.isArray(proposals.rows), "proposed_courses() answers instead of 404ing");

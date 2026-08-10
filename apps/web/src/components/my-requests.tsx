@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ShareButton } from "@/components/share-button";
 import { browserKey } from "@/lib/browser-key";
 import { createClient } from "@/lib/supabase/client";
 
@@ -94,6 +95,9 @@ export function MyRequests() {
               </div>
               <p className="mt-1.5 text-pretty text-ink-800">{r.prompt}</p>
               <p className="mt-1 text-sm text-ink-500">{s.detail}</p>
+              <div className="mt-2">
+                <ShareButton id={r.id} subtle />
+              </div>
             </li>
           );
         })}
