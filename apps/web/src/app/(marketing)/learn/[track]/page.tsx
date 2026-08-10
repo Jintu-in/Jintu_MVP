@@ -3,32 +3,34 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceItem } from "@/components/resource-item";
 import { Rubric } from "@/components/rubric";
-import { getPublishedTrack, type Module } from "@/lib/curriculum";
+import { getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
 
 /**
- * The free, public curriculum — ARCHITECTURE.md §6, Phase 1. This is the top
- * of the funnel: indexable, linkable, and readable without an account. The
- * cohort is what costs money; the syllabus does not.
+ * One course, in full. ARCHITECTURE.md §6 — the free public top of the
+ * funnel: indexable, linkable, readable with no account.
  *
- * Rendered on demand and revalidated rather than prerendered at build, so a
- * build needs no database. There is deliberately no generateStaticParams for
- * the same reason — CI builds this app with no Supabase project configured.
+ * Generated on first request and cached rather than prerendered at build.
+ * Returning [] from generateStaticParams opts into the incremental path
+ * without enumerating slugs, which would need a database CI does not have.
+ * Without it Next treats the segment as fully dynamic and `revalidate` is
+ * silently ignored, so every crawler hit becomes a Postgres query.
  */
 export const revalidate = 3600;
 
-/**
- * Empty on purpose. Returning [] opts the segment into the incremental-static
- * path — pages are built on first request and then cached for `revalidate`
- * seconds — without enumerating slugs at build time, which would require a
- * database CI does not have. Without this, Next treats the dynamic segment as
- * fully dynamic and `revalidate` above is silently ignored, so every crawler
- * hit becomes a Postgres query.
- */
 export async function generateStaticParams() {
   return [];
 }
 
-const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? "" : "s"}`;
+const plural = (n: number, one: string, many = `${one}s`) =>
+  `${n} ${n === 1 ? one : many}`;
+
+/** What the student hands in, stated in the student's terms. */
+const SUBMIT_LABEL: Record<Assignment["kind"], string> = {
+  sql: "A query",
+  artifact_link: "A link to your work",
+  file: "A file",
+  recording: "A recording",
+};
 
 export async function generateMetadata({
   params,
@@ -37,7 +39,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { track: slug } = await params;
   const track = await getPublishedTrack(slug);
-  if (!track) return { title: "Not found" };
+  if (!track) return { title: "Course not found" };
 
   return {
     title: track.title,
@@ -51,7 +53,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function TrackPage({
+export default async function CoursePage({
   params,
 }: {
   params: Promise<{ track: string }>;
@@ -60,7 +62,8 @@ export default async function TrackPage({
   const track = await getPublishedTrack(slug);
   if (!track) notFound();
 
-  const totalResources = track.modules.reduce((n, m) => n + m.resources.length, 0);
+  const resources = track.modules.reduce((n, m) => n + m.resources.length, 0);
+  const artifacts = track.modules.reduce((n, m) => n + m.assignments.length, 0);
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
@@ -68,18 +71,23 @@ export default async function TrackPage({
         <Link href="/learn" className="hover:text-brand-800">
           Free curriculum
         </Link>
-        <span aria-hidden> / </span>
+        <span aria-hidden className="px-1.5">
+          /
+        </span>
         <span className="text-ink-600">{track.title}</span>
       </nav>
 
-      <h1 className="mt-2 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
         {track.title}
       </h1>
 
+      {/* Counted from what is published, so the chips cannot overstate the
+          course. A week with no resources contributes nothing to the total. */}
       <ul className="mt-4 flex flex-wrap gap-2">
         {[
-          count(track.modules.length, "week"),
-          count(totalResources, "resource"),
+          plural(track.modules.length, "week"),
+          plural(resources, "resource"),
+          plural(artifacts, "artifact"),
           `Version ${track.version}`,
         ].map((chip) => (
           <li
@@ -93,26 +101,30 @@ export default async function TrackPage({
 
       <p className="mt-4 text-lg text-pretty text-ink-600">{track.summary}</p>
 
-      <p className="mt-6 rounded-card border border-ink-100 bg-white p-4 text-pretty text-ink-600">
-        Everything below is free and always will be. {track.modules.length} weeks,{" "}
-        {totalResources} resources, and the rubrics your work is graded against —
-        all readable before you decide whether to join a cohort. What you pay for
-        is the deadlines, the grading, the peer review, and the profile.
-      </p>
+      {track.modules.length === 0 ? (
+        <EmptyCourse />
+      ) : (
+        <>
+          <p className="mt-6 rounded-card border border-ink-100 bg-white p-4 text-pretty text-ink-600">
+            All of this is free. Work through it alone at your own pace, or join
+            a cohort for the deadlines, the grading, two peer reviews a week,
+            and a profile you can send to anyone.
+          </p>
 
-      {/* Weeks collapse so the whole syllabus is scannable on a phone, and the
-          first is open so the page never lands as a wall of closed rows. Native
-          <details>: this stays a server component, works with JS still parsing,
-          and browser find-in-page opens a closed week to reach a match. */}
-      <ol className="mt-8 space-y-3">
-        {track.modules.map((module, i) => (
-          <ModuleSection key={module.id} module={module} defaultOpen={i === 0} />
-        ))}
-      </ol>
+          {/* Native <details>: keeps this a server component, works before
+              JavaScript has parsed, and find-in-page opens a closed week to
+              reach a match. The first is open so the page never lands as a
+              wall of shut rows. */}
+          <ol className="mt-8 space-y-3">
+            {track.modules.map((module, i) => (
+              <Week key={module.id} module={module} open={i === 0} />
+            ))}
+          </ol>
+        </>
+      )}
 
-      {/* sticky, not fixed: it rides the bottom of the viewport while the
-          syllabus is on screen, then scrolls away instead of sitting on top of
-          the footer's legal line. */}
+      {/* sticky, not fixed: rides the bottom while the syllabus is on screen,
+          then scrolls away instead of covering the footer's legal line. */}
       <div className="sticky bottom-0 mt-8 -mx-5 border-t border-ink-100 bg-white px-5 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="text-sm">
@@ -131,23 +143,14 @@ export default async function TrackPage({
   );
 }
 
-function ModuleSection({
-  module,
-  defaultOpen,
-}: {
-  module: Module;
-  defaultOpen: boolean;
-}) {
+function Week({ module, open }: { module: Module; open: boolean }) {
   const headingId = `week-${module.week_no}`;
 
   return (
     <li>
-      <details
-        open={defaultOpen}
-        className="group rounded-card border border-ink-100 bg-white"
-      >
-        {/* Only phrasing and heading content may sit inside a <summary>, so the
-            week label is a span inside the h2 rather than a <p> beside it. */}
+      <details open={open} className="group rounded-card border border-ink-100 bg-white">
+        {/* Only phrasing or heading content belongs in a <summary>, so the week
+            label is a span inside the h2 rather than a <p> beside it. */}
         <summary className="flex cursor-pointer list-none items-center gap-4 p-4 [&::-webkit-details-marker]:hidden">
           <h2 id={headingId} className="min-w-0 flex-1">
             <span className="block font-mono text-sm font-normal text-ink-500">
@@ -158,11 +161,8 @@ function ModuleSection({
             </span>
           </h2>
 
-          <span className="hidden text-sm text-ink-500 sm:inline">
-            {count(module.resources.length, "resource")}
-            {module.assignments.length > 0
-              ? ` · ${count(module.assignments.length, "artifact")}`
-              : null}
+          <span className="hidden shrink-0 text-sm text-ink-500 sm:inline">
+            {plural(module.resources.length, "resource")}
           </span>
 
           <svg
@@ -180,35 +180,83 @@ function ModuleSection({
         </summary>
 
         <div className="border-t border-ink-100 p-4">
-          <p className="text-pretty text-ink-600">{module.objective}</p>
+          <p className="text-pretty text-ink-700">{module.objective}</p>
 
+          <h3 className="mt-5 text-xs font-semibold tracking-wide text-ink-500 uppercase">
+            Resources
+          </h3>
           {module.resources.length > 0 ? (
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-2 space-y-2">
               {module.resources.map((resource) => (
                 <li key={resource.id}>
                   <ResourceItem resource={resource} />
                 </li>
               ))}
             </ul>
-          ) : null}
+          ) : (
+            <p className="mt-2 text-sm text-pretty text-ink-500">
+              No links this week — the work is the assignment below.
+            </p>
+          )}
 
           {module.assignments.length > 0 ? (
-            <div className="mt-4 rounded-card border border-brand-200 bg-brand-50 p-4">
-              <h3 className="text-sm font-semibold tracking-wide text-brand-800 uppercase">
+            <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
+              <h3 className="text-xs font-semibold tracking-wide text-brand-800 uppercase">
                 What you submit
               </h3>
-              <ul className="mt-2 space-y-4 text-pretty text-ink-700">
-                {module.assignments.map((a) => (
-                  <li key={a.id}>
-                    <p>{a.spec?.prompt ?? a.kind}</p>
-                    {a.rubrics ? <Rubric rubric={a.rubrics} /> : null}
+              <ul className="mt-2 space-y-4">
+                {module.assignments.map((assignment) => (
+                  <li key={assignment.id}>
+                    <p className="text-sm font-medium text-ink-500">
+                      {SUBMIT_LABEL[assignment.kind]}
+                    </p>
+                    <p className="mt-0.5 text-pretty text-ink-800">
+                      {assignment.spec?.prompt ?? "Details to follow."}
+                    </p>
+                    {assignment.rubrics ? (
+                      <Rubric rubric={assignment.rubrics} />
+                    ) : (
+                      // Said out loud rather than hidden: the landing page
+                      // promises a rubric you can read before you start, so a
+                      // missing one is a content bug someone should notice.
+                      <p className="mt-2 text-sm text-ink-500">
+                        The rubric for this one is not published yet.
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>
             </div>
-          ) : null}
+          ) : (
+            <p className="mt-5 text-sm text-ink-500">Nothing to submit this week.</p>
+          )}
         </div>
       </details>
     </li>
+  );
+}
+
+/**
+ * A published course with no weeks. Rare but reachable — a path can be
+ * published before its modules land — and better said plainly than rendered
+ * as a title followed by nothing.
+ */
+function EmptyCourse() {
+  return (
+    <div className="mt-8 rounded-card border border-ink-200 bg-white p-8 text-center">
+      <p className="text-lg font-semibold text-ink-900">
+        This course has no weeks published yet.
+      </p>
+      <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">
+        It is still being written. Everything will appear here as soon as it is
+        ready, and it will be free to read.
+      </p>
+      <Link
+        href="/learn"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg border border-ink-200 px-5 font-medium text-brand-700 hover:border-brand-600 hover:text-brand-800"
+      >
+        See the other courses
+      </Link>
+    </div>
   );
 }

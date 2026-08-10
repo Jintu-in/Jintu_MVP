@@ -64,6 +64,12 @@ jobs:
       - name: Simulate migrations
         run: pnpm db:simulate
 
+      # Deno resolves nothing without a file extension, and the rest of the repo
+      # is deliberately extensionless. Caught statically here rather than by the
+      # Docker job failing five minutes later.
+      - name: Edge function imports resolve
+        run: pnpm fn:imports
+
       # Every guard must have a script and a CI step. Merges keep dropping them.
       - name: Guards are wired
         run: pnpm guards

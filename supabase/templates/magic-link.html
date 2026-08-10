@@ -1,0 +1,64 @@
+<!--
+  The sign-in email.
+
+  Supabase's stock "Magic Link" template is a link and nothing else. Our form
+  asks for a six-digit code, so without `{{ .Token }}` somewhere in this file
+  the email arrives, looks fine, and every code the student types is wrong —
+  a failure that looks like a bug in the app and is in fact a missing
+  variable in a template nobody thought to read.
+
+  The link is kept as well as the code. Some mail clients on Android make
+  copying six digits out of an email harder than tapping a link, and there is
+  no reason to make someone choose.
+
+  Inline styles only: Gmail strips <style> blocks, and a table is still the
+  only layout primitive that behaves across mail clients. This is not how the
+  rest of the app is written and it should not be — it is how email is.
+-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background:#f7f7f7;padding:24px 0;font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans',sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+             style="max-width:480px;background:#ffffff;border:1px solid #ededed;border-radius:12px;padding:32px;">
+        <tr>
+          <td>
+            <p style="margin:0;font-size:20px;font-weight:600;color:#231f20;">
+              Your Jintu sign-in code
+            </p>
+            <p style="margin:12px 0 0;font-size:15px;line-height:1.5;color:#585556;">
+              Enter this code in the tab you left open. It expires in an hour,
+              and it only works once.
+            </p>
+
+            <p style="margin:24px 0;font-family:ui-monospace,Menlo,monospace;font-size:32px;
+                      letter-spacing:8px;font-weight:600;color:#231f20;text-align:center;
+                      background:#f7f7f7;border-radius:8px;padding:16px 0;">
+              {{ .Token }}
+            </p>
+
+            <!--
+              Our own route, not {{ .ConfirmationURL }}. That one round-trips
+              through Supabase and hands the session back in a URL fragment,
+              which a server never sees — and this app keeps its session in
+              cookies. See apps/web/src/app/auth/confirm/route.ts.
+            -->
+            <p style="margin:0;font-size:15px;line-height:1.5;color:#585556;">
+              Or
+              <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/dashboard"
+                 style="color:#17758a;font-weight:500;">
+                sign in with one tap</a>.
+            </p>
+
+            <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #ededed;
+                      font-size:13px;line-height:1.5;color:#706d6e;">
+              If you did not ask for this, nothing has happened to your account
+              and you can ignore this email. Nobody can sign in without the
+              code above.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

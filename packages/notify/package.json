@@ -1,0 +1,20 @@
+{
+  "name": "@jintu/notify",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@jintu/config": "workspace:*",
+    "eslint": "^10.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}

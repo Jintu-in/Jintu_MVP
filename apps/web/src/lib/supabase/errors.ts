@@ -11,6 +11,19 @@ import type { PostgrestError } from "@supabase/supabase-js";
 export function describeSupabaseError(context: string, error: PostgrestError): Error {
   const code = error.code ?? "";
 
+  // No code means the request never reached PostgREST — DNS, TLS, a dropped
+  // socket. "listing published tracks failed [no code]: TypeError: fetch
+  // failed" is technically accurate and tells an operator nothing about where
+  // to look, so say which layer broke.
+  if (!code && /fetch failed|network|ECONN|ETIMEDOUT|EAI_AGAIN|socket hang up|terminated/i.test(error.message ?? "")) {
+    return new Error(
+      `Could not reach the database while ${context}. This is a network ` +
+        `failure between the server and Supabase, not a bad query — the ` +
+        `request never arrived. Already retried. Check Supabase status and ` +
+        `outbound connectivity from the host.\n\nUnderlying: ${error.message}`,
+    );
+  }
+
   // PGRST205: PostgREST cannot see the table. 42P01: Postgres says it does
   // not exist. Both mean the same thing in practice here.
   if (code === "PGRST205" || code === "42P01") {

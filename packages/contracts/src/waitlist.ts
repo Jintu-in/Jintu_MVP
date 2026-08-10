@@ -8,7 +8,11 @@ import { z } from "zod";
  * published notice in place — a consent record that cannot show which text
  * the user actually read proves nothing (docs/LEGAL.md §2.2).
  */
-export const NOTICE_VERSION = "2026-08-09.v1";
+// v2 (2026-08-10): sign-in moved from SMS OTP to an emailed code, so the
+// notice's account of what the mobile number is for changed — it is contact,
+// not identity. A consent row pointing at v1 would point at a sentence that
+// is no longer true of the service.
+export const NOTICE_VERSION = "2026-08-10.v2";
 
 const E164_INDIAN_MOBILE = /^\+91[6-9]\d{9}$/;
 

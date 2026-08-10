@@ -1,0 +1,53 @@
+<!--
+  Changing the address the account signs in with.
+
+  Since sign-in is by emailed code, this address IS the credential — changing
+  it is closer to changing a password than to updating a contact detail. That
+  is why `double_confirm_changes` is on in config.toml: the code goes to both
+  the old address and the new one, so an attacker holding a live session
+  cannot quietly move the account somewhere the owner cannot reach.
+
+  `{{ .Email }}` is the current address and `{{ .NewEmail }}` the proposed
+  one. Naming both is what makes this email actionable by the person who did
+  not initiate the change: they can see where their account is being moved.
+-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background:#f7f7f7;padding:24px 0;font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans',sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+             style="max-width:480px;background:#ffffff;border:1px solid #ededed;border-radius:12px;padding:32px;">
+        <tr>
+          <td>
+            <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:1px;
+                      text-transform:uppercase;color:#17758a;">
+              Jintu
+            </p>
+            <p style="margin:8px 0 0;font-size:20px;font-weight:600;color:#231f20;">
+              Confirm your new email address
+            </p>
+            <p style="margin:12px 0 0;font-size:15px;line-height:1.5;color:#585556;">
+              You asked to move this account from
+              <strong style="color:#231f20;">{{ .Email }}</strong> to
+              <strong style="color:#231f20;">{{ .NewEmail }}</strong>. Enter
+              this code to confirm.
+            </p>
+
+            <p style="margin:24px 0;font-family:ui-monospace,Menlo,monospace;font-size:32px;
+                      letter-spacing:8px;font-weight:600;color:#231f20;text-align:center;
+                      background:#f7f7f7;border-radius:8px;padding:16px 0;">
+              {{ .Token }}
+            </p>
+
+            <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #ededed;
+                      font-size:13px;line-height:1.5;color:#706d6e;">
+              If you did not ask for this, do not enter the code — and tell us,
+              because it means somebody else is in your account. The address
+              only changes once both the old and the new one confirm.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

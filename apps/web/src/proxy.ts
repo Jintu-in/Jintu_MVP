@@ -1,7 +1,15 @@
 import type { NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
+/**
+ * Renamed from `middleware` in Next 16 — both the file and the export. The old
+ * convention still runs and prints a deprecation warning on every `next dev`.
+ *
+ * The `edge` runtime is not available under `proxy`; it is Node, and not
+ * configurable. That suits us: the session refresh talks to Supabase over
+ * HTTP and needs nothing edge-specific.
+ */
+export async function proxy(request: NextRequest) {
   return updateSession(request);
 }
 

@@ -1,5 +1,6 @@
 import { createPublicClient } from "@/lib/supabase/public";
 import { describeSupabaseError } from "@/lib/supabase/errors";
+import { retryRead } from "@/lib/supabase/retry";
 
 /**
  * Read side of the public curriculum.
@@ -64,43 +65,48 @@ export type TrackSummary = {
   slug: string;
   title: string;
   summary: string;
+  /** Counted through the published path, so a half-written draft never shows. */
   weeks: number;
+  resources: number;
+  artifacts: number;
 };
 
 export async function getPublishedTrack(slug: string): Promise<TrackPage | null> {
   const supabase = createPublicClient();
 
-  const { data: track, error: trackError } = await supabase
-    .from("tracks")
-    .select("id, slug, title, summary")
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data: track, error: trackError } = await retryRead(() =>
+    supabase.from("tracks").select("id, slug, title, summary").eq("slug", slug).maybeSingle(),
+  );
 
   if (trackError) throw describeSupabaseError("looking up the track", trackError);
   if (!track) return null;
 
   // Highest published version wins. RLS has already excluded drafts, so the
   // newest row visible here is by definition the live one.
-  const { data: path, error: pathError } = await supabase
-    .from("paths")
-    .select("id, version")
-    .eq("track_id", track.id)
-    .order("version", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { data: path, error: pathError } = await retryRead(() =>
+    supabase
+      .from("paths")
+      .select("id, version")
+      .eq("track_id", track.id)
+      .order("version", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  );
 
   if (pathError) throw describeSupabaseError("looking up the published path", pathError);
   if (!path) return null;
 
-  const { data: modules, error: modulesError } = await supabase
-    .from("modules")
-    .select(
-      `id, week_no, title, objective,
+  const { data: modules, error: modulesError } = await retryRead(() =>
+    supabase
+      .from("modules")
+      .select(
+        `id, week_no, title, objective,
        resources ( id, kind, provider, external_url, youtube_video_id, title, duration_sec, position, health ),
        assignments ( id, kind, spec, rubrics ( name, max_score, criteria ) )`,
-    )
-    .eq("path_id", path.id)
-    .order("week_no", { ascending: true });
+      )
+      .eq("path_id", path.id)
+      .order("week_no", { ascending: true }),
+  );
 
   if (modulesError) throw describeSupabaseError("loading the weekly modules", modulesError);
 
@@ -127,10 +133,12 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
   // No is_published filter: RLS already returns only published tracks, and
   // only their published paths. Counting modules through that join therefore
   // counts the live curriculum rather than whatever is half-written in a draft.
-  const { data, error } = await supabase
-    .from("tracks")
-    .select("slug, title, summary, paths ( modules ( id ) )")
-    .order("title", { ascending: true });
+  const { data, error } = await retryRead(() =>
+    supabase
+      .from("tracks")
+      .select("slug, title, summary, paths ( modules ( id ) )")
+      .order("title", { ascending: true }),
+  );
 
   if (error) throw describeSupabaseError("listing published tracks", error);
 
@@ -138,13 +146,24 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
     slug: string;
     title: string;
     summary: string;
-    paths: { modules: { id: string }[] | null }[] | null;
+    paths:
+      | {
+          modules:
+            | { id: string; resources: { id: string }[] | null; assignments: { id: string }[] | null }[]
+            | null;
+        }[]
+      | null;
   };
 
-  return ((data ?? []) as unknown as Row[]).map((t) => ({
-    slug: t.slug,
-    title: t.title,
-    summary: t.summary,
-    weeks: (t.paths ?? []).reduce((n, p) => n + (p.modules?.length ?? 0), 0),
-  }));
+  return ((data ?? []) as unknown as Row[]).map((t) => {
+    const modules = (t.paths ?? []).flatMap((p) => p.modules ?? []);
+    return {
+      slug: t.slug,
+      title: t.title,
+      summary: t.summary,
+      weeks: modules.length,
+      resources: modules.reduce((n, m) => n + (m.resources?.length ?? 0), 0),
+      artifacts: modules.reduce((n, m) => n + (m.assignments?.length ?? 0), 0),
+    };
+  });
 }

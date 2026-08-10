@@ -156,11 +156,26 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+# The deployed origin, not localhost. `supabase config push` sends this whole
+# file to the linked project, so a localhost site_url here becomes the live
+# project's site_url — the URL every auth email links to.
+#
+# jintu.in is not registered yet. Deliberately NOT allow-listed until it is:
+# an entry here is a domain auth will redirect to, and pointing that at a name
+# somebody else could buy tomorrow is an open redirect with our own sign-in
+# tokens attached. Change this line and add it below on the day it is bought.
+site_url = "https://jintu-mvp.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "https://jintu-mvp.vercel.app",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000",
+  # `next dev` falls back to 3001 when 3000 is taken, and a redirect URL that
+  # is not on this list fails closed.
+  "http://localhost:3001",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -196,7 +211,17 @@ password_requirements = ""
 
 [auth.rate_limit]
 # Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+#
+# 2 is the default and it is the built-in sender's ceiling, not a choice — a
+# single person testing sign-in twice exhausts it, and every request after
+# that fails with `over_email_send_rate_limit` before an email is attempted.
+# It reads as "email OTP is broken" and is in fact a quota.
+#
+# This raise only takes effect once auth.email.smtp is enabled; on the
+# built-in sender the cap holds regardless of what is written here. 100/hour
+# is comfortable for a 50-student cohort signing up the same evening and low
+# enough that a loop hitting the endpoint is contained.
+email_sent = 100
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -217,9 +242,13 @@ web3 = 30
 # secret = ""
 
 [auth.email]
-# Phone-first: email is transactional only (Resend), never an auth factor.
-# ARCHITECTURE.md §1 — phone OTP is the correct primary for India.
-enable_signup = false
+# Email OTP is the sign-in factor for now. ARCHITECTURE.md §1 calls for phone
+# OTP and that is still the right end state, but every A2P SMS to an Indian
+# number needs TRAI DLT registration first — a registered entity, PAN and GST
+# paperwork, weeks of waiting — and none of that work carries over to
+# WhatsApp, which needs Meta business verification instead. See
+# packages/contracts/src/auth.ts.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
@@ -234,20 +263,87 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Use a production-ready SMTP server
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# Your own SMTP is not optional here, for two reasons. Supabase's built-in
+# sender is rate-limited to a handful of messages an hour — twenty students
+# signing up the same evening will hit that wall — and since 3 June 2026 new
+# projects cannot customise auth email templates while on it, which means the
+# template above never takes effect and no code is ever sent.
+#
+# ⚠ Set SENDGRID_API_KEY in .env BEFORE the next `supabase config push`.
+# Pushing this with the variable empty enables SMTP with a blank password, and
+# then no auth email is sent at all.
+#
+# SendGrid rather than Resend, and it is the domain that decides it. Neither
+# provider will send from an address on a domain you have not proved you own,
+# and jintu.in is not registered yet — so the question is what each does in
+# the meantime:
+#
+#   Resend   onboarding@resend.dev delivers ONLY to the address the Resend
+#            account is registered under. Enough to watch the flow work once.
+#   SendGrid Single Sender Verification verifies one address — a Gmail address
+#            is fine — and then sends to anyone. A cohort can sign up.
+#
+# The second is the difference between a demo and a usable sign-in, so it wins
+# until the domain lands. `user` really is the literal string "apikey";
+# SendGrid uses it for every account and the key goes in the password.
+#
+# When jintu.in is bought: verify the domain (in either provider), change
+# admin_email, and delete the sender-verification caveat. Nothing else moves.
+[auth.email.smtp]
+enabled = true
+host = "smtp.sendgrid.net"
+port = 587
+user = "apikey"
+pass = "env(SENDGRID_API_KEY)"
+# Must be an address verified under SendGrid > Sender Authentication > Single
+# Sender Verification, and must match it exactly — SendGrid rejects any send
+# whose From is not a verified identity, which surfaces through Supabase as a
+# bare 500 "Error sending magic link email" with nothing naming the address.
+admin_email = "mainhujintu@gmail.com"
+sender_name = "Jintu"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Resend, if you would rather. Same shape, one restriction worse until the
+# domain exists.
+# host = "smtp.resend.com"
+# user = "resend"
+# pass = "env(RESEND_API_KEY)"
+# admin_email = "onboarding@resend.dev"
+
+# ── Auth emails ──────────────────────────────────────────────────────────────
+# Every template below carries `{{ .Token }}`. Supabase's stock templates carry
+# a link and no code, so a sign-in form that asks for six digits gets an email
+# that never contains any — the failure looks like a bug in the app and is a
+# missing variable in a template nobody thought to read.
+#
+# Which of these Supabase actually sends is not obvious, and getting it wrong
+# is how the first round of testing produced a "Confirm your email address"
+# email with a link in it:
+#
+#   * enable_confirmations = true  + address never seen  ->  confirmation
+#   * enable_confirmations = false + any address         ->  magic_link
+#
+# Both are customised, so the flow works either way and one fewer setting has
+# to be right for a student to get in.
+[auth.email.template.confirmation]
+subject = "Your Jintu sign-in code"
+content_path = "./supabase/templates/confirm-signup.html"
+
+[auth.email.template.magic_link]
+subject = "Your Jintu sign-in code"
+content_path = "./supabase/templates/magic-link.html"
+
+# The address is the credential here, so changing it is closer to changing a
+# password than to editing a contact detail.
+[auth.email.template.email_change]
+subject = "Confirm your new Jintu email address"
+content_path = "./supabase/templates/email-change.html"
+
+# Deliberately left stock:
+#   * recovery — there are no passwords to recover
+#   * invite — nobody is invited; enrolment is created by ops after payment
+#   * reauthentication — only used by secure_password_change, which is off
+# A branded template for an email we never send is a file that goes stale
+# without anyone noticing.
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
@@ -256,18 +352,35 @@ otp_expiry = 3600
 # content_path = "./templates/password_changed_notification.html"
 
 [auth.sms]
-# Allow/disallow new user signups via SMS to your project.
-enable_signup = true
+# Off until DLT registration is done. The Phone provider is already disabled on
+# the linked project; this keeps the declared config saying the same thing, so
+# `config push` does not quietly switch on a provider with no SMS credentials
+# behind it.
+enable_signup = false
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = true
-# Template for sending OTP to users
+# The message body. Two things about it are not stylistic:
+#
+#   * TRAI requires the text to match a template registered on the DLT portal
+#     CHARACTER FOR CHARACTER, with variables in the registered positions. An
+#     edit here that is not mirrored there is not a worse message, it is an
+#     undelivered one — carriers reject on template mismatch.
+#   * "Do not share it with anyone" is the line that makes an OTP-relay scam
+#     harder. Keep it.
 template = "{{ .Code }} is your Jintu verification code. It expires in 10 minutes. Do not share it with anyone."
 # Controls the minimum amount of time that must pass before sending another sms otp.
 max_frequency = "5s"
 
-# Use pre-defined map of phone number to OTP for testing.
+# Fixed codes for fixed numbers, so the whole sign-in flow can be exercised
+# with no SMS provider, no DLT registration and no cost. This is how to test
+# today; it is not how to run a cohort.
+#
+# Left commented deliberately. `supabase config push` sends this file to the
+# linked project, and a test number on production is a permanent backdoor into
+# whichever account owns that number. Add one in the dashboard while testing,
+# take it out before anyone real signs up.
 # [auth.sms.test_otp]
-# 4152127777 = "123456"
+# 919876543210 = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]
@@ -286,13 +399,52 @@ max_frequency = "5s"
 # enabled = true
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
-# Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# ── The SMS provider ─────────────────────────────────────────────────────────
+# Supabase Auth does not send SMS. It owns the OTP — generating it, storing the
+# hash, expiring it, verifying it — and hands the message to a provider you
+# bring. With no provider configured, `signInWithOtp({ phone })` returns
+# "provider disabled" and no code is ever sent, which is the state this project
+# was in.
+#
+# Supported: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# Anything else — MSG91, Gupshup, Kaleyra, the cheap Indian aggregators — needs
+# the send_sms hook below instead.
+#
+# Before any of them delivers to an Indian number: TRAI DLT registration. A
+# registered entity with PAN and GST, a header (sender ID), and the template
+# above, each approved separately on the operator portals. It is paperwork and
+# waiting, not a switch, and no provider can skip it.
 [auth.sms.twilio]
 enabled = false
-account_sid = ""
-message_service_sid = ""
+# Both of these identify the account rather than authenticate it, so they are
+# not secrets — but they differ per environment, which is reason enough to
+# keep them out of a committed file.
+account_sid = "env(SUPABASE_AUTH_SMS_TWILIO_ACCOUNT_SID)"
+message_service_sid = "env(SUPABASE_AUTH_SMS_TWILIO_MESSAGE_SERVICE_SID)"
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
 auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+
+# ── Delivery over WhatsApp instead of SMS ────────────────────────────────────
+# Supabase calls this hook in place of a built-in provider. It still owns the
+# one-time code — generating, hashing, expiring and verifying it — and the
+# hook only carries the message, which is why nothing in the sign-in forms or
+# actions knows the channel is not SMS.
+#
+# This is what removes TRAI DLT from the critical path. DLT governs SMS and
+# voice on telecom networks; WhatsApp is OTT and outside it. The cost is Meta
+# business verification, a phone number dedicated to the API, and an
+# AUTHENTICATION-category template — work the Phase 2 deadline nudges need
+# anyway, unlike DLT, which would be bought for authentication alone.
+#
+# The same hook is the route to MSG91 or Gupshup later: swap the Notifier in
+# supabase/functions/send-sms/index.ts, deploy, change nothing else.
+#
+# Enable after `pnpm fn:deploy send-sms`, with the project ref substituted.
+# Pointing this at a function that is not deployed makes every sign-in fail.
+# [auth.hook.send_sms]
+# enabled = true
+# uri = "https://nejtogeezerebdeflhfa.supabase.co/functions/v1/send-sms"
+# secrets = "env(SEND_SMS_HOOK_SECRET)"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]

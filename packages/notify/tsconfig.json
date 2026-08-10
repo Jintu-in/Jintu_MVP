@@ -1,0 +1,20 @@
+{
+  "extends": "@jintu/config/typescript/base.json",
+  "compilerOptions": {
+    // The base lib is ES2023 and nothing else, which is right for the packages
+    // that touch no platform APIs. This one is built out of web standards on
+    // purpose — fetch, crypto.subtle, TextEncoder, atob — because those are
+    // the APIs Node and Deno both have, and being able to name their types is
+    // what keeps the runtime-pure rule checkable rather than aspirational.
+    //
+    // DOM, not @types/node: pulling in Node's types here would make
+    // `node:crypto` resolve and quietly undo the point.
+    "lib": ["ES2023", "DOM"],
+    // Deno needs the extension in the specifier; TS rejects it by default.
+    // Safe here because the base config sets noEmit — nothing rewrites these
+    // paths, so what Deno reads is what is written.
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
