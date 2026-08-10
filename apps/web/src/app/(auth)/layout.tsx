@@ -1,16 +1,27 @@
 import Link from "next/link";
+import { AvatarMenu } from "@/components/avatar-menu";
+import { getViewer, initialsFor } from "@/lib/session";
 
 /**
- * The shell for sign-in, onboarding and the account page.
+ * The shell for sign-in, onboarding and the signed-in pages.
  *
  * Deliberately thinner than the marketing header: no Curriculum/Pricing/Sign
  * in nav. Someone halfway through an OTP flow has one thing to do, and a nav
  * bar full of exits is how a half-created account happens. The way out is the
  * wordmark, which goes home.
+ *
+ * The avatar appears only once a profile exists, which is the same line the
+ * rule above draws: no profile means onboarding is unfinished, so the header
+ * stays bare. Past that point this group is the dashboard, the profile and the
+ * account page, where having no way to move between them is its own problem.
+ *
+ * Costs nothing here — every route in this group is already force-dynamic.
  */
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const viewer = await getViewer();
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-ink-100 bg-white">
@@ -33,6 +44,16 @@ export default function AuthLayout({
             </svg>
             <span className="text-lg font-semibold tracking-tight">Jintu</span>
           </Link>
+
+          {viewer?.hasProfile ? (
+            <div className="ml-auto">
+              <AvatarMenu
+                initials={initialsFor(viewer)}
+                fullName={viewer.fullName}
+                email={viewer.email}
+              />
+            </div>
+          ) : null}
         </div>
       </header>
 

@@ -1,9 +1,39 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AvatarMenu } from "@/components/avatar-menu";
+import { getViewer, initialsFor } from "@/lib/session";
 
-export default function MarketingLayout({
+/**
+ * Reading the viewer here is what makes these routes render per request.
+ *
+ * `/`, `/pricing` and `/privacy` were prerendered static and `/learn/[track]`
+ * was SSG; a layout that touches cookies makes all four dynamic. That was a
+ * deliberate trade, taken because the alternative — filling the avatar in
+ * after hydration — means a signed-in student watches the header change under
+ * them on every marketing page, and a header that rearranges itself reads as a
+ * bug even when it is not.
+ *
+ * The way to have both is Partial Prerendering: a static shell with the avatar
+ * streaming into a hole. That needs `cacheComponents`, which turns data
+ * fetching dynamic-by-default across the whole app and would want its own
+ * change rather than riding along with a header.
+ *
+ * Declared force-dynamic rather than left for Next to infer from the cookie
+ * read. Inference is not reliable here: createClient() validates the
+ * environment BEFORE it touches cookies, so on a build with no Supabase
+ * project — which is exactly what CI does, on purpose — the env error is
+ * raised during the prerender attempt and Next never gets as far as the
+ * dynamic bail-out. The result was a green local build and a red CI one,
+ * "Export encountered an error on /(marketing)/page: /". Saying it outright
+ * means the two agree.
+ */
+export const dynamic = "force-dynamic";
+
+export default async function MarketingLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const viewer = await getViewer();
+
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Sticky, because the curriculum page is long and the sign-in and
@@ -39,9 +69,33 @@ export default function MarketingLayout({
             <Link href="/pricing" className="font-medium text-ink-600 hover:text-ink-900">
               Pricing
             </Link>
-            <Link href="/join" className="font-medium text-brand-700 hover:text-brand-800">
-              Sign in
-            </Link>
+
+            {/*
+              Three states, not two. Someone who has authenticated but not
+              finished onboarding has no profiles row — under Law 3 that means
+              they have never confirmed being 18, so they are not yet a user of
+              anything and must not be handed an account menu. Showing them
+              "Sign in" would be worse: they are signed in, and the link would
+              bounce them through a flow they are already inside.
+            */}
+            {viewer?.hasProfile ? (
+              <AvatarMenu
+                initials={initialsFor(viewer)}
+                fullName={viewer.fullName}
+                email={viewer.email}
+              />
+            ) : viewer ? (
+              <Link
+                href="/onboarding"
+                className="font-medium text-brand-700 hover:text-brand-800"
+              >
+                Finish signing up
+              </Link>
+            ) : (
+              <Link href="/join" className="font-medium text-brand-700 hover:text-brand-800">
+                Sign in
+              </Link>
+            )}
           </nav>
         </div>
       </header>
