@@ -8,6 +8,7 @@ import { NEEDS_ACCOUNT } from "@jintu/contracts";
 import { requestCourse } from "@/actions/course-request";
 import { ShareButton } from "@/components/share-button";
 import { SignInDialog } from "@/components/sign-in-dialog";
+import { StatusPill } from "@/components/status-pill";
 import { browserKey } from "@/lib/browser-key";
 
 /**
@@ -116,53 +117,57 @@ export function TrackRouter({
         <label htmlFor={id} className="sr-only">
           What do you want to learn?
         </label>
+        {/* min-w-0 so the input can actually shrink inside the flex row;
+            without it a long placeholder sets a floor and the button is
+            pushed off a narrow screen. */}
         <input
           id={id}
           name="q"
           type="text"
           maxLength={120}
           placeholder="data analyst"
-          className="h-12 w-full rounded-lg border border-ink-200 px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:max-w-sm"
+          className="h-12 w-full min-w-0 flex-1 rounded-lg border border-ink-200 px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:max-w-md"
         />
-        {/* The only primary button on the page. */}
+        {/* The only primary button on the page. Full width on a phone, where a
+            half-width button beside nothing looks like a mistake. */}
         <button
           type="submit"
-          className="h-12 shrink-0 rounded-lg bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          className="h-12 w-full shrink-0 rounded-lg bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto"
         >
           Check
         </button>
       </form>
 
-      {/* Real examples only. Every one of these resolves to something. */}
-      <p className="mt-3 text-[13px] text-ink-500">
-        Try{" "}
-        {tracks.slice(0, 3).map((t, i) => (
-          <span key={t.slug}>
-            {i > 0 ? " · " : ""}
-            <button
-              type="button"
-              onClick={() => {
-                if (formRef.current?.q) formRef.current.q.value = t.title;
-                check();
-              }}
-              className="underline hover:text-ink-900"
-            >
-              {t.title.split(" — ")[0]}
-            </button>
-          </span>
+      {/*
+        Real examples only — every one of these resolves to something.
+
+        Chips rather than a sentence of inline links. Inline text links inside
+        13px copy are a ~16px tap target on a phone, which is half what a thumb
+        needs; a bordered chip with h-9 and horizontal padding is a real one,
+        and wraps cleanly at 360px instead of reflowing mid-list.
+      */}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="text-[13px] text-ink-500">Try</span>
+        {tracks.slice(0, 3).map((t) => (
+          <Chip
+            key={t.slug}
+            onClick={() => {
+              if (formRef.current?.q) formRef.current.q.value = t.title;
+              check();
+            }}
+          >
+            {t.title.split(" — ")[0]}
+          </Chip>
         ))}
-        {" · "}
-        <button
-          type="button"
+        <Chip
           onClick={() => {
             if (formRef.current?.q) formRef.current.q.value = "battery pack engineering";
             check();
           }}
-          className="underline hover:text-ink-900"
         >
           Something else
-        </button>
-      </p>
+        </Chip>
+      </div>
 
       <div aria-live="polite">
         {result.kind === "sprint" ? <SprintResult track={result.track} /> : null}
@@ -190,8 +195,26 @@ export function TrackRouter({
   );
 }
 
+/** A tappable example. h-9 plus padding is a real target; 13px inline text is not. */
+function Chip({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex h-9 items-center rounded-full border border-ink-200 bg-white px-3.5 text-[13px] text-ink-600 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+    >
+      {children}
+    </button>
+  );
+}
+
 /**
  * Route A — a sprint exists.
+ *
+ * The heaviest thing on the page, deliberately: it is the only outcome that
+ * leads to money, and the brief's warning is that a homepage about "learn
+ * anything" buries the one thing that earns. So it gets the filled button and
+ * Route C does not.
  *
  * Deliberately does not print a cohort date or a seat count. There is no
  * cohort row in the database; a date here would be a commitment somebody could
@@ -200,24 +223,33 @@ export function TrackRouter({
  */
 function SprintResult({ track }: { track: RouterTrack }) {
   return (
-    <div className="mt-6 border border-ink-100 p-6">
-      <p className="text-[13px] text-ink-500">Sprint</p>
-      <h2 className="mt-1 text-lg font-medium text-ink-900">{track.title}</h2>
+    <div className="mt-6 rounded-card border border-ink-100 bg-white p-5 sm:p-6">
+      <StatusPill tone="active">Sprint</StatusPill>
 
-      <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
+      <h2 className="mt-3 text-lg leading-snug font-medium text-balance text-ink-900 sm:text-xl">
+        {track.title}
+      </h2>
+
+      <p className="mt-1.5 font-mono text-[13px] text-ink-500">
         {track.weeks} weeks · {track.artifacts}{" "}
         {track.artifacts === 1 ? "artifact" : "artifacts"} · ₹999 once
       </p>
 
-      <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-ink-600">
+      <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
         {track.summary}
       </p>
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
-        <Link href={`/learn/${track.slug}`} className="font-medium text-brand-700 underline hover:text-brand-800">
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
+        <Link
+          href={`/learn/${track.slug}`}
+          className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+        >
           Read the curriculum — free
         </Link>
-        <a href="#waitlist" className="text-brand-700 underline hover:text-brand-800">
+        <a
+          href="#waitlist"
+          className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+        >
           Join the waitlist
         </a>
       </div>
@@ -248,20 +280,28 @@ function UnbuiltResult({
 }) {
   if (requestedId) {
     return (
-      <div className="mt-6 border border-ink-100 p-6" role="status">
-        <p className="text-[13px] text-ink-500">Asked for</p>
-        <h2 className="mt-1 text-lg font-medium text-ink-900">{typed}</h2>
-        <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-600">
+      <div className="mt-6 rounded-card border border-ink-100 bg-white p-5 sm:p-6" role="status">
+        <StatusPill tone="active">Requested</StatusPill>
+        <h2 className="mt-3 text-lg leading-snug font-medium break-words text-ink-900">{typed}</h2>
+        <p className="mt-2 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
           A person reads these and writes the weeks by hand, so give it a little
           time. It moves under your courses as it goes.
         </p>
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
-          <Link href="/tracks" className="font-medium text-brand-700 underline hover:text-brand-800">
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
+          <Link
+            href="/tracks"
+            className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          >
             See it in your tracks
           </Link>
-          <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
+          <Link
+            href="/learn"
+            className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+          >
             Browse what exists
           </Link>
+        </div>
+        <div className="mt-3">
           <ShareButton id={requestedId} subtle />
         </div>
       </div>
@@ -269,11 +309,14 @@ function UnbuiltResult({
   }
 
   return (
-    <div className="mt-6 border border-ink-100 p-6">
-      <p className="text-[13px] text-ink-500">Nobody has built this yet</p>
-      <h2 className="mt-1 text-lg font-medium text-ink-900">{typed}</h2>
+    // Dashed and unfilled, against Route A's solid border and filled button.
+    // The brief is explicit that this must stay visibly thinner: a satisfying
+    // "nothing here yet" is the free thing a chat window already does.
+    <div className="mt-6 rounded-card border border-dashed border-ink-200 bg-ink-50 p-5 sm:p-6">
+      <StatusPill>Not built yet</StatusPill>
+      <h2 className="mt-3 text-lg leading-snug font-medium break-words text-ink-900">{typed}</h2>
 
-      <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-600">
+      <p className="mt-2 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
         No outline, and not a generated one either — a person writes these. Ask
         for it and it joins the queue.
       </p>
@@ -293,16 +336,19 @@ function UnbuiltResult({
         </p>
       ) : null}
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
         <button
           type="button"
           onClick={onAsk}
           disabled={pending}
-          className="font-medium text-brand-700 underline hover:text-brand-800 disabled:text-ink-500 disabled:no-underline"
+          className="flex h-11 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
         >
           {pending ? "Asking…" : signedIn ? "Ask for this course" : "Sign in and ask for this"}
         </button>
-        <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
+        <Link
+          href="/learn"
+          className="flex h-11 items-center justify-center rounded-lg px-4 text-[15px] font-medium text-ink-700 hover:text-brand-800"
+        >
           Browse what exists
         </Link>
       </div>

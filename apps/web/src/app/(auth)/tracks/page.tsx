@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ShareButton } from "@/components/share-button";
+import { StatusPill } from "@/components/status-pill";
 import { listMyRequests, listMyTracks, type MyRequest } from "@/lib/my-tracks";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,17 +28,23 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const STATUS: Record<MyRequest["status"], { label: string; detail: string; tone: string }> = {
-  new: { label: "Requested", detail: "Waiting for someone to read it.", tone: "text-ink-600" },
-  triaged: { label: "Read", detail: "Looked at, and in the queue.", tone: "text-ink-600" },
-  writing: { label: "Being written", detail: "Someone is working on it now.", tone: "text-brand-800" },
-  published: { label: "Published", detail: "It is live — open it from Tracks.", tone: "text-ok-800" },
+const STATUS: Record<
+  MyRequest["status"],
+  { label: string; detail: string; tone: "neutral" | "active" | "done" }
+> = {
+  new: { label: "Requested", detail: "Waiting for someone to read it.", tone: "neutral" },
+  triaged: { label: "Read", detail: "Looked at, and in the queue.", tone: "neutral" },
+  writing: { label: "Being written", detail: "Someone is working on it now.", tone: "active" },
+  published: { label: "Published", detail: "It is live — open it from Tracks.", tone: "done" },
   declined: {
     label: "Not being built",
     detail: "We could not do this one well enough to publish it.",
-    tone: "text-ink-600",
+    tone: "neutral",
   },
 };
+
+const day = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 
 export default async function MyTracksPage() {
   const supabase = await createClient();
@@ -58,42 +65,51 @@ export default async function MyTracksPage() {
   ]);
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-10">
-      <h1 className="text-2xl font-medium text-ink-900">Your tracks</h1>
+    <main className="mx-auto max-w-2xl px-5 py-10 sm:py-14">
+      <h1 className="text-[26px] leading-tight font-medium text-ink-900 sm:text-[32px]">
+        Your tracks
+      </h1>
 
       {/* ── enrolled ───────────────────────────────────────────────────── */}
-      <section className="mt-8" aria-labelledby="enrolled">
-        <h2 id="enrolled" className="text-lg font-medium text-ink-900">
-          Running
-        </h2>
-
+      <Section title="Running" count={tracks.length} className="mt-10 sm:mt-12">
         {tracks.length ? (
-          <ul className="mt-4 space-y-3">
+          <ul className="space-y-3">
             {tracks.map((t) => (
-              <li key={t.enrollmentId} className="border border-ink-100 p-5">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <p className="text-[15px] font-medium text-ink-900">{t.title}</p>
-                  <p className="font-mono text-[13px] text-ink-500">{t.status}</p>
+              <li
+                key={t.enrollmentId}
+                className="rounded-card border border-ink-100 bg-white p-5 transition-colors hover:border-ink-200"
+              >
+                {/* min-w-0 on the growing child, or a long title refuses to
+                    wrap and pushes the pill off a 360px screen. */}
+                <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                  <p className="min-w-0 flex-1 text-[15px] font-medium break-words text-ink-900">
+                    {t.title}
+                  </p>
+                  <StatusPill tone={t.status === "completed" ? "done" : "active"}>
+                    {t.status}
+                  </StatusPill>
                 </div>
+
                 {t.startsOn ? (
-                  <p className="mt-1 text-[13px] text-ink-500">
-                    {new Date(t.startsOn).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                    })}
-                    {t.endsOn
-                      ? ` – ${new Date(t.endsOn).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
-                      : ""}
+                  <p className="mt-1.5 font-mono text-[13px] text-ink-500">
+                    {day(t.startsOn)}
+                    {t.endsOn ? ` – ${day(t.endsOn)}` : ""}
                   </p>
                 ) : null}
-                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[15px]">
-                  <Link href="/dashboard" className="text-brand-700 underline hover:text-brand-800">
+
+                {/* Stacked and full-width below sm so both are 48px targets on
+                    a phone; inline once there is room for two. */}
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <Link
+                    href="/dashboard"
+                    className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+                  >
                     This week&rsquo;s work
                   </Link>
                   {t.slug ? (
                     <Link
                       href={`/learn/${t.slug}`}
-                      className="text-brand-700 underline hover:text-brand-800"
+                      className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
                     >
                       Full curriculum
                     </Link>
@@ -103,48 +119,39 @@ export default async function MyTracksPage() {
             ))}
           </ul>
         ) : (
-          <div className="mt-4 border border-ink-100 bg-ink-50 p-5">
-            <p className="text-[15px] leading-[1.7] text-pretty text-ink-700">
-              You are not in a cohort yet. Every curriculum is free to work
-              through on your own in the meantime — nothing is held back for
-              paying students.
-            </p>
-            <Link
-              href="/learn"
-              className="mt-3 inline-block text-[15px] text-brand-700 underline hover:text-brand-800"
-            >
-              Browse tracks
-            </Link>
-          </div>
+          <Empty
+            body="You are not in a cohort yet. Every curriculum is free to work through on your own in the meantime — nothing is held back for paying students."
+            href="/learn"
+            cta="Browse tracks"
+          />
         )}
-      </section>
+      </Section>
 
       {/* ── requested ──────────────────────────────────────────────────── */}
-      <section className="mt-12" aria-labelledby="requested">
-        <h2 id="requested" className="text-lg font-medium text-ink-900">
-          Requested
-        </h2>
-
+      <Section title="Requested" count={requests.length} className="mt-12 sm:mt-16">
         {requests.length ? (
-          <ul className="mt-4 space-y-3">
+          <ul className="space-y-3">
             {requests.map((r) => {
               const s = STATUS[r.status] ?? STATUS.new;
               return (
-                <li key={r.id} className="border border-ink-100 p-5">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <p className={`text-[13px] font-medium ${s.tone}`}>{s.label}</p>
-                    <p className="font-mono text-[13px] text-ink-500">
-                      {new Date(r.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                      })}
-                    </p>
+                <li
+                  key={r.id}
+                  className="rounded-card border border-ink-100 bg-white p-5 transition-colors hover:border-ink-200"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <StatusPill tone={s.tone}>{s.label}</StatusPill>
+                    <p className="font-mono text-[13px] text-ink-500">{day(r.createdAt)}</p>
                   </div>
-                  <p className="mt-1.5 text-[15px] leading-[1.7] text-pretty text-ink-800">
+
+                  {/* break-words, not truncate: somebody's own words should not
+                      be cut off on their own page, and a pasted URL with no
+                      spaces will otherwise widen the whole layout. */}
+                  <p className="mt-3 text-[15px] leading-[1.7] break-words text-pretty text-ink-800">
                     {r.prompt}
                   </p>
-                  <p className="mt-1 text-[13px] text-ink-500">{s.detail}</p>
-                  <div className="mt-3">
+                  <p className="mt-1.5 text-[13px] text-ink-500">{s.detail}</p>
+
+                  <div className="mt-4">
                     <ShareButton id={r.id} subtle />
                   </div>
                 </li>
@@ -152,20 +159,58 @@ export default async function MyTracksPage() {
             })}
           </ul>
         ) : (
-          <div className="mt-4 border border-ink-100 bg-ink-50 p-5">
-            <p className="text-[15px] leading-[1.7] text-pretty text-ink-700">
-              You have not asked for anything yet. If the track you want does
-              not exist, say so on the home page and a person will write it.
-            </p>
-            <Link
-              href="/"
-              className="mt-3 inline-block text-[15px] text-brand-700 underline hover:text-brand-800"
-            >
-              Ask for a course
-            </Link>
-          </div>
+          <Empty
+            body="You have not asked for anything yet. If the track you want does not exist, say so on the home page and a person will write it."
+            href="/"
+            cta="Ask for a course"
+          />
         )}
-      </section>
+      </Section>
     </main>
+  );
+}
+
+/**
+ * A section with its count in the heading.
+ *
+ * The count is there for the same reason the homepage tier rows carry one: a
+ * zero beside "Running" is a fact, and a heading with nothing under it and no
+ * number reads like something failed to load.
+ */
+function Section({
+  title,
+  count,
+  className,
+  children,
+}: {
+  title: string;
+  count: number;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className={className} aria-labelledby={title.toLowerCase()}>
+      <div className="mb-4 flex items-baseline gap-3 border-b border-ink-100 pb-3">
+        <h2 id={title.toLowerCase()} className="text-lg font-medium text-ink-900">
+          {title}
+        </h2>
+        <span className="font-mono text-[13px] text-ink-500">{count}</span>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Empty({ body, href, cta }: { body: string; href: "/learn" | "/"; cta: string }) {
+  return (
+    <div className="rounded-card border border-dashed border-ink-200 bg-ink-50 p-5 sm:p-6">
+      <p className="max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-700">{body}</p>
+      <Link
+        href={href}
+        className="mt-4 inline-flex h-11 items-center rounded-lg border border-ink-200 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+      >
+        {cta}
+      </Link>
+    </div>
   );
 }
