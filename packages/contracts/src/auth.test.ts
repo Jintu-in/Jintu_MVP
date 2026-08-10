@@ -5,6 +5,8 @@ import {
   otpRequestInput,
   otpVerifyInput,
   safeNextPath,
+  passwordSignInInput,
+  setPasswordInput,
 } from "./auth";
 
 const validOnboarding = {
@@ -146,5 +148,46 @@ describe("safeNextPath", () => {
   it("falls back when nothing is supplied", () => {
     expect(safeNextPath(undefined)).toBe("/account");
     expect(safeNextPath(undefined, "/onboarding")).toBe("/onboarding");
+  });
+});
+
+describe("passwordSignInInput", () => {
+  it("accepts an address and any non-empty password", () => {
+    const r = passwordSignInInput.safeParse({ email: "A@Example.com ", password: "x" });
+    expect(r.success).toBe(true);
+    // Normalised the same way the OTP path does it, or the same person is two
+    // accounts depending on how they capitalised their own address.
+    if (r.success) expect(r.data.email).toBe("a@example.com");
+  });
+
+  it("does not impose a length rule at sign-in", () => {
+    // The rule belongs on the form that SETS a password. Applying it here
+    // would tell somebody with an older, shorter password that their own
+    // password is invalid — and they would have no way to act on that.
+    expect(passwordSignInInput.safeParse({ email: "a@b.co", password: "short" }).success).toBe(true);
+  });
+
+  it("still requires something in the box", () => {
+    expect(passwordSignInInput.safeParse({ email: "a@b.co", password: "" }).success).toBe(false);
+  });
+});
+
+describe("setPasswordInput", () => {
+  it("requires ten characters", () => {
+    expect(setPasswordInput.safeParse({ password: "123456789" }).success).toBe(false);
+    expect(setPasswordInput.safeParse({ password: "1234567890" }).success).toBe(true);
+  });
+
+  it("accepts a passphrase over a mangled word", () => {
+    // The point of length-over-composition: this passes and "P@ssw0rd" does not.
+    expect(setPasswordInput.safeParse({ password: "correct horse battery" }).success).toBe(true);
+    expect(setPasswordInput.safeParse({ password: "P@ssw0rd" }).success).toBe(false);
+  });
+
+  it("stops at bcrypt's limit", () => {
+    // 72 bytes is where bcrypt silently truncates. A longer password would be
+    // accepted here and quietly not mean what the person typed.
+    expect(setPasswordInput.safeParse({ password: "a".repeat(72) }).success).toBe(true);
+    expect(setPasswordInput.safeParse({ password: "a".repeat(73) }).success).toBe(false);
   });
 });
