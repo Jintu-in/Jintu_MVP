@@ -134,9 +134,10 @@ function Received({ onAgain }: { onAgain: () => void }) {
   return (
     <div className="mt-8" role="status" aria-live="polite">
       <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
-        <p className="font-semibold text-ink-900">Filed. Give it about a day.</p>
+        <p className="font-semibold text-ink-900">Request received.</p>
         <p className="mt-1.5 text-pretty text-ink-700">
-          A person writes these by hand — no AI. Nothing for you to do now.
+          A person writes these by hand — no AI. Check your courses for the
+          status.
         </p>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -144,7 +145,7 @@ function Received({ onAgain }: { onAgain: () => void }) {
             href="/learn"
             className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
-            Browse courses
+            Check your courses
           </Link>
           <a
             href="#waitlist"
