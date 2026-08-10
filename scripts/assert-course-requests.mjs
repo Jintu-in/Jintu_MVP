@@ -120,6 +120,75 @@ const visible = await one("select count(*)::int n from public.course_requests");
 await db.exec("rollback;");
 check(visible.n === 0, `anon reads no requests back (${visible.n} visible)`);
 
+console.log("\n── reading your own back ───────────────────────────────────");
+// The landing page says "check your courses to see the status", so there has
+// to be a way to check that does not open the table to everyone.
+const mine = await db.query("select * from public.my_course_requests($1)", [BROWSER_A]);
+check(mine.rows.length === 5, `this browser sees its own five (${mine.rows.length})`);
+check(
+  mine.rows.every((r) => r.status === "new"),
+  "each one reports the ops status, so the page can say where it got to",
+);
+check(
+  !mine.rows.some((r) => r.prompt.includes("different browser entirely")),
+  "and not the other browser's request",
+);
+
+const theirs = await db.query("select * from public.my_course_requests($1)", [BROWSER_B]);
+check(theirs.rows.length === 1, `the other browser sees only its own (${theirs.rows.length})`);
+
+const nobody = await db.query("select * from public.my_course_requests(null)");
+check(
+  nobody.rows.length === 0,
+  `no key and no session returns nothing, not everything (${nobody.rows.length})`,
+);
+
+console.log("\n── claiming on sign-in ─────────────────────────────────────");
+// Somebody asks anonymously, likes the place, signs up. Their request should
+// follow them to the account rather than being stranded in localStorage.
+let refusedAnon = false;
+try {
+  await db.query("select public.claim_course_requests($1)", [BROWSER_B]);
+} catch {
+  refusedAnon = true;
+}
+check(refusedAnon, "claiming without a session is refused");
+
+await db.exec(`
+  -- No phone: the shim makes it unique and the seed already used one.
+  insert into auth.users (id) values ('55555555-5555-4555-8555-000000000001')
+  on conflict (id) do nothing;
+`);
+await db.exec("begin; set local jintu.uid = '55555555-5555-4555-8555-000000000001';");
+const claimed = await one("select public.claim_course_requests($1) as n", [BROWSER_B]);
+check(Number(claimed.n) === 1, `signing in claims what this browser filed (${claimed.n})`);
+
+await db.exec("commit;");
+
+// The real question is whether somebody else holding the same key can take
+// rows that already belong to an account. Holding a key must not be a way to
+// inherit another person's history.
+await db.exec(`
+  insert into auth.users (id) values ('55555555-5555-4555-8555-000000000002')
+  on conflict (id) do nothing;
+`);
+await db.exec("begin; set local jintu.uid = '55555555-5555-4555-8555-000000000002';");
+const stolen = await one("select public.claim_course_requests($1) as n", [BROWSER_B]);
+await db.exec("rollback;");
+check(
+  Number(stolen.n) === 0,
+  `a second account holding the same key claims nothing (${stolen.n} taken)`,
+);
+
+const stillTheirs = await one(
+  "select user_id from public.course_requests where requester_key = $1",
+  [BROWSER_B],
+);
+check(
+  stillTheirs.user_id === "55555555-5555-4555-8555-000000000001",
+  "and the row still belongs to whoever claimed it first",
+);
+
 await db.close();
 console.log(`\n${passed} passed, ${failures.length} failed`);
 if (failures.length) process.exit(1);
