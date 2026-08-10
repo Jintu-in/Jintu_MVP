@@ -64,6 +64,14 @@ jobs:
       - name: Simulate migrations
         run: pnpm db:simulate
 
+      # The Data Analyst curriculum is the one course a cohort actually runs
+      # on. This applies it to the simulated database twice: once to prove it
+      # publishes all six weeks, once to prove re-running is a no-op. It also
+      # asserts version 1 is left alone, since a student mid-sprint is reading
+      # it. Offline — the reference results are committed, not fetched.
+      - name: Data Analyst curriculum applies and re-applies
+        run: pnpm courses:verify
+
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the
       # Docker job failing five minutes later.

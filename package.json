@@ -31,7 +31,10 @@
     "fn:imports": "node scripts/assert-edge-imports.mjs",
     "guards": "node scripts/assert-guards-wired.mjs",
     "contrast": "node scripts/assert-contrast.mjs",
-    "courses": "node scripts/generate-courses.mjs"
+    "courses": "node scripts/generate-courses.mjs",
+    "courses:data-analyst": "node scripts/generate-data-analyst-v2.mjs",
+    "courses:expected": "node scripts/pagila-expected.mjs",
+    "courses:verify": "node scripts/assert-data-analyst-v2.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",
