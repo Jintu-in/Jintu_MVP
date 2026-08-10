@@ -36,3 +36,5 @@ export {
   type SubmissionInput,
   type UrlRejection,
 } from "./submission";
+
+export { profileUpdateInput, type ProfileUpdateInput } from "./profile";

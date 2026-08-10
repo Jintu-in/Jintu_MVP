@@ -9,17 +9,28 @@ import { getPublishedTrack, type Assignment, type Module } from "@/lib/curriculu
  * One course, in full. ARCHITECTURE.md §6 — the free public top of the
  * funnel: indexable, linkable, readable with no account.
  *
- * Generated on first request and cached rather than prerendered at build.
- * Returning [] from generateStaticParams opts into the incremental path
- * without enumerating slugs, which would need a database CI does not have.
- * Without it Next treats the segment as fully dynamic and `revalidate` is
- * silently ignored, so every crawler hit becomes a Postgres query.
+ * Rendered per request.
+ *
+ * It used to be incremental — `revalidate = 3600` plus an empty
+ * generateStaticParams, which opts into the cached path without enumerating
+ * slugs against a database CI does not have. That is gone, and the reason is
+ * worth recording rather than rediscovering:
+ *
+ * The marketing layout now reads the signed-in viewer so the header can show
+ * an avatar, and reading cookies is dynamic. A dynamic layout inside a segment
+ * that has opted into static generation is not a downgrade to SSR — it is an
+ * error. This route returned 500 with digest DYNAMIC_SERVER_USAGE until the
+ * two were reconciled, and the build output still printed a cheerful `●`
+ * against it, because generateStaticParams was present and the marker reports
+ * the strategy rather than whether it can work.
+ *
+ * The cost is the one the old comment warned about: every crawler hit is now
+ * three Postgres queries instead of one every hour. At one published course
+ * that is noise. It stops being noise as the catalogue grows, and the fix then
+ * is Partial Prerendering — a static shell with the avatar streaming into a
+ * hole — which needs `cacheComponents` and a migration of its own.
  */
-export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 const plural = (n: number, one: string, many = `${one}s`) =>
   `${n} ${n === 1 ? one : many}`;
