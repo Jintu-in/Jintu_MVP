@@ -28,13 +28,61 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MIGRATIONS = path.join(ROOT, "supabase", "migrations");
 const SEED = path.join(ROOT, "supabase", "seed.sql");
 const OUT_DIR = path.join(ROOT, "supabase", ".bundle");
-const OUT = path.join(OUT_DIR, "apply-all.sql");
+let OUT = path.join(OUT_DIR, "apply-all.sql");
 
 const withSeed = process.argv.includes("--seed");
 
-const files = readdirSync(MIGRATIONS)
+/**
+ * `--since <prefix>` emits only migrations after the one already applied.
+ *
+ *   pnpm db:bundle --since 20260809050000
+ *
+ * Pasting apply-all.sql into a project that is halfway through is not safe in
+ * general — the early migrations create tables that already exist, and the
+ * first `create table` without `if not exists` aborts the whole script, so you
+ * find out by watching it fail rather than by it doing nothing. A catch-up
+ * bundle is the smaller, honest artefact: exactly the files that have not run.
+ *
+ * The prefix is the timestamp of the LAST migration already applied, so the
+ * output starts at the one after it.
+ */
+const sinceFlag = process.argv.indexOf("--since");
+const since = sinceFlag === -1 ? null : process.argv[sinceFlag + 1];
+
+if (sinceFlag !== -1 && !since) {
+  console.error("--since needs a migration timestamp, e.g. --since 20260809050000");
+  process.exit(1);
+}
+
+const all = readdirSync(MIGRATIONS)
   .filter((f) => f.endsWith(".sql"))
   .sort();
+
+/**
+ * Compared on the timestamp alone, not the filename.
+ *
+ * `"20260809050000_weekly_loop.sql" > "20260809050000"` is true — same prefix,
+ * longer string — so filtering on the raw filename includes the migration you
+ * said was already applied. That bundle then opens by re-creating tables that
+ * exist, the first `create table` aborts the script, and nothing after it
+ * runs. Caught by reading the output rather than by trusting the flag.
+ */
+const stamp = (f) => f.split("_")[0];
+
+const files = since ? all.filter((f) => stamp(f) > since) : all;
+
+if (since && !all.some((f) => stamp(f) === since)) {
+  console.error(
+    `--since ${since} does not match any migration. Check the timestamp:\n` +
+      all.map((f) => `  ${f}`).join("\n"),
+  );
+  process.exit(1);
+}
+
+if (since && files.length === 0) {
+  console.log(`Nothing to bundle — every migration after ${since} is already in this repo's history.`);
+  process.exit(0);
+}
 
 if (files.length === 0) {
   console.error("No migrations found.");
@@ -76,6 +124,7 @@ if (withSeed) {
   );
 }
 
+if (since) OUT = path.join(OUT_DIR, `catch-up-since-${since}.sql`);
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(OUT, parts.join("\n"), "utf8");
 
