@@ -572,7 +572,7 @@ out.push("");
 
   The fix is not to delete them — the titles and summaries are good, and
   knowing that people want an Android track is worth having. It is to move
-  them to `is_proposed`, where they render a vote page instead of a
+  them to tier `draft`, where they render a vote page instead of a
   curriculum (migration 20260810000000).
 
   The slug list is TRACKS above rather than a second list written by hand,
@@ -598,11 +598,11 @@ if (process.argv.includes("--propose")) {
     "",
     "update public.tracks",
     "   set is_published = false,",
-    "       is_proposed  = true",
+    "       tier         = 'draft'",
     " where slug in (",
     demote.map((s) => `         ${q(s)}`).join(",\n"),
     "       )",
-    "   and (is_published or not is_proposed);",
+    "   and (is_published or tier <> 'draft');",
     "",
     "commit;",
     "",
@@ -643,12 +643,22 @@ for (const t of TRACKS) {
   out.push(`  v_state text;`);
   out.push(`begin`);
   out.push(`  -- Metadata is safe to refresh: tracks carry no immutability trigger.`);
-  out.push(`  insert into public.tracks (slug, title, summary, is_published)`);
-  out.push(`  values (${q(t.slug)}, ${q(t.title)}, ${q(t.summary)}, true)`);
+  out.push(`  insert into public.tracks (slug, title, summary, is_published, tier)`);
+  out.push(`  values (${q(t.slug)}, ${q(t.title)}, ${q(t.summary)}, true, 'sprint')`);
   out.push(`  on conflict (slug) do update set`);
   out.push(`    title = excluded.title,`);
   out.push(`    summary = excluded.summary,`);
-  out.push(`    is_published = excluded.is_published;`);
+  // A track already demoted to 'draft' keeps both its tier and its
+  // unpublished state. Re-running this file is a metadata refresh, and it
+  // must not silently undo the one edit --propose exists to make. Writing
+  // excluded.is_published unconditionally would also violate
+  // tracks_draft_is_not_published and fail the whole block.
+  out.push(`    is_published = case when public.tracks.tier = 'draft'`);
+  out.push(`                       then public.tracks.is_published`);
+  out.push(`                       else excluded.is_published end,`);
+  out.push(`    tier = case when public.tracks.tier = 'draft'`);
+  out.push(`                then public.tracks.tier`);
+  out.push(`                else excluded.tier end;`);
   out.push("");
   out.push(`  -- Resolved by slug, never by a hardcoded id: a track created by hand`);
   out.push(`  -- would have a different id and every foreign key below would break.`);

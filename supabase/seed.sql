@@ -9,13 +9,17 @@
 
 begin;
 
-insert into public.tracks (id, slug, title, summary, is_published) values
+insert into public.tracks (id, slug, title, summary, is_published, tier) values
   (
     '11111111-1111-4111-8111-111111111111',
     'data-analyst-fresher',
     'Data Analyst — first job',
     'Six weeks of real analyst work: SQL against messy data, one findings memo, one dashboard, and a recorded walkthrough.',
-    true
+    true,
+    -- Stated, not defaulted. The default is 'draft', and a published draft is
+    -- refused by tracks_draft_is_not_published — deliberately, so that every
+    -- writer has to say what kind of track it is making.
+    'sprint'
   );
 
 insert into public.paths (id, track_id, version, status) values
