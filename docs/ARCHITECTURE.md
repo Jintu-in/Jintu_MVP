@@ -5,6 +5,19 @@
 > **Repo:** `jintu/jintu` · **Stack:** Next.js 16 · Supabase · TypeScript · Tailwind v4 · PWA
 > **Doc version:** 1.0 · **Last verified:** August 2026
 
+### Companion document
+
+`TRACK_MODEL.md` is the source of truth for **how a track is verified** — the
+six verification archetypes, the checker registry, the tier rules, and the
+points ledgers. This file stays the source of truth for **stack, data model
+and compliance**.
+
+Where they overlap, they must agree. TRACK_MODEL.md Part 11 records the five
+places they currently do not, and Part 12 is the order in which to reconcile
+them. When a change touches both, update both in the same PR — a fork between
+these two documents is how a rule gets enforced in one place and quietly
+dropped in the other.
+
 ---
 
 ## 0. Read this first — the three architectural laws
