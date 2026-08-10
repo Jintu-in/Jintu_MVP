@@ -3,35 +3,7 @@
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { voteForCourse } from "@/actions/proposals";
-
-const STORAGE_KEY = "jintu.voter-key";
-
-/**
- * A random id, minted once per browser and kept in localStorage.
- *
- * Deliberately not a cookie, an IP address, or a fingerprint. A cookie would
- * be sent on every request and would need to sit inside the consent regime; an
- * IP is personal data under DPDP. This is a bare uuid that exists so the same
- * browser cannot run the count up on its own, and it never leaves this
- * feature.
- *
- * It is weak on purpose-built abuse: clearing site data resets it. That is why
- * nothing here claims the number represents people.
- */
-function voterKey(): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const existing = window.localStorage.getItem(STORAGE_KEY);
-    if (existing) return existing;
-    const minted = crypto.randomUUID();
-    window.localStorage.setItem(STORAGE_KEY, minted);
-    return minted;
-  } catch {
-    // Private mode, or storage disabled. Voting is not important enough to
-    // break the page over.
-    return null;
-  }
-}
+import { browserKey, isDone, markDone } from "@/lib/browser-key";
 
 export function VoteButton({ slug, votes }: { slug: string; votes: number }) {
   const { execute, result, status } = useAction(voteForCourse);
@@ -41,9 +13,9 @@ export function VoteButton({ slug, votes }: { slug: string; votes: number }) {
   // localStorage is not available during render on the server, and reading it
   // in render would make the first client paint disagree with the HTML.
   useEffect(() => {
-    const k = voterKey();
+    const k = browserKey("votes");
     setKey(k);
-    if (k) setAlreadyVoted(window.localStorage.getItem(`${STORAGE_KEY}.${slug}`) === "1");
+    if (k) setAlreadyVoted(isDone("votes", slug));
   }, [slug]);
 
   const pending = status === "executing";
@@ -58,7 +30,7 @@ export function VoteButton({ slug, votes }: { slug: string; votes: number }) {
           disabled={pending || voted || key === null}
           onClick={() => {
             if (!key) return;
-            window.localStorage.setItem(`${STORAGE_KEY}.${slug}`, "1");
+            markDone("votes", slug);
             setAlreadyVoted(true);
             execute({ slug, voterKey: key });
           }}
