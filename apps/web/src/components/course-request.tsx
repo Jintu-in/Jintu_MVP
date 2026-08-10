@@ -11,26 +11,34 @@ const MAX = 600;
 /**
  * The first thing on the site: ask for the course you want.
  *
- * It looks like a chat box and it is not one. There is no model behind it,
- * nothing is generated, and the reply is the same sentence every time. Saying
- * that plainly in the reply is the whole design — a box that looks like an
- * assistant and answers like one, while a person quietly writes the thing by
- * hand three hours later, teaches people that this product's claims are
- * decorative. This one tells you it is a form the moment you use it.
+ * Deliberately almost wordless. The field, two buttons, one line of small
+ * print — anything else here is read as instructions, and a box you have to
+ * be briefed on is a box nobody uses. The placeholder does the explaining.
  *
- * What it buys, before any of that is automated: the exact words people use
- * for the job they want. The vote pages capture demand for courses we already
- * named; this captures the ones we did not think of.
+ * It looks like a chat box and it is not one. There is no model behind it and
+ * nothing is generated; the text is filed and a person writes the curriculum.
+ * The "No AI" line stays even in the trimmed version, because a box shaped
+ * like an assistant that quietly turns into a person three hours later teaches
+ * people that this site's claims are decorative.
  */
 export function CourseRequest() {
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
-  const [key, setKey] = useState<string | null>(null);
+  /**
+   * undefined = not looked yet, null = looked and storage is unavailable.
+   *
+   * Two states, not one, because they render differently and only one of them
+   * is true on the server. Initialising to null made the server HTML say
+   * "Needs browser storage, which looks off here" to every visitor, including
+   * the overwhelming majority whose storage is fine, until hydration replaced
+   * it. A warning that is wrong on first paint is worse than no warning.
+   */
+  const [key, setKey] = useState<string | null | undefined>(undefined);
   const [count, setCount] = useState(0);
-  const [sent, setSent] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   const { execute, result, status } = useAction(requestCourse, {
-    onSuccess: () => setSent(formRef.current?.prompt?.value?.trim() ?? ""),
+    onSuccess: () => setSent(true),
   });
 
   // Read after mount: localStorage does not exist while this renders on the
@@ -41,7 +49,7 @@ export function CourseRequest() {
   const pending = status === "executing";
   const tooLong = count > MAX;
 
-  if (sent !== null) return <Received asked={sent} onAgain={() => setSent(null)} />;
+  if (sent) return <Received onAgain={() => setSent(false)} />;
 
   return (
     <div className="mt-8">
@@ -53,11 +61,13 @@ export function CourseRequest() {
           execute({ prompt: String(formData.get("prompt") ?? ""), requesterKey: key });
         }}
       >
-        <label htmlFor={id} className="block text-sm font-medium text-ink-700">
-          What job do you want? We will write the course for it.
+        {/* Visually hidden, not absent: the placeholder is a hint, and a hint
+            is not a label for anyone using a screen reader. */}
+        <label htmlFor={id} className="sr-only">
+          Describe the job you want a course for
         </label>
 
-        <div className="mt-2 rounded-card border border-ink-200 bg-white focus-within:border-brand-600">
+        <div className="rounded-card border border-ink-200 bg-white focus-within:border-brand-600">
           <textarea
             id={id}
             name="prompt"
@@ -66,53 +76,49 @@ export function CourseRequest() {
             onChange={(e) => setCount(e.target.value.trim().length)}
             onKeyDown={(e) => {
               // Enter sends, Shift+Enter breaks the line. Matches what the box
-              // looks like; a send button that only works with the mouse in
-              // something shaped like a chat input is a small daily annoyance.
+              // looks like; a send that only works with a mouse, in something
+              // shaped like a chat input, is a small daily annoyance.
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 formRef.current?.requestSubmit();
               }
             }}
-            placeholder="Backend engineer at a product company. I know Python but I have never shipped an API."
-            className="block w-full resize-y rounded-card bg-transparent px-4 pt-3.5 pb-2 text-ink-900 placeholder:text-ink-500 focus:outline-none"
+            placeholder="What job do you want? We will write the course for it."
+            className="block w-full resize-y rounded-card bg-transparent px-4 py-3.5 text-ink-900 placeholder:text-ink-500 focus:outline-none"
           />
+        </div>
 
-          <div className="flex items-center justify-between gap-3 px-3 pb-3">
-            <p className={tooLong ? "text-sm text-risk-800" : "text-sm text-ink-500"}>
-              {tooLong ? `${count - MAX} characters too many` : "A person reads this. No AI."}
-            </p>
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <button
+            type="submit"
+            disabled={pending || !key || count < 10 || tooLong}
+            className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
+          >
+            {pending ? "Sending…" : "Request a course"}
+          </button>
 
-            <button
-              type="submit"
-              disabled={pending || key === null || count < 10 || tooLong}
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
-            >
-              {pending ? "Sending…" : "Request it"}
-            </button>
-          </div>
+          <Link
+            href="/learn"
+            className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-5 font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+          >
+            Browse courses
+          </Link>
         </div>
       </form>
 
-      {key === null ? (
-        <p className="mt-2 text-sm text-ink-500">
-          This needs browser storage, which looks disabled here. The curriculum
-          below is free to read either way.
-        </p>
-      ) : null}
+      <p className="mt-3 text-sm text-ink-500" aria-live="polite">
+        {tooLong
+          ? `${count - MAX} characters too many`
+          : key === null
+            ? "Needs browser storage, which looks off here."
+            : "A person reads this. No AI."}
+      </p>
 
       {result?.serverError ? (
         <p role="alert" className="mt-2 text-sm text-risk-800">
           {result.serverError}
         </p>
       ) : null}
-
-      <p className="mt-4 text-ink-600">
-        Or{" "}
-        <Link href="/learn" className="font-medium text-brand-800 underline hover:text-brand-900">
-          browse the courses that already exist
-        </Link>{" "}
-        — all free, all readable without an account.
-      </p>
     </div>
   );
 }
@@ -120,32 +126,17 @@ export function CourseRequest() {
 /**
  * The reply.
  *
- * It commits to reading the request, not to writing the course. "About a day"
- * rather than a deadline, and no promise that it gets built at all, because
- * the only thing anyone can actually guarantee here is that a person will look
- * — and a landing page that overpromises on its first interaction is the kind
- * of thing the rest of this site is written to avoid.
+ * Commits to reading the request, not to writing the course, and gives a day
+ * rather than a deadline — on a page whose own copy says we will never publish
+ * a figure we cannot evidence, the first interaction is a poor place to start.
  */
-function Received({ asked, onAgain }: { asked: string; onAgain: () => void }) {
+function Received({ onAgain }: { onAgain: () => void }) {
   return (
     <div className="mt-8" role="status" aria-live="polite">
-      <div className="rounded-card border border-ink-100 bg-ink-50 p-4">
-        <p className="text-sm font-medium text-ink-500">You asked for</p>
-        <p className="mt-1 text-pretty text-ink-800">{asked}</p>
-      </div>
-
-      <div className="mt-3 rounded-card border border-brand-200 bg-brand-50 p-4">
-        <p className="font-semibold text-ink-900">Got it — that is filed.</p>
-        <p className="mt-2 text-pretty text-ink-700">
-          Nothing is generated here. Somebody reads what you wrote and writes
-          the six weeks by hand, which takes about a day. If it is a course we
-          can do well, it appears under the curriculum; if it is not, we would
-          rather not publish a bad one.
-        </p>
-        <p className="mt-3 text-pretty text-ink-700">
-          There is nothing for you to do now. Put your number on the waitlist if
-          you want telling when it is up, or start on a course that already
-          exists.
+      <div className="rounded-card border border-brand-200 bg-brand-50 p-5">
+        <p className="font-semibold text-ink-900">Filed. Give it about a day.</p>
+        <p className="mt-1.5 text-pretty text-ink-700">
+          A person writes these by hand — no AI. Nothing for you to do now.
         </p>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -153,13 +144,13 @@ function Received({ asked, onAgain }: { asked: string; onAgain: () => void }) {
             href="/learn"
             className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
-            Browse the curriculum
+            Browse courses
           </Link>
           <a
             href="#waitlist"
             className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-5 font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
           >
-            Tell me when it is ready
+            Tell me when it is up
           </a>
         </div>
       </div>
@@ -169,7 +160,7 @@ function Received({ asked, onAgain }: { asked: string; onAgain: () => void }) {
         onClick={onAgain}
         className="mt-3 text-sm text-ink-500 underline hover:text-ink-900"
       >
-        Ask for another one
+        Ask for another
       </button>
     </div>
   );
