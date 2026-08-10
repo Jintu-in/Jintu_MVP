@@ -259,3 +259,46 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
     };
   });
 }
+
+export type OpenCohort = {
+  cohortId: string;
+  startsOn: string;
+  endsOn: string;
+  capacity: number;
+  seatsLeft: number;
+};
+
+/**
+ * The open cohort for a track, if one exists.
+ *
+ * Null is the common case and not an error — cohorts open a few weeks a
+ * year. The track page decides between "Enrol" and "Join the waitlist" on
+ * exactly this.
+ */
+export async function getOpenCohort(slug: string): Promise<OpenCohort | null> {
+  const supabase = createPublicClient();
+
+  const { data, error } = await retryRead(() =>
+    supabase.rpc("open_cohort", { p_track_slug: slug }),
+  );
+
+  // PGRST202 = the enrolment migration is not applied yet. The track page
+  // must not 500 over a missing button — it falls back to the waitlist CTA,
+  // which is exactly what it showed before this function existed.
+  if (error) {
+    if (error.code === "PGRST202") return null;
+    throw describeSupabaseError("checking for an open cohort", error);
+  }
+
+  type Row = { cohort_id: string; starts_on: string; ends_on: string; capacity: number; seats_left: number };
+  const row = (data as unknown as Row[] | null)?.[0];
+  if (!row) return null;
+
+  return {
+    cohortId: row.cohort_id,
+    startsOn: row.starts_on,
+    endsOn: row.ends_on,
+    capacity: row.capacity,
+    seatsLeft: Number(row.seats_left),
+  };
+}
