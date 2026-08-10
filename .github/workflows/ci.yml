@@ -72,6 +72,13 @@ jobs:
       - name: Data Analyst curriculum applies and re-applies
         run: pnpm courses:verify
 
+      # Course proposals: one vote per browser, no voting for a real course,
+      # and anon must never be able to read the votes table — voter_key is a
+      # stable per-browser id, so readable rows would let anyone correlate
+      # which courses one browser asked for.
+      - name: Course proposal rules hold in the database
+        run: pnpm proposals:verify
+
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the
       # Docker job failing five minutes later.

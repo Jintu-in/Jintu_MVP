@@ -36,3 +36,5 @@ export {
   type SubmissionInput,
   type UrlRejection,
 } from "./submission";
+
+export { courseVoteInput, type CourseVoteInput } from "./proposals";

@@ -127,6 +127,48 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
   };
 }
 
+export type CourseProposal = {
+  slug: string;
+  title: string;
+  summary: string;
+  votes: number;
+};
+
+/**
+ * Courses nobody has built yet, most-wanted first.
+ *
+ * Read through an RPC rather than a table because proposals are invisible to
+ * anon under RLS on purpose — `tracks` stays gated on `is_published` alone, so
+ * "is this a live course?" has exactly one answer and listPublishedTracks
+ * cannot accidentally leak a proposal by forgetting a filter. The function is
+ * security definer and returns only these four columns.
+ */
+export async function listCourseProposals(): Promise<CourseProposal[]> {
+  const supabase = createPublicClient();
+
+  const { data, error } = await retryRead(() => supabase.rpc("proposed_courses"));
+
+  if (error) throw describeSupabaseError("listing course proposals", error);
+
+  type Row = { slug: string; title: string; summary: string; votes: number | string };
+
+  // count() comes back as bigint, which PostgREST serialises as a string once
+  // it exceeds the safe integer range and as a number below it. Normalise
+  // rather than trusting whichever one today's row count produces.
+  return ((data ?? []) as unknown as Row[]).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    summary: p.summary,
+    votes: Number(p.votes ?? 0),
+  }));
+}
+
+/** One proposal, or null if the slug is not a proposal (or is a real course). */
+export async function getCourseProposal(slug: string): Promise<CourseProposal | null> {
+  const all = await listCourseProposals();
+  return all.find((p) => p.slug === slug) ?? null;
+}
+
 /**
  * Title and summary only, for the social preview image.
  *

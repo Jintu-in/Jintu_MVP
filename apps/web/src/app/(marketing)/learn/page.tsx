@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { listPublishedTracks, type TrackSummary } from "@/lib/curriculum";
+import {
+  listCourseProposals,
+  listPublishedTracks,
+  type CourseProposal,
+  type TrackSummary,
+} from "@/lib/curriculum";
 
 /**
  * Every published course.
@@ -23,7 +28,13 @@ const plural = (n: number, one: string, many = `${one}s`) =>
   `${n} ${n === 1 ? one : many}`;
 
 export default async function CoursesPage() {
-  const tracks = await listPublishedTracks();
+  // Independent queries, so they overlap rather than queue. A proposal read
+  // that fails must not take the finished course down with it — the course is
+  // the thing people came for.
+  const [tracks, proposals] = await Promise.all([
+    listPublishedTracks(),
+    listCourseProposals().catch(() => [] as CourseProposal[]),
+  ]);
 
   const totals = tracks.reduce(
     (acc, t) => ({
@@ -74,7 +85,49 @@ export default async function CoursesPage() {
       ) : (
         <EmptyState />
       )}
+
+      {proposals.length > 0 ? <Proposals proposals={proposals} /> : null}
     </main>
+  );
+}
+
+/**
+ * Courses that do not exist.
+ *
+ * Kept visibly below the finished ones and never styled as a course card: the
+ * whole failure being corrected here is that an unwritten course looked
+ * exactly like a written one until you clicked it.
+ */
+function Proposals({ proposals }: { proposals: CourseProposal[] }) {
+  return (
+    <section className="mt-14 border-t border-ink-100 pt-10">
+      <h2 className="text-2xl font-semibold text-balance text-ink-900">
+        What should we build next?
+      </h2>
+      <p className="mt-3 text-pretty text-ink-600">
+        These are not courses yet — nobody has written them. We would rather
+        finish one properly than publish nineteen half-done, so the next one is
+        whichever the most people ask for. No account needed to vote.
+      </p>
+
+      <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+        {proposals.map((p) => (
+          <li key={p.slug}>
+            <Link
+              href={`/learn/vote/${p.slug}`}
+              className="group flex items-center justify-between gap-3 rounded-card border border-dashed border-ink-200 bg-ink-50 px-4 py-3 transition-colors hover:border-brand-600 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            >
+              <span className="min-w-0 font-medium text-pretty text-ink-800 group-hover:text-brand-800">
+                {p.title}
+              </span>
+              <span className="shrink-0 font-mono text-sm text-ink-500">
+                {p.votes === 1 ? "1 vote" : `${p.votes} votes`}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
