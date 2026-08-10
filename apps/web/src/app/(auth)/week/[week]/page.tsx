@@ -135,7 +135,7 @@ function Assignment({ assignment }: { assignment: WeekAssignment }) {
         {assignment.spec.prompt ?? assignment.kind}
       </p>
 
-      {assignment.rubric ? <Rubric rubric={assignment.rubric} /> : null}
+      {assignment.rubric ? <Rubric rubric={assignment.rubric} kind={assignment.kind} /> : null}
 
       {submission ? (
         <div className="mt-4 border-t border-ink-100 pt-4">
