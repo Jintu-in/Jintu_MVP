@@ -85,6 +85,11 @@ jobs:
       - name: Course request limits hold in the database
         run: pnpm requests:verify
 
+      # The catch-up bundle has to apply to the project as it actually is —
+      # part-migrated, with real rows — not to an empty database.
+      - name: Catch-up bundle applies to the live shape
+        run: pnpm catchup:verify
+
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the
       # Docker job failing five minutes later.
