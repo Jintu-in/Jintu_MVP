@@ -79,6 +79,12 @@ jobs:
       - name: Course proposal rules hold in the database
         run: pnpm proposals:verify
 
+      # The landing page has an unauthenticated text box that writes to
+      # Postgres. Every limit on it is one a stranger will eventually test, so
+      # none of them live only in the form.
+      - name: Course request limits hold in the database
+        run: pnpm requests:verify
+
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the
       # Docker job failing five minutes later.

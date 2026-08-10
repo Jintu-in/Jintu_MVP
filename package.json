@@ -36,6 +36,7 @@
     "courses:verify": "node scripts/assert-data-analyst-v2.mjs",
     "proposals:verify": "node scripts/assert-course-proposals.mjs",
     "courses:propose": "node scripts/generate-courses.mjs --propose",
+    "requests:verify": "node scripts/assert-course-requests.mjs",
     "courses:keys": "node scripts/sql-fixtures.mjs"
   },
   "devDependencies": {

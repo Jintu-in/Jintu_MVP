@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CourseRequest } from "@/components/course-request";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { cn } from "@/lib/utils";
 
@@ -42,22 +43,24 @@ export default function LandingPage() {
           deadlines, the grading, the peer review, and the profile.
         </p>
 
-        {/* Stacked and full-bleed on a phone, content-width side by side once
-            there is room — a 768px-wide primary button reads as a banner. */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <Link
-            href="/learn"
-            className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-          >
-            See the free curriculum
-          </Link>
-          <a
-            href="#how-it-works"
-            className="flex h-12 items-center justify-center rounded-lg font-medium text-brand-700 hover:text-brand-800"
-          >
-            How it works
-          </a>
-        </div>
+        {/*
+          The request box takes the place of the old button pair. "See the free
+          curriculum" has not been dropped — it is the link underneath the box,
+          because the two things a first-time visitor can usefully do are read
+          what exists and say what does not.
+
+          It sits after the h1 and the pitch rather than above them on purpose.
+          A box is not a claim: someone who lands here from a WhatsApp forward
+          needs to know what this is before being asked what they want.
+        */}
+        <CourseRequest />
+
+        <a
+          href="#how-it-works"
+          className="mt-6 inline-flex h-12 items-center font-medium text-brand-700 hover:text-brand-800"
+        >
+          How it works
+        </a>
       </section>
 
       {/* Full-bleed band, so it separates the pitch from the detail below it.
