@@ -1,159 +1,182 @@
 import Link from "next/link";
-import { CourseRequest } from "@/components/course-request";
+import { TrackRouter, type RouterTrack } from "@/components/track-router";
 import { WaitlistForm } from "@/components/waitlist-form";
-import { cn } from "@/lib/utils";
+import { listCourseProposals, listPublishedTracks } from "@/lib/curriculum";
 
-const WEEKS = [
-  { week: "01–02", title: "SQL, for real problems", artifact: "Query set, auto-graded" },
-  { week: "03", title: "Cleaning messy data", artifact: "Cleaned dataset + notes" },
-  { week: "04", title: "Analysis that answers something", artifact: "Findings memo" },
-  { week: "05", title: "Dashboards people can read", artifact: "Published dashboard" },
-  { week: "06", title: "Explaining your work out loud", artifact: "Recorded walkthrough" },
-];
+/**
+ * The homepage is a router, not a brochure.
+ *
+ * It used to be a single-product landing page: a stat strip, "how it works",
+ * "what you build", four calls to action above the fold. All of that described
+ * one course. Now the site holds more than one thing and the page's job is to
+ * ask what you want and answer honestly — including "we have not built that".
+ *
+ * The differentiator sits in the first two lines, because "learn anything" on
+ * its own is a commodity claim that a free chat window already satisfies. What
+ * a chat window does not do is check whether you finished.
+ *
+ * Every number below is read from the database. There is deliberately no
+ * hard-coded cohort date and no seat count: no cohort row exists, and a date
+ * invented by a component is a commitment somebody could plan around. The
+ * section further down promising never to publish a figure we cannot evidence
+ * is not a section that gets to make an exception for itself.
+ */
+export const dynamic = "force-dynamic";
 
-const STATS = [
-  { label: "Duration", value: "6 weeks" },
-  { label: "Output", value: "6 artifacts" },
-  { label: "Price", value: "₹999 once" },
-];
+export default async function LandingPage() {
+  // Independent reads, so they overlap. A proposals failure must not take the
+  // page down — it is a count, and the page works without it.
+  const [tracks, proposals] = await Promise.all([
+    listPublishedTracks(),
+    listCourseProposals().catch(() => []),
+  ]);
 
-const STEPS = [
-  "Join a cohort. Everyone starts on the same Monday.",
-  "Ship one artifact a week. Graded against the published rubric, and reviewed by two peers.",
-  "Finish with a profile you can send to anyone.",
-];
+  // Sorted by how finished a track is, not alphabetically. The router shows
+  // the first three as examples, and the examples should be the ones worth
+  // clicking — "Android Engineer" leading because A comes first is an
+  // accident of the ORDER BY, not a recommendation.
+  const routerTracks: RouterTrack[] = [...tracks]
+    .sort((a, b) => b.artifacts - a.artifacts || b.weeks - a.weeks)
+    .map((t) => ({
+      slug: t.slug,
+      title: t.title,
+      summary: t.summary,
+      weeks: t.weeks,
+      artifacts: t.artifacts,
+    }));
 
-export default function LandingPage() {
+  // The flagship, for the "Running now" card: the course with the most
+  // finished work behind it rather than a slug written into the page.
+  const flagship = routerTracks[0];
+
+  const counts = {
+    sprint: tracks.length,
+    // Nobody has authored one yet. Printed rather than hidden: a zero is what
+    // makes the tier real instead of decorative.
+    community: 0,
+    draft: proposals.length,
+  };
+
   return (
-    <main>
-      <section className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
-        <h1 className="text-[28px] leading-9 font-semibold tracking-tight text-balance text-ink-900 sm:text-5xl sm:leading-tight">
-          Six weeks. Six artifacts. One profile that shows what you can actually
-          do.
+    <main className="mx-auto max-w-3xl px-5">
+      {/* ── hero ─────────────────────────────────────────────────────────── */}
+      <section className="pt-16 pb-18 sm:pt-24">
+        <h1 className="text-[30px] leading-tight font-medium text-balance text-ink-900 sm:text-[40px]">
+          Learn anything. Then prove you actually did.
         </h1>
 
-        <p className="mt-5 text-lg text-pretty text-ink-600">
-          A cohort-based sprint for first-job data roles. You build one real thing
-          a week, get it graded against a published rubric, review two peers, and
-          finish with a shareable proof-of-readiness profile.
+        <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
+          An AI can write you a plan in five seconds. Nobody checks whether you
+          finished it. Type what you want to learn and we will tell you
+          honestly whether we can help you finish.
         </p>
 
-        <p className="mt-4 text-lg text-pretty text-ink-600">
-          The curriculum is free and public. You pay for the cohort — the
-          deadlines, the grading, the peer review, and the profile.
-        </p>
-
-        {/*
-          The request box takes the place of the old button pair. "See the free
-          curriculum" has not been dropped — it is the link underneath the box,
-          because the two things a first-time visitor can usefully do are read
-          what exists and say what does not.
-
-          It sits after the h1 and the pitch rather than above them on purpose.
-          A box is not a claim: someone who lands here from a WhatsApp forward
-          needs to know what this is before being asked what they want.
-        */}
-        <CourseRequest />
-
-        <a
-          href="#how-it-works"
-          className="mt-6 inline-flex h-12 items-center font-medium text-brand-700 hover:text-brand-800"
-        >
-          How it works
-        </a>
+        <TrackRouter tracks={routerTracks} />
       </section>
 
-      {/* Full-bleed band, so it separates the pitch from the detail below it.
-          brand-950 on the brand fill, never white: #43b4c8 carries white at
-          2.44:1 — see the note at the top of the palette. */}
-      <section className="border-y border-ink-100 bg-brand-500" aria-label="At a glance">
-        <dl className="mx-auto flex max-w-3xl items-center px-5 py-4">
-          {STATS.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={cn("flex-1", i > 0 && "border-l border-brand-950/20 pl-4")}
-            >
-              <dt className="text-xs font-medium tracking-wide text-brand-950 uppercase">
-                {stat.label}
-              </dt>
-              <dd className="mt-0.5 font-semibold text-brand-950">{stat.value}</dd>
-            </div>
-          ))}
+      {/* ── three kinds of track ─────────────────────────────────────────── */}
+      <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="kinds">
+        <h2 id="kinds" className="text-lg font-medium text-ink-900">
+          Three kinds of track
+        </h2>
+
+        <dl className="mt-6 divide-y divide-ink-100 border-y border-ink-100">
+          <Kind
+            name="Sprint"
+            count={counts.sprint}
+            detail="Paid cohort. Fixed start date, graded artifacts, verified profile. ₹999."
+          />
+          <Kind
+            name="Community"
+            count={counts.community}
+            detail="Free. Built by learners, checked by peers. Any subject."
+          />
+          <Kind
+            name="Draft"
+            count={counts.draft}
+            detail="Asked for, not written yet. Vote to move one up the queue."
+          />
         </dl>
       </section>
 
-      {/* scroll-mt clears the sticky app bar when the hero link jumps here. */}
-      <section
-        id="how-it-works"
-        className="mx-auto max-w-3xl scroll-mt-20 px-5 py-12"
-        aria-labelledby="how-heading"
-      >
-        <h2 id="how-heading" className="text-2xl font-semibold tracking-tight text-ink-900">
-          How it works
-        </h2>
-
-        <ol className="mt-5 space-y-3">
-          {STEPS.map((step, i) => (
-            <li
-              key={step}
-              className="rounded-card border border-ink-100 border-l-4 border-l-brand-500 bg-white p-4"
-            >
-              <p className="text-sm font-medium text-ink-500">Step {i + 1}</p>
-              <p className="mt-1 text-pretty text-ink-900">{step}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-5 pb-12" aria-labelledby="weeks-heading">
-        <h2 id="weeks-heading" className="text-2xl font-semibold tracking-tight text-ink-900">
-          What you build
-        </h2>
-
-        <ul className="mt-5 divide-y divide-ink-100 rounded-card border border-ink-100 bg-white px-4">
-          {WEEKS.map(({ week, title, artifact }) => (
-            <li key={week} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4">
-              <span className="w-14 shrink-0 font-mono text-sm text-ink-500">{week}</span>
-              <span className="font-medium text-ink-900">{title}</span>
-              <span className="ml-auto text-sm text-ink-500">{artifact}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-5 pb-12" aria-labelledby="honest-heading">
-        <div className="rounded-card border border-ink-100 bg-white p-6">
-          <h2 id="honest-heading" className="font-semibold text-ink-900">
-            What this is not
+      {/* ── running now ──────────────────────────────────────────────────── */}
+      {flagship ? (
+        <section className="py-18 sm:py-24" aria-labelledby="running">
+          <h2 id="running" className="text-lg font-medium text-ink-900">
+            Running now
           </h2>
-          <p className="mt-2 text-pretty text-ink-600">
-            We do not promise you a job, and we will never publish a placement
-            statistic we cannot evidence. What we can promise is that at the end
-            you will have six pieces of work, graded against a rubric you can
-            read up front, that you can show to anyone.
-          </p>
-        </div>
+
+          <div className="mt-6 border border-ink-100 p-6">
+            <p className="text-[15px] font-medium text-ink-900">{flagship.title}</p>
+            <p className="mt-1 text-[13px] text-ink-500">
+              {flagship.weeks} weeks · {flagship.artifacts}{" "}
+              {flagship.artifacts === 1 ? "artifact" : "artifacts"} · ₹999 once
+            </p>
+
+            <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
+              The curriculum is free to read in full, including every rubric.
+              You pay for the cohort.
+            </p>
+
+            {/*
+              No date and no seat count. There is no cohort row yet, and the
+              first one to exist should put its own date here rather than have
+              a number written into a component.
+            */}
+            <p className="mt-3 text-[13px] text-ink-500">
+              Dates for the first cohort are not set. The waitlist is how you
+              hear when they are.
+            </p>
+
+            <Link
+              href={`/learn/${flagship.slug}`}
+              className="mt-5 inline-block text-[15px] font-medium text-brand-700 underline hover:text-brand-800"
+            >
+              Read it before you pay anything →
+            </Link>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ── what this is not ─────────────────────────────────────────────── */}
+      <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="not">
+        <h2 id="not" className="text-lg font-medium text-ink-900">
+          What this is not
+        </h2>
+
+        <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
+          We do not promise you a job, and we will never publish a placement
+          statistic we cannot evidence.
+        </p>
+        <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
+          What you get is six pieces of work, graded against a rubric you read
+          before paying, that you can show to anyone.
+        </p>
       </section>
 
-      <section className="mx-auto max-w-3xl px-5 pb-12">
-        <div className="flex flex-col items-center gap-5 rounded-card border border-ink-100 bg-white p-6 text-center">
-          <p className="text-pretty text-ink-900">
-            The curriculum is free. Read all of it before you pay anything.
-          </p>
-          <Link
-            href="/learn"
-            className="flex h-12 w-full items-center justify-center rounded-lg border border-ink-200 px-5 font-medium text-brand-700 hover:border-brand-600 hover:text-brand-800"
-          >
-            Open the curriculum
-          </Link>
-        </div>
-      </section>
-
-      {/* scroll-mt so the heading is not hidden under the header when the
-          pricing page links here. */}
-      <section id="waitlist" className="mx-auto max-w-3xl scroll-mt-20 px-5 pb-16">
+      {/* ── waitlist ─────────────────────────────────────────────────────── */}
+      <section id="waitlist" className="scroll-mt-20 border-t border-ink-100 py-18 sm:py-24">
         <WaitlistForm />
       </section>
     </main>
+  );
+}
+
+/**
+ * One tier. A row with a hairline, not a card.
+ *
+ * Card grids on a page this plain read as a template. The count is
+ * right-aligned and shown even when it is zero — a zero is the honest state
+ * and it is what makes the vote mechanic look real rather than ornamental.
+ */
+function Kind({ name, count, detail }: { name: string; count: number; detail: string }) {
+  return (
+    <div className="flex items-baseline gap-4 py-4">
+      <dt className="w-24 shrink-0 text-[15px] font-medium text-ink-900">{name}</dt>
+      <dd className="max-w-[62ch] flex-1 text-[15px] leading-[1.7] text-ink-600">{detail}</dd>
+      <span className="shrink-0 font-mono text-[13px] text-ink-500" aria-label={`${count} available`}>
+        {count}
+      </span>
+    </div>
   );
 }
