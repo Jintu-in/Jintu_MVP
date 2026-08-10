@@ -151,3 +151,49 @@ export const consentToggleInput = z.object({
   purpose: z.enum(OPTIONAL_PURPOSES),
   granted: z.boolean(),
 });
+
+/**
+ * Signing in with a password instead of a code.
+ *
+ * Added because the code is the expensive half. Supabase's built-in sender
+ * allows roughly two auth emails an hour per project, so a student who mistypes
+ * an address, or simply signs in on a second device, can be locked out by a
+ * quota that has nothing to do with them. A password costs no email at all.
+ *
+ * The code does not go away. It stays as the way in for a first-time visitor,
+ * for anyone who has not set a password, and — usefully — as the entire
+ * password-recovery story: forget your password and you ask for a code, which
+ * is a flow that already exists and is already tested.
+ */
+export const passwordSignInInput = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Enter your email address.")
+    .max(254, "That address is longer than an email address can be.")
+    .pipe(z.email("That does not look like an email address.")),
+  // Only presence is checked here. Length rules belong on the form that SETS a
+  // password; applying them at sign-in would tell somebody with an older,
+  // shorter password that their own password is invalid.
+  password: z.string().min(1, "Enter your password."),
+});
+
+/**
+ * Choosing a password once you are already signed in.
+ *
+ * Ten characters, not the Supabase default of six. Six is two guesses shy of
+ * useless and this account will eventually hold a phone number and a
+ * readiness score. No composition rules — no "one capital and one symbol" —
+ * because they push people towards Password1! and away from length, which is
+ * the only property that actually helps.
+ */
+export const setPasswordInput = z.object({
+  password: z
+    .string()
+    .min(10, "Use at least ten characters. Length beats punctuation.")
+    .max(72, "Passwords are limited to 72 characters."),
+});
+
+export type PasswordSignInInput = z.infer<typeof passwordSignInInput>;
+export type SetPasswordInput = z.infer<typeof setPasswordInput>;

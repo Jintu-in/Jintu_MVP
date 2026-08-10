@@ -3,6 +3,7 @@
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useId, useRef, useState } from "react";
 import { requestOtp, verifyOtp } from "@/actions/auth";
+import { PasswordSignIn } from "@/components/password-sign-in";
 
 /**
  * Sign in without leaving the page.
@@ -20,7 +21,11 @@ import { requestOtp, verifyOtp } from "@/actions/auth";
  * real pseudo-element rather than a sibling that has to be kept in sync.
  */
 
-type Stage = "email" | "code";
+// "password" is an alternative entry point, not a step: email -> code is the
+// original path and is untouched. Someone who has set a password can switch to
+// it and skip the email entirely, which is the point — the code is the thing
+// that costs a send.
+type Stage = "email" | "code" | "password";
 
 export function SignInDialog({
   open,
@@ -95,15 +100,21 @@ export function SignInDialog({
     >
       <div className="p-6">
         <h2 id={`${id}-title`} className="text-lg font-semibold text-ink-900">
-          {stage === "email" ? "Sign in to send this" : "Check your email"}
+          {stage === "code"
+            ? "Check your email"
+            : stage === "password"
+              ? "Sign in with your password"
+              : "Sign in to send this"}
         </h2>
         <p className="mt-1.5 text-pretty text-ink-600">
-          {stage === "email"
-            ? reason
-            : `We sent a six-digit code to ${email}. It is good for a few minutes.`}
+          {stage === "code"
+            ? `We sent a six-digit code to ${email}. It is good for a few minutes.`
+            : reason}
         </p>
 
-        {stage === "email" ? (
+        {stage === "password" ? (
+          <PasswordSignIn onSignedIn={onSignedIn} onUseCode={() => setStage("email")} />
+        ) : stage === "email" ? (
           <form
             noValidate
             className="mt-5"
@@ -128,6 +139,25 @@ export function SignInDialog({
             <Errors result={send.result} field="email" />
 
             <Actions busy={busy} onClose={onClose} label={busy ? "Sending…" : "Send me a code"} />
+
+            {/*
+              Offered second, not first. A first-time visitor has no password,
+              and leading with one asks a stranger to remember something they
+              never set. This is for the people coming back — and every one of
+              them who takes it is an email we do not send against a quota of
+              roughly two an hour.
+            */}
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                send.reset();
+                setStage("password");
+              }}
+              className="mt-3 h-11 text-sm text-ink-500 underline hover:text-ink-900"
+            >
+              I have a password
+            </button>
           </form>
         ) : (
           <form

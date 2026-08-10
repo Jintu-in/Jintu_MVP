@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import type { OptionalPurpose } from "@jintu/contracts";
 import { signOut } from "@/actions/auth";
 import { ConsentToggle } from "@/components/consent-toggle";
+import { PasswordForm } from "@/components/password-form";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -54,6 +55,8 @@ export default async function AccountPage() {
     .from("consents")
     .select("purpose, notice_version, granted_at")
     .is("withdrawn_at", null);
+
+  const hasPassword = Boolean(user.user_metadata?.has_password);
 
   const live = new Set((consents ?? []).map((c) => c.purpose as string));
   const noticeVersion = consents?.[0]?.notice_version ?? null;
@@ -107,6 +110,19 @@ export default async function AccountPage() {
             </>
           ) : null}
         </p>
+      </section>
+
+      <section className="mt-10" aria-labelledby="password">
+        <h2 id="password" className="text-lg font-semibold text-ink-900">
+          How you sign in
+        </h2>
+        <p className="mt-1 max-w-[62ch] text-pretty text-ink-600">
+          We email you a six-digit code, and that will always work. Setting a
+          password is optional — it just saves waiting for an email every time,
+          which matters on a slow connection or a second device. Forget it and
+          you ask for a code, so there is nothing to reset.
+        </p>
+        <PasswordForm hasPassword={hasPassword} />
       </section>
 
       <section

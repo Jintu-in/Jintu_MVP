@@ -8,8 +8,10 @@ import {
   onboardingInput,
   otpRequestInput,
   otpVerifyInput,
+  passwordSignInInput,
+  setPasswordInput,
 } from "@jintu/contracts";
-import { actionClient } from "@/lib/safe-action";
+import { actionClient, UserFacingError } from "@/lib/safe-action";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -221,3 +223,92 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+/**
+ * Sign in with a password, for anyone who has set one.
+ *
+ * This exists to stop spending an email on every sign-in. Supabase's built-in
+ * sender allows roughly two auth emails an hour per project, so a student
+ * signing in on a second device — or mistyping their address once — can be
+ * shut out by a quota that has nothing to do with them. A password costs
+ * nothing to check.
+ *
+ * The code is not replaced. It remains the way in for a first-time visitor,
+ * for anyone who has not set a password, and it is also the whole
+ * password-recovery story: forget the password, ask for a code. That is why
+ * there is still no recovery email template — the flow that would use it is
+ * the flow we already have.
+ */
+export const signInWithPassword = actionClient
+  .inputSchema(passwordSignInInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: parsedInput.email,
+      password: parsedInput.password,
+    });
+
+    if (error) {
+      console.error("[auth] password sign-in failed", error.status, error.code);
+
+      // One message for a wrong password, an unknown address, and an account
+      // with no password set. Distinguishing them turns this form into an
+      // oracle for which email addresses have accounts here — and this is a
+      // site whose users are job-seeking students, which is not a list worth
+      // letting anybody enumerate.
+      throw new UserFacingError(
+        "That email and password do not match. Try again, or ask for a code instead.",
+      );
+    }
+
+    return { signedIn: true };
+  });
+
+/**
+ * Set or change your password. Requires a session.
+ *
+ * Reachable only from the account page, so the person doing it has already
+ * proved they hold the address — either by code or by knowing the current
+ * password. secure_password_change is off in config.toml, which means Supabase
+ * does not demand a fresh re-authentication here; the session is the proof.
+ *
+ * Worth knowing if that setting is ever turned on: this call starts failing
+ * with a reauthentication error, and this action is where that would surface.
+ */
+export const setPassword = actionClient
+  .inputSchema(setPasswordInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    // The marker rides along with the password in one call, so the two cannot
+    // disagree. Supabase exposes no "does this user have a password" field —
+    // an OTP-only account and a password account both carry an email identity
+    // — and this only drives a button label, so a soft flag is the right
+    // weight of solution. Worst case it reads "Set password" for somebody who
+    // already has one, which costs nothing.
+    const { error } = await supabase.auth.updateUser({
+      password: parsedInput.password,
+      data: { has_password: true },
+    });
+
+    if (error) {
+      console.error("[auth] set password failed", error.status, error.code);
+
+      // Supabase rejects passwords it considers weak, and it knows things the
+      // form cannot — a breach corpus, for one. Passing its reason through is
+      // more useful than replacing it with a generic sentence, and it leaks
+      // nothing: the caller already holds the session.
+      throw new UserFacingError(
+        error.message || "We could not set that password. Try a different one.",
+      );
+    }
+
+    return { set: true };
+  });

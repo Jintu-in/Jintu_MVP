@@ -16,7 +16,11 @@ export {
   otpVerifyInput,
   type OnboardingInput,
   type OptionalPurpose,
+  passwordSignInInput,
+  setPasswordInput,
   safeNextPath,
+  type PasswordSignInInput,
+  type SetPasswordInput,
 } from "./auth";
 
 export {

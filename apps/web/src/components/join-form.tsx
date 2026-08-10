@@ -5,6 +5,7 @@ import { useAction } from "next-safe-action/hooks";
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { requestOtp, verifyOtp } from "@/actions/auth";
+import { PasswordSignIn } from "@/components/password-sign-in";
 import { Steps } from "@/components/steps";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,9 @@ export function JoinForm({ next }: { next: Route }) {
   const id = useId();
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
+  // "password" is a sibling of the code flow, not a step inside it. The
+  // email -> code path below is untouched.
+  const [mode, setMode] = useState<"code" | "password">("code");
 
   const request = useAction(requestOtp, {
     onSuccess: ({ data }) => setEmail(data?.email ?? null),
@@ -38,6 +42,21 @@ export function JoinForm({ next }: { next: Route }) {
   const verify = useAction(verifyOtp, {
     onSuccess: () => router.replace(next),
   });
+
+  if (mode === "password") {
+    return (
+      <div>
+        <Steps current={1} label="Your email" />
+        <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+          Sign in with your password
+        </h1>
+        <PasswordSignIn
+          onSignedIn={() => router.replace(next)}
+          onUseCode={() => setMode("code")}
+        />
+      </div>
+    );
+  }
 
   if (email) {
     return (
@@ -109,7 +128,8 @@ export function JoinForm({ next }: { next: Route }) {
         Enter your email address
       </h1>
       <p className="mt-2 text-pretty text-ink-600">
-        We send a six-digit code. No password to forget.
+        We send a six-digit code. Nothing to remember — and if you have set a
+        password, you can use that instead.
       </p>
 
       <label htmlFor={`${id}-email`} className="mt-6 block text-sm font-medium text-ink-700">
@@ -153,6 +173,20 @@ export function JoinForm({ next }: { next: Route }) {
         Jintu is open to people aged 18 and over. We ask you to confirm that on
         the next step.
       </p>
+
+      {/*
+        Offered after the code, not instead of it. A first-time visitor has no
+        password, so leading with one asks a stranger to remember something
+        they never set — but everybody coming back who takes this route is an
+        email we do not send, against a built-in quota of roughly two an hour.
+      */}
+      <button
+        type="button"
+        onClick={() => setMode("password")}
+        className="mt-6 h-11 text-sm text-brand-700 underline hover:text-brand-800"
+      >
+        I have a password — sign in with that instead
+      </button>
     </form>
   );
 }
