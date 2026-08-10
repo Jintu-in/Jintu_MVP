@@ -22,3 +22,14 @@ export const courseRequestInput = z.object({
 });
 
 export type CourseRequestInput = z.infer<typeof courseRequestInput>;
+
+/**
+ * Not a message — a signal.
+ *
+ * requestCourse throws this when the caller has no session, and the request
+ * box matches on it to open the sign-in dialog instead of printing it at
+ * somebody. It lives here rather than beside the action because a "use
+ * server" file may only export async functions, and a constant exported from
+ * one fails the build with "Only async functions are allowed to be exported".
+ */
+export const NEEDS_ACCOUNT = "NEEDS_ACCOUNT";
