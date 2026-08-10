@@ -85,6 +85,11 @@ jobs:
       - name: Course request limits hold in the database
         run: pnpm requests:verify
 
+      # Enrolment is where a person becomes a student: session and 18+ gates,
+      # the seat cap under a row lock, and RLS on who can read the result.
+      - name: Enrolment rules hold in the database
+        run: pnpm enrolment:verify
+
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.
       - name: Catch-up bundle applies to the live shape

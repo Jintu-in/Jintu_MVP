@@ -44,4 +44,4 @@ export {
 export { profileUpdateInput, type ProfileUpdateInput } from "./profile";
 export { courseVoteInput, type CourseVoteInput } from "./proposals";
 
-export { NEEDS_ACCOUNT, courseRequestInput, type CourseRequestInput } from "./course-request";
+export { NEEDS_ACCOUNT, NEEDS_PROFILE, courseRequestInput, type CourseRequestInput } from "./course-request";
