@@ -15,7 +15,7 @@ import { describeSupabaseError } from "@/lib/supabase/errors";
 export type SprintAssignment = {
   id: string;
   kind: "sql" | "artifact_link" | "file" | "recording";
-  spec: { prompt?: string };
+  spec: { prompt?: string; codes?: string[] };
   submission: {
     id: string;
     status: "submitted" | "grading" | "graded" | "needs_review";
@@ -107,7 +107,7 @@ export async function getMySprint(): Promise<Sprint | null> {
     week_no: number;
     title: string;
     objective: string;
-    assignments: { id: string; kind: SprintAssignment["kind"]; spec: { prompt?: string } }[] | null;
+    assignments: { id: string; kind: SprintAssignment["kind"]; spec: { prompt?: string; codes?: string[] } }[] | null;
   };
 
   return {
@@ -218,7 +218,7 @@ export async function getSprintWeek(weekNo: number): Promise<WeekDetail | null> 
     objective: string;
     resources: Resource[] | null;
     assignments:
-      | { id: string; kind: SprintAssignment["kind"]; spec: { prompt?: string }; rubrics: Rubric | null }[]
+      | { id: string; kind: SprintAssignment["kind"]; spec: { prompt?: string; codes?: string[] }; rubrics: Rubric | null }[]
       | null;
   };
 
@@ -342,7 +342,7 @@ export async function getFeedback(submissionId: string): Promise<Feedback | null
     week_no: number;
     status: string;
     submitted_at: string;
-    assignments: { spec: { prompt?: string } | null; rubrics: Rubric | null } | null;
+    assignments: { spec: { prompt?: string; codes?: string[] } | null; rubrics: Rubric | null } | null;
     gradings:
       | {
           grader_type: GradeCard["graderType"];

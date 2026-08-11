@@ -72,7 +72,13 @@ export const submitAssignment = actionClient
     const payload =
       parsedInput.kind === "sql"
         ? { sql: parsedInput.sql }
-        : { url: parsedInput.url, note: parsedInput.note ?? null };
+        : {
+            url: parsedInput.url,
+            note: parsedInput.note ?? null,
+            // Present only when the student ticked codes — the grading
+            // pipeline treats its presence as "mark me against the key".
+            ...(parsedInput.findings?.length ? { findings: parsedInput.findings } : {}),
+          };
 
     const { data: inserted, error } = await supabase
       .from("submissions")

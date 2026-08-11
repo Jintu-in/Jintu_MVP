@@ -16,9 +16,16 @@ const LABEL = "block text-sm font-medium text-ink-700";
 export function SubmissionForm({
   assignmentId,
   kind,
+  codes,
 }: {
   assignmentId: string;
   kind: "sql" | "artifact_link";
+  /**
+   * Candidate defect codes, present only on detectable artifacts. Some are
+   * planted, some are distractors, and the form has no idea which — that is
+   * the entire point of offering them together.
+   */
+  codes?: string[];
 }) {
   const id = useId();
   const { execute, result, status } = useAction(submitAssignment);
@@ -50,6 +57,9 @@ export function SubmissionForm({
                 kind: "artifact_link",
                 url: String(fd.get("url") ?? ""),
                 note: String(fd.get("note") ?? ""),
+                ...(codes?.length
+                  ? { findings: fd.getAll("findings").map(String) }
+                  : {}),
               },
         )
       }
@@ -107,6 +117,39 @@ export function SubmissionForm({
             <span className="font-normal text-ink-500">(optional)</span>
           </label>
           <input id={`${id}-note`} name="note" className={cn(FIELD, "mt-1.5 h-12 border-ink-200")} />
+
+          {codes?.length ? (
+            <fieldset className="mt-5">
+              <legend className={LABEL}>Which of these are really in the data?</legend>
+              {/*
+                The codes arrive shuffled and the form does not know which are
+                planted — some are not in the data at all, and ticking a ghost
+                counts against the report, the way an auditor who invents
+                findings reads. Said here so nobody box-ticks in good faith.
+              */}
+              <p className="mt-1 text-sm text-pretty text-ink-500">
+                Tick only what you can point to. Some of these are not in the
+                data, and claiming a problem that is not there counts against
+                the report.
+              </p>
+              <div className="mt-3 grid gap-1 sm:grid-cols-2">
+                {codes.map((code) => (
+                  <label
+                    key={code}
+                    className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-ink-100 bg-white px-3 font-mono text-sm text-ink-800 has-checked:border-brand-700 has-checked:bg-brand-50"
+                  >
+                    <input
+                      type="checkbox"
+                      name="findings"
+                      value={code}
+                      className="size-4 accent-brand-700"
+                    />
+                    {code}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ) : null}
           <p className="mt-1.5 text-sm text-ink-500">
             The link must be public — a reviewer who cannot open it cannot mark it.
           </p>

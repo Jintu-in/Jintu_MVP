@@ -512,14 +512,14 @@ Each phase has a **ship gate**. Do not start the next phase until the gate passe
 The cohort runs on Notion + WhatsApp + Google Forms. You grade by hand. The repo exists only to hold a landing page and to start the schema.
 
 **Build**
-- [ ] `pnpm dlx create-turbo@latest`, pnpm workspaces, Turborepo
-- [ ] `apps/web` on Next 16 + TS strict + Tailwind v4 + shadcn
-- [ ] `packages/config` — shared eslint/tsconfig/tailwind preset
-- [ ] Supabase project in **ap-south-1**, CLI linked, first migration
-- [ ] Landing page + waitlist (phone capture, consent checkbox, 18+ gate)
-- [ ] `docs/LEGAL.md` written before any marketing copy exists
-- [ ] Sentry + PostHog wired
-- [ ] GitHub Actions: lint, typecheck, build on PR
+- [x] `pnpm dlx create-turbo@latest`, pnpm workspaces, Turborepo
+- [x] `apps/web` on Next 16 + TS strict + Tailwind v4 (shadcn dropped — hand-rolled components under the design rules)
+- [x] `packages/config` — shared eslint/tsconfig/tailwind preset
+- [x] Supabase project in **ap-south-1**; migrations applied by SQL-editor paste (CLI link pending — needs the access token)
+- [x] Landing page + waitlist (phone capture, per-purpose consents, 18+ gate); homepage is now the track router
+- [x] `docs/LEGAL.md` written before any marketing copy exists; /terms, /refunds, /contact shipped
+- [x] Sentry + PostHog wired (consent-gated; keys not yet set in prod)
+- [x] GitHub Actions: lint, typecheck, build, and eleven database guards on PR
 
 **Do by hand, not in code:** curriculum, cohort ops, grading, nudges, payments (UPI QR + manual reconciliation)
 
@@ -531,17 +531,17 @@ The cohort runs on Notion + WhatsApp + Google Forms. You grade by hand. The repo
 **Business goal: run cohort 2 (50 students at ₹999) without you in the loop.**
 
 **Build**
-- [ ] Full schema + RLS on every table + generated types (`pnpm db:types`)
-- [ ] Phone OTP auth, 18+ confirmation, `consents` capture at signup
-- [ ] Path viewer: 6 weeks, modules, resources, YouTube IFrame embeds
-- [ ] **Public free path** at `/learn/[track]` — the curriculum is free, indexable, and is your top-of-funnel
-- [ ] Submission flow (link paste / file upload to Supabase Storage)
-- [ ] Deterministic SQL grader (containerised runner, weeks 1–2) — zero AI cost
-- [ ] Peer review queue: 2 assignments per student per week, author anonymised
-- [ ] Public profile page `/p/[slug]` with OG image generation
-- [ ] Razorpay UPI one-time checkout + webhook → Edge Function
-- [ ] **PWA: Serwist, manifest, offline fallback, install prompt**
-- [ ] `ai_usage` + `budget_guards` tables live *before* the first AI call ships
+- [x] Full schema + RLS on every table + generated types
+- [x] Auth: EMAIL OTP (not phone — DLT-free) + optional password; 18+ confirmation and `consents` at onboarding
+- [x] Path viewer: 6 weeks, modules, resources, YouTube IFrame embeds
+- [x] **Public free path** at `/learn/[track]` — the curriculum is free, indexable, and is your top-of-funnel
+- [x] Submission flow (link paste; detectable checklists; file upload wired to Storage)
+- [x] Deterministic SQL grader (PGlite read-only sandbox, not a container) — zero AI cost
+- [x] Peer review queue: 2 per student per week, author anonymised
+- [x] Public profile page `/p/[slug]`; OG images site-wide
+- [ ] Razorpay UPI checkout — BLOCKED on business inputs: onboarding not started; needs registered address (see /contact), PAN, bank account. Enrolment reserves seats; payment is concierge UPI meanwhile
+- [x] **PWA: Serwist, manifest, offline fallback**
+- [x] `ai_usage` + `budget_guards` tables live — and no AI call exists yet, so the order held
 
 **Ship gate:** 50 paid enrollments. Completion ≥50%. Measured COGS/student <₹150. Lighthouse PWA installable on a mid-range Android.
 

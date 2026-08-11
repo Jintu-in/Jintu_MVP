@@ -408,7 +408,12 @@ checked against migrations, `packages/grading/src`, or a live query.
 | Curriculum tables | `tracks` → `paths` → `modules` → `resources`/`assignments`/`rubrics` | Versioned, immutable once published, enforced by trigger |
 | Readiness | `readiness_scores`, `/p/[slug]` | Computed; public only with consent |
 | Cost tables | `ai_usage`, `budget_guards` | Exist and are empty, which is correct — they had to land before the first AI call, and there is no AI |
-| Demand capture | `course_requests`, `track_votes` | Free-text asks and per-track votes. Both anonymous, both rate-limited, neither readable by anon. |
+| Demand capture | `course_requests`, `track_votes` | Requests now require an account and are shareable by link; votes stay anonymous per browser. |
+| **Enrolment** | `enrol_me()`, `open_cohort()` | Session + profile (18+) gates, seat cap under a row lock, idempotent, withdrawal restores. Enrol button on the track page. 15 assertions. |
+| **Tiers + margin** | `tracks.tier`, `sprint_needs_deterministic` | sprint / community / draft, and the 50% bar as a CHECK (NULL allowed until something can compute the share). |
+| **Rubric criteria carry `check`/`checker`** | trigger + generators | Part 12 item 5, landed before anything was graded. The SQL grader reads weights from the rubric; identical-by-construction to the old constants. |
+| **Points ledgers + streaks + daily reps** | `point_events`, `streaks`, `daily_reps`, `submit_rep()` | Part 6 complete: 30/day cap, day-stamped by construction, retroactive voiding, proof-locked-on-reviews. `proof_totals` is the wall — rule 5 in a WHERE clause. Dashboard board + 18 reps in the DA generator. 21 assertions. |
+| **Defect keys (detectable)** | `assignment_defect_keys`, `defect-dataset.mjs`, pipeline branch | Seed-secret generator (repo-safe), counted truths, distractors, service-role-only key, checklist UI -> `answer_key_match` -> grading row. 16 assertions. |
 
 ### Not built
 
@@ -418,10 +423,7 @@ checked against migrations, `packages/grading/src`, or a live query.
 | `code_test_suite` | 2 | Needs the sandbox to run arbitrary suites — a container question, not a function |
 | `rubric_ai` — `rubric_score` | 2 | Prose grading. The only paid call. |
 | `mentor_sample` | 2 | Quality control at volume |
-| `daily_reps`, `rep_submissions` | 7 | The habit loop |
-| `point_events`, `streaks`, freezes, the four anti-gaming rules | 6 | Consistency ledger |
-| `tracks.tier`, `verification_profile`, `deterministic_share`, `author_id` | 7 | Tiers, and the margin constraint |
-| `sprint_needs_deterministic` DB constraint | 7 | The thing that stops a 2am paid guitar cohort |
+| `author_id` on tracks, `verification_profile` computation | 7 | community-tier authorship; the share is a NULL column until a job computes it |
 | `topic_queries`, `draft_outlines` | 7 | `draft` tier |
 
 ### Five places the code and this document disagree
@@ -429,7 +431,7 @@ checked against migrations, `packages/grading/src`, or a live query.
 These are the decisions to make before building further. Each one is a fork
 where something already shipped in a shape this document does not describe.
 
-1. **`is_proposed` vs `tier`.** Migration `20260810000000` added a boolean:
+1. ~~`is_proposed` vs `tier`~~ **RESOLVED** (#42): tier column, boolean dropped. Original note: Migration `20260810000000` added a boolean:
    a track is either published or proposed. This document specifies
    `tier in ('sprint','community','draft')`. The boolean is a strict subset —
    `is_proposed` is `draft`. Migrating is one column and a backfill, and it
@@ -446,7 +448,7 @@ where something already shipped in a shape this document does not describe.
    people typing the same thing are ten thousand rows, and the caching
    argument in Part 3 does not hold.
 
-4. **Rubric criteria carry no `checker`.** Shipped criteria are
+4. ~~Rubric criteria carry no `checker`~~ **RESOLVED** (#57): criteria carry check/checker, trigger-validated, grader reads rubric weights. Original note: Shipped criteria are
    `{key, label, weight}`. This document specifies `{name, weight, check,
    checker}`. The consequence is live today: `gradeSqlSubmission` hard-codes
    `returns_expected_rows: 3, no_cartesian: 1, readable: 1` instead of reading
@@ -475,32 +477,32 @@ Ordered by what unblocks what, not by value. Each step is shippable on its own.
 
 **Now — reconcile before building on top**
 
-1. Apply the four outstanding migrations to the live project, then the Data
+1. ✓ (migrations through course_requests applied on prod; later ones pending a fresh catch-up paste) Apply the four outstanding migrations to the live project, then the Data
    Analyst v2 curriculum and the demotion SQL. Nothing below is testable
    against a database three versions behind.
-2. `tracks.tier` replacing `is_proposed`, with the
+2. ✓ (#42) `tracks.tier` replacing `is_proposed`, with the
    `sprint_needs_deterministic` check. One migration, done before anything
    reads the boolean.
-3. `packages/grading/registry.ts` — the `CHECKERS` map, with `sql_diff`
+3. ✓ (#55) `packages/grading/registry.ts` — the `CHECKERS` map, with `sql_diff`
    moved into it unchanged. No behaviour change; it is the seam everything
    else attaches to.
 
 **Next — free verification, no AI**
 
-4. `structural` checkers: `non_empty`, `duration_between`, `has_sections`,
+4. ✓ (#55 — seven of seven, media_has_audio excepted with reasons) `structural` checkers: `non_empty`, `duration_between`, `has_sections`,
    `url_reachable`, `media_has_audio`, `contains_join`, `row_count_ceiling`.
    Seven small pure functions, each with tests. Unlocks `community` tier.
-5. Rubric criteria gain `check` and `checker`; the SQL grader reads its
+5. ✓ (#57) Rubric criteria gain `check` and `checker`; the SQL grader reads its
    weights from the rubric instead of a constant. Must precede any new rubric,
    because a rubric cited by graded work cannot change afterwards.
-6. `daily_reps` + `rep_submissions` + `point_events` + `streaks`, with the
+6. ✓ (#58, #59) `daily_reps` + `rep_submissions` + `point_events` + `streaks`, with the
    consistency/proof split enforced in the view. Free, and it is what drives
    completion.
 
 **Then — the first spend**
 
-7. `detectable` + `answer_key_match`, with keys in private storage.
-8. `rubric_ai` behind the existing `budget_guards`, degrading to manual review
+7. ✓ (#60) `detectable` + `answer_key_match` — keys in a service-role table, generator seed-secret, checklist UI wired to the grader.
+8. ← NEXT. `rubric_ai` behind the existing `budget_guards`, degrading to manual review
    rather than overspending. First and only paid call.
 
 **After — breadth**
