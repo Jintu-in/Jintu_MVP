@@ -40,7 +40,8 @@
     "courses:keys": "node scripts/sql-fixtures.mjs",
     "db:catchup": "node scripts/bundle-migrations.mjs --since",
     "catchup:verify": "node scripts/assert-catch-up.mjs",
-    "enrolment:verify": "node scripts/assert-enrolment.mjs"
+    "enrolment:verify": "node scripts/assert-enrolment.mjs",
+    "points:verify": "node scripts/assert-points.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

@@ -89,6 +89,11 @@ jobs:
       # the seat cap under a row lock, and RLS on who can read the result.
       - name: Enrolment rules hold in the database
         run: pnpm enrolment:verify
+      # The two point ledgers and the four anti-gaming rules from TRACK_MODEL
+      # Part 6 — including the wall: proof_totals never contains a
+      # consistency point.
+      - name: Points ledgers hold their rules
+        run: pnpm points:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.
