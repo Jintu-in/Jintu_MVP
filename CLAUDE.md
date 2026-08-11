@@ -91,6 +91,7 @@ Two knowing deltas, kept deliberately:
 
 The invariants are enforced by CI guards where a guard can reach them:
 `pnpm embeds` (rule 1), `ai_usage`/`budget_guards` tables ahead of any AI
-call (rule 2), `pnpm db:simulate` asserts the 18+ CHECK and per-purpose
-consents (rule 3), `pnpm claims` (rule 4). Rule 5's view constraint lands
-with the points ledgers (TRACK_MODEL.md Part 6).
+call and `pnpm ai:verify` proving the spend gate cannot leak (rule 2),
+`pnpm db:simulate` asserts the 18+ CHECK and per-purpose consents
+(rule 3), `pnpm claims` (rule 4), `pnpm points:verify` asserts the
+proof_totals wall (rule 5).

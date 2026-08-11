@@ -149,6 +149,17 @@ export function getServiceEnv() {
 }
 
 /**
+ * The Anthropic key for rubric_ai — the only paid call in the product.
+ * Absence is a supported state, same contract as getServiceEnv: submissions
+ * whose rubric wants a model land as needs_review and a human grades them.
+ * Server-only, never NEXT_PUBLIC_: this key is money.
+ */
+export function getAnthropicEnv() {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  return apiKey ? { apiKey } : null;
+}
+
+/**
  * Observability config. Unlike Supabase, every one of these is optional and
  * absence is a supported state — Sentry and PostHog are simply off. Returning
  * undefined rather than throwing is what lets the app run locally, and in CI,
