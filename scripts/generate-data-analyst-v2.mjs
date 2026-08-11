@@ -70,27 +70,27 @@ const RUBRICS = [
     name: "sql-correctness-v1",
     max_score: 5,
     criteria: [
-      { key: "returns_expected_rows", label: "Returns the expected result set", weight: 3 },
-      { key: "no_cartesian", label: "No accidental cross join", weight: 1 },
-      { key: "readable", label: "Aliases and formatting a reviewer can follow", weight: 1 },
+      { key: "returns_expected_rows", label: "Returns the expected result set", weight: 3, check: "executable", checker: "sql_diff" },
+      { key: "no_cartesian", label: "No accidental cross join", weight: 1, check: "structural", checker: "sql_diff" },
+      { key: "readable", label: "Aliases and formatting a reviewer can follow", weight: 1, check: "structural", checker: "sql_diff" },
     ],
   },
   {
     name: "written-finding-v1",
     max_score: 7,
     criteria: [
-      { key: "answers_question", label: "Answers the question actually asked", weight: 3 },
-      { key: "states_caveats", label: "States what would change the conclusion", weight: 2 },
-      { key: "evidence", label: "Every number is traceable to a query", weight: 2 },
+      { key: "answers_question", label: "Answers the question actually asked", weight: 3, check: "peer", checker: null },
+      { key: "states_caveats", label: "States what would change the conclusion", weight: 2, check: "peer", checker: null },
+      { key: "evidence", label: "Every number is traceable to a query", weight: 2, check: "peer", checker: null },
     ],
   },
   {
     name: "walkthrough-v1",
     max_score: 5,
     criteria: [
-      { key: "under_five_minutes", label: "Makes the point in under five minutes", weight: 2 },
-      { key: "explains_why", label: "Explains a decision, not only what was built", weight: 2 },
-      { key: "audible", label: "Audible, with the screen readable at 720p", weight: 1 },
+      { key: "under_five_minutes", label: "Makes the point in under five minutes", weight: 2, check: "peer", checker: null },
+      { key: "explains_why", label: "Explains a decision, not only what was built", weight: 2, check: "peer", checker: null },
+      { key: "audible", label: "Audible, with the screen readable at 720p", weight: 1, check: "peer", checker: null },
     ],
   },
   // New.
@@ -98,18 +98,18 @@ const RUBRICS = [
     name: "data-quality-audit-v1",
     max_score: 7,
     criteria: [
-      { key: "finds_real_problems", label: "Names problems that are actually in the data", weight: 3 },
-      { key: "quantifies", label: "Says how many rows each problem affects", weight: 2 },
-      { key: "decides", label: "States what to drop, fix or keep — and why", weight: 2 },
+      { key: "finds_real_problems", label: "Names problems that are actually in the data", weight: 3, check: "peer", checker: null },
+      { key: "quantifies", label: "Says how many rows each problem affects", weight: 2, check: "peer", checker: null },
+      { key: "decides", label: "States what to drop, fix or keep — and why", weight: 2, check: "peer", checker: null },
     ],
   },
   {
     name: "dashboard-clarity-v1",
     max_score: 7,
     criteria: [
-      { key: "reads_unaided", label: "A stranger states the main finding without being told it", weight: 3 },
-      { key: "honest_scales", label: "Axes, baselines and filters do not overstate the result", weight: 2 },
-      { key: "traceable", label: "Every number names the query or table behind it", weight: 2 },
+      { key: "reads_unaided", label: "A stranger states the main finding without being told it", weight: 3, check: "peer", checker: null },
+      { key: "honest_scales", label: "Axes, baselines and filters do not overstate the result", weight: 2, check: "peer", checker: null },
+      { key: "traceable", label: "Every number names the query or table behind it", weight: 2, check: "peer", checker: null },
     ],
   },
 ];

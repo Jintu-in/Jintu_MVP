@@ -108,34 +108,47 @@ export function TrackRouter({
 
   return (
     <div>
-      <form
-        ref={formRef}
-        noValidate
-        action={check}
-        className="mt-8 flex flex-col gap-3 sm:flex-row"
-      >
+      <form ref={formRef} noValidate action={check} className="mt-8">
         <label htmlFor={id} className="sr-only">
           What do you want to learn?
         </label>
-        {/* min-w-0 so the input can actually shrink inside the flex row;
-            without it a long placeholder sets a floor and the button is
-            pushed off a narrow screen. */}
-        <input
-          id={id}
-          name="q"
-          type="text"
-          maxLength={120}
-          placeholder="data analyst"
-          className="h-12 w-full min-w-0 flex-1 rounded-lg border border-ink-200 px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:max-w-md"
-        />
-        {/* The only primary button on the page. Full width on a phone, where a
-            half-width button beside nothing looks like a mistake. */}
-        <button
-          type="submit"
-          className="h-12 w-full shrink-0 rounded-lg bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto"
-        >
-          Check
-        </button>
+
+        {/*
+          One bar, not a field beside a button. The field-and-button version
+          looked broken for a stack of small reasons that added up: the input
+          had no background, so on the ink-50 page ground it rendered as a
+          grey box with a near-invisible border; flex-1 fought sm:max-w-md
+          over its width; and on a phone the button stacked below it at full
+          width, eating a whole row to say one word.
+
+          The container owns the chrome — white card, hairline, focus ring
+          via focus-within — and the input inside is borderless, so there is
+          exactly one visual edge. The button rides inside the bar on every
+          screen size; "Check" is short enough to share a 360px row with the
+          field.
+        */}
+        <div className="flex items-center gap-1.5 rounded-card border border-ink-200 bg-white p-1.5 transition-colors focus-within:border-brand-700 sm:max-w-xl">
+          {/* min-w-0 so the field can shrink; without it the placeholder sets
+              a floor and pushes the button out of the bar on a narrow screen. */}
+          <input
+            id={id}
+            name="q"
+            type="text"
+            maxLength={120}
+            placeholder="data analyst"
+            autoComplete="off"
+            // 16px, not 15: iOS Safari zooms the whole page into any focused
+            // input under 16px, and the hero is the first thing a phone
+            // visitor touches.
+            className="h-12 w-full min-w-0 flex-1 bg-transparent px-3.5 text-[16px] text-ink-900 placeholder:text-ink-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="h-12 shrink-0 rounded-lg bg-brand-700 px-5 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          >
+            Check
+          </button>
+        </div>
       </form>
 
       {/*

@@ -1,4 +1,4 @@
-export { SQL_MAX_SCORE, gradeSqlSubmission } from "./deterministic/sql";
+export { SQL_MAX_SCORE, gradeSqlSubmission, type RubricCriterion } from "./deterministic/sql";
 export { describeDifference, diffResults, type Difference } from "./deterministic/compare";
 export {
   hasTableAliases,
@@ -16,3 +16,12 @@ export type {
   SqlAssignmentSpec,
   SqlGrade,
 } from "./deterministic/types";
+export {
+  CHECKERS,
+  CHECKER_NAMES,
+  parseCheck,
+  runCheck,
+  type Checker,
+  type CheckerName,
+  type CheckResult,
+} from "./registry";

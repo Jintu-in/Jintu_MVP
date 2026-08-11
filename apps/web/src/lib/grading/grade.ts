@@ -130,6 +130,19 @@ async function gradeSql(
     .eq("assignment_id", assignmentId)
     .maybeSingle();
 
+  // The rubric the student read is the rubric the grade uses. The grader
+  // falls back to weights identical to sql-correctness-v1 when this comes
+  // back empty, so a rubric-less assignment grades exactly as before — but a
+  // rubric with different weights now actually means something.
+  const { data: withRubric } = await supabase
+    .from("assignments")
+    .select("rubrics ( criteria )")
+    .eq("id", assignmentId)
+    .maybeSingle();
+  const rubricCriteria = (
+    withRubric?.rubrics as unknown as { criteria?: { key: string; weight: number }[] } | null
+  )?.criteria;
+
   if (keyError) throw new Error(`could not load the answer key: ${keyError.message}`);
 
   const key = sqlAnswerKey.safeParse(rawKey);
@@ -154,6 +167,7 @@ async function gradeSql(
       sql,
       { expected: key.data.expected, orderMatters: key.data.order_matters },
       runner,
+      rubricCriteria,
     );
   } catch (cause) {
     // The sandbox itself failed. That is an operational problem, and it is
@@ -161,6 +175,15 @@ async function gradeSql(
     // score.
     await supabase.from("submissions").update({ status: "needs_review" }).eq("id", submissionId);
     throw cause instanceof SandboxUnavailable ? cause : new Error(String(cause));
+  }
+
+  // A rubric with nothing this grader implements is a track-authoring error,
+  // and the grader says so instead of scoring. Route it to a human: a zero
+  // grading row here would tell the student they failed, and that is not
+  // what happened.
+  if (grade.maxScore === 0 && grade.error) {
+    await supabase.from("submissions").update({ status: "needs_review" }).eq("id", submissionId);
+    throw new Error(`rubric not machine-gradable for assignment ${assignmentId}: ${grade.error}`);
   }
 
   const { error } = await supabase.from("gradings").insert({
