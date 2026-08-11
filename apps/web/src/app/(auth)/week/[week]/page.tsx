@@ -59,7 +59,7 @@ export default async function WeekPage({
       <p className="mt-2 font-mono text-sm text-ink-500">
         Week {String(weekNo).padStart(2, "0")}
       </p>
-      <h1 className="mt-0.5 text-3xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-0.5 text-3xl font-medium tracking-tight text-balance text-ink-900">
         {detail.title}
       </h1>
       <p className="mt-3 text-lg text-pretty text-ink-600">{detail.objective}</p>

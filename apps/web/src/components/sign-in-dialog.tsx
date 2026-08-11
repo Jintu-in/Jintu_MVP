@@ -99,7 +99,7 @@ export function SignInDialog({
       className="w-[min(28rem,calc(100vw-2rem))] rounded-card border border-ink-100 bg-white p-0 text-ink-900 backdrop:bg-ink-900/40"
     >
       <div className="p-6">
-        <h2 id={`${id}-title`} className="text-lg font-semibold text-ink-900">
+        <h2 id={`${id}-title`} className="text-lg font-medium text-ink-900">
           {stage === "code"
             ? "Check your email"
             : stage === "password"
@@ -154,7 +154,7 @@ export function SignInDialog({
                 send.reset();
                 setStage("password");
               }}
-              className="mt-3 h-11 text-sm text-ink-500 underline hover:text-ink-900"
+              className="mt-3 h-12 text-sm text-ink-500 underline hover:text-ink-900"
             >
               I have a password
             </button>

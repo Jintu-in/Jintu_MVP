@@ -85,6 +85,10 @@ jobs:
       - name: Course request limits hold in the database
         run: pnpm requests:verify
 
+      # Enrolment is where a person becomes a student: session and 18+ gates,
+      # the seat cap under a row lock, and RLS on who can read the result.
+      - name: Enrolment rules hold in the database
+        run: pnpm enrolment:verify
       # The two point ledgers and the four anti-gaming rules from TRACK_MODEL
       # Part 6 — including the wall: proof_totals never contains a
       # consistency point.

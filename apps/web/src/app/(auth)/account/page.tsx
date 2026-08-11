@@ -64,7 +64,7 @@ export default async function AccountPage() {
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-ink-900">
+        <h1 className="text-2xl font-medium text-ink-900">
           {profile.full_name ?? "Your account"}
         </h1>
         <form action={signOut}>
@@ -76,7 +76,7 @@ export default async function AccountPage() {
       <p className="mt-1 font-mono text-sm text-ink-500">{profile.phone}</p>
 
       <section className="mt-10" aria-labelledby="consents">
-        <h2 id="consents" className="text-lg font-semibold text-ink-900">
+        <h2 id="consents" className="text-lg font-medium text-ink-900">
           What you have agreed to
         </h2>
         <p className="mt-1 text-pretty text-ink-600">
@@ -113,7 +113,7 @@ export default async function AccountPage() {
       </section>
 
       <section className="mt-10" aria-labelledby="password">
-        <h2 id="password" className="text-lg font-semibold text-ink-900">
+        <h2 id="password" className="text-lg font-medium text-ink-900">
           How you sign in
         </h2>
         <p className="mt-1 max-w-[62ch] text-pretty text-ink-600">
@@ -129,7 +129,7 @@ export default async function AccountPage() {
         className="mt-10 rounded-card border border-ink-100 bg-white p-6"
         aria-labelledby="rights"
       >
-        <h2 id="rights" className="font-semibold text-ink-900">
+        <h2 id="rights" className="font-medium text-ink-900">
           Your data
         </h2>
         <p className="mt-2 text-pretty text-ink-600">

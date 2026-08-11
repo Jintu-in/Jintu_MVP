@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function OfflinePage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-16">
-      <h1 className="text-2xl font-semibold text-ink-900">You are offline</h1>
+      <h1 className="text-2xl font-medium text-ink-900">You are offline</h1>
       <p className="mt-3 text-pretty text-ink-600">
         This page needs a connection. Weeks you have already opened are still
         readable — the curriculum is cached once you have visited it.

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceItem } from "@/components/resource-item";
 import { Rubric } from "@/components/rubric";
-import { getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
+import { EnrolButton } from "@/components/enrol-button";
+import { getOpenCohort, getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
 
 /**
  * One course, in full. ARCHITECTURE.md §6 — the free public top of the
@@ -82,6 +83,11 @@ export default async function CoursePage({
   const track = await getPublishedTrack(slug);
   if (!track) notFound();
 
+  // In parallel with nothing: it depends on the slug being real, and the
+  // notFound above has to win. Null when no cohort is open or the migration
+  // is not applied, and the bar falls back to the waitlist either way.
+  const cohort = await getOpenCohort(track.slug);
+
   const resources = track.modules.reduce((n, m) => n + m.resources.length, 0);
   const artifacts = track.modules.reduce((n, m) => n + m.assignments.length, 0);
 
@@ -97,7 +103,7 @@ export default async function CoursePage({
         <span className="text-ink-600">{track.title}</span>
       </nav>
 
-      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
         {track.title}
       </h1>
 
@@ -148,16 +154,46 @@ export default async function CoursePage({
       <div className="sticky bottom-0 mt-8 -mx-5 border-t border-ink-100 bg-white px-5 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="text-sm">
-            <p className="text-ink-500">Cohort</p>
-            <p className="font-medium text-ink-900">₹999 one time</p>
+            {cohort ? (
+              <>
+                {/* Real numbers or none: the date and the seat count come from
+                    the cohort row, and this block does not render without one. */}
+                <p className="text-ink-500">
+                  Starts{" "}
+                  {new Date(cohort.startsOn).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                  })}
+                  {" · "}
+                  {cohort.seatsLeft} of {cohort.capacity} seats left
+                </p>
+                <p className="font-medium text-ink-900">₹999 one time</p>
+              </>
+            ) : (
+              <>
+                <p className="text-ink-500">Cohort</p>
+                <p className="font-medium text-ink-900">₹999 one time</p>
+              </>
+            )}
           </div>
-          <Link
-            href="/#waitlist"
-            className="flex h-12 shrink-0 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-          >
-            Join the waitlist
-          </Link>
+          {cohort && cohort.seatsLeft > 0 ? (
+            <EnrolButton cohortId={cohort.cohortId} slug={track.slug} />
+          ) : (
+            <Link
+              href="/#waitlist"
+              className="flex h-12 shrink-0 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            >
+              Join the waitlist
+            </Link>
+          )}
         </div>
+        {cohort && cohort.seatsLeft > 0 ? (
+          <p className="mt-1.5 text-xs text-ink-500">
+            Enrolling reserves your seat. We message you how to pay — ₹999 by
+            UPI — before the cohort starts, and week one is a full-refund
+            window either way.
+          </p>
+        ) : null}
       </div>
     </main>
   );
@@ -176,7 +212,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
             <span className="block font-mono text-sm font-normal text-ink-500">
               Week {String(module.week_no).padStart(2, "0")}
             </span>
-            <span className="mt-0.5 block font-semibold text-pretty text-ink-900">
+            <span className="mt-0.5 block font-medium text-pretty text-ink-900">
               {module.title}
             </span>
           </h2>
@@ -216,7 +252,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
             </p>
           ) : (
             <>
-              <h3 className="mt-5 text-xs font-semibold tracking-wide text-ink-500 uppercase">
+              <h3 className="mt-5 text-xs font-medium tracking-wide text-ink-500 uppercase">
                 Resources
               </h3>
               {module.resources.length > 0 ? (
@@ -235,7 +271,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
 
               {module.assignments.length > 0 ? (
                 <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
-                  <h3 className="text-xs font-semibold tracking-wide text-brand-800 uppercase">
+                  <h3 className="text-xs font-medium tracking-wide text-brand-800 uppercase">
                     What you submit
                   </h3>
                   <ul className="mt-2 space-y-4">
@@ -280,7 +316,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
 function EmptyCourse() {
   return (
     <div className="mt-8 rounded-card border border-ink-200 bg-white p-8 text-center">
-      <p className="text-lg font-semibold text-ink-900">
+      <p className="text-lg font-medium text-ink-900">
         This course has no weeks published yet.
       </p>
       <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">

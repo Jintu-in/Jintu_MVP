@@ -31,7 +31,7 @@ export default async function OnboardingPage() {
     <main className="mx-auto max-w-md px-5 py-10">
       <Steps current={3} label="Your profile" />
 
-      <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+      <h1 className="mt-8 text-2xl font-medium tracking-tight text-ink-900">
         Two things before we start
       </h1>
       <p className="mt-2 text-pretty text-ink-600">

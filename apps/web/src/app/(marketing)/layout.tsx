@@ -63,7 +63,7 @@ export default async function MarketingLayout({
               className="h-8 w-8"
               priority
             />
-            <span className="text-xl font-semibold tracking-tight text-ink-900">
+            <span className="text-xl font-medium tracking-tight text-ink-900">
               Jintu
             </span>
           </Link>
@@ -112,7 +112,7 @@ export default async function MarketingLayout({
 
       <footer className="border-t border-ink-100 bg-white">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-5 py-10 text-center">
-          <span className="text-lg font-semibold tracking-tight text-ink-900">
+          <span className="text-lg font-medium tracking-tight text-ink-900">
             Jintu
           </span>
 

@@ -35,7 +35,7 @@ export default function PricingPage() {
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Pricing
       </p>
-      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
         The syllabus is free. The cohort is not.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
@@ -49,7 +49,7 @@ export default function PricingPage() {
 
       <section className="mt-10 rounded-card border-2 border-brand-600 bg-white p-6">
         <div className="flex flex-wrap items-baseline gap-x-3">
-          <span className="text-4xl font-semibold text-ink-900">₹999</span>
+          <span className="text-4xl font-medium text-ink-900">₹999</span>
           <span className="text-ink-500">one time, per cohort</span>
         </div>
         <p className="mt-2 text-ink-600">
@@ -57,7 +57,7 @@ export default function PricingPage() {
           stored.
         </p>
 
-        <h2 className="mt-6 text-sm font-semibold tracking-wide text-ink-500 uppercase">
+        <h2 className="mt-6 text-sm font-medium tracking-wide text-ink-500 uppercase">
           What you get
         </h2>
         <ul className="mt-3 space-y-2">
@@ -85,7 +85,7 @@ export default function PricingPage() {
       </section>
 
       <section className="mt-10" aria-labelledby="not-included">
-        <h2 id="not-included" className="text-lg font-semibold text-ink-900">
+        <h2 id="not-included" className="text-lg font-medium text-ink-900">
           What ₹999 does not buy
         </h2>
         <ul className="mt-3 space-y-2">
@@ -104,7 +104,7 @@ export default function PricingPage() {
         className="mt-10 rounded-card border border-ink-100 bg-white p-6"
         aria-labelledby="refunds"
       >
-        <h2 id="refunds" className="font-semibold text-ink-900">
+        <h2 id="refunds" className="font-medium text-ink-900">
           Refunds
         </h2>
         <p className="mt-2 text-pretty text-ink-600">
@@ -116,7 +116,7 @@ export default function PricingPage() {
       </section>
 
       <section className="mt-10" aria-labelledby="colleges">
-        <h2 id="colleges" className="text-lg font-semibold text-ink-900">
+        <h2 id="colleges" className="text-lg font-medium text-ink-900">
           Colleges
         </h2>
         <p className="mt-2 text-pretty text-ink-600">

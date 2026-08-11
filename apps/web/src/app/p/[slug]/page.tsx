@@ -58,7 +58,7 @@ export default async function ProfilePage({
           <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
             Proof of readiness
           </p>
-          <h1 className="mt-2 text-3xl leading-tight font-semibold text-balance text-ink-900">
+          <h1 className="mt-2 text-3xl leading-tight font-medium text-balance text-ink-900">
             {profile.headline ?? "Completed a Jintu placement sprint."}
           </h1>
           {profile.publishedAt ? (
@@ -82,12 +82,12 @@ export default async function ProfilePage({
           >
             <h2
               id="score"
-              className="text-sm font-semibold tracking-wide text-ink-500 uppercase"
+              className="text-sm font-medium tracking-wide text-ink-500 uppercase"
             >
               Readiness
             </h2>
             <p className="mt-1 flex items-baseline gap-1.5">
-              <span className="font-mono text-5xl font-semibold tabular-nums text-ink-900">
+              <span className="font-mono text-5xl font-medium tabular-nums text-ink-900">
                 {profile.overall}
               </span>
               <span className="text-ink-500">/ 100</span>
@@ -124,7 +124,7 @@ export default async function ProfilePage({
           className="mt-4 rounded-card border border-ink-100 border-l-4 border-l-brand-500 bg-white p-6"
           aria-labelledby="what"
         >
-          <h2 id="what" className="font-semibold text-ink-900">
+          <h2 id="what" className="font-medium text-ink-900">
             What this score is
           </h2>
           <p className="mt-2 text-pretty text-ink-600">
@@ -140,7 +140,7 @@ export default async function ProfilePage({
 
       <footer className="border-t border-ink-100 bg-white">
         <div className="mx-auto flex max-w-2xl items-center gap-2 px-5 py-6 text-sm text-ink-500">
-          <Link href="/" className="font-semibold text-ink-900 hover:text-brand-800">
+          <Link href="/" className="font-medium text-ink-900 hover:text-brand-800">
             Jintu
           </Link>
           <span aria-hidden>·</span>
