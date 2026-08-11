@@ -414,6 +414,7 @@ checked against migrations, `packages/grading/src`, or a live query.
 | **Rubric criteria carry `check`/`checker`** | trigger + generators | Part 12 item 5, landed before anything was graded. The SQL grader reads weights from the rubric; identical-by-construction to the old constants. |
 | **Points ledgers + streaks + daily reps** | `point_events`, `streaks`, `daily_reps`, `submit_rep()` | Part 6 complete: 30/day cap, day-stamped by construction, retroactive voiding, proof-locked-on-reviews. `proof_totals` is the wall — rule 5 in a WHERE clause. Dashboard board + 18 reps in the DA generator. 21 assertions. |
 | **Defect keys (detectable)** | `assignment_defect_keys`, `defect-dataset.mjs`, pipeline branch | Seed-secret generator (repo-safe), counted truths, distractors, service-role-only key, checklist UI -> `answer_key_match` -> grading row. 16 assertions. |
+| **Community tier** | `author_id`, `author_community_track()`, `set_community_outline()`, three wall triggers | Anyone onboarded authors a track (3 unpublished max); outline replaced whole, week numbers by position; authors see only their own unpublished work; publishing stays with ops. The wall: a community track never carries a paid check — enforced at the assignment, the rubric and the tier flip. 27 assertions. |
 | **rubric_ai spend gate** | `ai_spend_reserve/settle/release`, `gradeRubricAi` | The only paid call. Reserve-before-spend, one `ai_usage` row per call, fail-closed with no guard row, every failure degrades to needs_review. Dormant until a rubric carries a rubric_ai criterion. 25 assertions. |
 
 ### Not built
@@ -424,7 +425,7 @@ checked against migrations, `packages/grading/src`, or a live query.
 | `code_test_suite` | 2 | Needs the sandbox to run arbitrary suites — a container question, not a function |
 | `rubric_ai` — `rubric_score` | 2 | Prose grading. The only paid call. |
 | `mentor_sample` | 2 | Quality control at volume |
-| `author_id` on tracks, `verification_profile` computation | 7 | community-tier authorship; the share is a NULL column until a job computes it |
+| `verification_profile` computation | 7 | the share is a NULL column until a job computes it |
 | `topic_queries`, `draft_outlines` | 7 | `draft` tier |
 
 ### Five places the code and this document disagree
@@ -508,8 +509,9 @@ Ordered by what unblocks what, not by value. Each step is shippable on its own.
 
 **After — breadth**
 
-9. `community` tier: user-authored tracks, structural plus peer only, never a
-   model call.
+9. ✓ `community` tier: user-authored tracks, structural plus peer only, never a
+   model call — the never is three triggers, not a convention. Authoring UI
+   (a form over the two RPCs) still to come.
 10. `draft` tier: `normalized_key` on requests and votes, `draft_outlines`
     cached per topic. This is where items 2 and 3 above get repaid.
 11. `mentor_sample` and retroactive voiding, once a cohort is large enough to

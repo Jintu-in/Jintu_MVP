@@ -102,6 +102,10 @@ jobs:
       # leaves, one ai_usage row per call, fail-closed when unconfigured.
       - name: AI budget cannot leak money
         run: pnpm ai:verify
+      # Community tier: authorship gates, and the wall — a community track
+      # never carries a paid check, enforced at all three doors.
+      - name: Community tracks never pay
+        run: pnpm community:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

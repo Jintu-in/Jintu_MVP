@@ -57,6 +57,7 @@ export type TrackPage = {
   slug: string;
   title: string;
   summary: string;
+  tier: "sprint" | "community" | "draft";
   version: number;
   modules: Module[];
 };
@@ -75,7 +76,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
   const supabase = createPublicClient();
 
   const { data: track, error: trackError } = await retryRead(() =>
-    supabase.from("tracks").select("id, slug, title, summary").eq("slug", slug).maybeSingle(),
+    supabase.from("tracks").select("id, slug, title, summary, tier").eq("slug", slug).maybeSingle(),
   );
 
   if (trackError) throw describeSupabaseError("looking up the track", trackError);
@@ -114,6 +115,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     slug: track.slug,
     title: track.title,
     summary: track.summary,
+    tier: track.tier as TrackPage["tier"],
     version: path.version,
     modules: ((modules ?? []) as unknown as Module[]).map((m) => ({
       ...m,

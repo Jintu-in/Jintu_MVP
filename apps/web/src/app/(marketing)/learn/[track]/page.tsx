@@ -127,6 +127,18 @@ export default async function CoursePage({
 
       <p className="mt-4 text-lg text-pretty text-ink-600">{track.summary}</p>
 
+      {/* The tier is a promise about how work gets checked, so it is said
+          where the curriculum starts, in words rather than a bare label. A
+          sprint carries no banner — machine-checked is this site's default
+          claim, and restating defaults is noise. */}
+      {track.tier === "community" ? (
+        <p className="mt-4 rounded-card border border-ink-100 bg-white px-4 py-3 text-sm text-pretty text-ink-600">
+          <span className="font-medium text-ink-900">Community track.</span>{" "}
+          Written by a member, checked by structure and by peers — never by a
+          model. Free, like everything else here.
+        </p>
+      ) : null}
+
       {track.modules.length === 0 ? (
         <EmptyCourse />
       ) : (
