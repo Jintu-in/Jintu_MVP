@@ -510,8 +510,8 @@ Ordered by what unblocks what, not by value. Each step is shippable on its own.
 **After — breadth**
 
 9. ✓ `community` tier: user-authored tracks, structural plus peer only, never a
-   model call — the never is three triggers, not a convention. Authoring UI
-   (a form over the two RPCs) still to come.
+   model call — the never is three triggers, not a convention. /write is the
+   pen: start a track, outline it week by week, all through the two RPCs.
 10. `draft` tier: `normalized_key` on requests and votes, `draft_outlines`
     cached per topic. This is where items 2 and 3 above get repaid.
 11. `mentor_sample` and retroactive voiding, once a cohort is large enough to
