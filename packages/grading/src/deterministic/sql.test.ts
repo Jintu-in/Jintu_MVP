@@ -199,3 +199,66 @@ describe("gradeSqlSubmission", () => {
     expect((still.rows[0] as { n: number }).n).toBe(5);
   });
 });
+
+describe("rubric-driven weights", () => {
+  it("grades at the rubric's weights when they differ from the defaults", async () => {
+    const grade = await gradeSqlSubmission(CORRECT, spec(), runner, [
+      { key: "returns_expected_rows", weight: 5 },
+      { key: "no_cartesian", weight: 2 },
+      { key: "readable", weight: 3 },
+    ]);
+    expect(grade.maxScore).toBe(10);
+    expect(grade.criteria.find((c) => c.key === "returns_expected_rows")?.weight).toBe(5);
+  });
+
+  it("matches the defaults exactly when given sql-correctness-v1's weights", async () => {
+    // The safety property of the whole change: the shipped rubric carries the
+    // same keys at the same weights, so rubric-driven and constant-driven
+    // grading are indistinguishable, and nothing already graded would move.
+    const fromRubric = await gradeSqlSubmission(CORRECT, spec(), runner, [
+      { key: "returns_expected_rows", weight: 3 },
+      { key: "no_cartesian", weight: 1 },
+      { key: "readable", weight: 1 },
+    ]);
+    const fromDefaults = await gradeSqlSubmission(CORRECT, spec(), runner);
+    expect(fromRubric.total).toBe(fromDefaults.total);
+    expect(fromRubric.maxScore).toBe(fromDefaults.maxScore);
+  });
+
+  it("skips criteria the rubric leaves out, rather than scoring them at zero", async () => {
+    const grade = await gradeSqlSubmission(CORRECT, spec(), runner, [
+      { key: "returns_expected_rows", weight: 4 },
+    ]);
+    expect(grade.criteria.map((c) => c.key)).toEqual(["returns_expected_rows"]);
+    expect(grade.maxScore).toBe(4);
+  });
+
+  it("ignores rubric keys it does not implement — they belong to other checkers", async () => {
+    const grade = await gradeSqlSubmission(CORRECT, spec(), runner, [
+      { key: "returns_expected_rows", weight: 3 },
+      { key: "peer_reviewed_style", weight: 2 },
+    ]);
+    expect(grade.criteria.map((c) => c.key)).toEqual(["returns_expected_rows"]);
+    expect(grade.maxScore).toBe(3);
+  });
+
+  it("a rubric with nothing machine-gradable is a track error, not a zero", async () => {
+    const grade = await gradeSqlSubmission(CORRECT, spec(), runner, [
+      { key: "vibes", weight: 5 },
+    ]);
+    expect(grade.criteria).toEqual([]);
+    expect(grade.maxScore).toBe(0);
+    expect(grade.error).toMatch(/track needs fixing/i);
+    // And explicitly not a failing score against invented criteria.
+    expect(grade.total).toBe(0);
+  });
+
+  it("failure paths use the rubric weights too", async () => {
+    const grade = await gradeSqlSubmission("   ", spec(), runner, [
+      { key: "returns_expected_rows", weight: 7 },
+    ]);
+    expect(grade.maxScore).toBe(7);
+    expect(grade.criteria).toHaveLength(1);
+    expect(grade.error).toMatch(/Nothing was submitted/);
+  });
+});
