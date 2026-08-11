@@ -16,3 +16,12 @@ export type {
   SqlAssignmentSpec,
   SqlGrade,
 } from "./deterministic/types";
+export {
+  CHECKERS,
+  CHECKER_NAMES,
+  parseCheck,
+  runCheck,
+  type Checker,
+  type CheckerName,
+  type CheckResult,
+} from "./registry";
