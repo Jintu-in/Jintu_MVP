@@ -73,6 +73,15 @@ async function run(submissionId: string) {
   });
   if (allocationError) console.error("[grading] allocation", allocationError.message);
 
+  // Proof points, gated on the reviewer having no pending peer reviews —
+  // TRACK_MODEL rule 4. Reports rather than throws, like its neighbours: the
+  // grade is already written and nothing here may sink it.
+  const { data: award, error: awardError } = await supabase.rpc("award_artifact_points", {
+    p_submission_id: submission.id,
+  });
+  if (awardError) console.error("[grading] points", awardError.message);
+  else if (award?.reason) console.warn("[grading] points withheld:", award.reason);
+
   const { error: readinessError } = await supabase.rpc("compute_readiness", {
     p_enrollment_id: submission.enrollment_id,
   });
