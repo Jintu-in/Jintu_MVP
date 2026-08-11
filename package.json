@@ -39,7 +39,9 @@
     "requests:verify": "node scripts/assert-course-requests.mjs",
     "courses:keys": "node scripts/sql-fixtures.mjs",
     "db:catchup": "node scripts/bundle-migrations.mjs --since",
-    "catchup:verify": "node scripts/assert-catch-up.mjs"
+    "catchup:verify": "node scripts/assert-catch-up.mjs",
+    "defects:verify": "node scripts/assert-defects.mjs",
+    "defects:dataset": "node scripts/defect-dataset.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

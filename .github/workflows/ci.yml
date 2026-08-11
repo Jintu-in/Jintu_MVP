@@ -85,6 +85,11 @@ jobs:
       - name: Course request limits hold in the database
         run: pnpm requests:verify
 
+      # The planted-defect generator: every rows_affected recounted from the
+      # CSV, distractors verifiably absent, keys service-role only.
+      - name: Defect datasets tell the truth
+        run: pnpm defects:verify
+
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.
       - name: Catch-up bundle applies to the live shape
