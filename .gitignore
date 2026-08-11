@@ -48,3 +48,7 @@ pnpm-debug.log*
 **/public/sw.js.map
 **/public/swe-worker-*.js
 supabase/.bundle/
+
+# PDFs dropped into docs/ are working files, not repo content. The repo holds
+# markdown; a stray PDF here once went into a commit by accident.
+docs/*.pdf

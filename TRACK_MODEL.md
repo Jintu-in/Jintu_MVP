@@ -398,6 +398,9 @@ checked against migrations, `packages/grading/src`, or a live query.
 | Piece | Where | Note |
 |---|---|---|
 | `executable` archetype | `packages/grading/src/deterministic/sql.ts` | Runs the query, diffs the result. 14 tests. |
+| **Checker registry** | `packages/grading/src/registry.ts` | Part 12 item 3. The eleven names fixed as `CHECKER_NAMES`; eight resolve. `runCheck("duration_between:60,180", input)` parses and runs a stored spec. Checkers refuse legibly, never throw. 37 tests. |
+| `structural` checkers | registry | `non_empty`, `duration_between`, `has_sections`, `url_reachable` (injected fetch), `contains_join` (gameable by design, ≤1 point), `row_count_ceiling` |
+| `detectable` checker | registry | `answer_key_match` — set-based, threshold arg, and its detail never names the missed defects, because the key is the answer |
 | Answer-key storage | `assignment_answer_keys` | `setup` + `reference_sql` + `expected` + `order_matters`, service-role only, frozen once its path publishes |
 | Grading pipeline | `apps/web/src/lib/grading/grade.ts` | Reads the key with the service client, drives the PGlite sandbox, writes `gradings`. Runs in `after()`; pgmq is still Phase 2. |
 | Sandbox | `apps/web/sandbox/run-sql.mjs` | Read-only transaction proven by 14 tests — delete/update/insert/drop/create/truncate all refused by Postgres, not by a denylist |
@@ -411,9 +414,8 @@ checked against migrations, `packages/grading/src`, or a live query.
 
 | Piece | Part | Blocking what |
 |---|---|---|
-| Checker registry (`CHECKERS`) | 4 | Everything below. This is the keystone. |
-| `structural` checkers — `non_empty`, `duration_between`, `has_sections`, `url_reachable`, `media_has_audio`, `contains_join`, `row_count_ceiling` | 2 | `community` tier, guitar, most free verification |
-| `detectable` checker — `answer_key_match` | 2 | The strongest weeks in every track |
+| `media_has_audio` | 2 | Named in CHECKER_NAMES, deliberately unimplemented: real media probing, not trusting client metadata — a checker that trusts the uploader verifies nothing |
+| `code_test_suite` | 2 | Needs the sandbox to run arbitrary suites — a container question, not a function |
 | `rubric_ai` — `rubric_score` | 2 | Prose grading. The only paid call. |
 | `mentor_sample` | 2 | Quality control at volume |
 | `daily_reps`, `rep_submissions` | 7 | The habit loop |
