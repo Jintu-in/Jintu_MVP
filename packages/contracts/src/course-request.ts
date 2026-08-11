@@ -33,3 +33,11 @@ export type CourseRequestInput = z.infer<typeof courseRequestInput>;
  * one fails the build with "Only async functions are allowed to be exported".
  */
 export const NEEDS_ACCOUNT = "NEEDS_ACCOUNT";
+
+/**
+ * Same species as NEEDS_ACCOUNT: the caller has a session but no profile, so
+ * the 18+ confirmation has never been given. The client redirects to
+ * /onboarding rather than printing it. Lives here because a "use server"
+ * file may only export async functions.
+ */
+export const NEEDS_PROFILE = "NEEDS_PROFILE";

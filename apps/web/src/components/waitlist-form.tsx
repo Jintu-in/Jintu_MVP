@@ -23,7 +23,7 @@ export function WaitlistForm() {
   if (result?.data?.joined) {
     return (
       <div role="status" className="rounded-card border border-brand-200 bg-brand-50 p-6">
-        <p className="font-semibold text-ink-900">You&rsquo;re on the list.</p>
+        <p className="font-medium text-ink-900">You&rsquo;re on the list.</p>
         <p className="mt-2 text-pretty text-ink-600">
           We&rsquo;ll message you when the next cohort opens. Twenty places,
           and we pick for fit rather than first-come.
@@ -48,7 +48,7 @@ export function WaitlistForm() {
       }}
       className="rounded-card border border-ink-100 bg-white p-6"
     >
-      <h2 className="text-xl font-semibold tracking-tight text-ink-900">
+      <h2 className="text-xl font-medium tracking-tight text-ink-900">
         Join the waitlist
       </h2>
       <p className="mt-1 text-sm text-ink-500">
@@ -87,7 +87,7 @@ export function WaitlistForm() {
       </div>
 
       <fieldset className="mt-6 space-y-3">
-        <legend className="text-sm font-semibold text-ink-900">
+        <legend className="text-sm font-medium text-ink-900">
           Before you join
         </legend>
 

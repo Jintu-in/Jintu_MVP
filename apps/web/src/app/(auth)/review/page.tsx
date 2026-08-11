@@ -42,7 +42,7 @@ export default async function ReviewQueuePage() {
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Peer review
       </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-2 text-3xl font-medium tracking-tight text-balance text-ink-900">
         {pending.length > 0 ? "Reviews to write" : "Nothing to review"}
       </h1>
 

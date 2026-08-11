@@ -79,12 +79,12 @@ export default async function SharedRequestPage({
         {request.is_mine ? "Your request" : "A course someone asked for"}
       </p>
 
-      <h1 className="mt-3 text-2xl leading-snug font-semibold text-balance text-ink-900">
+      <h1 className="mt-3 text-2xl leading-snug font-medium text-balance text-ink-900">
         {request.prompt}
       </h1>
 
       <div className="mt-6 rounded-card border border-ink-100 bg-white p-5">
-        <p className={`font-semibold ${s.tone}`}>{s.label}</p>
+        <p className={`font-medium ${s.tone}`}>{s.label}</p>
         <p className="mt-1 text-pretty text-ink-600">{s.detail}</p>
         <p className="mt-3 font-mono text-xs text-ink-500">
           Asked {new Date(request.created_at).toLocaleDateString("en-IN", {

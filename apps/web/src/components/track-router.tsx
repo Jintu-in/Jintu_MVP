@@ -108,34 +108,47 @@ export function TrackRouter({
 
   return (
     <div>
-      <form
-        ref={formRef}
-        noValidate
-        action={check}
-        className="mt-8 flex flex-col gap-3 sm:flex-row"
-      >
+      <form ref={formRef} noValidate action={check} className="mt-8">
         <label htmlFor={id} className="sr-only">
           What do you want to learn?
         </label>
-        {/* min-w-0 so the input can actually shrink inside the flex row;
-            without it a long placeholder sets a floor and the button is
-            pushed off a narrow screen. */}
-        <input
-          id={id}
-          name="q"
-          type="text"
-          maxLength={120}
-          placeholder="data analyst"
-          className="h-12 w-full min-w-0 flex-1 rounded-lg border border-ink-200 px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:max-w-md"
-        />
-        {/* The only primary button on the page. Full width on a phone, where a
-            half-width button beside nothing looks like a mistake. */}
-        <button
-          type="submit"
-          className="h-12 w-full shrink-0 rounded-lg bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto"
-        >
-          Check
-        </button>
+
+        {/*
+          One bar, not a field beside a button. The field-and-button version
+          looked broken for a stack of small reasons that added up: the input
+          had no background, so on the ink-50 page ground it rendered as a
+          grey box with a near-invisible border; flex-1 fought sm:max-w-md
+          over its width; and on a phone the button stacked below it at full
+          width, eating a whole row to say one word.
+
+          The container owns the chrome — white card, hairline, focus ring
+          via focus-within — and the input inside is borderless, so there is
+          exactly one visual edge. The button rides inside the bar on every
+          screen size; "Check" is short enough to share a 360px row with the
+          field.
+        */}
+        <div className="flex items-center gap-1.5 rounded-card border border-ink-200 bg-white p-1.5 transition-colors focus-within:border-brand-700 sm:max-w-xl">
+          {/* min-w-0 so the field can shrink; without it the placeholder sets
+              a floor and pushes the button out of the bar on a narrow screen. */}
+          <input
+            id={id}
+            name="q"
+            type="text"
+            maxLength={120}
+            placeholder="data analyst"
+            autoComplete="off"
+            // 16px, not 15: iOS Safari zooms the whole page into any focused
+            // input under 16px, and the hero is the first thing a phone
+            // visitor touches.
+            className="h-12 w-full min-w-0 flex-1 bg-transparent px-3.5 text-[16px] text-ink-900 placeholder:text-ink-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="h-12 shrink-0 rounded-lg bg-brand-700 px-5 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          >
+            Check
+          </button>
+        </div>
       </form>
 
       {/*
@@ -143,7 +156,7 @@ export function TrackRouter({
 
         Chips rather than a sentence of inline links. Inline text links inside
         13px copy are a ~16px tap target on a phone, which is half what a thumb
-        needs; a bordered chip with h-9 and horizontal padding is a real one,
+        needs; a bordered 48px chip with horizontal padding is a real one,
         and wraps cleanly at 360px instead of reflowing mid-list.
       */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -195,13 +208,13 @@ export function TrackRouter({
   );
 }
 
-/** A tappable example. h-9 plus padding is a real target; 13px inline text is not. */
+/** A tappable example. 48px tall per the project rules; 13px inline text is not a target. */
 function Chip({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-9 items-center rounded-full border border-ink-200 bg-white px-3.5 text-[13px] text-ink-600 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+      className="inline-flex h-12 items-center rounded-full border border-ink-200 bg-white px-3.5 text-[13px] text-ink-600 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
     >
       {children}
     </button>
@@ -242,13 +255,13 @@ function SprintResult({ track }: { track: RouterTrack }) {
       <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
         <Link
           href={`/learn/${track.slug}`}
-          className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
         >
           Read the track — free
         </Link>
         <a
           href="#waitlist"
-          className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+          className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
         >
           Join the waitlist
         </a>
@@ -290,13 +303,13 @@ function UnbuiltResult({
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:gap-3">
           <Link
             href="/tracks"
-            className="flex h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
             See it in your tracks
           </Link>
           <Link
             href="/learn"
-            className="flex h-11 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
+            className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
           >
             Browse what exists
           </Link>
@@ -341,13 +354,13 @@ function UnbuiltResult({
           type="button"
           onClick={onAsk}
           disabled={pending}
-          className="flex h-11 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
+          className="flex h-12 items-center justify-center rounded-lg border border-brand-700 bg-white px-4 text-[15px] font-medium text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:border-ink-200 disabled:text-ink-500"
         >
           {pending ? "Asking…" : signedIn ? "Ask for this track" : "Sign in and ask for this"}
         </button>
         <Link
           href="/learn"
-          className="flex h-11 items-center justify-center rounded-lg px-4 text-[15px] font-medium text-ink-700 hover:text-brand-800"
+          className="flex h-12 items-center justify-center rounded-lg px-4 text-[15px] font-medium text-ink-700 hover:text-brand-800"
         >
           Browse what exists
         </Link>

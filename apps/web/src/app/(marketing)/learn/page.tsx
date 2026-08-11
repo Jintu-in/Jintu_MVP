@@ -50,7 +50,7 @@ export default async function CoursesPage() {
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
         Free curriculum
       </p>
-      <h1 className="mt-3 text-3xl leading-tight font-semibold text-balance text-ink-900 sm:text-4xl">
+      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
         Every track, in full, before you pay anything.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
@@ -101,7 +101,7 @@ export default async function CoursesPage() {
 function Proposals({ proposals }: { proposals: CourseProposal[] }) {
   return (
     <section className="mt-14 border-t border-ink-100 pt-10">
-      <h2 className="text-2xl font-semibold text-balance text-ink-900">
+      <h2 className="text-2xl font-medium text-balance text-ink-900">
         What should we build next?
       </h2>
       <p className="mt-3 text-pretty text-ink-600">
@@ -135,7 +135,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-white px-4 py-3 text-center">
       <dt className="text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</dt>
-      <dd className="mt-0.5 text-xl font-semibold text-ink-900">{value}</dd>
+      <dd className="mt-0.5 text-xl font-medium text-ink-900">{value}</dd>
     </div>
   );
 }
@@ -148,7 +148,7 @@ function CourseCard({ track }: { track: TrackSummary }) {
     >
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-pretty text-ink-900 group-hover:text-brand-800">
+          <h2 className="text-lg font-medium text-pretty text-ink-900 group-hover:text-brand-800">
             {track.title}
           </h2>
           <p className="mt-1.5 text-pretty text-ink-600">{track.summary}</p>
@@ -202,7 +202,7 @@ function CourseCard({ track }: { track: TrackSummary }) {
 function EmptyState() {
   return (
     <div className="mt-10 rounded-card border border-ink-200 bg-white p-8 text-center">
-      <p className="text-lg font-semibold text-ink-900">No tracks are published yet.</p>
+      <p className="text-lg font-medium text-ink-900">No tracks are published yet.</p>
       <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">
         The first one is being written. When it goes up it will be here in
         full — every week and every rubric — before anyone is asked to pay for

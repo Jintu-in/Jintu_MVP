@@ -28,7 +28,7 @@ export default function GlobalError({
     <html lang="en-IN">
       <body className="min-h-dvh antialiased">
         <main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-5 py-16">
-          <h1 className="text-2xl font-semibold tracking-tight text-balance text-ink-900">
+          <h1 className="text-2xl font-medium tracking-tight text-balance text-ink-900">
             Jintu is having a bad moment
           </h1>
           <p className="mt-3 text-pretty text-ink-600">

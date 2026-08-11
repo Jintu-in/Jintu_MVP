@@ -19,7 +19,7 @@ export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-5 py-16">
       <p className="font-mono text-sm text-ink-500">404</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-2 text-3xl font-medium tracking-tight text-balance text-ink-900">
         That page is not here
       </h1>
       <p className="mt-3 text-pretty text-ink-600">

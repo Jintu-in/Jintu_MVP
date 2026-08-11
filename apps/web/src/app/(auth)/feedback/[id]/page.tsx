@@ -49,7 +49,7 @@ export default async function FeedbackPage({
         <span className="text-ink-600">How it was marked</span>
       </nav>
 
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-balance text-ink-900">
+      <h1 className="mt-2 text-2xl font-medium tracking-tight text-balance text-ink-900">
         {feedback.prompt}
       </h1>
       <p className="mt-2 text-sm text-ink-500">

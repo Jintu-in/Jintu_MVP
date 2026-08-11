@@ -47,7 +47,7 @@ export function JoinForm({ next }: { next: Route }) {
     return (
       <div>
         <Steps current={1} label="Your email" />
-        <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-8 text-2xl font-medium tracking-tight text-ink-900">
           Sign in with your password
         </h1>
         <PasswordSignIn
@@ -66,7 +66,7 @@ export function JoinForm({ next }: { next: Route }) {
       >
         <Steps current={2} label="Verify code" />
 
-        <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-8 text-2xl font-medium tracking-tight text-ink-900">
           Enter the code
         </h1>
         <p className="mt-2 text-ink-600">
@@ -124,7 +124,7 @@ export function JoinForm({ next }: { next: Route }) {
     >
       <Steps current={1} label="Your email" />
 
-      <h1 className="mt-8 text-2xl font-semibold tracking-tight text-ink-900">
+      <h1 className="mt-8 text-2xl font-medium tracking-tight text-ink-900">
         Enter your email address
       </h1>
       <p className="mt-2 text-pretty text-ink-600">
@@ -183,7 +183,7 @@ export function JoinForm({ next }: { next: Route }) {
       <button
         type="button"
         onClick={() => setMode("password")}
-        className="mt-6 h-11 text-sm text-brand-700 underline hover:text-brand-800"
+        className="mt-6 h-12 text-sm text-brand-700 underline hover:text-brand-800"
       >
         I have a password — sign in with that instead
       </button>

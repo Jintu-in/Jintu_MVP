@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16">
-      <h1 className="text-3xl font-semibold text-ink-900">Privacy notice</h1>
+      <h1 className="text-3xl font-medium text-ink-900">Privacy notice</h1>
       <p className="mt-2 text-sm text-ink-500">
         Version {NOTICE_VERSION}. This is the notice in force for consents
         recorded under that version.
@@ -160,7 +160,7 @@ export default function PrivacyPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-lg font-semibold text-ink-900">{title}</h2>
+      <h2 className="text-lg font-medium text-ink-900">{title}</h2>
       <div className="mt-2">{children}</div>
     </section>
   );
