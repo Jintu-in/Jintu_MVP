@@ -134,6 +134,48 @@ const leaked = await one("select count(*)::int n from public.assignment_answer_k
 await db.exec("rollback;");
 check(leaked.n === 0, `anon cannot read answer keys (${leaked.n} visible)`);
 
+console.log("\n── criteria carry their verification ───────────────────────");
+// TRACK_MODEL Part 12 item 5: every criterion on the new rubrics says how it
+// is judged, and the database trigger is what keeps that true.
+const annotated = await db.query(
+  "select name, criteria from public.rubrics where name in ('data-quality-audit-v1', 'dashboard-clarity-v1')",
+);
+check(
+  annotated.rows.length === 2 &&
+    annotated.rows.every((r) => r.criteria.every((c) => typeof c.check === "string")),
+  "every criterion on the new rubrics carries its archetype",
+);
+
+const rejects = async (criteria) => {
+  try {
+    await db.query(
+      "insert into public.rubrics (name, criteria, max_score) values ('probe-v1', $1, 5)",
+      [JSON.stringify(criteria)],
+    );
+    await db.query("delete from public.rubrics where name = 'probe-v1'");
+    return false;
+  } catch {
+    return true;
+  }
+};
+
+check(
+  await rejects([{ key: "k", label: "l", weight: 1, checker: "tarot_reading" }]),
+  "a checker name that does not exist is refused at insert",
+);
+check(
+  await rejects([{ key: "k", label: "l", weight: 0 }]),
+  "a zero-weight criterion is refused — a promise that counts for nothing",
+);
+check(
+  await rejects([{ key: "k", label: "l", weight: 1, check: "astrology" }]),
+  "an invented archetype is refused",
+);
+check(
+  !(await rejects([{ key: "k", label: "l", weight: 1, check: "peer", checker: null }])),
+  "a well-formed peer criterion with no checker is accepted",
+);
+
 console.log("\n── v1 must be untouched ────────────────────────────────────");
 const after1 = await one(`
   select count(*)::int n from public.modules m
