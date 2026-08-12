@@ -644,7 +644,7 @@ for (const t of TRACKS) {
   out.push(`begin`);
   out.push(`  -- Metadata is safe to refresh: tracks carry no immutability trigger.`);
   out.push(`  insert into public.tracks (slug, title, summary, is_published, tier)`);
-  out.push(`  values (${q(t.slug)}, ${q(t.title)}, ${q(t.summary)}, true, 'sprint')`);
+  out.push(`  values (${q(t.slug)}, ${q(t.title)}, ${q(t.summary)}, true, 'verified')`);
   out.push(`  on conflict (slug) do update set`);
   out.push(`    title = excluded.title,`);
   out.push(`    summary = excluded.summary,`);

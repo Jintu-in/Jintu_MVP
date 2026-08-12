@@ -65,7 +65,7 @@ export type TrackPage = {
   slug: string;
   title: string;
   summary: string;
-  tier: "sprint" | "community" | "draft";
+  tier: "verified" | "community" | "draft";
   version: number;
   modules: Module[];
 };
@@ -219,7 +219,7 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
   // and the counts silently go to zero again — see the guard below.
   //
   // `version` is load-bearing too. Publishing v2 keeps v1 published — a
-  // student mid-sprint is reading it — so a track can have several published
+  // student mid-track is reading it — so a track can have several published
   // paths at once, and only the newest is what the site serves. Counting
   // across all of them once advertised "12 weeks · 8 artifacts" on the
   // homepage for a 6-week, 6-artifact course: v1 + v2, summed.

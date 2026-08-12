@@ -48,7 +48,7 @@ const fail = (msg) => problems.push(msg);
 if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(spec.slug ?? "")) fail(`slug "${spec.slug}" must be kebab-case`);
 if (!spec.title || spec.title.length < 4) fail("title needs at least four characters");
 if (!spec.summary || spec.summary.length < 20) fail("summary should say what the track prepares someone for — one or two sentences");
-if (!["sprint", "community"].includes(spec.tier)) fail(`tier must be 'sprint' or 'community', got "${spec.tier}"`);
+if (!["verified", "community"].includes(spec.tier)) fail(`tier must be 'verified' or 'community', got "${spec.tier}"`);
 if (!Number.isInteger(spec.version) || spec.version < 1) fail("version must be a positive integer");
 if (!Array.isArray(spec.weeks) || spec.weeks.length === 0) fail("a track needs at least one week");
 
@@ -76,7 +76,7 @@ let machinePts = 0, totalPts = 0, repCount = 0;
     if (days.has(rep.day)) fail(`${wk}: two reps on day ${rep.day}`);
     days.add(rep.day);
     if (!rep.prompt || rep.prompt.length < 10) fail(`${wk} rep day ${rep.day}: the prompt is the whole rep — one small checked thing`);
-    if (!["structural", "executable"].includes(rep.verification)) fail(`${wk} rep day ${rep.day}: reps are free archetypes only (structural/executable) — never AI, never peer`);
+    if (!["structural", "executable", "detectable"].includes(rep.verification)) fail(`${wk} rep day ${rep.day}: reps are free archetypes only (executable/detectable/structural) — never AI, never peer`);
     const pts = rep.points ?? 10;
     if (pts < 1 || pts > 30) fail(`${wk} rep day ${rep.day}: points must be 1–30 (a learner caps at 30/day anyway)`);
     (rep.checks ?? []).forEach((c) => {
@@ -138,10 +138,10 @@ let machinePts = 0, totalPts = 0, repCount = 0;
 });
 
 const share = totalPts > 0 ? machinePts / totalPts : 0;
-if (spec.tier === "sprint" && share < 0.5) {
+if (spec.tier === "verified" && share < 0.5) {
   fail(
     `only ${Math.round(share * 100)}% of points are machine-checked (${machinePts} of ${totalPts}); ` +
-      `a sprint needs ≥50%. Count points, not criteria — see AUTHORING.md §2.`,
+      `the verified tier needs ≥50%. Count points, not criteria — see AUTHORING.md §2.`,
   );
 }
 
@@ -264,7 +264,7 @@ writeFileSync(target, out.join("\n"));
 
 console.log(`${spec.title} — version ${spec.version}`);
 console.log(`  weeks ${spec.weeks.length} · artifact points ${totalPts} · reps ${repCount}`);
-console.log(`  machine-checked points: ${machinePts}/${totalPts} (${Math.round(share * 100)}%)${spec.tier === "sprint" ? " — sprint bar is 50%" : ""}`);
+console.log(`  machine-checked points: ${machinePts}/${totalPts} (${Math.round(share * 100)}%)${spec.tier === "verified" ? " — verified bar is 50%" : ""}`);
 if (spec.weeks.length !== 6) console.log(`  note: ${spec.weeks.length} weeks — the house shape is 6; fine if deliberate`);
 console.log(`\nWrote ${path.relative(ROOT, target)}`);
 console.log(`Next: pnpm track:verify ${specPath}`);

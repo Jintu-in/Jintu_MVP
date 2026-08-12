@@ -13,7 +13,7 @@ a learner's six weeks.
 ```
 track                     one job you prepare someone for
 ├─ slug, title, summary   the /learn card and the page header
-├─ tier                   'sprint' (machine-verified) | 'community' (structural+peer)
+├─ tier                   'verified' (machine-checked) | 'community' (structural+peer)
 └─ version N (path)       published atomically; old versions never edited
    └─ week 1..6           one module per week
       ├─ title            what the week is called
@@ -47,9 +47,9 @@ checks them first so you hear it from a sentence instead of a stack trace.
 | `check` must be one of: `executable` `detectable` `structural` `rubric_ai` `peer` `mentor_sample` | DB trigger |
 | `peer`/`mentor_sample` criteria carry `checker: null`; machine criteria must name an implemented checker | generator + DB |
 | **Community tier: `structural` + `peer` ONLY.** No executable, no detectable, never `rubric_ai` | DB — three triggers |
-| **Sprint tier: ≥ 50% of POINTS machine-checked** (executable+detectable+structural). Points, not criteria count | `canPublishAsVerified` |
+| **Verified tier: ≥ 50% of POINTS machine-checked** (executable+detectable+structural). Points, not criteria count | `canPublishAsVerified` + the DB margin constraint |
 | Every `sql` artifact needs an answer key (fixture + expected rows) | generator + publish check |
-| Reps are free archetypes only (`executable`/`structural`) — never AI, never peer | DB CHECK |
+| Reps are free archetypes only (`executable`/`detectable`/`structural`) — never AI, never peer | DB CHECK |
 | Rep points: 1–30 each; a learner caps at 30 consistency points/day regardless | DB CHECK + trigger |
 | A published version is frozen. Fix content by shipping version N+1 | DB trigger |
 | No week without resources; no artifact without a rubric | publish completeness check |
@@ -77,7 +77,7 @@ points**. Count points, not rows.
 | `sql_diff` | executable | the learner's SQL, run against your fixture | **yes**: `setup` DDL+data, `expected` rows | any query with one right answer |
 | `numeric_cells` | executable | parsed spreadsheet cells | yes: expected cells | sheet work, to stated precision |
 | `formula_present` | executable | cell formulas | no (names cells in args) | "computed, not pasted" |
-| `consistent_with` | executable | this figure vs their earlier one | no | cross-week coherence |
+| `consistent_with` | executable | this figure vs their earlier one | no¹ | cross-week coherence |
 | `answer_key_match` | detectable | findings vs planted defects | **yes**: ops-held defect key | audit artifacts — the crown jewel |
 | `non_empty` | structural | text | no | the floor under prose |
 | `has_sections` | structural | text headings (args: names) | no | memo/report structure |
@@ -86,10 +86,22 @@ points**. Count points, not rows.
 | `url_reachable` | structural | the submitted link | no | deployed/public artifacts |
 | `contains_pattern` | structural | text (args: words, ANY matches) | no | **max 1 point — gameable by design** |
 | `row_count_ceiling` | structural | result rows (args: max) | no | catches runaway joins |
-| `rubric_score` | rubric_ai | prose, via the model | no | **the only paid one** — sprint only, sparingly |
+| `rubric_score` | rubric_ai | prose, via the model | no | **the only paid one** — verified only, sparingly |
 
-Checker spec format everywhere: `"name:arg1,arg2"` — e.g.
+**The list is closed at these thirteen.** If a track seems to need a
+fourteenth checker, the artifact needs redesigning — that rule is what
+keeps "adding a subject" meaning "inserting rows".
+
+Checker spec format everywhere: `"name:arg1,arg2"` — this string form IS
+the engine's native interface (`parseCheck`), not a translation layer.
+`contains_pattern` takes literal synonyms (ANY of them satisfies); it
+never accepts regex from an author — e.g.
 `duration_between:120,300`, `has_sections:Findings,Method,Caveats`.
+
+¹ `consistent_with` needs the learner's earlier figure loaded by the
+prior-work adapter (`facts.priorSubmissions`) — authorable today, fires
+once that adapter ships. The grading pipeline routes it to a human until
+then; it never silently passes.
 
 **Detectable artifacts** (planted-defect audits) are the most defensible
 thing you can author — the key is not on the internet. Workflow: write
@@ -97,8 +109,20 @@ the artifact with `codes` (the checklist the learner sees, planted +
 decoys shuffled); generate the dataset with
 `pnpm defects:dataset --seed <secret> --label <name>` (the seed is the
 secret, keep it out of the repo); upload the CSV wherever learners fetch
-it; paste the emitted key SQL. A fabricated finding cancels a real one —
-the form already warns them.
+it; paste the emitted key SQL — and then PROVE they agree:
+
+```
+pnpm defects:verify   # recounts every planted class from the CSV itself
+```
+
+A drifted key is worse than no key — it fails correct learners. Ten
+mutations on the same rows can collide and shift a count. Re-verify after
+every reseed, and treat any key older than three rotations as public.
+Ship the dataset with a learner-facing README naming what is LEGITIMATELY
+blank or zero — a decoy nobody could recognise is a trick, not a test,
+and the decoy penalty makes it an expensive one. A fabricated finding cancels a real one —
+the decoy penalty, implemented and tested in `answer_key_match`, and the
+submission form warns exactly that before anyone ticks a box.
 
 ## 5. The quality bar — what "not thin" means
 
@@ -122,11 +146,15 @@ to a query" (weight 2, peer) + "Returns the expected result set"
 its place; titles in OUR words; YouTube only via the official embed
 (store the video id); everything else an https URL you have opened this
 month. We store links and metadata — never transcripts, summaries, or
-full text. That line is legal, not stylistic.
+full text. That line is legal, not stylistic — and it means never: no transcripts,
+no summaries, no text-to-speech, no offline bundles, however often
+someone asks.
 
 **Reps are one small checked thing.** 10–20 minutes, one concept, a
 check the registry can run: `"Write a query joining X to Y"` +
-`contains_join` + `non_empty`. Reps are where the streak lives — make
+`contains_pattern:join` + `non_empty` — and detectable reps are often the
+best ones: "report the exact spend on keywords with zero conversions",
+checked against a seeded export. Reps are where the streak lives — make
 day 3 as doable as day 1.
 
 **Feedback never names the miss.** Checkers tell the learner what's
@@ -148,6 +176,17 @@ The generator refuses with a teaching sentence when a rule breaks. The
 verifier proves: it publishes, every week has resources, every artifact
 has a rubric and (where required) a key, anon cannot read the keys,
 re-running is a no-op, and prior published versions are untouched.
+
+**Week vs unit:** this doc says "week" because the live schema does
+(`modules.week_no`) and the product renders "Week 02". Weeks here are
+SIZE, not deadlines — the platform is self-paced. (The v3 schema drop
+renames these to `units`; when it lands, the generator maps `week →
+unit_no` and this doc changes in the same commit.)
+
+**Not yet in the live schema** (coming with v3, do not guess at them):
+per-resource `needs_verification`, track-level `reviewed_at` and
+`changelog`, `suggested_pace`. Until then: only publish links you have
+opened, and version bumps are your changelog.
 
 **Versioning:** the first paste is version 1. To improve a live track,
 bump `version` and paste again — the site switches atomically to the

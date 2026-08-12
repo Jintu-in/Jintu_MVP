@@ -139,12 +139,12 @@ check(Array.isArray(proposals.rows), "proposed_courses() answers instead of 404i
 
 console.log("\n── existing data survived ──────────────────────────────────");
 const after = await db.query(
-  "select count(*)::int n, count(*) filter (where tier = 'sprint')::int sprints from public.tracks where is_published",
+  "select count(*)::int n, count(*) filter (where tier = 'verified')::int verifieds from public.tracks where is_published",
 );
 check(after.rows[0].n === 19, `still 19 published tracks (${after.rows[0].n})`);
 check(
-  after.rows[0].sprints === 19,
-  `each backfilled to tier 'sprint' rather than defaulting to draft (${after.rows[0].sprints})`,
+  after.rows[0].verifieds === 19,
+  `each backfilled to tier 'verified' rather than defaulting to draft (${after.rows[0].verifieds})`,
 );
 
 await db.close();

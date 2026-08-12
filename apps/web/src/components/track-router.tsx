@@ -14,7 +14,7 @@ import { browserKey } from "@/lib/browser-key";
 /**
  * The homepage router: type a subject, get an honest answer about it.
  *
- * Three outcomes, and the ranking between them is the whole design. A sprint
+ * Three outcomes, and the ranking between them is the whole design. A verified track
  * that matches goes first and largest, because it is the only thing here that
  * takes money. Nothing built yet goes last and stays deliberately thin — a
  * satisfying "here is a free outline" is the thing a chat window already gives
@@ -37,7 +37,7 @@ export type RouterTrack = {
 
 type Result =
   | { kind: "none" }
-  | { kind: "sprint"; track: RouterTrack }
+  | { kind: "verified"; track: RouterTrack }
   | { kind: "unbuilt"; typed: string };
 
 /**
@@ -96,7 +96,7 @@ export function TrackRouter({
     if (!typed) return;
     setRequested(null);
     const found = match(typed, tracks);
-    setResult(found ? { kind: "sprint", track: found } : { kind: "unbuilt", typed });
+    setResult(found ? { kind: "verified", track: found } : { kind: "unbuilt", typed });
   };
 
   const ask = () => {
@@ -183,7 +183,7 @@ export function TrackRouter({
       </div>
 
       <div aria-live="polite">
-        {result.kind === "sprint" ? <SprintResult track={result.track} /> : null}
+        {result.kind === "verified" ? <SprintResult track={result.track} /> : null}
         {result.kind === "unbuilt" ? (
           <UnbuiltResult
             signedIn={signedIn}
@@ -222,7 +222,7 @@ function Chip({ onClick, children }: { onClick: () => void; children: React.Reac
 }
 
 /**
- * Route A — a sprint exists.
+ * Route A — a verified track exists.
  *
  * The heaviest thing on the page, deliberately: it is the only outcome that
  * leads to money, and the brief's warning is that a homepage about "learn

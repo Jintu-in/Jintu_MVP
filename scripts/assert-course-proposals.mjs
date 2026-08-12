@@ -121,7 +121,7 @@ console.log("\n── tiers, and the margin as a constraint ──────�
 const seeded = await one(
   "select tier from public.tracks where slug = 'data-analyst-fresher'",
 );
-check(seeded.tier === "sprint", `a published track is a sprint (${seeded.tier})`);
+check(seeded.tier === "verified", `a published track is verified (${seeded.tier})`);
 
 const refuses = async (sql) => {
   try {
@@ -143,19 +143,19 @@ check(
   await refuses(
     "update public.tracks set deterministic_share = 0.40 where slug = 'data-analyst-fresher';",
   ),
-  "a sprint below 50% deterministic is refused",
+  "a verified track below 50% deterministic is refused",
 );
 check(
   !(await refuses(
     "update public.tracks set deterministic_share = 0.60 where slug = 'data-analyst-fresher';",
   )),
-  "a sprint at or above 50% is allowed",
+  "a verified track at or above 50% is allowed",
 );
 check(
   !(await refuses(
     "update public.tracks set deterministic_share = null where slug = 'data-analyst-fresher';",
   )),
-  "a sprint with no share yet is allowed — the database cannot compute it, so it does not pretend to",
+  "a verified track with no share yet is allowed — the database cannot compute it, so it does not pretend to",
 );
 check(
   await refuses("update public.tracks set deterministic_share = 1.4 where slug = 'data-analyst-fresher';"),
