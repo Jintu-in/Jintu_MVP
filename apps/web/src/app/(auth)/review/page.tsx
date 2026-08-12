@@ -49,7 +49,7 @@ export default async function ReviewQueuePage() {
       {queue.length === 0 ? (
         <div className="mt-5 rounded-card border border-ink-100 bg-white p-6">
           <p className="text-pretty text-ink-600">
-            Reviews are allocated once other people in your cohort have
+            Reviews are allocated once other people on your track have
             submitted the same assignment. Submit yours and you will be given
             two to read.
           </p>

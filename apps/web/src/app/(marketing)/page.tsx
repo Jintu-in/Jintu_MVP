@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { TrackRouter, type RouterTrack } from "@/components/track-router";
-import { WaitlistForm } from "@/components/waitlist-form";
 import { listCourseProposals, listPublishedTracks } from "@/lib/curriculum";
 import { getViewer } from "@/lib/session";
 
@@ -52,7 +51,7 @@ export default async function LandingPage() {
   const flagship = routerTracks[0];
 
   const counts = {
-    sprint: tracks.length,
+    verified: tracks.length,
     // Nobody has authored one yet. Printed rather than hidden: a zero is what
     // makes the tier real instead of decorative.
     community: 0,
@@ -83,15 +82,18 @@ export default async function LandingPage() {
         </h2>
 
         <dl className="mt-6 divide-y divide-ink-100 border-y border-ink-100">
+          {/* V3 names: tiers differ only in verification strength, and the
+              names now say so. No prices anywhere — everything is free, and
+              the tier tells you how strongly your work gets checked. */}
           <Kind
-            name="Sprint"
-            count={counts.sprint}
-            detail="Paid cohort. Fixed start date, graded artifacts, verified profile. ₹999."
+            name="Verified"
+            count={counts.verified}
+            detail="Machine-checked wherever a machine can check. The strong badge."
           />
           <Kind
             name="Community"
             count={counts.community}
-            detail="Free. Built by learners, checked by peers. Any subject."
+            detail="Built by learners, checked by structure and peers. Any subject."
           />
           <Kind
             name="Draft"
@@ -101,40 +103,31 @@ export default async function LandingPage() {
         </dl>
       </section>
 
-      {/* ── running now ──────────────────────────────────────────────────── */}
+      {/* ── start today ──────────────────────────────────────────────────── */}
       {flagship ? (
-        <section className="py-18 sm:py-24" aria-labelledby="running">
-          <h2 id="running" className="text-lg font-medium text-ink-900">
-            Running now
+        <section className="py-18 sm:py-24" aria-labelledby="start">
+          <h2 id="start" className="text-lg font-medium text-ink-900">
+            Start today
           </h2>
 
           <div className="mt-6 border border-ink-100 p-6">
             <p className="text-[15px] font-medium text-ink-900">{flagship.title}</p>
             <p className="mt-1 text-[13px] text-ink-500">
               {flagship.weeks} weeks · {flagship.artifacts}{" "}
-              {flagship.artifacts === 1 ? "artifact" : "artifacts"} · ₹999 once
+              {flagship.artifacts === 1 ? "artifact" : "artifacts"} · free
             </p>
 
             <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-              The curriculum is free to read in full, including every rubric.
-              You pay for the cohort.
-            </p>
-
-            {/*
-              No date and no seat count. There is no cohort row yet, and the
-              first one to exist should put its own date here rather than have
-              a number written into a component.
-            */}
-            <p className="mt-3 text-[13px] text-ink-500">
-              Dates for the first cohort are not set. The waitlist is how you
-              hear when they are.
+              Everything is free and self-paced: the curriculum, the grading,
+              the points, the profile. Your queries are run, your findings are
+              counted, and no point is ever awarded for watching something.
             </p>
 
             <Link
               href={`/learn/${flagship.slug}`}
               className="mt-5 inline-block text-[15px] font-medium text-brand-700 underline hover:text-brand-800"
             >
-              Read it before you pay anything →
+              Read it, then start →
             </Link>
           </div>
         </section>
@@ -151,14 +144,10 @@ export default async function LandingPage() {
           statistic we cannot evidence.
         </p>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          What you get is six pieces of work, graded against a rubric you read
-          before paying, that you can show to anyone.
+          And no point here can be earned by watching, scrolling or marking
+          things done. Points come from work that something checked — which is
+          exactly what makes them worth showing to anyone.
         </p>
-      </section>
-
-      {/* ── waitlist ─────────────────────────────────────────────────────── */}
-      <section id="waitlist" className="scroll-mt-20 border-t border-ink-100 py-18 sm:py-24">
-        <WaitlistForm />
       </section>
     </main>
   );

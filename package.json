@@ -45,7 +45,8 @@
     "defects:verify": "node scripts/assert-defects.mjs",
     "defects:dataset": "node scripts/defect-dataset.mjs",
     "ai:verify": "node scripts/assert-ai-budget.mjs",
-    "community:verify": "node scripts/assert-community.mjs"
+    "community:verify": "node scripts/assert-community.mjs",
+    "start:verify": "node scripts/assert-open-start.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

@@ -29,15 +29,17 @@ export default function TermsPage() {
         Terms
       </h1>
       <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-        Plain language on purpose. If anything here is unclear, ask before you
-        pay — the answer counts as part of these terms for you.
+        Plain language on purpose. If anything here is unclear, ask — the
+        answer counts as part of these terms for you. Nothing on Jintu costs
+        money today; the parts below about paid products apply only if and
+        when one exists, and this page changes before that happens.
       </p>
 
       <Section title="What Jintu is">
         <p>
-          Jintu publishes free, public curricula — tracks — and sells cohorts:
-          a fixed start date, deadlines, grading against rubrics published
-          before you pay, peer review, and a profile of your finished work.
+          Jintu publishes free, public curricula — tracks — that anyone can
+          work through at their own pace, with submissions graded against
+          published rubrics, peer review, and a profile of finished work.
           Reading any track is free, needs no account, and always will.
         </p>
       </Section>

@@ -106,6 +106,10 @@ jobs:
       # never carries a paid check, enforced at all three doors.
       - name: Community tracks never pay
         run: pnpm community:verify
+      # V3 open start: the rolling intake, its gates, and the seat cohorts
+      # it must never touch.
+      - name: Starting a track holds its rules
+        run: pnpm start:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

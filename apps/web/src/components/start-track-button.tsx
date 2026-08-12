@@ -4,34 +4,24 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { NEEDS_ACCOUNT, NEEDS_PROFILE } from "@jintu/contracts";
-import { enrol } from "@/actions/enrolment";
+import { startTrack } from "@/actions/enrolment";
 import { SignInDialog } from "@/components/sign-in-dialog";
 
 /**
- * The enrol button on a track page, shown only when an open cohort exists.
+ * V3's one call to action on a track page. Free, self-paced, no seats, no
+ * dates — so the button says what happens and nothing needs a caveat.
  *
- * The three refusals each become movement rather than a message:
- *
- *   no session  -> the sign-in dialog opens over the page, and on success the
- *                  enrolment retries itself — same pattern as requesting a
- *                  track, for the same reason: the person already pressed the
- *                  button that means "do this"
- *   no profile  -> /onboarding, with ?next pointing back here, because the
- *                  18+ confirmation cannot happen in a dialog — it creates
- *                  consents, and that page owns that responsibility
- *   enrolled    -> /dashboard, where the week's work is
- *
- * Payment is deliberately absent. Phase 0 is concierge: the seat is reserved
- * here, the ₹999 moves by UPI, and a person reconciles it — the copy under
- * the button says exactly that, because a button that takes a seat silently
- * looks free, and this is not free.
+ * The refusals become movement, same pattern as everything else: no session
+ * opens sign-in over the page and retries itself; no profile goes to
+ * onboarding with the way back in ?next; started lands on the dashboard,
+ * where the work is.
  */
-export function EnrolButton({ cohortId, slug }: { cohortId: string; slug: string }) {
+export function StartTrackButton({ slug }: { slug: string }) {
   const router = useRouter();
   const [signingIn, setSigningIn] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const { execute, status } = useAction(enrol, {
+  const { execute, status } = useAction(startTrack, {
     onSuccess: ({ data }) => {
       if (data?.enrolmentId) router.push("/dashboard");
     },
@@ -55,25 +45,25 @@ export function EnrolButton({ cohortId, slug }: { cohortId: string; slug: string
       <button
         type="button"
         disabled={pending}
-        onClick={() => execute({ cohortId })}
+        onClick={() => execute({ slug })}
         className="flex h-12 shrink-0 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-500"
       >
-        {pending ? "Reserving…" : "Enrol — ₹999"}
+        {pending ? "Starting…" : "Start this track"}
       </button>
 
       {message ? (
-        <p role="alert" className="mt-2 text-sm text-risk-800">
+        <p role="alert" className="mt-2 text-sm text-pretty text-risk-800">
           {message}
         </p>
       ) : null}
 
       <SignInDialog
         open={signingIn}
-        reason="Enrolment needs an account — your submissions, grades and peer reviews all hang off it."
+        reason="Starting a track needs an account — your submissions, scores and streak all hang off it. Reading never does."
         onClose={() => setSigningIn(false)}
         onSignedIn={() => {
           setSigningIn(false);
-          execute({ cohortId });
+          execute({ slug });
         }}
       />
     </>

@@ -46,7 +46,7 @@ export const submitAssignment = actionClient
       .maybeSingle();
 
     if (enrolmentError) throw new Error(`Could not find your enrolment: ${enrolmentError.message}`);
-    if (!enrolment) throw new Error("You are not enrolled in a running cohort.");
+    if (!enrolment) throw new Error("Start this track before submitting to it — the button is on the track page.");
 
     // week_no comes from the assignment's module, never from the client: a
     // submitted week number would let someone file week 6 work in week 1 and

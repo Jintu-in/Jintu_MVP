@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceItem } from "@/components/resource-item";
 import { Rubric } from "@/components/rubric";
-import { EnrolButton } from "@/components/enrol-button";
-import { getOpenCohort, getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
+import { StartTrackButton } from "@/components/start-track-button";
+import { getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
 
 /**
  * One course, in full. ARCHITECTURE.md §6 — the free public top of the
@@ -83,11 +83,6 @@ export default async function CoursePage({
   const track = await getPublishedTrack(slug);
   if (!track) notFound();
 
-  // In parallel with nothing: it depends on the slug being real, and the
-  // notFound above has to win. Null when no cohort is open or the migration
-  // is not applied, and the bar falls back to the waitlist either way.
-  const cohort = await getOpenCohort(track.slug);
-
   const resources = track.modules.reduce((n, m) => n + m.resources.length, 0);
   const artifacts = track.modules.reduce((n, m) => n + m.assignments.length, 0);
 
@@ -127,26 +122,33 @@ export default async function CoursePage({
 
       <p className="mt-4 text-lg text-pretty text-ink-600">{track.summary}</p>
 
-      {/* The tier is a promise about how work gets checked, so it is said
-          where the curriculum starts, in words rather than a bare label. A
-          sprint carries no banner — machine-checked is this site's default
-          claim, and restating defaults is noise. */}
+      {/* The tier is a promise about how work gets checked — V3's only
+          difference between tracks — so both get said in words where the
+          curriculum starts. "sprint" is the database's old name for the
+          verified tier; the display rename shipped first, the column value
+          follows as its own migration. */}
       {track.tier === "community" ? (
         <p className="mt-4 rounded-card border border-ink-100 bg-white px-4 py-3 text-sm text-pretty text-ink-600">
-          <span className="font-medium text-ink-900">Community track.</span>{" "}
+          <span className="font-medium text-ink-900">Community-reviewed track.</span>{" "}
           Written by a member, checked by structure and by peers — never by a
           model. Free, like everything else here.
         </p>
-      ) : null}
+      ) : (
+        <p className="mt-4 rounded-card border border-ink-100 bg-white px-4 py-3 text-sm text-pretty text-ink-600">
+          <span className="font-medium text-ink-900">Verified track.</span>{" "}
+          Machine-checked wherever a machine can check — running your queries,
+          counting what you found — with peers on the rest. The strong badge.
+        </p>
+      )}
 
       {track.modules.length === 0 ? (
         <EmptyCourse />
       ) : (
         <>
           <p className="mt-6 rounded-card border border-ink-100 bg-white p-4 text-pretty text-ink-600">
-            All of this is free. Work through it alone at your own pace, or join
-            a cohort for the deadlines, the grading, two peer reviews a week,
-            and a profile you can send to anyone.
+            All of it is free, at your own pace. Start it and every submission
+            gets checked — instantly where a machine can run it, by peers where
+            it takes a person. Points only ever come from work that passed.
           </p>
 
           {/* Native <details>: keeps this a server component, works before
@@ -162,50 +164,17 @@ export default async function CoursePage({
       )}
 
       {/* sticky, not fixed: rides the bottom while the syllabus is on screen,
-          then scrolls away instead of covering the footer's legal line. */}
+          then scrolls away instead of covering the footer's legal line.
+          V3: no date, no seats, no price — those were the cohort's, and the
+          cohort is dead. The bar says the whole deal in three words. */}
       <div className="sticky bottom-0 mt-8 -mx-5 border-t border-ink-100 bg-white px-5 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="text-sm">
-            {cohort ? (
-              <>
-                {/* Real numbers or none: the date and the seat count come from
-                    the cohort row, and this block does not render without one. */}
-                <p className="text-ink-500">
-                  Starts{" "}
-                  {new Date(cohort.startsOn).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                  })}
-                  {" · "}
-                  {cohort.seatsLeft} of {cohort.capacity} seats left
-                </p>
-                <p className="font-medium text-ink-900">₹999 one time</p>
-              </>
-            ) : (
-              <>
-                <p className="text-ink-500">Cohort</p>
-                <p className="font-medium text-ink-900">₹999 one time</p>
-              </>
-            )}
+            <p className="text-ink-500">Free · self-paced</p>
+            <p className="font-medium text-ink-900">Every submission checked</p>
           </div>
-          {cohort && cohort.seatsLeft > 0 ? (
-            <EnrolButton cohortId={cohort.cohortId} slug={track.slug} />
-          ) : (
-            <Link
-              href="/#waitlist"
-              className="flex h-12 shrink-0 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-            >
-              Join the waitlist
-            </Link>
-          )}
+          <StartTrackButton slug={track.slug} />
         </div>
-        {cohort && cohort.seatsLeft > 0 ? (
-          <p className="mt-1.5 text-xs text-ink-500">
-            Enrolling reserves your seat. We message you how to pay — ₹999 by
-            UPI — before the cohort starts, and week one is a full-refund
-            window either way.
-          </p>
-        ) : null}
       </div>
     </main>
   );

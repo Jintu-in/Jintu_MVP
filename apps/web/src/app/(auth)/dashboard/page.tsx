@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Your sprint",
+  title: "Your track",
   robots: { index: false },
 };
 
@@ -30,28 +30,25 @@ export default async function DashboardPage() {
 
   const [sprint, pendingReviews] = await Promise.all([getMySprint(), countPendingReviews()]);
 
-  // Not enrolled is a normal state, not an error: in the concierge phase ops
-  // creates enrolments by hand after payment clears.
+  // Not having started anything is a normal state, not an error — V3 is
+  // self-paced and free, so the fix is one button away.
   if (!sprint) {
     return (
       <main className="mx-auto max-w-2xl px-5 py-10">
         <h1 className="text-2xl font-medium tracking-tight text-ink-900">
-          You are not in a cohort yet
+          You have not started a track yet
         </h1>
         <div className="mt-5 rounded-card border border-ink-100 bg-white p-6">
           <p className="text-pretty text-ink-600">
-            Your account is set up. The next cohort has twenty places, and we
-            message you before it opens.
-          </p>
-          <p className="mt-4 text-pretty text-ink-600">
-            In the meantime the whole curriculum is free and open. Nothing about
-            it is held back for paying students.
+            Your account is set up. Pick a track and press start — everything
+            is free and self-paced, and your work shows up here the moment
+            there is any.
           </p>
           <Link
             href="/learn"
             className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto"
           >
-            Start on week one
+            Pick a track
           </Link>
         </div>
       </main>
@@ -68,7 +65,7 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
-        Your sprint
+        Your track
       </p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight text-balance text-ink-900">
         {sprint.trackTitle}
@@ -110,7 +107,7 @@ export default async function DashboardPage() {
             <span className="font-medium">
               {pendingReviews} review{pendingReviews === 1 ? "" : "s"} to write
             </span>{" "}
-            — someone in your cohort is waiting to hear what you thought.
+            — someone on your track is waiting to hear what you thought.
           </p>
           <span aria-hidden className="shrink-0 text-brand-700 group-hover:text-brand-800">
             →

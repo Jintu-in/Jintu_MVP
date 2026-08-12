@@ -46,7 +46,7 @@ export default async function ReviewPage({
         {task.prompt}
       </h1>
       <p className="mt-2 text-sm text-pretty text-ink-500">
-        Submitted by someone else in your cohort. You are not told who, and
+        Submitted by someone else on this track. You are not told who, and
         they are not told who reviewed them.
       </p>
 

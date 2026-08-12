@@ -104,9 +104,9 @@ export default async function ProfilePage() {
         </p>
       </section>
 
-      <section className="mt-10" aria-labelledby="cohort">
-        <h2 id="cohort" className="text-lg font-medium text-ink-900">
-          Your cohort
+      <section className="mt-10" aria-labelledby="my-track">
+        <h2 id="my-track" className="text-lg font-medium text-ink-900">
+          Your track
         </h2>
         {sprint ? (
           <div className="mt-4 rounded-card border border-ink-100 bg-white p-5">
@@ -121,9 +121,8 @@ export default async function ProfilePage() {
         ) : (
           <div className="mt-4 rounded-card border border-ink-100 bg-ink-50 p-5">
             <p className="text-pretty text-ink-700">
-              You are not in a cohort yet. The curriculum is free to work
-              through on your own in the meantime, and nothing in it is held
-              back for paying students.
+              You have not started a track yet. Pick one — everything is
+              free and self-paced, and starting takes one press.
             </p>
             <Link
               href="/learn"
