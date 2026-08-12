@@ -28,7 +28,13 @@ export type Resource = {
   health: "ok" | "degraded" | "dead";
 };
 
-export type RubricCriterion = { key: string; label: string; weight: number };
+export type RubricCriterion = {
+  key: string;
+  label: string;
+  weight: number;
+  /** Verification archetype (#57 onwards). Older rubrics may not carry it. */
+  check?: string | null;
+};
 
 export type Rubric = {
   name: string;
@@ -51,6 +57,8 @@ export type Module = {
   objective: string;
   resources: Resource[];
   assignments: Assignment[];
+  /** Daily reps under this week — the habit loop's day-sized prompts. */
+  reps: number;
 };
 
 export type TrackPage = {
@@ -103,7 +111,8 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
       .select(
         `id, week_no, title, objective,
        resources ( id, kind, provider, external_url, youtube_video_id, title, duration_sec, position, health ),
-       assignments ( id, kind, spec, rubrics ( name, max_score, criteria ) )`,
+       assignments ( id, kind, spec, rubrics ( name, max_score, criteria ) ),
+       daily_reps ( id )`,
       )
       .eq("path_id", path.id)
       .order("week_no", { ascending: true }),
@@ -117,7 +126,9 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
     summary: track.summary,
     tier: track.tier as TrackPage["tier"],
     version: path.version,
-    modules: ((modules ?? []) as unknown as Module[]).map((m) => ({
+    modules: (
+      (modules ?? []) as unknown as (Module & { daily_reps?: { id: string }[] })[]
+    ).map((m) => ({
       ...m,
       // Dead links stay in the database for the ops queue but are not shown
       // to a student — §6 flags them for a human, it does not auto-repair.
@@ -125,6 +136,7 @@ export async function getPublishedTrack(slug: string): Promise<TrackPage | null>
         .filter((r) => r.health !== "dead")
         .sort((a, b) => a.position - b.position),
       assignments: m.assignments ?? [],
+      reps: (m.daily_reps ?? []).length,
     })),
   };
 }
