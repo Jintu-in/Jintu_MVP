@@ -85,9 +85,16 @@ export default async function CoursePage({
 
   const resources = track.modules.reduce((n, m) => n + m.resources.length, 0);
   const artifacts = track.modules.reduce((n, m) => n + m.assignments.length, 0);
+  // Summed from the published rubrics, so the number cannot overstate what
+  // the trail actually pays. An assignment without a rubric contributes zero
+  // — and its missing rubric is called out where it happens.
+  const points = track.modules.reduce(
+    (n, m) => n + m.assignments.reduce((s, a) => s + Number(a.rubrics?.max_score ?? 0), 0),
+    0,
+  );
 
   return (
-    <main className="mx-auto max-w-3xl px-5 py-10">
+    <main className="mx-auto max-w-5xl px-5 py-8">
       <nav aria-label="Breadcrumb" className="text-sm text-ink-500">
         <Link href="/learn" className="hover:text-brand-800">
           Free curriculum
@@ -98,76 +105,113 @@ export default async function CoursePage({
         <span className="text-ink-600">{track.title}</span>
       </nav>
 
-      <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
-        {track.title}
-      </h1>
+      {/* The trail layout: a sticky rail of facts beside the path itself.
+          Same information architecture as before — the rail is the old chip
+          row and banners given a place to stand, not new claims. */}
+      <div className="mt-5 items-start gap-8 lg:grid lg:grid-cols-[300px_minmax(0,1fr)]">
+        <aside className="space-y-4 lg:sticky lg:top-6">
+          <section className="rounded-card border border-ink-100 bg-white p-4">
+            <h2 className="text-xs font-medium tracking-[0.09em] text-ink-500 uppercase">
+              This trail
+            </h2>
+            <dl className="mt-3 space-y-2">
+              {[
+                ["Weeks", String(track.modules.length)],
+                ["Resources", String(resources)],
+                ["Artifacts", String(artifacts)],
+                ["Points on the trail", String(points)],
+                ["Version", String(track.version)],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-baseline justify-between gap-3 text-sm">
+                  <dt className="text-ink-600">{label}</dt>
+                  <dd className="font-mono tabular-nums text-ink-900">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-3 border-t border-ink-100 pt-3 text-sm text-pretty text-ink-500">
+              {track.tier === "community" ? (
+                <>
+                  <span className="font-medium text-ink-900">Community-reviewed.</span>{" "}
+                  Written by a member, checked by structure and by peers —
+                  never by a model.
+                </>
+              ) : (
+                <>
+                  <span className="font-medium text-ink-900">Verified.</span>{" "}
+                  Machine-checked wherever a machine can check, with peers on
+                  the rest. The strong badge.
+                </>
+              )}
+            </p>
+          </section>
 
-      {/* Counted from what is published, so the chips cannot overstate the
-          course. A week with no resources contributes nothing to the total. */}
-      <ul className="mt-4 flex flex-wrap gap-2">
-        {[
-          plural(track.modules.length, "week"),
-          plural(resources, "resource"),
-          plural(artifacts, "artifact"),
-          `Version ${track.version}`,
-        ].map((chip) => (
-          <li
-            key={chip}
-            className="rounded-full border border-ink-100 bg-white px-3 py-1 text-sm text-ink-600"
-          >
-            {chip}
-          </li>
-        ))}
-      </ul>
+          <section className="rounded-card border border-brand-600 bg-white p-4">
+            <p className="font-mono text-[10px] tracking-[0.11em] text-brand-700 uppercase">
+              Free · self-paced
+            </p>
+            <p className="mt-1.5 text-sm text-pretty text-ink-700">
+              Every submission on this trail gets checked. Reading needs no
+              account; earning does.
+            </p>
+            <div className="mt-3">
+              <StartTrackButton slug={track.slug} />
+            </div>
+          </section>
 
-      <p className="mt-4 text-lg text-pretty text-ink-600">{track.summary}</p>
+          <section className="rounded-card border border-ink-100 bg-white p-4">
+            <h2 className="text-xs font-medium tracking-[0.09em] text-ink-500 uppercase">
+              How points are earned
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li className="flex items-baseline gap-2">
+                <VerifyTag tone="ok">checked</VerifyTag>
+                <span className="text-ink-600">a machine runs it</span>
+              </li>
+              <li className="flex items-baseline gap-2">
+                <VerifyTag tone="warn">written</VerifyTag>
+                <span className="text-ink-600">you write it, it is read</span>
+              </li>
+              <li className="flex items-baseline gap-2">
+                <VerifyTag tone="brand">peer</VerifyTag>
+                <span className="text-ink-600">two peers mark it</span>
+              </li>
+            </ul>
+            <p className="mt-3 border-t border-ink-100 pt-3 text-sm text-pretty text-ink-500">
+              No point is ever awarded for watching, scrolling or marking
+              things done.
+            </p>
+          </section>
+        </aside>
 
-      {/* The tier is a promise about how work gets checked — V3's only
-          difference between tracks — so both get said in words where the
-          curriculum starts. "sprint" is the database's old name for the
-          verified tier; the display rename shipped first, the column value
-          follows as its own migration. */}
-      {track.tier === "community" ? (
-        <p className="mt-4 rounded-card border border-ink-100 bg-white px-4 py-3 text-sm text-pretty text-ink-600">
-          <span className="font-medium text-ink-900">Community-reviewed track.</span>{" "}
-          Written by a member, checked by structure and by peers — never by a
-          model. Free, like everything else here.
-        </p>
-      ) : (
-        <p className="mt-4 rounded-card border border-ink-100 bg-white px-4 py-3 text-sm text-pretty text-ink-600">
-          <span className="font-medium text-ink-900">Verified track.</span>{" "}
-          Machine-checked wherever a machine can check — running your queries,
-          counting what you found — with peers on the rest. The strong badge.
-        </p>
-      )}
+        <div className="mt-8 min-w-0 lg:mt-0">
+          <h1 className="text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
+            {track.title}
+          </h1>
+          <p className="mt-3 max-w-[62ch] text-lg text-pretty text-ink-600">{track.summary}</p>
 
-      {track.modules.length === 0 ? (
-        <EmptyCourse />
-      ) : (
-        <>
-          <p className="mt-6 rounded-card border border-ink-100 bg-white p-4 text-pretty text-ink-600">
-            All of it is free, at your own pace. Start it and every submission
-            gets checked — instantly where a machine can run it, by peers where
-            it takes a person. Points only ever come from work that passed.
-          </p>
+          {track.modules.length === 0 ? (
+            <EmptyCourse />
+          ) : (
+            <>
+              {/* Native <details>: keeps this a server component, works before
+                  JavaScript has parsed, and find-in-page opens a closed week
+                  to reach a match. The first is open so the page never lands
+                  as a wall of shut rows. The rail and nodes are decoration
+                  over the same list semantics. */}
+              <ol className="relative mt-8 space-y-3 pl-12 before:absolute before:top-4 before:bottom-4 before:left-4 before:w-px before:bg-ink-200">
+                {track.modules.map((module, i) => (
+                  <Week key={module.id} module={module} open={i === 0} />
+                ))}
+              </ol>
+            </>
+          )}
+        </div>
+      </div>
 
-          {/* Native <details>: keeps this a server component, works before
-              JavaScript has parsed, and find-in-page opens a closed week to
-              reach a match. The first is open so the page never lands as a
-              wall of shut rows. */}
-          <ol className="mt-8 space-y-3">
-            {track.modules.map((module, i) => (
-              <Week key={module.id} module={module} open={i === 0} />
-            ))}
-          </ol>
-        </>
-      )}
-
-      {/* sticky, not fixed: rides the bottom while the syllabus is on screen,
-          then scrolls away instead of covering the footer's legal line.
-          V3: no date, no seats, no price — those were the cohort's, and the
-          cohort is dead. The bar says the whole deal in three words. */}
-      <div className="sticky bottom-0 mt-8 -mx-5 border-t border-ink-100 bg-white px-5 py-3">
+      {/* The small-screen door. On large screens the rail carries the start
+          button; below that it rides the bottom while the syllabus is on
+          screen, then scrolls away instead of covering the footer. */}
+      <div className="sticky bottom-0 mt-8 -mx-5 border-t border-ink-100 bg-white px-5 py-3 lg:hidden">
         <div className="flex items-center justify-between gap-4">
           <div className="text-sm">
             <p className="text-ink-500">Free · self-paced</p>
@@ -180,11 +224,45 @@ export default async function CoursePage({
   );
 }
 
+/** The verification legend's little labels — mono, quiet, token-coloured. */
+function VerifyTag({
+  tone,
+  children,
+}: {
+  tone: "ok" | "warn" | "brand";
+  children: React.ReactNode;
+}) {
+  const tones = {
+    ok: "bg-ok-600/10 text-ok-800",
+    warn: "bg-warn-600/10 text-warn-800",
+    brand: "bg-brand-50 text-brand-800",
+  } as const;
+  return (
+    <span
+      className={`inline-flex shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] tracking-[0.03em] ${tones[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
 function Week({ module, open }: { module: Module; open: boolean }) {
   const headingId = `week-${module.week_no}`;
 
   return (
-    <li>
+    <li className="relative">
+      {/* The node on the rail. Decoration over list semantics — aria-hidden,
+          because "Week 02" is already read out from the heading. The first
+          open week gets the brand ring the same way a current step would. */}
+      <span
+        aria-hidden
+        className={`absolute top-4 -left-12 flex size-8 items-center justify-center rounded-full border bg-white font-mono text-xs tabular-nums ${
+          open ? "border-brand-600 text-brand-700 ring-2 ring-brand-50" : "border-ink-200 text-ink-500"
+        }`}
+      >
+        {String(module.week_no).padStart(2, "0")}
+      </span>
+
       <details open={open} className="group rounded-card border border-ink-100 bg-white">
         {/* Only phrasing or heading content belongs in a <summary>, so the week
             label is a span inside the h2 rather than a <p> beside it. */}
@@ -198,7 +276,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
             </span>
           </h2>
 
-          <span className="hidden shrink-0 text-sm text-ink-500 sm:inline">
+          <span className="hidden shrink-0 font-mono text-sm text-ink-500 sm:inline">
             {plural(module.resources.length, "resource")}
           </span>
 
@@ -251,19 +329,35 @@ function Week({ module, open }: { module: Module; open: boolean }) {
               )}
 
               {module.assignments.length > 0 ? (
-                <div className="mt-5 rounded-card border border-brand-200 bg-brand-50 p-4">
-                  <h3 className="text-xs font-medium tracking-wide text-brand-800 uppercase">
+                <>
+                  <h3 className="mt-5 text-xs font-medium tracking-wide text-ink-500 uppercase">
                     What you submit
                   </h3>
-                  <ul className="mt-2 space-y-4">
+                  {/* One card per artifact, mission-style: what kind of thing
+                      it is, what it asks, and what the rubric pays — the
+                      points shown are the rubric's own max, not a promise
+                      invented by the page. */}
+                  <ul className="mt-2 space-y-3">
                     {module.assignments.map((assignment) => (
-                      <li key={assignment.id}>
-                        <p className="text-sm font-medium text-ink-500">
-                          {SUBMIT_LABEL[assignment.kind]}
-                        </p>
-                        <p className="mt-0.5 text-pretty text-ink-800">
-                          {assignment.spec?.prompt ?? "Details to follow."}
-                        </p>
+                      <li
+                        key={assignment.id}
+                        className="rounded-card border border-brand-200 bg-brand-50 p-4"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="font-mono text-[10px] tracking-[0.1em] text-brand-800 uppercase">
+                              {SUBMIT_LABEL[assignment.kind]}
+                            </p>
+                            <p className="mt-1 font-medium text-pretty text-ink-900">
+                              {assignment.spec?.prompt ?? "Details to follow."}
+                            </p>
+                          </div>
+                          {assignment.rubrics ? (
+                            <p className="shrink-0 font-mono text-sm tabular-nums text-brand-700">
+                              {Number(assignment.rubrics.max_score)} pts
+                            </p>
+                          ) : null}
+                        </div>
                         {assignment.rubrics ? (
                           <Rubric rubric={assignment.rubrics} kind={assignment.kind} />
                         ) : (
@@ -277,7 +371,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </>
               ) : (
                 <p className="mt-5 text-sm text-ink-500">Nothing to submit this week.</p>
               )}
