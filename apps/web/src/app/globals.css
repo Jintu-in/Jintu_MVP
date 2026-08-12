@@ -1,6 +1,32 @@
 @import "tailwindcss";
 @import "@jintu/config/tailwind/preset.css";
 
+/* The loaded faces (next/font in the root layout) take over from the
+   preset's fallback stacks. Mono is semantic here — measured numbers are
+   mono, prose is sans — so the real faces matter, not just the look. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", Roboto,
+    "Noto Sans", "Noto Sans Devanagari", sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, "Cascadia Code",
+    "Source Code Pro", Menlo, monospace;
+}
+
+@layer utilities {
+  /* One entrance, 180ms, on the curriculum detail pane only. A page where
+     everything animates reads as generated; a single deliberate transition
+     reads as built. The reduced-motion kill switch below already zeroes it. */
+  .animate-in {
+    animation: panel-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-in { animation: none; }
+  }
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;

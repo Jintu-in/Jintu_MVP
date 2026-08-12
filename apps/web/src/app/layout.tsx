@@ -1,7 +1,19 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { AnalyticsProvider } from "@/components/analytics-provider";
 import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
+
+/*
+  Mono is semantic on this site, not cosmetic: anything MEASURED — points,
+  percentages, durations, data sizes, unit numbers — is set in mono, and
+  prose is set in sans; the typeface tells you whether a number was counted
+  or written. A fallback stack silently breaks that intent, which is why the
+  faces load here (audit bug d) instead of being named in CSS and never
+  fetched. next/font self-hosts both: zero external requests, no CLS.
+*/
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono", display: "swap" });
 
 const DESCRIPTION =
   "Type what you want to learn. Free curricula, graded artifacts, and a profile that shows what you can actually do.";
@@ -56,7 +68,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-IN">
+    <html lang="en-IN" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-dvh antialiased">
         {/*
           Hard-coded false until auth exists to read consents.analytics.

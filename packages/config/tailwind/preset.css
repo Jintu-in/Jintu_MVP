@@ -81,6 +81,21 @@
   --font-mono:
     ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
 
+  /* ── Verification ─────────────────────────────────────────────────────────
+   * Semantic, never decorative: these encode HOW a point was earned — mint =
+   * a machine compared it to a right answer, violet = humans judged it,
+   * amber = a model scored prose. Never recolour them for aesthetics; they
+   * carry the page's only real claim. The base steps are FILLS (strips,
+   * dots, tints — all clear the 3:1 UI minimum); the -ink steps are for
+   * text, including on the base colour's own 12% tint.
+   */
+  --color-check-machine: #1d9e75; /*  3.39:1 — fill only (strip, dot, /12 tint) */
+  --color-check-machine-ink: #0b5b41; /*  8.12:1 on white, 7.05:1 on machine/12 */
+  --color-check-peer: #7f77dd; /*  3.76:1 — fill only */
+  --color-check-peer-ink: #423b93; /*  9.22:1 on white, 8.01:1 on peer/12 */
+  --color-check-model: #ba7517; /*  3.72:1 — fill only */
+  --color-check-model-ink: #6e440a; /*  8.42:1 on white, 7.31:1 on model/12 */
+
   /* Mid-range Android is the target device — keep the scale tight */
   --radius-card: 0.75rem;
 }
