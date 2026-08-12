@@ -176,6 +176,29 @@ check(
   "a well-formed peer criterion with no checker is accepted",
 );
 
+console.log("\n── the habit loop shipped with the curriculum ──────────────");
+const reps = await db.query(`
+  select m.week_no, count(*)::int n from public.daily_reps dr
+  join public.modules m on m.id = dr.module_id
+  join public.paths p on p.id = m.path_id
+  join public.tracks t on t.id = p.track_id
+  where t.slug = 'data-analyst-fresher' and p.version = 2
+  group by m.week_no order by m.week_no`);
+check(
+  reps.rows.length === 6 && reps.rows.every((r) => r.n === 3),
+  "three reps on every one of the six weeks",
+);
+
+const repShape = await one(`
+  select count(*)::int n from public.daily_reps dr
+  join public.modules m on m.id = dr.module_id
+  join public.paths p on p.id = m.path_id
+  where p.version = 2 and (dr.verification <> 'structural' or dr.points <> 10)`);
+check(
+  repShape.n === 0,
+  "every rep is structural and worth ten — a full day is exactly the 30-point cap",
+);
+
 console.log("\n── v1 must be untouched ────────────────────────────────────");
 const after1 = await one(`
   select count(*)::int n from public.modules m
