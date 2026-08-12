@@ -22,6 +22,20 @@ const LABELS: Record<string, string> = {
   peer_review_participation: "Peer review",
 };
 
+/**
+ * How each archetype reads to a stranger. Ordered strong-to-soft on
+ * purpose: the point of the breakdown is that a recruiter can see how much
+ * of the score a machine stands behind, so machine checks come first.
+ */
+const VERIFICATION: Record<string, string> = {
+  executable: "Code that ran correctly",
+  detectable: "Findings counted against a hidden key",
+  structural: "Structure checked automatically",
+  rubric_ai: "Scored by a model against the rubric",
+  peer: "Judged by peers",
+  mentor_sample: "Spot-audited by a mentor",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -35,7 +49,7 @@ export async function generateMetadata({
     title: `Proof of readiness · ${profile.slug}`,
     description:
       profile.headline ??
-      "Six weeks, six artifacts, graded against published rubrics.",
+      "Artifacts graded against published rubrics, points only for checked work.",
     alternates: { canonical: `/p/${profile.slug}` },
   };
 }
@@ -59,7 +73,7 @@ export default async function ProfilePage({
             Proof of readiness
           </p>
           <h1 className="mt-2 text-3xl leading-tight font-medium text-balance text-ink-900">
-            {profile.headline ?? "Completed a Jintu placement sprint."}
+            {profile.headline ?? "Work checked, counted and published on Jintu."}
           </h1>
           {profile.publishedAt ? (
             <p className="mt-2 text-sm text-ink-500">
@@ -120,6 +134,39 @@ export default async function ProfilePage({
           </p>
         )}
 
+        {profile.verification.length > 0 ? (
+          <section
+            className="mt-4 rounded-card border border-ink-100 bg-white p-6"
+            aria-labelledby="verification"
+          >
+            <h2
+              id="verification"
+              className="text-sm font-medium tracking-wide text-ink-500 uppercase"
+            >
+              How these points were checked
+            </h2>
+            {/* V3's auditable credential: every point names the archetype
+                that verified it, so this table cannot be flattered — it is
+                read straight off the ledger. */}
+            <dl className="mt-4 space-y-2.5">
+              {profile.verification.map((v) => (
+                <div key={v.archetype} className="flex items-baseline justify-between gap-4 text-sm">
+                  <dt className="text-ink-700">
+                    {VERIFICATION[v.archetype] ?? v.archetype}
+                  </dt>
+                  <dd className="font-mono tabular-nums text-ink-900">
+                    {v.points} {v.points === 1 ? "point" : "points"}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-4 text-sm text-pretty text-ink-500">
+              Machine-checked points cannot be earned by goodwill — the query
+              ran or it did not, the defect was in the data or it was not.
+            </p>
+          </section>
+        ) : null}
+
         <section
           className="mt-4 rounded-card border border-ink-100 border-l-4 border-l-brand-500 bg-white p-6"
           aria-labelledby="what"
@@ -130,7 +177,7 @@ export default async function ProfilePage({
           <p className="mt-2 text-pretty text-ink-600">
             A measure of work actually submitted and graded against{" "}
             <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
-              rubrics published before the sprint began
+              published rubrics
             </Link>
             . It is not a prediction that this person will be hired, and Jintu
             makes no such claim.
@@ -144,7 +191,7 @@ export default async function ProfilePage({
             Jintu
           </Link>
           <span aria-hidden>·</span>
-          <span>placement sprints</span>
+          <span>proof of work</span>
         </div>
       </footer>
     </div>

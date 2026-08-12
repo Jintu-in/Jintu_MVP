@@ -43,6 +43,14 @@ for (const f of readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql")).sort()
 await db.exec(readFileSync(SEED, "utf8"));
 
 const one = async (q, p = []) => (await db.query(q, p)).rows[0];
+const codeOf = async (q, p = []) => {
+  try {
+    await db.query(q, p);
+    return null;
+  } catch (e) {
+    return e.code ?? "unknown";
+  }
+};
 
 // A student, enrolled in the seed cohort; and a bystander.
 const STUDENT = "55555555-5555-4555-8555-0000000000aa";
@@ -233,6 +241,61 @@ check(proofCount.n === 1, `exactly one proof event exists (${proofCount.n})`);
 
 const totals = await one("select proof_points from public.proof_totals where user_id = $1", [STUDENT]);
 check(totals.proof_points === 5, `proof_totals reads 5 — and only the proof ledger (${totals.proof_points})`);
+
+console.log("\n── every point says how it was earned (V3) ─────────────────");
+const unattributed = await one(
+  "select count(*)::int n from public.point_events where verification is null",
+);
+check(unattributed.n === 0, "no point event is missing its verification");
+
+const repAttribution = await one(`
+  select count(*)::int n from public.point_events pe
+  join public.daily_reps dr on dr.id = pe.source_id
+  where pe.source_type = 'daily_rep' and pe.verification <> dr.verification`);
+check(repAttribution.n === 0, "rep points carry the archetype the rep declared");
+
+// The fixture's grading is deterministic, so the proof point must say which
+// deterministic: sql ran (executable) or a defect key counted (detectable).
+const artifactKind = (await one("select kind from public.assignments where id = $1", [assignment.id])).kind;
+const proofVerification = (
+  await one("select verification from public.point_events where ledger = 'proof' limit 1")
+).verification;
+check(
+  proofVerification === (artifactKind === "sql" ? "executable" : "detectable"),
+  `the artifact point derives its archetype from the grading (${proofVerification} for a ${artifactKind})`,
+);
+
+const noAttribution = await codeOf(
+  "insert into public.point_events (user_id, ledger, source_type, source_id, points) values ($1, 'proof', 'artifact', gen_random_uuid(), 1)",
+  [STUDENT],
+);
+check(noAttribution === "23502", "an unattributed point is refused at the column");
+const fakeAttribution = await codeOf(
+  "insert into public.point_events (user_id, ledger, source_type, source_id, points, verification) values ($1, 'proof', 'artifact', gen_random_uuid(), 1, 'vibes')",
+  [STUDENT],
+);
+check(fakeAttribution === "23514", "an invented archetype is refused");
+
+// The public half: a recruiter sees the breakdown only after the owner
+// publishes, and sees proof points only.
+await db.query(
+  "insert into public.public_profiles (slug, enrollment_id, visibility, published_at) values ('proof-owner', $1, 'public', now())",
+  [enrolment.id],
+);
+await db.exec("grant usage on schema public to anon;");
+await db.exec("begin; set local role anon;");
+const publicRows = (await db.query("select * from public.public_point_verification('proof-owner')")).rows;
+await db.exec("rollback;");
+check(
+  publicRows.length === 1 && publicRows[0].points === 5 && publicRows[0].verification === proofVerification,
+  `anon reads the published breakdown — proof only (${JSON.stringify(publicRows)})`,
+);
+
+await db.query("update public.public_profiles set visibility = 'private', published_at = null where slug = 'proof-owner'");
+await db.exec("begin; set local role anon;");
+const privateRows = (await db.query("select * from public.public_point_verification('proof-owner')")).rows;
+await db.exec("rollback;");
+check(privateRows.length === 0, "a withdrawn profile's breakdown vanishes with it");
 
 console.log("\n── voiding (rule 3) ────────────────────────────────────────");
 const { rows: [event] } = await db.query(

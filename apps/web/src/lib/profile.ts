@@ -25,6 +25,8 @@ export type PublicProfile = {
   trackTitle: string | null;
   overall: number | null;
   breakdown: ReadinessBreakdown;
+  /** V3: proof points per verification archetype — the auditable half. */
+  verification: { archetype: string; points: number }[];
 };
 
 export async function getPublicProfile(slug: string): Promise<PublicProfile | null> {
@@ -54,6 +56,16 @@ export async function getPublicProfile(slug: string): Promise<PublicProfile | nu
     throw describeSupabaseError("loading the readiness score", readinessError);
   }
 
+  // V3: the auditable half of the credential — how many of these points a
+  // machine stands behind versus people. Definer RPC because point_events
+  // is owner-only under RLS; the function opens exactly this slice (proof
+  // ledger, published profiles) and nothing else. Absence is a supported
+  // state: PGRST202 means the migration has not landed, and the profile
+  // renders without the section rather than 500ing the shareable page.
+  const { data: verification } = await supabase.rpc("public_point_verification", {
+    p_slug: slug,
+  });
+
   return {
     slug: data.slug,
     headline: data.headline,
@@ -65,5 +77,8 @@ export async function getPublicProfile(slug: string): Promise<PublicProfile | nu
     trackTitle: null,
     overall: readiness?.overall ?? null,
     breakdown: (readiness?.breakdown ?? {}) as ReadinessBreakdown,
+    verification: ((verification ?? []) as { verification: string; points: number }[]).map(
+      (v) => ({ archetype: v.verification, points: v.points }),
+    ),
   };
 }
