@@ -110,6 +110,10 @@ jobs:
       # it must never touch.
       - name: Starting a track holds its rules
         run: pnpm start:verify
+      # The grading package must run unchanged in Node and Deno: no Node
+      # builtins in src, and the generated Deno mirror must be fresh.
+      - name: Grading engine is runtime-pure and the Deno mirror is fresh
+        run: pnpm grading:purity
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

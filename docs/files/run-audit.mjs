@@ -29,6 +29,7 @@ const DIR = path.dirname(fileURLToPath(import.meta.url));
 const FILES = [
   "0001_init.sql", "0002_identity.sql", "0003_curriculum.sql", "0004_work.sql",
   "0005_points.sql", "0006_ops.sql", "0007_discovery.sql", "0008_views_guards.sql",
+  "0009_grading_queue_api.sql",
 ];
 
 const SHIM = `
@@ -67,6 +68,23 @@ begin
     using msg into id;
   return id;
 end $mock$;
+-- read/archive with the real pgmq signatures (visibility timeout ignored in
+-- the mock; delivery semantics are the edge function's concern, the audit's
+-- concern is that 0009's wrappers parse and bind).
+create or replace function pgmq.read(queue_name text, vt integer, qty integer)
+returns table (msg_id bigint, message jsonb) language plpgsql as $mock$
+begin
+  return query execute format('select q.msg_id, q.message from pgmq.q_%I q order by q.msg_id limit $1', queue_name)
+    using qty;
+end $mock$;
+create or replace function pgmq.archive(queue_name text, p_msg_id bigint)
+returns boolean language plpgsql as $mock$
+declare n int;
+begin
+  execute format('delete from pgmq.q_%I where msg_id = $1', queue_name) using p_msg_id;
+  get diagnostics n = row_count;
+  return n > 0;
+end $mock$;
 create schema if not exists net;
 create or replace function net.http_post(url text, body jsonb default '{}'::jsonb, params jsonb default '{}'::jsonb, headers jsonb default '{}'::jsonb)
 returns bigint language sql as $$ select 1::bigint $$;
@@ -95,6 +113,12 @@ await db.exec(SHIM);
 
 let failed = false;
 for (const file of FILES) {
+  // Supabase's default privileges grant table-wide SELECT at creation time,
+  // and 0009's whole point is to strip that from assignments AFTER the fact.
+  // The broad grants therefore apply before 0009, exactly as accumulated
+  // defaults would on a real project — otherwise the runner would silently
+  // re-open the column the hardening closed.
+  if (file.startsWith("0009")) await db.exec(GRANTS);
   let sql = readFileSync(path.join(DIR, file), "utf8");
   for (const line of ENV_SKIP) sql = sql.replace(line, `-- [runner] env-skip: ${line}`);
   try {
@@ -115,7 +139,6 @@ for (const file of FILES) {
 
 if (!failed && process.argv.includes("--tests")) {
   const tests = readFileSync(path.join(DIR, "9999_tests.sql"), "utf8");
-  await db.exec(GRANTS);
   // The test file is a sequence of DO blocks separated by lines of dashes;
   // each block asserts one thing and raises on failure. Run them one at a
   // time so a failure names its block.
