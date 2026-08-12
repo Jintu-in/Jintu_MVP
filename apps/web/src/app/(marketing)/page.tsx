@@ -69,7 +69,7 @@ export default async function LandingPage() {
 
         <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
           An AI can write you a plan in five seconds. Nobody checks whether you
-          finished it. Type what you want to learn and we will tell you
+          did any of it. Type what you want to learn and we will tell you
           honestly whether we can help you finish.
         </p>
 

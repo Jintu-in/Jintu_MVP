@@ -205,11 +205,17 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
   // this mapper, and /learn advertised "Artifacts: 0" over a database holding
   // 56 of them for as long as it took someone to notice. Narrow this select
   // and the counts silently go to zero again — see the guard below.
+  //
+  // `version` is load-bearing too. Publishing v2 keeps v1 published — a
+  // student mid-sprint is reading it — so a track can have several published
+  // paths at once, and only the newest is what the site serves. Counting
+  // across all of them once advertised "12 weeks · 8 artifacts" on the
+  // homepage for a 6-week, 6-artifact course: v1 + v2, summed.
   const { data, error } = await retryRead(() =>
     supabase
       .from("tracks")
       .select(
-        "slug, title, summary, paths ( modules ( id, resources ( id ), assignments ( id ) ) )",
+        "slug, title, summary, paths ( version, modules ( id, resources ( id ), assignments ( id ) ) )",
       )
       .order("title", { ascending: true }),
   );
@@ -222,6 +228,7 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
     summary: string;
     paths:
       | {
+          version: number;
           modules:
             | { id: string; resources: { id: string }[] | null; assignments: { id: string }[] | null }[]
             | null;
@@ -235,7 +242,14 @@ export async function listPublishedTracks(): Promise<TrackSummary[]> {
   const rows = (data ?? []) as unknown as Row[];
 
   return rows.map((t) => {
-    const modules = (t.paths ?? []).flatMap((p) => p.modules ?? []);
+    // The same rule getPublishedTrack applies one track at a time: the
+    // highest published version is the live one, and the card must count
+    // what the track page will show.
+    const live = (t.paths ?? []).reduce(
+      (a, p) => (a === null || p.version > a.version ? p : a),
+      null as null | NonNullable<Row["paths"]>[number],
+    );
+    const modules = live?.modules ?? [];
 
     // Absent, not empty. PostgREST returns `[]` for a requested relation with
     // no rows and omits the key entirely for one that was never requested, so

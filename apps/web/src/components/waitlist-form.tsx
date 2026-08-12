@@ -65,7 +65,7 @@ export function WaitlistForm() {
           autoComplete="tel"
           placeholder="98765 43210"
           required
-          hint="Indian mobile. We use it to sign you in — no password."
+          hint="Indian mobile. For deadline reminders and cohort updates — signing in is by email."
           error={firstError(fieldErrors, "phone")}
         />
         <Field

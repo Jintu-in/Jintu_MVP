@@ -29,13 +29,18 @@ import type { Assignment, Rubric as RubricType } from "@/lib/curriculum";
  * Typed as a total Record, so adding a fifth assignment kind fails the build
  * here rather than shipping a rubric with no explanation under it.
  */
+// "Two peers" is a system guarantee — allocate_peer_reviews assigns exactly
+// two. Mentor review is sampling, and the copy says so: "a mentor spot-check"
+// on every artifact was 80 written commitments per 20-student cohort, made on
+// a public page before payment. Promise what the machine enforces; describe
+// what a human does.
 const GRADING_NOTE: Record<Assignment["kind"], string> = {
   sql: "Graded by running your query against a fixed dataset and comparing the result to the expected one. Deterministic — the same query always scores the same.",
   artifact_link:
-    "Graded by people against the criteria above: two peers, and a mentor spot-check.",
-  file: "Graded by people against the criteria above: two peers, and a mentor spot-check.",
+    "Graded by two peers against the criteria above, with mentor spot-checks sampled across the cohort.",
+  file: "Graded by two peers against the criteria above, with mentor spot-checks sampled across the cohort.",
   recording:
-    "Graded by people against the criteria above: two peers, and a mentor spot-check.",
+    "Graded by two peers against the criteria above, with mentor spot-checks sampled across the cohort.",
 };
 
 export function Rubric({ rubric, kind }: { rubric: RubricType; kind: Assignment["kind"] }) {
@@ -84,14 +89,16 @@ export function Rubric({ rubric, kind }: { rubric: RubricType; kind: Assignment[
         </p>
 
         {/*
-          Said once, at the bottom, rather than woven into each note above.
-          It is true of every artifact today because no model grades anything
-          here yet — packages/grading has a deterministic SQL checker and
-          nothing else. The day a rubric_ai checker ships, this sentence stops
-          being true and has to move above, per kind. Leaving it as a blanket
-          claim would make that the easiest thing in the world to forget.
+          Deliberately NOT "no model marks any of it", which used to be here.
+          That was true, published, and one shipped rubric_ai criterion away
+          from being a broken promise on a paid product — the old comment on
+          this line predicted exactly that. What replaces it is the promise
+          that survives any grader: the rubric is the whole of the marking.
         */}
-        <p className="mt-1.5 text-xs text-ink-500">No model marks any of it.</p>
+        <p className="mt-1.5 text-xs text-ink-500">
+          Marked against exactly this list — nothing off-rubric counts for or
+          against you.
+        </p>
       </div>
     </details>
   );
