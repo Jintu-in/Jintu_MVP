@@ -120,6 +120,10 @@ jobs:
       # spec CI can and must hold to the same bar.
       - name: Track template generates and verifies
         run: pnpm track:verify docs/tracks/_template.mjs
+      # V3 review-to-unlock: claim-based peer review, the per-submission
+      # entry gate, and the ops-only collusion surface.
+      - name: Review-to-unlock holds its rules
+        run: pnpm reviews:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

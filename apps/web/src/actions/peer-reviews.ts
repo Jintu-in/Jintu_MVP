@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
-import { peerReviewInput } from "@jintu/contracts";
+import { NEEDS_ACCOUNT, NEEDS_PROFILE, peerReviewInput } from "@jintu/contracts";
 import { recomputeReadiness } from "@/lib/grading/grade";
 import { criteriaOf, getReviewTask } from "@/lib/review";
-import { actionClient } from "@/lib/safe-action";
+import { actionClient, UserFacingError } from "@/lib/safe-action";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -91,3 +91,31 @@ export const submitPeerReview = actionClient
     revalidatePath("/dashboard");
     return { sent: true };
   });
+
+/**
+ * V3's review-to-unlock: pick up the oldest claimable submission instead of
+ * waiting for allocation. Every rule lives in claim_review() — the caller's
+ * enrolment, never-your-own, the two-reviewer cap, and the author's own
+ * feed-the-queue debt — so there is no second path that skips them.
+ */
+export const claimReview = actionClient.action(async () => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc("claim_review");
+
+  if (error) {
+    if (error.code === "28000") throw new UserFacingError(NEEDS_ACCOUNT);
+    if (error.code === "P0002") throw new UserFacingError(NEEDS_PROFILE);
+    if (error.code === "P0001") throw new UserFacingError(error.message);
+    if (error.code === "PGRST202") {
+      throw new Error(
+        "claim_review() does not exist — migration 20260812080000_review_to_unlock.sql " +
+          "has not been applied. Run pnpm db:catchup and paste the output into the SQL editor.",
+      );
+    }
+    throw new Error(`claiming a review failed: ${error.code ?? "no code"} ${error.message}`);
+  }
+
+  revalidatePath("/review");
+  return { reviewId: data as string };
+});
