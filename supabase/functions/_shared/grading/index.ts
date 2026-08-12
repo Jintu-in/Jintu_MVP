@@ -1,19 +1,21 @@
+// GENERATED from packages/grading/src by scripts/build-deno-grading.mjs.
+// Do not edit: edit the package source and re-run the build. CI fails on drift.
 export {
   DB_ARCHETYPES,
   toDbArchetype,
   toEngineCheck,
   type DbArchetype,
   type EngineArchetype,
-} from "./archetypes";
-export { SQL_MAX_SCORE, gradeSqlSubmission, type RubricCriterion } from "./deterministic/sql";
-export { describeDifference, diffResults, type Difference } from "./deterministic/compare";
+} from "./archetypes.ts";
+export { SQL_MAX_SCORE, gradeSqlSubmission, type RubricCriterion } from "./deterministic/sql.ts";
+export { describeDifference, diffResults, type Difference } from "./deterministic/compare.ts";
 export {
   hasTableAliases,
   joinsWithoutCondition,
   planHasCrossJoin,
   stripNoise,
   usesSelectStar,
-} from "./deterministic/readability";
+} from "./deterministic/readability.ts";
 export type {
   Cell,
   CriterionResult,
@@ -22,7 +24,7 @@ export type {
   Row,
   SqlAssignmentSpec,
   SqlGrade,
-} from "./deterministic/types";
+} from "./deterministic/types.ts";
 export {
   RUBRIC_AI_MAX_OUTPUT_TOKENS,
   RUBRIC_AI_MODEL,
@@ -33,7 +35,7 @@ export {
   parseRubricVerdict,
   type AiCriterion,
   type RubricAiVerdict,
-} from "./rubric-ai";
+} from "./rubric-ai.ts";
 export {
   canPublishAsVerified,
   grade,
@@ -44,7 +46,7 @@ export {
   type GradeCtx,
   type GradeReport,
   type PublishVerdict,
-} from "./engine";
+} from "./engine.ts";
 export {
   CHECKERS,
   CHECKER_NAMES,
@@ -53,4 +55,4 @@ export {
   type Checker,
   type CheckerName,
   type CheckResult,
-} from "./registry";
+} from "./registry.ts";

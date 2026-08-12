@@ -471,3 +471,120 @@ begin
   if n <> 0 then raise exception 'TEST FAILED: profile visible WITHOUT public_profile consent'; end if;
 end $$;
 rollback;
+
+-- ================================================================
+-- TEST: the six archetype enum values are exactly what the TS union maps
+do $$
+declare vals text[];
+begin
+  select array_agg(enumlabel order by enumsortorder) into vals
+  from pg_enum e join pg_type t on t.oid = e.enumtypid
+  where t.typname = 'archetype';
+  if vals <> array['executable','detectable','structural','rubric_ai','peer','mentor'] then
+    raise exception 'TEST FAILED: archetype enum is % — the TS mapping in packages/grading/src/archetypes.ts no longer matches', vals;
+  end if;
+end $$;
+
+-- ================================================================
+-- TEST: key isolation — direct select of answer_keys is empty for clients
+begin;
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+do $$
+declare n int;
+begin
+  select count(*) into n from answer_keys;
+  if n <> 0 then raise exception 'TEST FAILED: client read % answer_keys rows', n; end if;
+end $$;
+rollback;
+
+-- ================================================================
+-- TEST: key isolation — selecting the answer_key_ref COLUMN is permission-denied
+begin;
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+do $$
+begin
+  begin
+    perform answer_key_ref from assignments;
+    raise exception 'TEST FAILED: a client selected assignments.answer_key_ref';
+  exception
+    when insufficient_privilege then null; -- the column grant did its job
+    when others then
+      if sqlerrm like 'TEST FAILED%' then raise; end if;
+      raise exception 'TEST FAILED: expected insufficient_privilege, got %', sqlerrm;
+  end;
+  -- The safe columns stay readable (zero rows via RLS, but no privilege error).
+  perform id from assignments;
+end $$;
+rollback;
+
+-- ================================================================
+-- TEST: key isolation — the nested join path (units -> assignments) is dead too
+begin;
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+do $$
+begin
+  begin
+    perform a.answer_key_ref
+    from units u join assignments a on a.unit_id = u.id;
+    raise exception 'TEST FAILED: the join path exposed answer_key_ref';
+  exception
+    when insufficient_privilege then null;
+    when others then
+      if sqlerrm like 'TEST FAILED%' then raise; end if;
+      raise exception 'TEST FAILED: expected insufficient_privilege on join path, got %', sqlerrm;
+  end;
+end $$;
+rollback;
+
+-- ================================================================
+-- TEST: key isolation — the public view exposes rows but not the column
+begin;
+set local role anon;
+do $$
+declare n int;
+begin
+  -- The generated-API surface is PostgREST over exactly these grants: the
+  -- view is what anon can address, and the column is not on it.
+  select count(*) into n from assignments_public;
+  if n < 1 then raise exception 'TEST FAILED: public view returns nothing'; end if;
+end $$;
+rollback;
+do $$
+declare n int;
+begin
+  select count(*) into n from information_schema.columns
+  where table_name = 'assignments_public' and column_name = 'answer_key_ref';
+  if n <> 0 then raise exception 'TEST FAILED: answer_key_ref is on the public view'; end if;
+end $$;
+
+-- ================================================================
+-- TEST: the queue wrappers are service-role only, and the queue flows
+do $$
+declare m record; found boolean := false;
+begin
+  -- The enqueue trigger fired for the fixture submissions; read one back.
+  for m in select * from grading_queue_read(10) loop
+    found := true;
+    perform grading_queue_archive(m.msg_id);
+  end loop;
+  if not found then raise exception 'TEST FAILED: nothing on the grading queue after submissions were inserted'; end if;
+end $$;
+begin;
+set local role authenticated;
+set local "request.jwt.claims" = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+do $$
+begin
+  begin
+    perform * from grading_queue_read(1);
+    raise exception 'TEST FAILED: a client read the grading queue';
+  exception
+    when insufficient_privilege then null;
+    when others then
+      if sqlerrm like 'TEST FAILED%' then raise; end if;
+      raise exception 'TEST FAILED: expected insufficient_privilege on queue read, got %', sqlerrm;
+  end;
+end $$;
+rollback;
