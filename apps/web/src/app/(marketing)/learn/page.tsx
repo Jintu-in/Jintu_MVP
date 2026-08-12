@@ -110,6 +110,14 @@ function Proposals({ proposals }: { proposals: CourseProposal[] }) {
         whichever the most people ask for. No account needed to vote.
       </p>
 
+      <p className="mt-2 text-pretty text-ink-600">
+        Or{" "}
+        <Link href="/write" className="font-medium text-brand-700 hover:text-brand-800">
+          write one yourself
+        </Link>{" "}
+        — community tracks are checked by structure and by peers, and stay free.
+      </p>
+
       <ul className="mt-6 grid gap-2 sm:grid-cols-2">
         {proposals.map((p) => (
           <li key={p.slug}>
