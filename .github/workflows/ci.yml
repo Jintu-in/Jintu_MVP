@@ -114,6 +114,12 @@ jobs:
       # builtins in src, and the generated Deno mirror must be fresh.
       - name: Grading engine is runtime-pure and the Deno mirror is fresh
         run: pnpm grading:purity
+      # The authoring kit, dogfooded: the committed template must generate,
+      # validate, publish twice in real Postgres, and leak no keys. User
+      # specs are gitignored (keys live in them); the template is the one
+      # spec CI can and must hold to the same bar.
+      - name: Track template generates and verifies
+        run: pnpm track:verify docs/tracks/_template.mjs
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.
