@@ -14,18 +14,25 @@ import { CHECKERS, CHECKER_NAMES, parseCheck, runCheck } from "./registry";
  */
 
 describe("the registry itself", () => {
-  it("holds eleven names, exactly as TRACK_MODEL fixes them", () => {
-    expect(CHECKER_NAMES).toHaveLength(11);
+  it("holds fifteen names, exactly as the README v2 fixes them", () => {
+    // README: twelve free + rubric_score, plus contains_join (legacy, kept
+    // because published reps reference it) and code_test_suite (planned).
+    expect(CHECKER_NAMES).toHaveLength(15);
   });
 
-  it("implements eight of them today", () => {
+  it("implements thirteen of them today — only the sandboxed and the paid stay out", () => {
     expect(Object.keys(CHECKERS).sort()).toEqual(
       [
         "answer_key_match",
+        "consistent_with",
         "contains_join",
+        "contains_pattern",
         "duration_between",
+        "formula_present",
         "has_sections",
+        "media_has_audio",
         "non_empty",
+        "numeric_cells",
         "row_count_ceiling",
         "sql_diff",
         "url_reachable",
@@ -33,7 +40,7 @@ describe("the registry itself", () => {
     );
   });
 
-  it("every implemented name is one of the eleven", () => {
+  it("every implemented name is in the registry list", () => {
     for (const name of Object.keys(CHECKERS)) {
       expect(CHECKER_NAMES).toContain(name);
     }

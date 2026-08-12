@@ -28,6 +28,17 @@ export {
   type RubricAiVerdict,
 } from "./rubric-ai";
 export {
+  canPublishAsVerified,
+  grade,
+  type CriterionResult as EngineCriterionResult,
+  type EngineCriterion,
+  type EngineRubric,
+  type EngineSubmission,
+  type GradeCtx,
+  type GradeReport,
+  type PublishVerdict,
+} from "./engine";
+export {
   CHECKERS,
   CHECKER_NAMES,
   parseCheck,
