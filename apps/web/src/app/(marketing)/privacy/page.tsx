@@ -52,8 +52,9 @@ export default function PrivacyPage() {
         <Section title="What we collect, and why">
           <dl className="space-y-4">
             <Item term="Your email address">
-              To sign you in. There is no password — we send a six-digit code
-              to that address, and holding it is how we know it is you.
+              To sign you in. We send a six-digit code to that address, and
+              holding it is how we know it is you. You can add a password
+              afterwards if you prefer one; the code always works.
             </Item>
             <Item term="Your mobile number">
               To reach you about your cohort: deadlines, a submission you have
