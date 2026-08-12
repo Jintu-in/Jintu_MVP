@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ClaimReviewButton } from "@/components/claim-review-button";
 import { getReviewQueue, type ReviewTask } from "@/lib/review";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,12 @@ export default async function ReviewQueuePage() {
   const pending = queue.filter((t) => t.status === "pending");
   const done = queue.filter((t) => t.status === "submitted");
 
+  // V3 review-to-unlock: how many reviews this person still owes. Absent
+  // (pre-migration) reads as zero rather than an error — the page is about
+  // their queue either way.
+  const { data: debtRaw } = await supabase.rpc("review_debt");
+  const debt = Number(debtRaw ?? 0);
+
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
       <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">
@@ -46,19 +53,32 @@ export default async function ReviewQueuePage() {
         {pending.length > 0 ? "Reviews to write" : "Nothing to review"}
       </h1>
 
+      {/* Review-to-unlock, said before anything else when it applies: the
+          debt is why their own next submission is not being read yet, and
+          the button below is how to fix that. */}
+      {debt > 0 ? (
+        <div className="mt-5 rounded-card border border-warn-600/20 bg-warn-600/10 p-4">
+          <p className="text-pretty text-ink-800">
+            <span className="font-medium">
+              You owe {debt} review{debt === 1 ? "" : "s"}.
+            </span>{" "}
+            Your latest submission waits outside the review queue until you
+            have read {debt === 1 ? "one more" : `${debt} more`} — you need
+            the queue, so you feed the queue.
+          </p>
+        </div>
+      ) : null}
+
       {queue.length === 0 ? (
         <div className="mt-5 rounded-card border border-ink-100 bg-white p-6">
           <p className="text-pretty text-ink-600">
-            Reviews are allocated once other people on your track have
-            submitted the same assignment. Submit yours and you will be given
-            two to read.
+            Nothing is assigned to you right now. You can pick up the oldest
+            submission waiting for a reader — you will not know whose it is,
+            and they never learn who read it.
           </p>
-          <Link
-            href="/dashboard"
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto"
-          >
-            Back to your sprint
-          </Link>
+          <div className="mt-6">
+            <ClaimReviewButton />
+          </div>
         </div>
       ) : (
         <>

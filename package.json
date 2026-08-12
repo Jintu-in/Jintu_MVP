@@ -50,7 +50,8 @@
     "grading:purity": "node scripts/assert-grading-purity.mjs",
     "grading:deno": "node scripts/build-deno-grading.mjs",
     "track:gen": "node scripts/generate-track.mjs",
-    "track:verify": "node scripts/assert-track.mjs"
+    "track:verify": "node scripts/assert-track.mjs",
+    "reviews:verify": "node scripts/assert-review-unlock.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",
