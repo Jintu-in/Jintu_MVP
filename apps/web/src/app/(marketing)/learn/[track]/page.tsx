@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceItem } from "@/components/resource-item";
-import { Rubric } from "@/components/rubric";
 import { StartTrackButton } from "@/components/start-track-button";
 import { getPublishedTrack, type Assignment, type Module } from "@/lib/curriculum";
 
@@ -85,6 +84,7 @@ export default async function CoursePage({
 
   const resources = track.modules.reduce((n, m) => n + m.resources.length, 0);
   const artifacts = track.modules.reduce((n, m) => n + m.assignments.length, 0);
+  const reps = track.modules.reduce((n, m) => n + m.reps, 0);
   // Summed from the published rubrics, so the number cannot overstate what
   // the trail actually pays. An assignment without a rubric contributes zero
   // — and its missing rubric is called out where it happens.
@@ -92,6 +92,24 @@ export default async function CoursePage({
     (n, m) => n + m.assignments.reduce((s, a) => s + Number(a.rubrics?.max_score ?? 0), 0),
     0,
   );
+
+  // The verification mix, from the rubrics' own weights: how much of this
+  // trail's score a machine stands behind versus people. Computed, never
+  // asserted — a criterion without an archetype falls to the bucket its
+  // assignment kind implies, so old rubrics still count honestly.
+  const mix = { machine: 0, people: 0, model: 0 };
+  for (const m of track.modules) {
+    for (const a of m.assignments) {
+      for (const c of a.rubrics?.criteria ?? []) {
+        const check = c.check ?? (a.kind === "sql" ? "executable" : "peer");
+        if (check === "rubric_ai") mix.model += c.weight;
+        else if (check === "peer" || check === "mentor_sample") mix.people += c.weight;
+        else mix.machine += c.weight;
+      }
+    }
+  }
+  const mixTotal = mix.machine + mix.people + mix.model;
+  const firstWeek = track.modules[0];
 
   return (
     <main className="mx-auto max-w-5xl px-5 py-8">
@@ -119,6 +137,7 @@ export default async function CoursePage({
                 ["Weeks", String(track.modules.length)],
                 ["Resources", String(resources)],
                 ["Artifacts", String(artifacts)],
+                ...(reps > 0 ? [["Daily reps", String(reps)] as [string, string]] : []),
                 ["Points on the trail", String(points)],
                 ["Version", String(track.version)],
               ].map(([label, value]) => (
@@ -156,7 +175,65 @@ export default async function CoursePage({
             <div className="mt-3">
               <StartTrackButton slug={track.slug} />
             </div>
+            {firstWeek ? (
+              <a
+                href={`#week-${String(firstWeek.week_no).padStart(2, "0")}`}
+                className="mt-3 flex min-h-12 items-center justify-between gap-3 rounded-lg border border-ink-100 bg-ink-50 px-3 py-2 hover:border-brand-600"
+              >
+                <span className="min-w-0 text-sm">
+                  <span className="block font-mono text-[10px] tracking-[0.1em] text-ink-500 uppercase">
+                    Start here
+                  </span>
+                  <span className="block truncate font-medium text-ink-800">
+                    Week 01 · {firstWeek.title}
+                  </span>
+                </span>
+                <span aria-hidden className="shrink-0 text-brand-700">
+                  ↓
+                </span>
+              </a>
+            ) : null}
           </section>
+
+          {mixTotal > 0 ? (
+            <section className="rounded-card border border-ink-100 bg-white p-4">
+              <h2 className="text-xs font-medium tracking-[0.09em] text-ink-500 uppercase">
+                How this trail is checked
+              </h2>
+              {/* Computed from the rubrics' own weights — the same numbers
+                  the grading pays out on — never a marketing split. */}
+              <dl className="mt-3 space-y-3">
+                {(
+                  [
+                    ["By a machine", mix.machine, "bg-ok-600"],
+                    ["By people", mix.people, "bg-brand-600"],
+                    ["By a model", mix.model, "bg-warn-600"],
+                  ] as const
+                )
+                  .filter(([, v]) => v > 0)
+                  .map(([label, value, bar]) => (
+                    <div key={label}>
+                      <div className="flex items-baseline justify-between text-sm">
+                        <dt className="text-ink-600">{label}</dt>
+                        <dd className="font-mono tabular-nums text-ink-900">
+                          {value} of {mixTotal}
+                        </dd>
+                      </div>
+                      <div aria-hidden className="mt-1 h-1.5 overflow-hidden rounded-full bg-ink-100">
+                        <div
+                          className={`h-full rounded-full ${bar}`}
+                          style={{ width: `${(value / mixTotal) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+              </dl>
+              <p className="mt-3 border-t border-ink-100 pt-3 text-sm text-pretty text-ink-500">
+                Machine-checked points cannot be earned by goodwill — the
+                query ran or it did not.
+              </p>
+            </section>
+          ) : null}
 
           <section className="rounded-card border border-ink-100 bg-white p-4">
             <h2 className="text-xs font-medium tracking-[0.09em] text-ink-500 uppercase">
@@ -198,7 +275,7 @@ export default async function CoursePage({
                   to reach a match. The first is open so the page never lands
                   as a wall of shut rows. The rail and nodes are decoration
                   over the same list semantics. */}
-              <ol className="relative mt-8 space-y-3 pl-12 before:absolute before:top-4 before:bottom-4 before:left-4 before:w-px before:bg-ink-200">
+              <ol className="relative mt-8 space-y-3 pl-9 before:absolute before:top-4 before:bottom-4 before:left-[13px] before:w-px before:bg-ink-200 sm:pl-12 sm:before:left-4">
                 {track.modules.map((module, i) => (
                   <Week key={module.id} module={module} open={i === 0} />
                 ))}
@@ -221,6 +298,53 @@ export default async function CoursePage({
         </div>
       </div>
     </main>
+  );
+}
+
+/**
+ * A rubric as the mockup's section rows: every criterion on its own hairline
+ * row with the archetype that judges it and the weight it pays. The tag is
+ * read from the criterion itself (#57 onwards); a rubric authored before
+ * archetypes existed falls back to what the assignment kind implies, so the
+ * page never guesses upward — machine-checked is claimed only when recorded.
+ */
+function CriteriaRows({
+  criteria,
+  kind,
+}: {
+  criteria: { key: string; label: string; weight: number; check?: string | null }[];
+  kind: Assignment["kind"];
+}) {
+  const tagFor = (check: string | null | undefined) => {
+    const c = check ?? (kind === "sql" ? "executable" : "peer");
+    if (c === "rubric_ai") return { tone: "warn" as const, label: "model" };
+    if (c === "peer" || c === "mentor_sample") return { tone: "brand" as const, label: "peer" };
+    return { tone: "ok" as const, label: "checked" };
+  };
+
+  return (
+    <div className="mt-3">
+      <ul className="divide-y divide-ink-100 border-t border-ink-100">
+        {criteria.map((c) => {
+          const tag = tagFor(c.check);
+          return (
+            <li key={c.key} className="flex items-baseline gap-3 py-2.5">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-pretty text-ink-800">{c.label}</p>
+              </div>
+              <VerifyTag tone={tag.tone}>{tag.label}</VerifyTag>
+              <span className="shrink-0 font-mono text-sm tabular-nums text-brand-700">
+                +{c.weight}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-2 text-xs text-ink-500">
+        Marked against exactly this list — nothing off-rubric counts for or
+        against you.
+      </p>
+    </div>
   );
 }
 
@@ -250,13 +374,16 @@ function Week({ module, open }: { module: Module; open: boolean }) {
   const headingId = `week-${module.week_no}`;
 
   return (
-    <li className="relative">
+    <li
+      className="relative scroll-mt-6"
+      id={`week-${String(module.week_no).padStart(2, "0")}`}
+    >
       {/* The node on the rail. Decoration over list semantics — aria-hidden,
           because "Week 02" is already read out from the heading. The first
           open week gets the brand ring the same way a current step would. */}
       <span
         aria-hidden
-        className={`absolute top-4 -left-12 flex size-8 items-center justify-center rounded-full border bg-white font-mono text-xs tabular-nums ${
+        className={`absolute top-4 -left-9 flex size-7 items-center justify-center rounded-full border bg-white font-mono text-[10px] tabular-nums sm:-left-12 sm:size-8 sm:text-xs ${
           open ? "border-brand-600 text-brand-700 ring-2 ring-brand-50" : "border-ink-200 text-ink-500"
         }`}
       >
@@ -295,7 +422,18 @@ function Week({ module, open }: { module: Module; open: boolean }) {
         </summary>
 
         <div className="border-t border-ink-100 p-4">
-          <p className="text-pretty text-ink-700">{module.objective}</p>
+          {/* The objective in the mockup's "why this matters" register: what
+              you can do after this week, set off from the machinery below. */}
+          <p className="border-l-2 border-brand-600 bg-brand-50 px-4 py-3 text-pretty text-ink-700">
+            {module.objective}
+          </p>
+
+          {module.reps > 0 ? (
+            <p className="mt-3 font-mono text-xs text-ink-500">
+              {module.reps} daily reps this week — one small checked thing a
+              day, consistency points only.
+            </p>
+          ) : null}
 
           {/*
             A week with neither resources nor an assignment is not two facts,
@@ -341,7 +479,7 @@ function Week({ module, open }: { module: Module; open: boolean }) {
                     {module.assignments.map((assignment) => (
                       <li
                         key={assignment.id}
-                        className="rounded-card border border-brand-200 bg-brand-50 p-4"
+                        className="rounded-card border border-brand-200 bg-white p-4"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
@@ -359,7 +497,10 @@ function Week({ module, open }: { module: Module; open: boolean }) {
                           ) : null}
                         </div>
                         {assignment.rubrics ? (
-                          <Rubric rubric={assignment.rubrics} kind={assignment.kind} />
+                          <CriteriaRows
+                            criteria={assignment.rubrics.criteria}
+                            kind={assignment.kind}
+                          />
                         ) : (
                           // Said out loud rather than hidden: the landing page
                           // promises a rubric you can read before you start, so
