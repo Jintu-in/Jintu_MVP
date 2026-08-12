@@ -48,7 +48,9 @@
     "community:verify": "node scripts/assert-community.mjs",
     "start:verify": "node scripts/assert-open-start.mjs",
     "grading:purity": "node scripts/assert-grading-purity.mjs",
-    "grading:deno": "node scripts/build-deno-grading.mjs"
+    "grading:deno": "node scripts/build-deno-grading.mjs",
+    "track:gen": "node scripts/generate-track.mjs",
+    "track:verify": "node scripts/assert-track.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

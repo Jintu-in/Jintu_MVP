@@ -1,0 +1,4 @@
+# Track specs contain ANSWER KEYS. The repo may be public; specs stay local.
+*
+!.gitignore
+!_template.mjs
