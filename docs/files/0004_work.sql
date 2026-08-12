@@ -42,8 +42,16 @@ create index on submissions (assignment_id, submitted_at desc);
 create index on submissions (status) where status in ('submitted','grading','needs_human');
 
 -- Latest attempt per assignment, which is what the UI and the profile use.
-create unique index submissions_latest
-  on submissions (enrollment_id, assignment_id, attempt desc);
+-- This was a unique index on (enrollment_id, assignment_id, attempt desc),
+-- which is NOT "the latest row" — a unique index with a DESC column is the
+-- same uniqueness as ASC, i.e. an exact duplicate of the constraint above.
+-- What actually answers "latest attempt" is DISTINCT ON over that same
+-- ordering, so it is a view. The unique constraint above already provides
+-- the index this view's scan wants.
+create or replace view submissions_latest as
+select distinct on (enrollment_id, assignment_id) *
+from submissions
+order by enrollment_id, assignment_id, attempt desc;
 
 create table gradings (
   id               uuid primary key default gen_random_uuid(),
@@ -186,12 +194,25 @@ create policy submissions_own on submissions for all
 -- A reviewer reads the submission they were assigned. They never learn who
 -- wrote it: enrollments is not readable to them, so there is no join back to
 -- a profile from here.
-create policy submissions_assigned_reviewer on submissions for select
-  using (exists (
+--
+-- SECURITY DEFINER, and that is load-bearing: written as a plain EXISTS over
+-- peer_reviews, this policy evaluates peer_reviews' own policies — one of
+-- which (peer_reviews_author_reads) queries submissions right back, and
+-- Postgres refuses with 'infinite recursion detected in policy'. The definer
+-- function reads peer_reviews without invoking its policies, which breaks
+-- the cycle without widening what anyone can see.
+create or replace function is_assigned_reviewer(sub_id uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (
     select 1 from peer_reviews pr
-    where pr.submission_id = id
+    where pr.submission_id = sub_id
       and pr.reviewer_id = (select auth.uid())
-      and pr.status <> 'voided'));
+      and pr.status <> 'voided'
+  )
+$$;
+
+create policy submissions_assigned_reviewer on submissions for select
+  using (is_assigned_reviewer(id));
 
 create policy gradings_own on gradings for select
   using (exists (

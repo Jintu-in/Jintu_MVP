@@ -91,6 +91,19 @@ create table staff (
 );
 create index on staff (college_id) where revoked_at is null;
 
+-- Is the caller staff at the given college? Used by TPO-scoped policies.
+-- Lives here rather than 0001 because Postgres validates this body at
+-- creation time and the table it reads is created just above.
+create or replace function is_college_staff(target_college uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from staff s
+    where s.user_id = (select auth.uid())
+      and s.college_id = target_college
+      and s.revoked_at is null
+  )
+$$;
+
 -- Append-only. Written by triggers and edge functions, never by clients.
 create table audit_log (
   id         bigserial primary key,

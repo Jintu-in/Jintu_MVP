@@ -17,10 +17,22 @@
 -- Public assignment view. Postgres RLS is row-level, not column-level, so the
 -- answer key is excluded by projection rather than by policy.
 -- ---------------------------------------------------------------------------
+-- security_invoker = FALSE, and that is load-bearing: assignments has no
+-- client select policy at all (the table would expose answer_key_ref), so an
+-- invoker view runs as the caller, hits that empty policy set, and returns
+-- ZERO rows to every client — the public curriculum read was broken. As a
+-- definer view it bypasses the table's RLS, which is exactly the intent, so
+-- it must scope itself to published tracks the way the table policies on
+-- units/resources do — a definer view with no WHERE would leak unpublished
+-- assignments.
 create or replace view assignments_public
-with (security_invoker = true) as
-select id, unit_id, rubric_id, kind, prompt, points, reads_prior
-from assignments;
+with (security_invoker = false) as
+select a.id, a.unit_id, a.rubric_id, a.kind, a.prompt, a.points, a.reads_prior
+from assignments a
+where exists (
+  select 1 from units u join tracks t on t.id = u.track_id
+  where u.id = a.unit_id and t.published_at is not null
+);
 -- answer_key_ref is absent. Deliberately. Never add it here.
 
 grant select on assignments_public to anon, authenticated;
@@ -51,7 +63,9 @@ from profiles p
 join enrollments e on e.user_id = p.id
 join tracks t on t.id = e.track_id
 left join submissions s on s.enrollment_id = e.id
-left join gradings g on g.submission_id = s.id
+-- gradings used to be joined here and no column of it was selected: a pure
+-- row multiplier. A submission with two grading rows (re-grade, appeal)
+-- doubled its proof points in this view. [audit: join removed]
 left join point_events pe
        on pe.user_id = p.id
       and pe.source_id = s.id
@@ -128,8 +142,11 @@ begin
 
   share := track_deterministic_share(new.id);
   if share < 0.50 then
+    -- %%% is one value placeholder followed by a literal percent sign; the
+    -- original '%%' was a literal-only, which left RAISE with two arguments
+    -- for one placeholder and failed at CREATE FUNCTION.
     raise exception
-      'track % cannot be verified: only %% of points are machine-checked (50%% required)',
+      'track % cannot be verified: only %%% of points are machine-checked (50%% required)',
       new.slug, round(share * 100, 1);
   end if;
 

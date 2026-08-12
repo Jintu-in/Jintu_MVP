@@ -59,6 +59,14 @@ begin
     and (
       (scope = 'global')
       or (scope = 'user' and scope_id = new.user_id::text)
+      -- 'track' was in the allowed scopes but never accrued, so a track
+      -- ceiling would silently never fill. Derived through the submission,
+      -- which is the only thing an ai_usage row reliably knows.
+      or (scope = 'track' and new.submission_id is not null and scope_id in (
+        select e.track_id::text
+        from submissions s join enrollments e on e.id = s.enrollment_id
+        where s.id = new.submission_id
+      ))
     );
   return new;
 end $$;
@@ -107,8 +115,12 @@ create index on notifications (user_id, created_at desc);
 create index on notifications (status) where status = 'queued';
 
 -- Never notify without consent, and never twice for the same thing in a day.
+-- created_at::date is NOT immutable (it reads the session timezone), so
+-- Postgres refuses it in an index. AT TIME ZONE with a constant zone IS
+-- immutable — and pinning the day to IST is also the honest boundary, since
+-- "once a day" means the learner's day, not the server's.
 create unique index notifications_daily_dedupe
-  on notifications (user_id, template, (created_at::date))
+  on notifications (user_id, template, ((created_at at time zone 'Asia/Kolkata')::date))
   where status <> 'failed';
 
 create or replace function assert_nudge_consent()
@@ -158,21 +170,39 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------------
--- Scheduled jobs
--- ---------------------------------------------------------------------------
-select cron.schedule('link-health-weekly', '0 3 * * 1', $$
-  select net.http_post(
-    url := current_setting('app.functions_url') || '/check-link-health',
-    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_key'))
-  );
-$$);
-
-select cron.schedule('nudges-daily', '30 12 * * *', $$
-  select net.http_post(
-    url := current_setting('app.functions_url') || '/send-nudges',
-    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_key'))
-  );
-$$);
+-- Scheduled jobs — NOT scheduled here, deliberately. Two reasons:
+--
+--   1. The original jobs read current_setting('app.functions_url') and
+--      current_setting('app.service_key'), which nothing ever set: both jobs
+--      would fail at execution, silently, forever.
+--   2. Worse than the failure, the obvious "fix" — ALTER DATABASE ... SET
+--      app.service_key — hands the service key to EVERY role, because
+--      current_setting() is callable by any SQL client. A cron job must read
+--      secrets from Vault, which only elevated roles can decrypt.
+--
+-- Scheduling is therefore an ops step run once per environment in the SQL
+-- editor, after storing the two secrets in Vault (Dashboard -> Vault:
+-- 'functions_url', 'service_key'):
+--
+--   select cron.schedule('link-health-weekly', '0 3 * * 1', $job$
+--     select net.http_post(
+--       url := (select decrypted_secret from vault.decrypted_secrets where name = 'functions_url') || '/check-link-health',
+--       headers := jsonb_build_object('Authorization', 'Bearer ' ||
+--         (select decrypted_secret from vault.decrypted_secrets where name = 'service_key'))
+--     );
+--   $job$);
+--
+--   select cron.schedule('nudges-daily', '30 12 * * *', $job$
+--     select net.http_post(
+--       url := (select decrypted_secret from vault.decrypted_secrets where name = 'functions_url') || '/send-nudges',
+--       headers := jsonb_build_object('Authorization', 'Bearer ' ||
+--         (select decrypted_secret from vault.decrypted_secrets where name = 'service_key'))
+--     );
+--   $job$);
+--
+-- (cron.schedule(name, schedule, command) and net.http_post(url, body,
+-- params, headers) are the correct current signatures; pg_cron, pgmq and
+-- pg_net all exist on Supabase but must be enabled for the project first.)
 
 -- ---------------------------------------------------------------------------
 -- Grading queue

@@ -63,21 +63,18 @@ end $$;
 -- auth.uid() directly. Postgres caches the subquery once per statement instead
 -- of re-evaluating per row; on a 600-row batch that is the difference between
 -- fast and unusable.
-create or replace function current_profile_id()
-returns uuid language sql stable as $$
-  select (select auth.uid())
-$$;
+--
+-- current_profile_id() used to be defined here as a wrapper for exactly that
+-- pattern — and then nothing called it, because every policy inlines
+-- (select auth.uid()) instead. An unused auth wrapper is a second door
+-- someone eventually uses inconsistently, so it is deleted rather than kept.
+-- [audit: removed, suspect (h)]
 
--- Is the caller staff at the given college? Used by TPO-scoped policies.
-create or replace function is_college_staff(target_college uuid)
-returns boolean language sql stable security definer set search_path = public as $$
-  select exists (
-    select 1 from staff s
-    where s.user_id = (select auth.uid())
-      and s.college_id = target_college
-      and s.revoked_at is null
-  )
-$$;
+-- is_college_staff() used to live here, but it queries the `staff` table and
+-- staff is created in 0002. Postgres validates SQL-language function bodies
+-- at creation time (check_function_bodies is on by default), so defining it
+-- here fails with 'relation "staff" does not exist'. It now lives in 0002,
+-- directly after the table it reads. [audit: moved, error confirmed live]
 
 comment on type archetype is
   'Verification mechanism. executable/detectable/structural are free and count as evidenced. rubric_ai is the only paid one.';
