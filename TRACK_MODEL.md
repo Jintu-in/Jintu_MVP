@@ -1,3 +1,8 @@
+> **Superseded in part by [V3.md](V3.md)** — the open platform. Cohorts, fixed
+> start dates and ₹999 are dead; the verification engine, tiers, ledgers and
+> anti-gaming rules below survive and are now load-bearing. Where this file
+> says cohort or sprint, V3.md wins.
+
 # Jintu — Canonical Track Model
 ### One reference curriculum, specified so the backend generalizes to anything
 

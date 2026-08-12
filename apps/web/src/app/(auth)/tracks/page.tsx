@@ -120,7 +120,7 @@ export default async function MyTracksPage() {
           </ul>
         ) : (
           <Empty
-            body="You are not in a cohort yet. Every curriculum is free to work through on your own in the meantime — nothing is held back for paying students."
+            body="You have not started a track yet. Pick one — everything is free and self-paced, and starting takes one press."
             href="/learn"
             cta="Browse tracks"
           />

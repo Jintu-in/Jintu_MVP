@@ -229,15 +229,13 @@ function Chip({ onClick, children }: { onClick: () => void; children: React.Reac
  * anything" buries the one thing that earns. So it gets the filled button and
  * Route C does not.
  *
- * Deliberately does not print a cohort date or a seat count. There is no
- * cohort row in the database; a date here would be a commitment somebody could
- * plan around, invented by a component. When cohorts exist this reads them and
- * says so.
+ * V3: no dates, no seats, no price — the platform is open and self-paced,
+ * so the card's one job is the track and the door into it.
  */
 function SprintResult({ track }: { track: RouterTrack }) {
   return (
     <div className="mt-6 rounded-card border border-ink-100 bg-white p-5 sm:p-6">
-      <StatusPill tone="active">Sprint</StatusPill>
+      <StatusPill tone="active">Verified</StatusPill>
 
       <h2 className="mt-3 text-lg leading-snug font-medium text-balance text-ink-900 sm:text-xl">
         {track.title}
@@ -245,7 +243,7 @@ function SprintResult({ track }: { track: RouterTrack }) {
 
       <p className="mt-1.5 font-mono text-[13px] text-ink-500">
         {track.weeks} weeks · {track.artifacts}{" "}
-        {track.artifacts === 1 ? "artifact" : "artifacts"} · ₹999 once
+        {track.artifacts === 1 ? "artifact" : "artifacts"} · free
       </p>
 
       <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
@@ -257,14 +255,8 @@ function SprintResult({ track }: { track: RouterTrack }) {
           href={`/learn/${track.slug}`}
           className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-4 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
         >
-          Read the track — free
+          Start learning — free
         </Link>
-        <a
-          href="#waitlist"
-          className="flex h-12 items-center justify-center rounded-lg border border-ink-200 px-4 text-[15px] font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800"
-        >
-          Join the waitlist
-        </a>
       </div>
     </div>
   );

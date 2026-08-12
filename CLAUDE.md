@@ -1,8 +1,11 @@
 # Jintu — project rules
 
-Jintu sells accountability and proof, not content. Curricula are free and
-public. Students pay ₹999 for a cohort: deadlines, grading, peer review,
-and a public proof-of-readiness profile.
+Jintu sells accountability and proof, not content. Since v3 (see V3.md)
+it is a free, open, self-paced platform: anyone signs in, learns anything,
+earns points only for submissions that something checked, and builds a
+public proof-of-readiness profile. No cohorts, no ₹999 — monetization
+comes later as pay-to-verify. The rule that replaces the cohort rule:
+**no point is ever awarded for consumption.**
 
 ## Hard invariants — never violate
 

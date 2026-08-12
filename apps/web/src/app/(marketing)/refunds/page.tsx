@@ -32,17 +32,18 @@ export default function RefundsPage() {
           The policy
         </h2>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-          Full refund if you ask before the end of week one of your cohort, for
-          any reason and without explaining yourself. After that we have
-          already graded your work and assigned your peer reviews, so we do not
-          refund — but tell us what went wrong anyway, because in week one we
-          can usually fix it.
+          Nothing on Jintu costs money today, so there is nothing to refund.
+          This policy exists for when a paid product does: full refund if you
+          ask within the first week of buying anything here, for
+          any reason and without explaining yourself. After that the work the
+          purchase paid for has been done, so we do not refund — but tell us
+          what went wrong anyway, because early on we can usually fix it.
         </p>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-          The curriculum itself is free and public, so there is nothing to
-          refund for reading it. The ₹999 buys the cohort — deadlines, grading,
-          peer review, and the profile — and that is what the week-one window
-          covers.
+          The curriculum, the grading, the points and the profile are free, so
+          none of them ever needs refunding. This window will cover whatever a
+          paid product turns out to include, and this page will name it before
+          anything is sold.
         </p>
       </section>
 
@@ -56,8 +57,7 @@ export default function RefundsPage() {
             privacy@jintu.in
           </a>{" "}
           from the address on your account, with the word refund anywhere in
-          it. No form, no call, no retention offer. A cancellation before your
-          cohort starts is the same email and the same full refund.
+          it. No form, no call, no retention offer.
         </p>
       </section>
 

@@ -29,7 +29,7 @@ export default function PrivacyPage() {
       <div className="mt-10 space-y-8 text-pretty text-ink-700">
         <Section title="Who we are">
           <p>
-            Jintu runs cohort-based placement sprints. We are the data
+            Jintu is a free, self-paced learning platform with verified points. We are the data
             fiduciary for the information described here. To reach us about
             anything on this page, write to{" "}
             <a className="underline" href="mailto:privacy@jintu.in">
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
               afterwards if you prefer one; the code always works.
             </Item>
             <Item term="Your mobile number">
-              To reach you about your cohort: deadlines, a submission you have
+              To reach you about your track: a submission you have
               missed, a peer review waiting on you. It is not how you sign in.
               Reminders on WhatsApp specifically are a separate choice below,
               and declining them changes nothing about your place.
@@ -124,9 +124,8 @@ export default function PrivacyPage() {
 
         <Section title="How long we keep it">
           <p>
-            Waitlist entries: until the cohort you are waiting for has run, or
-            until you ask us to remove you. Enrolment records and the work you
-            submitted: while your account exists, and afterwards only where we
+            Waitlist entries from the earlier cohort model: until you ask us to
+            remove you. Your track record and the work you submitted: while your account exists, and afterwards only where we
             are required to keep it — for example, records that substantiate a
             claim we have made publicly with your consent.
           </p>

@@ -15,7 +15,7 @@ import { ImageResponse } from "next/og";
  */
 
 export const alt =
-  "Jintu — six weeks, six artifacts, one profile that proves it. Free curriculum, ₹999 cohort.";
+  "Jintu — learn anything, prove you actually did. Free, self-paced, every submission checked.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -55,7 +55,7 @@ export default async function Image() {
         </div>
 
         <div style={{ display: "flex", fontSize: 30, color: "#706d6e", marginTop: 36 }}>
-          Free curriculum · ₹999 cohort
+          Free · self-paced · every submission checked
         </div>
       </div>
     ),

@@ -97,7 +97,7 @@ export default async function FeedbackPage({
 
         {feedback.peers.length === 0 ? (
           <p className="mt-3 rounded-card border border-ink-100 bg-white p-4 text-pretty text-ink-500">
-            Two people in your cohort have been asked to read this. Their
+            Two other people on this track have been asked to read this. Their
             reviews appear here when they send them.
           </p>
         ) : (

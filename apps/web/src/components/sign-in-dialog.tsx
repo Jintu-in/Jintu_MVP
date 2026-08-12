@@ -4,6 +4,8 @@ import { useAction } from "next-safe-action/hooks";
 import { useEffect, useId, useRef, useState } from "react";
 import { requestOtp, verifyOtp } from "@/actions/auth";
 import { PasswordSignIn } from "@/components/password-sign-in";
+import { getPublicEnv } from "@/lib/env";
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * Sign in without leaving the page.
@@ -42,6 +44,51 @@ export function SignInDialog({
   const ref = useRef<HTMLDialogElement>(null);
   const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState("");
+
+  // AUTH.md v2: Google first and visually dominant — but only when the
+  // Supabase project actually has the provider configured. The public
+  // settings endpoint says so, which means the button appears the moment
+  // the owner finishes the console setup, with no deploy in between, and a
+  // half-configured project never shows a button that would dead-end.
+  const [googleReady, setGoogleReady] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    try {
+      const env = getPublicEnv();
+      fetch(`${env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/settings`, {
+        headers: { apikey: env.supabaseKey },
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((settings: { external?: { google?: boolean } } | null) => {
+          if (!cancelled && settings?.external?.google) setGoogleReady(true);
+        })
+        .catch(() => {});
+    } catch {
+      // Supabase not configured at all — the dialog's other paths will say so.
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
+
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const continueWithGoogle = async () => {
+    // Full-page redirect: the pending intent (the thing that opened this
+    // dialog) does not survive it, unlike the OTP path which signs in in
+    // place. The person lands back on the same page signed in and presses
+    // the button again — one extra tap, traded for one-tap auth.
+    setGoogleBusy(true);
+    const supabase = createClient();
+    const next = `${window.location.pathname}${window.location.search}`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    });
+    if (error) setGoogleBusy(false);
+  };
 
   const send = useAction(requestOtp, {
     onSuccess: ({ data }) => {
@@ -111,6 +158,42 @@ export function SignInDialog({
             ? `We sent a six-digit code to ${email}. It is good for a few minutes.`
             : reason}
         </p>
+
+        {stage === "email" && googleReady ? (
+          <>
+            <button
+              type="button"
+              disabled={busy || googleBusy}
+              onClick={continueWithGoogle}
+              className="mt-5 flex h-12 w-full items-center justify-center gap-2.5 rounded-lg border border-ink-200 px-5 font-medium text-ink-800 hover:border-brand-600 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:text-ink-500"
+            >
+              <svg aria-hidden viewBox="0 0 24 24" className="size-5">
+                <path
+                  fill="#4285F4"
+                  d="M23.5 12.27c0-.85-.08-1.66-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.57-5.17 3.57-8.81Z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.88-3.01c-1.07.72-2.45 1.15-4.06 1.15-3.13 0-5.78-2.11-6.72-4.95H1.27v3.11A12 12 0 0 0 12 24Z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.28 14.28a7.21 7.21 0 0 1 0-4.56V6.61H1.27a12 12 0 0 0 0 10.78l4.01-3.11Z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 4.77c1.76 0 3.35.61 4.6 1.8l3.44-3.44A11.98 11.98 0 0 0 1.27 6.61l4.01 3.11C6.22 6.88 8.87 4.77 12 4.77Z"
+                />
+              </svg>
+              {googleBusy ? "Opening Google…" : "Continue with Google"}
+            </button>
+            <div aria-hidden className="mt-4 flex items-center gap-3 text-xs text-ink-500">
+              <span className="h-px flex-1 bg-ink-100" />
+              or
+              <span className="h-px flex-1 bg-ink-100" />
+            </div>
+          </>
+        ) : null}
 
         {stage === "password" ? (
           <PasswordSignIn onSignedIn={onSignedIn} onUseCode={() => setStage("email")} />

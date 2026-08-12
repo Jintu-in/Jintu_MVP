@@ -51,12 +51,12 @@ export default async function CoursesPage() {
         Free curriculum
       </p>
       <h1 className="mt-3 text-3xl leading-tight font-medium text-balance text-ink-900 sm:text-4xl">
-        Every track, in full, before you pay anything.
+        Every track, in full, without an account.
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
         The weeks, the resources and the rubric your work is graded against —
-        all of it readable now, without an account. What the cohort adds is
-        deadlines, grading, peer review and a profile.
+        all readable now. An account enters the picture only when you submit
+        something, because that is when there is work to check.
       </p>
 
       {tracks.length > 0 ? (
@@ -213,14 +213,13 @@ function EmptyState() {
       <p className="text-lg font-medium text-ink-900">No tracks are published yet.</p>
       <p className="mx-auto mt-2 max-w-md text-pretty text-ink-600">
         The first one is being written. When it goes up it will be here in
-        full — every week and every rubric — before anyone is asked to pay for
-        a cohort.
+        full — every week and every rubric — free and self-paced.
       </p>
       <Link
-        href="/#waitlist"
+        href="/"
         className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
       >
-        Tell me when it opens
+        Ask for the one you want
       </Link>
     </div>
   );

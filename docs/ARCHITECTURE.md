@@ -1,3 +1,8 @@
+> **Superseded in part by [../V3.md](../V3.md)** — the open platform. The
+> schema, RLS and verification design below remain the reference; the cohort
+> business model, Razorpay checkout and cohort phases do not. Where this file
+> says cohort or ₹999, V3.md wins.
+
 # Jintu — Architecture & Phased Build Plan
 
 > **Jintu.in** — a 6-week, cohort-based placement sprint. Free public content, AI-graded artifacts, peer review, and a shareable proof-of-readiness profile.
