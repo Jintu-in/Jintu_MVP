@@ -1,5 +1,5 @@
 import { sqlAnswerKey } from "@jintu/contracts";
-import { gradeSqlSubmission } from "@jintu/grading";
+import { gradeSqlSubmission, runCheck } from "@jintu/grading";
 import { SandboxUnavailable, sandboxRunner } from "@/lib/grading/sandbox";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -63,6 +63,11 @@ async function run(submissionId: string) {
   // the whole of the feedback until the AI scorer lands in Phase 2.
   if (assignment?.kind === "sql") {
     await gradeSql(supabase, submission.id, submission.assignment_id, submission.payload);
+  } else if (assignment?.kind === "artifact_link") {
+    // Detectable, when the assignment has a planted-defect key and the
+    // student ticked codes. No key or no findings: nothing happens here, and
+    // the artifact goes to peers exactly as before.
+    await gradeDetectable(supabase, submission.id, submission.assignment_id, submission.payload);
   }
 
   // Both of these read across the cohort, which is why they are database
@@ -200,6 +205,64 @@ async function gradeSql(
     // let it claim otherwise.
   });
   if (error) throw new Error(`could not record the grade: ${error.message}`);
+
+  await supabase.from("submissions").update({ status: "graded" }).eq("id", submissionId);
+}
+
+/**
+ * Marks a detectable artifact — a planted-defect audit — against its key.
+ *
+ * Quietly does nothing unless BOTH halves are present: a defect key on the
+ * assignment, and a findings list on the submission. An artifact_link with
+ * neither is the ordinary case (a memo, a dashboard) and its grading is the
+ * peers' job, exactly as before this function existed.
+ *
+ * The feedback counts hits and fabrications and NEVER names the misses — the
+ * key is the answer, and feedback that lists what a student did not find is
+ * the answer sheet with extra steps. Same rule as the checker itself, which
+ * is what actually does the marking here.
+ */
+async function gradeDetectable(
+  supabase: ServiceClient,
+  submissionId: string,
+  assignmentId: string,
+  payload: unknown,
+) {
+  const findings = (payload as { findings?: unknown } | null)?.findings;
+  if (!Array.isArray(findings) || findings.length === 0) return;
+
+  // Service client, same reason as the SQL keys: this table is the answer.
+  const { data: key, error: keyError } = await supabase
+    .from("assignment_defect_keys")
+    .select("planted, min_hits")
+    .eq("assignment_id", assignmentId)
+    .maybeSingle();
+
+  if (keyError) throw new Error(`could not load the defect key: ${keyError.message}`);
+  if (!key) return; // findings ticked against an assignment with no key — peers' problem, not ours
+
+  const planted = (key.planted as { slug: string }[]).map((p) => p.slug);
+
+  await supabase.from("submissions").update({ status: "grading" }).eq("id", submissionId);
+
+  const verdict = await runCheck(`answer_key_match:${key.min_hits}`, {
+    found: findings.map(String),
+    planted,
+  });
+
+  // Score = distinct real hits, out of the number planted. Computed here with
+  // the same set semantics the checker uses, because the checker returns a
+  // verdict and a sentence, not a tally.
+  const hits = [...new Set(findings.map(String))].filter((f) => planted.includes(f)).length;
+
+  const { error } = await supabase.from("gradings").insert({
+    submission_id: submissionId,
+    grader_type: "deterministic",
+    scores: { planted_found: hits },
+    total: hits,
+    feedback: verdict.detail,
+  });
+  if (error) throw new Error(`could not record the defect grade: ${error.message}`);
 
   await supabase.from("submissions").update({ status: "graded" }).eq("id", submissionId);
 }

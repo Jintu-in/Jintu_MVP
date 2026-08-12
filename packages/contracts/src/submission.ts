@@ -104,6 +104,17 @@ export const artifactSubmissionInput = z.object({
     .max(500, "Keep the note under 500 characters.")
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
+
+  /**
+   * Defect codes, for detectable artifacts only: the student ticks which of
+   * the offered codes are really in the dataset. Slug-shaped and capped,
+   * because this list is marked mechanically against a planted key and free
+   * text here would be marked as a fabrication it never claimed to be.
+   */
+  findings: z
+    .array(z.string().trim().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "codes are kebab-case"))
+    .max(24)
+    .optional(),
 });
 
 export const submissionInput = z.discriminatedUnion("kind", [

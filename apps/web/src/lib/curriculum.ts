@@ -39,7 +39,7 @@ export type Rubric = {
 export type Assignment = {
   id: string;
   kind: "sql" | "artifact_link" | "file" | "recording";
-  spec: { prompt?: string };
+  spec: { prompt?: string; codes?: string[] };
   /** Null only if an assignment was authored without one — visible in the UI. */
   rubrics: Rubric | null;
 };

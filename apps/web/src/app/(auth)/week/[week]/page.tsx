@@ -174,7 +174,11 @@ function Assignment({ assignment }: { assignment: WeekAssignment }) {
           </Link>
         </div>
       ) : assignment.kind === "sql" || assignment.kind === "artifact_link" ? (
-        <SubmissionForm assignmentId={assignment.id} kind={assignment.kind} />
+        <SubmissionForm
+          assignmentId={assignment.id}
+          kind={assignment.kind}
+          codes={assignment.spec.codes}
+        />
       ) : (
         <p className="mt-3 text-sm text-ink-500">
           This one is submitted by{" "}
