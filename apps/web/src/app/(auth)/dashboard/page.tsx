@@ -3,7 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SubmissionForm } from "@/components/submission-form";
 import { countPendingReviews } from "@/lib/review";
+import { RepBoard } from "@/components/rep-board";
 import { getMySprint, type SprintAssignment, type SprintWeek } from "@/lib/sprint";
+import { currentWeekNo, getRepBoard } from "@/lib/reps";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +57,13 @@ export default async function DashboardPage() {
     );
   }
 
+  // The habit loop for the week the cohort is in. Null when the ledgers
+  // migration is not applied or the week has no reps — the dashboard renders
+  // without the section either way.
+  const weekNo = currentWeekNo(sprint.cohortStartsOn, sprint.weeks.length);
+  const thisWeek = sprint.weeks.find((w) => w.weekNo === weekNo);
+  const board = thisWeek ? await getRepBoard(thisWeek.moduleId, weekNo).catch(() => null) : null;
+
   const total = sprint.weeks.reduce((n, w) => n + w.assignments.length, 0);
   const done = sprint.weeks.reduce(
     (n, w) => n + w.assignments.filter((a) => a.submission).length,
@@ -93,6 +102,11 @@ export default async function DashboardPage() {
           <div className="h-full rounded-full bg-brand-500" style={{ width: `${pct}%` }} />
         </div>
       </div>
+
+      {/* Between progress and the review queue: the small daily work. Absent
+          entirely when the week has no reps, rather than an empty box asking
+          for a habit nobody defined. */}
+      {board ? <RepBoard board={board} /> : null}
 
       {/* Reviewing is the one part of the week with a deadline that is not the
           student's own work, and it is 20% of their readiness. It gets a row

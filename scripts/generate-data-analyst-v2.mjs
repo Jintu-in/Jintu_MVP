@@ -284,6 +284,49 @@ const WEEKS = [
   },
 ];
 
+
+/**
+ * Daily reps — the habit loop under each week. Three per week, day-sized,
+ * checked only by the free structural archetypes: rubric_ai on a rep would be
+ * an unbounded per-user AI cost, which is Law 1's exact target.
+ *
+ * Ten points each against a 30/day cap, so a full day of reps is exactly the
+ * cap and grinding ahead buys nothing — the cap is the design, not a limit
+ * the content strains against.
+ */
+const REPS = {
+  1: [
+    [1, "Solve three questions on pgexercises.com (basic section). Paste your three queries.", ["non_empty"]],
+    [2, "Solve three join questions on pgexercises.com. Paste the queries — each should contain a join.", ["non_empty", "contains_join"]],
+    [3, "Write one query against Pagila you could not have written last week, and one sentence on why.", ["non_empty"]],
+  ],
+  2: [
+    [1, "Rank film categories by revenue with a window function. Paste the query.", ["non_empty"]],
+    [2, "Compute a 7-day running total of payments. Paste the query.", ["non_empty"]],
+    [3, "Explain, in three sentences, when RANK and ROW_NUMBER disagree.", ["non_empty"]],
+  ],
+  3: [
+    [1, "Find every duplicate row in your 311 slice. Paste the query and the count.", ["non_empty"]],
+    [2, "Count rows where the closed date precedes the created date. Paste query and count.", ["non_empty"]],
+    [3, "List the five messiest free-text values in one column, and what you would map them to.", ["non_empty"]],
+  ],
+  4: [
+    [1, "Write the one-sentence question your analysis answers. One sentence, no comma splices.", ["non_empty"]],
+    [2, "Draft the finding as a single paragraph with the number in it.", ["non_empty"]],
+    [3, "Write the caveat you would least like a reviewer to find. Publishing it beats hiding it.", ["non_empty"]],
+  ],
+  5: [
+    [1, "Sketch the dashboard on paper. Photograph it, upload anywhere, paste the link.", ["non_empty"]],
+    [2, "Build the first chart and paste its public link.", ["non_empty"]],
+    [3, "Show it to one person for sixty seconds. Write down the first thing they got wrong.", ["non_empty"]],
+  ],
+  6: [
+    [1, "Record a sixty-second dry run. Note where you stumbled.", ["non_empty"]],
+    [2, "Write the answer to the question an interviewer always asks: how do you know?", ["non_empty"]],
+    [3, "Record the walkthrough once, watch it once, list two cuts to make.", ["non_empty"]],
+  ],
+};
+
 // ── emit ─────────────────────────────────────────────────────────────────────
 
 const out = [];
@@ -349,6 +392,21 @@ out.push(`  ) as x(week, kind, url, title, position)`);
 out.push(`  join public.modules m on m.path_id = v_path and m.week_no = x.week`);
 out.push(`  on conflict (module_id, position) do nothing;`);
 out.push("");
+const repRows = Object.entries(REPS).flatMap(([week, reps]) =>
+  reps.map(([day, prompt, checks]) =>
+    `    (${week}, ${day}, ${q(prompt)}, array[${checks.map(q).join(", ")}]::text[])`,
+  ),
+);
+out.push(`  -- The habit loop. Structural checks only; ten points against the 30/day cap.`);
+out.push(`  insert into public.daily_reps (module_id, day_no, prompt, verification, checks, points)`);
+out.push(`  select m.id, x.day_no, x.prompt, 'structural', x.checks, 10`);
+out.push(`  from (values`);
+out.push(repRows.join(",\n"));
+out.push(`  ) as x(week, day_no, prompt, checks)`);
+out.push(`  join public.modules m on m.path_id = v_path and m.week_no = x.week`);
+out.push(`  on conflict (module_id, day_no) do nothing;`);
+out.push("");
+
 
 const assignmentRows = WEEKS.map(
   (w) =>
@@ -401,13 +459,16 @@ out.push(`         where m.path_id = v_path) <> ${resourceRows.length}`);
 out.push(`     or (select count(*) from public.assignments a`);
 out.push(`         join public.modules m on m.id = a.module_id`);
 out.push(`         where m.path_id = v_path) <> ${WEEKS.length}`);
-out.push(`     or (select count(*) from public.assignment_answer_keys k`);
+out.push(`     or (select count(*) from public.daily_reps dr
+         join public.modules m on m.id = dr.module_id
+         where m.path_id = v_path) <> ${repRows.length}
+     or (select count(*) from public.assignment_answer_keys k`);
 out.push(`         join public.assignments a on a.id = k.assignment_id`);
 out.push(`         join public.modules m on m.id = a.module_id`);
 out.push(`         where m.path_id = v_path) <> ${keyed.length} then`);
 out.push(
   `    raise exception ${q(
-    `${TRACK} v2 is incomplete — expected ${WEEKS.length} modules, ${resourceRows.length} resources, ${WEEKS.length} assignments, ${keyed.length} answer keys. Not publishing.`,
+    `${TRACK} v2 is incomplete — expected ${WEEKS.length} modules, ${resourceRows.length} resources, ${WEEKS.length} assignments, ${repRows.length} reps, ${keyed.length} answer keys. Not publishing.`,
   )};`,
 );
 out.push(`  end if;`);
