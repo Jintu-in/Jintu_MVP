@@ -414,6 +414,7 @@ checked against migrations, `packages/grading/src`, or a live query.
 | **Rubric criteria carry `check`/`checker`** | trigger + generators | Part 12 item 5, landed before anything was graded. The SQL grader reads weights from the rubric; identical-by-construction to the old constants. |
 | **Points ledgers + streaks + daily reps** | `point_events`, `streaks`, `daily_reps`, `submit_rep()` | Part 6 complete: 30/day cap, day-stamped by construction, retroactive voiding, proof-locked-on-reviews. `proof_totals` is the wall — rule 5 in a WHERE clause. Dashboard board + 18 reps in the DA generator. 21 assertions. |
 | **Defect keys (detectable)** | `assignment_defect_keys`, `defect-dataset.mjs`, pipeline branch | Seed-secret generator (repo-safe), counted truths, distractors, service-role-only key, checklist UI -> `answer_key_match` -> grading row. 16 assertions. |
+| **rubric_ai spend gate** | `ai_spend_reserve/settle/release`, `gradeRubricAi` | The only paid call. Reserve-before-spend, one `ai_usage` row per call, fail-closed with no guard row, every failure degrades to needs_review. Dormant until a rubric carries a rubric_ai criterion. 25 assertions. |
 
 ### Not built
 
@@ -502,7 +503,7 @@ Ordered by what unblocks what, not by value. Each step is shippable on its own.
 **Then — the first spend**
 
 7. ✓ (#60) `detectable` + `answer_key_match` — keys in a service-role table, generator seed-secret, checklist UI wired to the grader.
-8. ← NEXT. `rubric_ai` behind the existing `budget_guards`, degrading to manual review
+8. ✓ `rubric_ai` behind the existing `budget_guards`, degrading to manual review
    rather than overspending. First and only paid call.
 
 **After — breadth**

@@ -551,14 +551,14 @@ The cohort runs on Notion + WhatsApp + Google Forms. You grade by hand. The repo
 **Business goal: remove the human from the weekly loop.**
 
 **Build**
-- [ ] `packages/grading` extracted as runtime-pure TS (Node + Deno)
+- [x] `packages/grading` extracted as runtime-pure TS (zero runtime deps)
 - [ ] Supabase Queue (pgmq) `grading_queue` + `grade-submission` edge function
-- [ ] AI rubric scorer: capped tokens, structured JSON output, cost logged per call
-- [ ] Budget guard enforcement — degrade to manual review, never overspend
+- [x] AI rubric scorer: capped tokens, strict JSON verdict (refused whole on any deviation), cost logged per call in `ai_usage`
+- [x] Budget guard enforcement — reserve-before-spend against `budget_guards`, degrade to needs_review, fail-closed when unconfigured (`pnpm ai:verify`)
 - [ ] WhatsApp adapter (`packages/notify`) + `send-nudges` on pg_cron
   - deadline T-24h · missed-submission · peer-review-pending · weekly streak
 - [ ] `check-link-health` cron → flags dead resources for human fix (not AI auto-repair)
-- [ ] `compute-readiness` nightly job
+- [x] `compute-readiness` — runs after every grade and review rather than nightly
 - [ ] Admin console: cohort ops, cost dashboard, manual grade override
 
 **Ship gate:** <10% of submissions need human intervention. AI cost/student <₹40. Peer review participation ≥50%.

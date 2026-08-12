@@ -1,5 +1,6 @@
 import { sqlAnswerKey } from "@jintu/contracts";
 import { gradeSqlSubmission, runCheck } from "@jintu/grading";
+import { gradeRubricAi } from "@/lib/grading/rubric-ai";
 import { SandboxUnavailable, sandboxRunner } from "@/lib/grading/sandbox";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -68,6 +69,17 @@ async function run(submissionId: string) {
     // student ticked codes. No key or no findings: nothing happens here, and
     // the artifact goes to peers exactly as before.
     await gradeDetectable(supabase, submission.id, submission.assignment_id, submission.payload);
+    // rubric_ai, when the rubric carries criteria a model may score — the
+    // only grader that costs money, which is why it reserves against
+    // budget_guards before calling and degrades to needs_review when the
+    // guard says no. No rubric_ai criteria: nothing happens here either.
+    await gradeRubricAi(
+      supabase,
+      submission.id,
+      submission.assignment_id,
+      submission.enrollment_id,
+      submission.payload,
+    );
   }
 
   // Both of these read across the cohort, which is why they are database

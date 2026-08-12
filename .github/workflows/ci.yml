@@ -98,6 +98,10 @@ jobs:
       # CSV, distractors verifiably absent, keys service-role only.
       - name: Defect datasets tell the truth
         run: pnpm defects:verify
+      # The spend gate for rubric_ai — invariant 2. Reserve before the money
+      # leaves, one ai_usage row per call, fail-closed when unconfigured.
+      - name: AI budget cannot leak money
+        run: pnpm ai:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

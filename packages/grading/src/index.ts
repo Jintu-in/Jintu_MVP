@@ -17,6 +17,17 @@ export type {
   SqlGrade,
 } from "./deterministic/types";
 export {
+  RUBRIC_AI_MAX_OUTPUT_TOKENS,
+  RUBRIC_AI_MODEL,
+  actualCostPaise,
+  aiCriteria,
+  buildRubricPrompt,
+  estimateCostPaise,
+  parseRubricVerdict,
+  type AiCriterion,
+  type RubricAiVerdict,
+} from "./rubric-ai";
+export {
   CHECKERS,
   CHECKER_NAMES,
   parseCheck,
