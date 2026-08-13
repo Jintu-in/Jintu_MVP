@@ -124,6 +124,10 @@ jobs:
       # entry gate, and the ops-only collusion surface.
       - name: Review-to-unlock holds its rules
         run: pnpm reviews:verify
+      # DA v3: the verified tier earned by arithmetic — 21 of 36 points
+      # machine-checked, codes public, keys never.
+      - name: Data Analyst v3 earns the verified tier
+        run: pnpm da3:verify
 
       # The catch-up bundle has to apply to the project as it actually is —
       # part-migrated, with real rows — not to an empty database.

@@ -51,7 +51,9 @@
     "grading:deno": "node scripts/build-deno-grading.mjs",
     "track:gen": "node scripts/generate-track.mjs",
     "track:verify": "node scripts/assert-track.mjs",
-    "reviews:verify": "node scripts/assert-review-unlock.mjs"
+    "reviews:verify": "node scripts/assert-review-unlock.mjs",
+    "da3:verify": "node scripts/assert-data-analyst-v3.mjs",
+    "courses:v3": "node scripts/generate-data-analyst-v3.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

@@ -160,7 +160,10 @@ export function TrackRouter({
         and wraps cleanly at 360px instead of reflowing mid-list.
       */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="text-[13px] text-ink-500">Try</span>
+        {/* The trailing space is textual, not visual: flex gap renders the gap,
+            but copied text and screen readers see the nodes joined — this is
+            what turned "Try Data Analyst" into "TryData Analyst" in a review. */}
+        <span className="text-[13px] text-ink-500">{"Try "}</span>
         {tracks.slice(0, 3).map((t) => (
           <Chip
             key={t.slug}

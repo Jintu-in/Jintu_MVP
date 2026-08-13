@@ -35,7 +35,12 @@ export async function getTrack(slug: string): Promise<Track | null> {
     slug: t.slug,
     title: t.title,
     oneLine: t.summary,
-    tier: t.tier,
+    // Tolerates the one legacy value: if the deployed code is ever ahead of
+    // the pasted schema again (it just happened — the page rendered the
+    // community template for the flagship track), an unknown tier reads as
+    // verified rather than flipping templates. Community and draft are the
+    // only tiers that change behaviour, so they must match exactly.
+    tier: t.tier === "community" || t.tier === "draft" ? t.tier : "verified",
     units: t.modules.map((m): Unit => {
       // One artifact per unit is the house shape; when a week carries more
       // (sql + artifact in the same week), the highest-paying one is the

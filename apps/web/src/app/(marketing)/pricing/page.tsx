@@ -6,6 +6,16 @@ export const metadata: Metadata = {
   description:
     "Free. The curriculum, the grading, the points and the profile — all of it. Nothing on Jintu costs money today.",
   alternates: { canonical: "/pricing" },
+  // Without these, metadata merging keeps the ROOT openGraph whole — the
+  // pricing page previewed with the homepage's title in a WhatsApp share.
+  openGraph: {
+    title: "Pricing — free. All of it.",
+    description:
+      "The curriculum, the grading, the points and the profile. Nothing on Jintu costs money today.",
+    url: "/pricing",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: "Pricing — free. All of it." },
 };
 
 /**
