@@ -72,7 +72,15 @@ export default [
         estMinutes: 60,
         points: 35,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Window function processing",
+                    url: "https://www.postgresql.org/docs/current/functions-window.html",
+                    sourceName: "PostgreSQL documentation",
+                    editorNote: "The frame-clause reference — the RANGE vs ROWS distinction lives here."
+          }
+        ],
       },
       {
         title: "Day 46 — Positional functions",
@@ -86,7 +94,21 @@ export default [
         estMinutes: 55,
         points: 35,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "SQL window functions",
+                    url: "https://mode.com/sql-tutorial/sql-window-functions",
+                    sourceName: "Mode SQL tutorial",
+                    editorNote: "The LAG/LEAD half; do the exercises with your own tables."
+          },
+          {
+                    type: "doc",
+                    title: "Window function processing",
+                    url: "https://www.postgresql.org/docs/current/functions-window.html",
+                    sourceName: "PostgreSQL documentation"
+          }
+        ],
       },
       {
         title: "Day 47 — Cohort retention end to end",
@@ -100,7 +122,15 @@ export default [
         estMinutes: 70,
         points: 35,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "tool",
+                    title: "DataLemur — window questions",
+                    url: "https://datalemur.com/questions",
+                    sourceName: "DataLemur",
+                    editorNote: "Search for the retention and cohort questions; they mirror this build exactly."
+          }
+        ],
       },
       {
         title: "Day 48 — Window practice block",
@@ -160,7 +190,14 @@ export default [
         estMinutes: 45,
         points: 25,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Materialized views",
+                    url: "https://www.postgresql.org/docs/current/rules-materializedviews.html",
+                    sourceName: "PostgreSQL documentation"
+          }
+        ],
       },
       {
         title: "Day 51 — Data quality checks in SQL",
@@ -174,7 +211,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "The Quartz guide to bad data",
+                    url: "https://github.com/Quartz/bad-data-guide",
+                    sourceName: "Quartz",
+                    editorNote: "Reopen from day 3 — now every entry maps to a query you can write."
+          }
+        ],
       },
       {
         title: "Day 52 — Review and SQL capstone",
@@ -187,7 +232,15 @@ export default [
         estMinutes: 90,
         points: 35,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "tool",
+                    title: "pgexercises",
+                    url: "https://pgexercises.com/",
+                    sourceName: "pgexercises",
+                    editorNote: "Warm up with two hard ones before starting the capstone query."
+          }
+        ],
       },
     ],
   },

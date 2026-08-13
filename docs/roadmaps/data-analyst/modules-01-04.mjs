@@ -481,7 +481,15 @@ export default [
         estMinutes: 55,
         points: 35,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Merge queries overview",
+                    url: "https://learn.microsoft.com/en-us/power-query/merge-queries-overview",
+                    sourceName: "Microsoft Learn",
+                    editorNote: "All six join kinds, including the anti joins this day is really about."
+          }
+        ],
       },
       {
         title: "Day 20 — Build day: the auto-refreshing report",
@@ -494,7 +502,15 @@ export default [
         estMinutes: 90,
         points: 40,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "The Power Query user interface",
+                    url: "https://learn.microsoft.com/en-us/power-query/power-query-ui",
+                    sourceName: "Microsoft Learn",
+                    editorNote: "Keep open while assembling the pipeline; every pane you need is named here."
+          }
+        ],
       },
     ],
   },

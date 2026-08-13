@@ -59,6 +59,6 @@ export const setNodeDone = actionClient.inputSchema(input).action(async ({ parse
   );
   if (enrolError) throw new Error(`enrollment upsert failed: ${enrolError.message}`);
 
-  revalidatePath(`/learn/${roadmapSlug}`);
+  revalidatePath(`/learn/${roadmapSlug}`, "layout");
   return { done };
 });

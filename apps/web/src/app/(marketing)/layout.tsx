@@ -133,7 +133,7 @@ export default async function MarketingLayout({
 
           <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/learn" className="text-ink-600 hover:text-brand-800">
-              Tracks
+              Roadmaps
             </Link>
             <Link href="/pricing" className="text-ink-600 hover:text-brand-800">
               Pricing

@@ -160,7 +160,15 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Statistics (scipy.stats) tutorial",
+                    url: "https://docs.scipy.org/doc/scipy/tutorial/stats.html",
+                    sourceName: "SciPy documentation",
+                    editorNote: "t-tests, ANOVA and chi-square with runnable examples."
+          }
+        ],
       },
     ],
   },
@@ -204,7 +212,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "How not to run an A/B test",
+                    url: "https://www.evanmiller.org/how-not-to-run-an-ab-test.html",
+                    sourceName: "Evan Miller",
+                    editorNote: "The peeking problem, by the person whose calculator you used yesterday."
+          }
+        ],
       },
       {
         title: "Day 83 — Multiple comparisons and honest reporting",
@@ -218,7 +234,15 @@ export default [
         estMinutes: 50,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "Multiple comparisons problem",
+                    url: "https://en.wikipedia.org/wiki/Multiple_comparisons_problem",
+                    sourceName: "Wikipedia",
+                    editorNote: "Read for the jelly-bean intuition; skim the corrections table."
+          }
+        ],
       },
       {
         title: "Day 84 — Metrics that businesses actually track",
@@ -232,7 +256,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "Performance indicator",
+                    url: "https://en.wikipedia.org/wiki/Performance_indicator",
+                    sourceName: "Wikipedia",
+                    editorNote: "A sober taxonomy to steal vocabulary from before defining your five."
+          }
+        ],
       },
     ],
   },
@@ -347,7 +379,21 @@ export default [
         estMinutes: 120,
         points: 40,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "About READMEs",
+                    url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+                    sourceName: "GitHub Docs",
+                    editorNote: "The README is half the capstone's value; structure it before the code."
+          },
+          {
+                    type: "tool",
+                    title: "Kaggle Datasets",
+                    url: "https://www.kaggle.com/datasets",
+                    sourceName: "Kaggle"
+          }
+        ],
       },
       {
         title: "Day 90 — Portfolio and profile",
@@ -361,7 +407,15 @@ export default [
         estMinutes: 70,
         points: 40,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "About READMEs",
+                    url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+                    sourceName: "GitHub Docs",
+                    editorNote: "Apply the same discipline to all three project pages."
+          }
+        ],
       },
       {
         title: "Day 91 — Interview preparation",

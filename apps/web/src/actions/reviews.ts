@@ -50,7 +50,7 @@ export const createCard = actionClient.inputSchema(createInput).action(async ({ 
     throw new Error(`card insert failed: ${error.message}`);
   }
 
-  revalidatePath(`/learn/${parsedInput.roadmapSlug}/${parsedInput.nodeId}`);
+  revalidatePath(`/learn/${parsedInput.roadmapSlug}`, "layout");
   return { created: true };
 });
 

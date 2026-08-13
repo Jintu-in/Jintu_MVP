@@ -19,7 +19,7 @@ import { getRoadmap, type NodeResource } from "@/lib/roadmaps";
  */
 export const dynamic = "force-dynamic";
 
-type Params = { slug: string; nodeId: string };
+type Params = { slug: string; node: string };
 
 const TYPE_LABEL: Record<NodeResource["type"], string> = {
   read: "Read",
@@ -44,25 +44,35 @@ function dataCost(r: NodeResource): string | null {
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  const { slug, nodeId } = await params;
+  const { slug, node: nodeParam } = await params;
   const roadmap = await getRoadmap(slug).catch(() => null);
-  const node = roadmap?.modules.flatMap((m) => m.nodes).find((n) => n.id === nodeId);
+  const node = roadmap?.modules.flatMap((m) => m.nodes).find((n) => n.slug === nodeParam || n.id === nodeParam);
   if (!roadmap || !node) return { title: "Node" };
+  const description = `${node.estMinutes} min · ${node.points} pts — ${node.summary ?? roadmap.summary}`;
   return {
     title: `${node.title} — ${roadmap.title}`,
-    description: node.summary ?? roadmap.summary,
-    alternates: { canonical: `/learn/${slug}/${nodeId}` },
+    description,
+    alternates: { canonical: `/learn/${slug}/${node.slug}` },
+    openGraph: {
+      title: node.title,
+      description,
+      url: `/learn/${slug}/${node.slug}`,
+      type: "article",
+      locale: "en_IN",
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 
 export default async function NodeReaderPage({ params }: { params: Promise<Params> }) {
-  const { slug, nodeId } = await params;
+  const { slug, node: nodeParam } = await params;
 
   const roadmap = await getRoadmap(slug);
   if (!roadmap) notFound();
 
   const flat = roadmap.modules.flatMap((m) => m.nodes.map((n) => ({ node: n, module: m })));
-  const at = flat.findIndex((x) => x.node.id === nodeId);
+  // Slug first, id as a fallback so any pre-slug link someone saved resolves.
+  const at = flat.findIndex((x) => x.node.slug === nodeParam || x.node.id === nodeParam);
   if (at === -1) notFound();
   const { node, module } = flat[at]!;
   const next = flat[at + 1] ?? null;
@@ -192,7 +202,7 @@ export default async function NodeReaderPage({ params }: { params: Promise<Param
         ) : (
           <p className="text-[15px] text-ink-600">
             <Link
-              href={`/join?next=/learn/${slug}/${node.id}`}
+              href={`/join?next=/learn/${slug}/${node.slug}`}
               className="text-brand-700 underline hover:text-brand-800"
             >
               Sign in
