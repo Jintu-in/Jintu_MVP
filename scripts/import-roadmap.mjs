@@ -67,6 +67,8 @@ for (const [mi, m] of spec.modules.entries()) {
     if (!Number.isInteger(n.estMinutes) || n.estMinutes < 2 || n.estMinutes > 120)
       fail(`${at} estMinutes ${n.estMinutes} — one sitting is 2–120 minutes`);
     if (n.difficulty && !DIFF_NODE.includes(n.difficulty)) fail(`${at} difficulty`);
+    if (n.points !== undefined && (!Number.isInteger(n.points) || n.points < 5 || n.points > 100))
+      fail(`${at} points ${n.points} — 5–100 or omit for the default`);
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -154,8 +156,8 @@ for (const [mi, m] of spec.modules.entries()) {
   push(`  values (rm, ${mi + 1}, ${q(m.title)}, ${q(m.weekRange ?? null)}, ${q(m.objective ?? null)}, ${q(m.deliverable ?? null)}, ${qn(m.estHours)})`);
   push(`  returning id into m;`);
   for (const [ni, n] of m.nodes.entries()) {
-    push(`  insert into public.nodes (module_id, position, title, summary, learning_objectives, est_minutes, difficulty, is_optional)`);
-    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"})`);
+    push(`  insert into public.nodes (module_id, position, title, summary, learning_objectives, est_minutes, difficulty, is_optional, points)`);
+    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
     push(`  returning id into n;`);
     for (const [ri, r] of n.resources.entries()) {
       push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
