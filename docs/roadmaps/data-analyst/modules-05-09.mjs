@@ -277,7 +277,21 @@ export default [
         estMinutes: 50,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "SQL joins",
+                    url: "https://mode.com/sql-tutorial/sql-joins",
+                    sourceName: "Mode SQL tutorial",
+                    editorNote: "Re-read the outer-join half before attempting FULL OUTER reconciliation."
+          },
+          {
+                    type: "tool",
+                    title: "pgexercises — joins",
+                    url: "https://pgexercises.com/",
+                    sourceName: "pgexercises"
+          }
+        ],
       },
       {
         title: "Day 32 — Multi-table joins",
@@ -291,7 +305,21 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "tool",
+                    title: "pgexercises — joins and subqueries",
+                    url: "https://pgexercises.com/",
+                    sourceName: "pgexercises",
+                    editorNote: "The multi-table questions; verify totals against simpler versions."
+          },
+          {
+                    type: "tool",
+                    title: "DataLemur — join questions",
+                    url: "https://datalemur.com/questions",
+                    sourceName: "DataLemur"
+          }
+        ],
       },
       {
         title: "Day 33 — Set operations",
@@ -399,7 +427,21 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "Mode SQL tutorial — CASE",
+                    url: "https://mode.com/sql-tutorial/sql-case",
+                    sourceName: "Mode SQL tutorial",
+                    editorNote: "CASE inside SUM is the whole trick; this page plus GROUP BY is the day."
+          },
+          {
+                    type: "doc",
+                    title: "Aggregate functions tutorial",
+                    url: "https://www.postgresql.org/docs/current/tutorial-agg.html",
+                    sourceName: "PostgreSQL documentation"
+          }
+        ],
       },
       {
         title: "Day 38 — Working with dates in SQL",

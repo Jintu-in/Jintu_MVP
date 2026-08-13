@@ -68,7 +68,14 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "intro",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "Automate the Boring Stuff — chapter 2, flow control",
+                    url: "https://automatetheboringstuff.com/2e/chapter2/",
+                    sourceName: "Automate the Boring Stuff (Al Sweigart)"
+          }
+        ],
       },
       {
         title: "Day 56 — Functions and comprehensions",
@@ -82,7 +89,14 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "read",
+                    title: "Automate the Boring Stuff — chapter 3, functions",
+                    url: "https://automatetheboringstuff.com/2e/chapter3/",
+                    sourceName: "Automate the Boring Stuff (Al Sweigart)"
+          }
+        ],
       },
       {
         title: "Day 57 — Files, errors and modules",
@@ -182,7 +196,15 @@ export default [
         estMinutes: 50,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Broadcasting",
+                    url: "https://numpy.org/doc/stable/user/basics.broadcasting.html",
+                    sourceName: "NumPy documentation",
+                    editorNote: "The rules, with diagrams — read before timing your rewrite."
+          }
+        ],
       },
       {
         title: "Day 61 — Series and DataFrames",
@@ -224,7 +246,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Indexing and selecting data",
+                    url: "https://pandas.pydata.org/docs/user_guide/indexing.html",
+                    sourceName: "pandas documentation",
+                    editorNote: "The loc/iloc section and the chained-assignment warning explained by its authors."
+          }
+        ],
       },
       {
         title: "Day 63 — Missing data",
@@ -238,7 +268,14 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Working with missing data",
+                    url: "https://pandas.pydata.org/docs/user_guide/missing_data.html",
+                    sourceName: "pandas documentation"
+          }
+        ],
       },
       {
         title: "Day 64 — Types, strings and duplicates",
@@ -252,7 +289,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Working with text data",
+                    url: "https://pandas.pydata.org/docs/user_guide/text.html",
+                    sourceName: "pandas documentation",
+                    editorNote: "The .str accessor end to end; dates live in to_datetime's own page."
+          }
+        ],
       },
       {
         title: "Day 65 — Outliers and validation",
@@ -265,7 +310,15 @@ export default [
         estMinutes: 50,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Statistics (scipy.stats) tutorial",
+                    url: "https://docs.scipy.org/doc/scipy/tutorial/stats.html",
+                    sourceName: "SciPy documentation",
+                    editorNote: "The z-score and describe sections back today's audit function."
+          }
+        ],
       },
       {
         title: "Day 66 — groupby",
@@ -328,7 +381,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Merge, join, concatenate and compare",
+                    url: "https://pandas.pydata.org/docs/user_guide/merging.html",
+                    sourceName: "pandas documentation",
+                    editorNote: "validate= is documented here and almost nowhere else people read."
+          }
+        ],
       },
       {
         title: "Day 69 — Time series in pandas",
@@ -341,7 +402,15 @@ export default [
         estMinutes: 55,
         points: 30,
         difficulty: "core",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Time series / date functionality",
+                    url: "https://pandas.pydata.org/docs/user_guide/timeseries.html",
+                    sourceName: "pandas documentation",
+                    editorNote: "resample and rolling — the two sections today uses."
+          }
+        ],
       },
       {
         title: "Day 70 — A repeatable EDA workflow",
@@ -459,7 +528,15 @@ export default [
         estMinutes: 70,
         points: 30,
         difficulty: "stretch",
-        resources: [],
+        resources: [
+          {
+                    type: "doc",
+                    title: "Seaborn tutorial",
+                    url: "https://seaborn.pydata.org/tutorial.html",
+                    sourceName: "seaborn documentation",
+                    editorNote: "The gallery is the menu for the five charts the deliverable wants."
+          }
+        ],
       },
     ],
   },

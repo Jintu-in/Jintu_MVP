@@ -21,7 +21,7 @@ const input = z.object({
 });
 
 export const setResourceSaved = actionClient.inputSchema(input).action(async ({ parsedInput }) => {
-  const { resourceId, roadmapSlug, nodeId, saved } = parsedInput;
+  const { resourceId, roadmapSlug, saved } = parsedInput;
   const supabase = await createClient();
 
   const {
@@ -48,7 +48,7 @@ export const setResourceSaved = actionClient.inputSchema(input).action(async ({ 
     if (error) throw new Error(`unsave failed: ${error.message}`);
   }
 
-  revalidatePath(`/learn/${roadmapSlug}/${nodeId}`);
+  revalidatePath(`/learn/${roadmapSlug}`, "layout"); // node URLs are slugs now; layout scope covers every node page
   return { saved };
 });
 

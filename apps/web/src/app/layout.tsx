@@ -20,7 +20,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   title: {
-    default: "Jintu — learn anything, then prove it",
+    default: "Jintu — learn anything, properly",
     template: "%s · Jintu",
   },
   description: DESCRIPTION,

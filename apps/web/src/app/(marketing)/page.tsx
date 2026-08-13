@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
 
@@ -15,6 +16,23 @@ import { listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
  * screen proper (phase-3 screen 4) can replace the target without touching
  * this form.
  */
+export const metadata: Metadata = {
+  title: "Jintu — learn anything, properly",
+  description:
+    "Deep, free roadmaps built from the best free material on the internet. " +
+    "Reads, videos and docs in the order that teaches, with your progress tracked.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Jintu — learn anything, properly",
+    description: "Deep, free roadmaps built from the best free material on the internet.",
+    url: "/",
+    siteName: "Jintu",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image" },
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
@@ -28,13 +46,13 @@ export default async function LandingPage() {
       {/* ── hero ─────────────────────────────────────────────────────────── */}
       <section className="pt-16 pb-18 sm:pt-24">
         <h1 className="text-[30px] leading-tight font-medium text-balance text-ink-900 sm:text-[40px]">
-          Learn anything. Actually finish it.
+          Learn anything, properly.
         </h1>
 
         <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          Deep roadmaps built from the best free material on the internet —
-          reads, videos, docs, case studies — sequenced so you always know
-          what to open next. Free, forever.
+          An AI writes you a plan in five seconds and forgets it. These are
+          deep roadmaps — every day sequenced, every link opened by a person
+          before it shipped. Free, and readable without an account.
         </p>
 
         <form action="/learn" method="get" className="mt-8 flex max-w-xl gap-2" role="search">
@@ -56,6 +74,21 @@ export default async function LandingPage() {
             →
           </button>
         </form>
+
+        {/* One real example plus the open door — a chip list of one is a
+            recommendation, not a taxonomy. */}
+        <p className="mt-3 text-sm text-ink-500">
+          <Link
+            href="/learn/data-analyst"
+            className="text-brand-700 underline hover:text-brand-800"
+          >
+            Data analyst
+          </Link>
+          {" · "}
+          <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
+            Something else
+          </Link>
+        </p>
       </section>
 
       {/* ── start today ──────────────────────────────────────────────────── */}
@@ -93,9 +126,9 @@ export default async function LandingPage() {
           Built for two minutes at a time
         </h2>
         <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          Every node states how long it takes and how much data a video costs,
-          so a metro ride is a real session. Pick up exactly where you
-          stopped.
+          Every node says how long it takes before you open it, and a
+          reads-only mode for when you are on mobile data. Come back and it
+          remembers where you stopped.
         </p>
       </section>
 
@@ -105,8 +138,8 @@ export default async function LandingPage() {
           What keeps you going
         </h2>
         <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          A streak that survives a bad week, points for what you get through,
-          and spaced review so last month&apos;s module does not evaporate.
+          A streak that survives a bad week, points for what you actually get
+          through, and review that stops week three evaporating by week nine.
         </p>
       </section>
 
@@ -115,11 +148,15 @@ export default async function LandingPage() {
         <h2 id="not" className="text-lg font-medium text-ink-900">
           What this is not
         </h2>
-        <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          We do not promise you a job. We do not host anyone else&apos;s
-          content — every resource links out to the people who made it.
-          Points are for momentum, not a credential.
-        </p>
+        <div className="mt-4 max-w-[62ch] space-y-3 text-[15px] leading-[1.7] text-ink-600">
+          <p>We do not promise you a job.</p>
+          <p>
+            We do not host anyone else&apos;s work — every resource links out
+            to the person who made it, and nothing here was paywalled when a
+            human last checked.
+          </p>
+          <p>Points are for momentum, not a credential.</p>
+        </div>
       </section>
     </main>
   );
