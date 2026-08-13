@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   // Same open-redirect guard as the sign-in page. This one matters more, not
   // less: the link is in an email, so the URL is attacker-composable and
   // arrives somewhere a user has been trained to click.
-  const next = safeNextPath(searchParams.get("next") ?? undefined, "/dashboard");
+  const next = safeNextPath(searchParams.get("next") ?? undefined, "/learn");
 
   if (!tokenHash || !type) {
     return NextResponse.redirect(new URL("/join?error=link", request.url));
