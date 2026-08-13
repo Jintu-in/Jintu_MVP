@@ -99,25 +99,12 @@ begin
     raise exception 'Law 2: resources has content column(s): %. URLs and metadata only.', offenders;
   end if;
 
-  -- ── Published curriculum is immutable ─────────────────────────────────────
+  -- ── The catalogue really is public ────────────────────────────────────────
+  -- Reading a published roadmap requires no account: that is the SEO surface
+  -- and the trust argument. If the anon policy regresses, the funnel silently
+  -- closes and the only symptom is traffic that never converts.
   select string_agg(t.tbl, ', ' order by t.tbl) into offenders
-  from (values ('paths'), ('modules'), ('resources'), ('assignments')) as t(tbl)
-  where not exists (
-    select 1 from pg_trigger g
-    where g.tgrelid = ('public.' || t.tbl)::regclass
-      and not g.tgisinternal
-  );
-
-  if offenders is not null then
-    raise exception 'No immutability trigger on: %. A published path could be rewritten under a running cohort.', offenders;
-  end if;
-
-  -- ── The free curriculum really is public ──────────────────────────────────
-  -- §6 makes /learn/[track] the top of the funnel: indexable, no account.
-  -- If the anon grant regresses, the funnel silently closes and the only
-  -- symptom is traffic that never converts.
-  select string_agg(t.tbl, ', ' order by t.tbl) into offenders
-  from (values ('tracks'), ('paths'), ('modules'), ('resources')) as t(tbl)
+  from (values ('roadmaps'), ('modules'), ('nodes'), ('resources')) as t(tbl)
   where not exists (
     select 1
     from pg_policy p
@@ -128,7 +115,7 @@ begin
   );
 
   if offenders is not null then
-    raise exception 'Published curriculum is not readable by anon on: %.', offenders;
+    raise exception 'Published catalogue is not readable by anon on: %.', offenders;
   end if;
 
   raise notice 'All schema guarantees hold.';

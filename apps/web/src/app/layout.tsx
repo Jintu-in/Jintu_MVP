@@ -16,7 +16,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono", display: "swap" });
 
 const DESCRIPTION =
-  "Type what you want to learn. Free curricula, graded artifacts, and a profile that shows what you can actually do.";
+  "Deep, free roadmaps for any subject — curated reads, videos and docs in the order that teaches, with your progress tracked.";
 
 export const metadata: Metadata = {
   title: {

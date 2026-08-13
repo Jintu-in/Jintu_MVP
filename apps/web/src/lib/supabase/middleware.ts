@@ -9,7 +9,7 @@ import { getPublicEnv } from "@/lib/env";
  * checks `getUser()`, and RLS decides what any of them can read. Its job is to
  * send someone to sign-in instead of showing them an empty page.
  */
-const PROTECTED = ["/onboarding", "/account", "/dashboard", "/week", "/review", "/feedback"];
+const PROTECTED = ["/onboarding", "/account", "/profile"];
 
 /**
  * Refreshes the auth session on every request and gates the private routes.

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
  * the Terms, per docs/LEGAL.md §2.3.
  *
  * The version string below is the same constant written to
- * waitlist_signups.notice_version, so every consent row can be traced to the
+ * consents.notice_version, so every consent row can be traced to the
  * exact text the person read. If you change anything material on this page,
  * bump NOTICE_VERSION in @jintu/contracts. Do not edit a published version
  * in place.
@@ -29,7 +29,8 @@ export default function PrivacyPage() {
       <div className="mt-10 space-y-8 text-pretty text-ink-700">
         <Section title="Who we are">
           <p>
-            Jintu is a free, self-paced learning platform with verified points. We are the data
+            Jintu is a free, self-paced roadmap platform for learning from
+            curated free content. We are the data
             fiduciary for the information described here. To reach us about
             anything on this page, write to{" "}
             <a className="underline" href="mailto:privacy@jintu.in">
@@ -42,10 +43,10 @@ export default function PrivacyPage() {
         <Section title="You must be 18 or older">
           <p>
             Jintu is not open to anyone under 18, and we do not knowingly
-            collect information about children. Our product scores how ready
-            you are for a role, which is a form of profiling, and we are not
-            permitted to do that to a minor. If you tell us you are under 18,
-            we will not sign you up.
+            collect information about children. Our product tracks your
+            progress, streaks and points over time, which is a form of
+            profiling, and we are not permitted to do that to a minor. If you
+            tell us you are under 18, we will not sign you up.
           </p>
         </Section>
 
@@ -57,23 +58,19 @@ export default function PrivacyPage() {
               afterwards if you prefer one; the code always works.
             </Item>
             <Item term="Your mobile number">
-              To reach you about your track: a submission you have
-              missed, a peer review waiting on you. It is not how you sign in.
-              Reminders on WhatsApp specifically are a separate choice below,
-              and declining them changes nothing about your place.
+              To reach you with the one daily reminder, if you turn reminders
+              on. It is not how you sign in, and declining reminders changes
+              nothing about what you can use.
             </Item>
             <Item term="Your name and college (optional)">
               To address you properly and to group you with the right batch.
               You can leave both blank.
             </Item>
-            <Item term="Your submissions and the work you produce">
-              To grade it, to route it for peer review, and to build your
-              readiness profile. Peer reviewers see the work; they do not see
-              who wrote it.
-            </Item>
-            <Item term="Your readiness scores">
-              This is the product. It is profiling, which is why the 18+ rule
-              exists.
+            <Item term="Your progress">
+              Which nodes you finished, what you saved for later, your streak,
+              your points and the review cards you write. This is the product
+              working; it is also profiling, which is why the 18+ rule exists.
+              It is private to you by default.
             </Item>
           </dl>
         </Section>
@@ -85,8 +82,8 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              <strong className="font-medium">WhatsApp reminders</strong> —
-              deadlines, missed submissions, peer reviews waiting on you.
+              <strong className="font-medium">Reminders</strong> — one
+              well-timed daily nudge, on the channel and at the time you pick.
             </li>
             <li>
               <strong className="font-medium">Product analytics</strong> — how
@@ -94,8 +91,8 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="font-medium">A public profile</strong> —
-              publishing your proof-of-readiness page at a shareable link.
-              Off unless you turn it on.
+              publishing a page about your learning at a shareable link, if
+              we ever build one. Off unless you turn it on.
             </li>
           </ul>
         </Section>
@@ -107,27 +104,24 @@ export default function PrivacyPage() {
               Publish an outcome — an interview, an offer — without documentary
               evidence and your written permission, separately given.
             </li>
-            <li>
-              Show your identity to a peer reviewer alongside your work.
-            </li>
             <li>Give your contact details to a college without telling you.</li>
           </ul>
         </Section>
 
         <Section title="Where it is stored">
           <p>
-            In a database hosted in Mumbai. Some of the services we rely on to
-            send messages, watch for errors, and grade written work operate
-            outside India; we send them only what they need to do that job.
+            In a database hosted in Mumbai. Some of the services we rely on
+            to send messages and watch for errors operate outside India; we
+            send them only what they need to do that job.
           </p>
         </Section>
 
         <Section title="How long we keep it">
           <p>
-            Waitlist entries from the earlier cohort model: until you ask us to
-            remove you. Your track record and the work you submitted: while your account exists, and afterwards only where we
-            are required to keep it — for example, records that substantiate a
-            claim we have made publicly with your consent.
+            Your progress, streaks, points and review cards: while your
+            account exists. Consent records: kept after withdrawal, because
+            the record that consent existed is exactly what the law asks us
+            to be able to show.
           </p>
         </Section>
 

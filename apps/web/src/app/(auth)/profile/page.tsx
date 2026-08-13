@@ -3,18 +3,16 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProfileForm } from "@/components/profile-form";
 import { initialsFor } from "@/lib/session";
-import { getMySprint } from "@/lib/sprint";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * Who you are, as we hold it.
  *
- * Distinct from the two pages either side of it, and the split is worth
- * stating because three pages about "you" invites a fourth by accident:
+ * Distinct from the page beside it, and the split is worth stating because
+ * two pages about "you" invites a third by accident:
  *
  *   /profile   what we store about you, and the ones you can correct
  *   /account   what you have agreed to, and how to get it all back or deleted
- *   /dashboard the work due this week
  *
  * noindex, like every page in this group. It renders a name and a phone
  * number.
@@ -43,10 +41,6 @@ export default async function ProfilePage() {
   // No profile means the 18+ confirmation was never given, so there is nothing
   // to show and nothing we are permitted to hold. Same gate as /account.
   if (!profile) redirect("/onboarding");
-
-  // Not enrolled is a normal state during the concierge phase, so this is
-  // allowed to be null rather than treated as an error.
-  const sprint = await getMySprint();
 
   const initials = initialsFor({ fullName: profile.full_name, email: user.email ?? null });
 
@@ -104,34 +98,23 @@ export default async function ProfilePage() {
         </p>
       </section>
 
-      <section className="mt-10" aria-labelledby="my-track">
-        <h2 id="my-track" className="text-lg font-medium text-ink-900">
-          Your track
+      <section className="mt-10" aria-labelledby="my-roadmaps">
+        <h2 id="my-roadmaps" className="text-lg font-medium text-ink-900">
+          Your roadmaps
         </h2>
-        {sprint ? (
-          <div className="mt-4 rounded-card border border-ink-100 bg-white p-5">
-            <p className="font-medium text-ink-900">{sprint.trackTitle}</p>
-            <Link
-              href="/dashboard"
-              className="mt-3 inline-block text-sm text-brand-800 underline hover:text-brand-900"
-            >
-              Go to this week&rsquo;s work
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-4 rounded-card border border-ink-100 bg-ink-50 p-5">
-            <p className="text-pretty text-ink-700">
-              You have not started a track yet. Pick one — everything is
-              free and self-paced, and starting takes one press.
-            </p>
-            <Link
-              href="/learn"
-              className="mt-3 inline-block text-sm text-brand-800 underline hover:text-brand-900"
-            >
-              Read the curriculum
-            </Link>
-          </div>
-        )}
+        <div className="mt-4 rounded-card border border-ink-100 bg-ink-50 p-5">
+          <p className="text-pretty text-ink-700">
+            The first roadmaps are being curated now. When they arrive, the
+            ones you follow — and your progress through them — will live
+            here.
+          </p>
+          <Link
+            href="/learn"
+            className="mt-3 inline-block text-sm text-brand-800 underline hover:text-brand-900"
+          >
+            See what&rsquo;s coming
+          </Link>
+        </div>
       </section>
 
       <section className="mt-10 rounded-card border border-ink-100 bg-white p-6" aria-labelledby="more">
@@ -139,8 +122,7 @@ export default async function ProfilePage() {
           Consents, and getting your data back
         </h2>
         <p className="mt-2 text-pretty text-ink-600">
-          What you have agreed to — WhatsApp reminders, analytics, your public
-          profile — lives on the{" "}
+          What you have agreed to — reminders, analytics — lives on the{" "}
           <Link href="/account" className="underline hover:text-brand-800">
             account page
           </Link>

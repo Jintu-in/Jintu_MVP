@@ -40,10 +40,10 @@ export default function RefundsPage() {
           what went wrong anyway, because early on we can usually fix it.
         </p>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-          The curriculum, the grading, the points and the profile are free, so
-          none of them ever needs refunding. This window will cover whatever a
-          paid product turns out to include, and this page will name it before
-          anything is sold.
+          The roadmaps, the progress tracking, the streaks and the points are
+          free, so none of them ever needs refunding. This window will cover
+          whatever a paid product turns out to include, and this page will
+          name it before anything is sold.
         </p>
       </section>
 

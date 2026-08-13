@@ -16,9 +16,9 @@ export const dynamic = "force-dynamic";
 
 const PURPOSES: { name: OptionalPurpose; label: string; detail: string }[] = [
   {
-    name: "whatsapp_updates",
-    label: "WhatsApp reminders",
-    detail: "Deadlines, missed submissions, peer reviews waiting on you.",
+    name: "reminders",
+    label: "Daily reminder",
+    detail: "One well-timed nudge a day, on the channel and at the time you pick.",
   },
   {
     name: "analytics",
@@ -27,8 +27,8 @@ const PURPOSES: { name: OptionalPurpose; label: string; detail: string }[] = [
   },
   {
     name: "public_profile",
-    label: "Public proof-of-readiness profile",
-    detail: "A shareable page at jintu.in/p/… . Off unless you turn it on.",
+    label: "Public profile",
+    detail: "A shareable page about your learning, if we build one. Off unless you turn it on.",
   },
 ];
 
@@ -99,9 +99,9 @@ export default async function AccountPage() {
         </div>
 
         <p className="mt-4 text-sm text-ink-500">
-          Running the sprint itself — enrolment, submissions, grading, peer
-          review — is not on this list because it is what the account is for,
-          not an extra you can switch off. Closing the account is how you stop
+          The service itself — tracking your progress, streaks and points —
+          is not on this list because it is what the account is for, not an
+          extra you can switch off. Closing the account is how you stop
           that.{" "}
           {noticeVersion ? (
             <>

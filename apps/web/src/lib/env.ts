@@ -92,8 +92,8 @@ export function getPublicEnv() {
       "files from the app directory — one at the monorepo root is read by",
       "nothing.",
       "",
-      "The marketing pages at / and /privacy do not need this; only /learn",
-      "and the waitlist form talk to the database.",
+      "The marketing pages at / and /privacy do not need this; only the",
+      "signed-in pages talk to the database.",
     ].join("\n"),
   );
 }
@@ -124,18 +124,13 @@ export function getSupabaseEnvStatus() {
 }
 
 /**
- * The service-role credentials, for the two things that cannot run as the
- * signed-in student: writing a grade, and calling the loop functions that
- * read several students' rows at once.
+ * The service-role credentials, for work that cannot run as the signed-in
+ * user: awarding points, maintaining streaks, writing link-check results.
  *
- * Absence is a supported state and returns null rather than throwing. Without
- * it submissions land and simply stay ungraded, which is what the dashboard
- * already renders and what every environment without the key — CI, a fresh
- * clone, a preview deploy — should do. A build that fell over because grading
- * was not configured would be a worse outcome than one that does not grade.
- *
- * Nothing here is NEXT_PUBLIC_, and it must never become so: this key bypasses
- * every RLS policy in the database.
+ * Absence is a supported state and returns null rather than throwing —
+ * CI, a fresh clone and a preview deploy all run without it. Nothing here is
+ * NEXT_PUBLIC_, and it must never become so: this key bypasses every RLS
+ * policy in the database.
  */
 export function getServiceEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -146,17 +141,6 @@ export function getServiceEnv() {
 
   if (!url || !secret) return null;
   return { url, secretKey: secret };
-}
-
-/**
- * The Anthropic key for rubric_ai — the only paid call in the product.
- * Absence is a supported state, same contract as getServiceEnv: submissions
- * whose rubric wants a model land as needs_review and a human grades them.
- * Server-only, never NEXT_PUBLIC_: this key is money.
- */
-export function getAnthropicEnv() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  return apiKey ? { apiKey } : null;
 }
 
 /**

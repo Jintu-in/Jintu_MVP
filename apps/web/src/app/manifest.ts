@@ -6,10 +6,10 @@ import type { MetadataRoute } from "next";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Jintu — Placement Sprints",
+    name: "Jintu — Learn anything",
     short_name: "Jintu",
-    description: "Six weeks. Six artifacts. One proof-of-readiness profile.",
-    // The curriculum, not the dashboard: an installed app should open on
+    description: "Deep, free roadmaps for any subject, with your progress tracked.",
+    // The catalogue, not a dashboard: an installed app should open on
     // something that works before you have signed in, and /learn is the only
     // full-value screen that needs no session.
     start_url: "/learn",

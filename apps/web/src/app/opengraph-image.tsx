@@ -15,7 +15,7 @@ import { ImageResponse } from "next/og";
  */
 
 export const alt =
-  "Jintu — learn anything, prove you actually did. Free, self-paced, every submission checked.";
+  "Jintu — one place to learn anything, properly. Free roadmaps, curated links, your progress tracked.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -48,14 +48,14 @@ export default async function Image() {
         </div>
 
         <div style={{ display: "flex", fontSize: 66, color: "#231f20", lineHeight: 1.15 }}>
-          Six weeks. Six artifacts.
+          One place to learn
         </div>
         <div style={{ display: "flex", fontSize: 66, color: "#231f20", lineHeight: 1.15 }}>
-          One profile that proves it.
+          anything, properly.
         </div>
 
         <div style={{ display: "flex", fontSize: 30, color: "#706d6e", marginTop: 36 }}>
-          Free · self-paced · every submission checked
+          Free · self-paced · every link curated by hand
         </div>
       </div>
     ),

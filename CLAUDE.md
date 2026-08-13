@@ -1,38 +1,49 @@
 # Jintu — project rules
 
-Jintu sells accountability and proof, not content. Since v3 (see V3.md)
-it is a free, open, self-paced platform: anyone signs in, learns anything,
-earns points only for submissions that something checked, and builds a
-public proof-of-readiness profile. No cohorts, no ₹999 — monetization
-comes later as pay-to-verify. The rule that replaces the cohort rule:
-**no point is ever awarded for consumption.**
+Jintu is a free learning AGGREGATOR and ROADMAP platform: one place to
+find and follow deep, comprehensive roadmaps for any subject, built
+entirely from curated third-party free content — reads, embedded YouTube
+videos, official docs, case studies — sequenced into modules and nodes,
+with progress tracking, streaks and points for momentum. Primary use is
+MOBILE, 2–10 minute sessions; the only question the UI must answer
+instantly is "what do I tap now."
+
+There is no grading, no verification, no tiers, no votes, no credential.
+That product was deliberately deleted (August 2026 pivot — see the
+baseline in supabase/migrations/). Do not reintroduce it, "as an option"
+or otherwise. Getting through a node IS the progress event.
 
 ## Hard invariants — never violate
 
-1. **Never store or transform third-party content.** We store URLs and
-   metadata only. No transcript columns, no summary columns, no
-   AI-generated summaries of other people's articles, no text-to-speech,
-   no EPUB/PDF bundling. YouTube renders only via the official IFrame
-   embed and is never gated behind a quiz.
+1. **Never store or re-host third-party content.** URLs and metadata
+   only. No transcript columns, no summaries of other people's articles,
+   no TTS of third-party text, no offline bundling. This is the line
+   between an aggregator and an infringer, and Section 79 safe harbour
+   depends on it. YouTube renders only via the official IFrame Player on
+   the nocookie domain, click-to-load, autoplay off, branding kept, ads
+   never blocked, playback never gated behind an action.
 
-2. **No unbounded AI consumption.** Every LLM call attaches to one
-   discrete graded submission and writes a row to `ai_usage` with its
-   cost in paise. No chatbot, no "ask anything" box, no streaming
-   assistant. If a feature can be invoked unlimited times, it does not ship.
+2. **Never publish an unvalidated URL.** Anything a model suggested is
+   `needs_verification` until a person (or the link checker) has seen it
+   resolve and the title match. Roughly a fifth of LLM-suggested
+   references are fabricated, and a dead link on the main surface is
+   worse than a missing one. Show estimated data size on videos —
+   users are on metered mobile data — and lazy-load every embed.
 
 3. **18+ only.** Age-gate at signup. Consent is granular and
    purpose-specific — separate rows in `consents`, never one bundled
-   checkbox. DPDP Rule 10 prohibits profiling minors and our readiness
-   scoring is profiling.
+   checkbox. DPDP Rule 10 prohibits profiling minors, and tracking
+   progress, streaks and points is profiling.
 
 4. **Never promise employment.** No "guaranteed", "100% placement",
    "job assured", or any success statistic we cannot evidence with
    documentation and written consent. This is a legal constraint under
    the CCPA coaching-sector guidelines, not a style preference.
 
-5. **Consistency points never become proof points.** Two separate
-   ledgers. `readiness_score` reads only from `ledger = 'proof'`,
-   enforced in the view definition.
+5. **Points are for momentum, not a credential.** One ledger, awarded
+   server-side only for genuine node progress and completed reviews, and
+   the UI says so. No readiness scores, no evidenced points, no
+   credential language — ever.
 
 ## Design system
 
@@ -93,8 +104,9 @@ Two knowing deltas, kept deliberately:
   `font-bold` (700) are both off-limits.
 
 The invariants are enforced by CI guards where a guard can reach them:
-`pnpm embeds` (rule 1), `ai_usage`/`budget_guards` tables ahead of any AI
-call and `pnpm ai:verify` proving the spend gate cannot leak (rule 2),
-`pnpm db:simulate` asserts the 18+ CHECK and per-purpose consents
-(rule 3), `pnpm claims` (rule 4), `pnpm points:verify` asserts the
-proof_totals wall (rule 5).
+`pnpm embeds` and `pnpm schema:rules` (rule 1 — nocookie-only embeds, no
+content columns on tables that point at third-party URLs), the
+`needs_verification` column and `link_checks` table carry rule 2's state,
+`pnpm baseline:verify` asserts the 18+ CHECK, per-purpose consents,
+private-by-default progress and that clients cannot mint points (rules 3
+and 5), `pnpm claims` (rule 4).

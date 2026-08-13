@@ -37,7 +37,6 @@ const DEFAULT_TARGETS = [
   "packages/notify",
   "supabase/migrations",
   "supabase/seed.sql",
-  "scripts/generate-courses.mjs",
 ];
 
 const ABSOLUTE = [

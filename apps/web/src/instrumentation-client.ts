@@ -4,7 +4,7 @@ import { isSentryEnabled, sentryOptions } from "@/lib/sentry";
 if (isSentryEnabled()) {
   Sentry.init({
     ...sentryOptions(),
-    // Session replay would record what a student types into the waitlist
+    // Session replay would record what a person types into the onboarding
     // form, including their phone number. Off, and it stays off until there
     // is a consent purpose that covers it.
     replaysSessionSampleRate: 0,

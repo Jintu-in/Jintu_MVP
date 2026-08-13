@@ -27,17 +27,17 @@ const serwist = new Serwist({
 });
 
 /**
- * Never serve a cached page for anything behind a session or a payment.
+ * Never serve a cached page for anything behind a session.
  *
  * The default runtime cache would happily hand a second person on a shared
- * phone the previous student's dashboard, or show a stale readiness score as
- * if it were current. Shared devices are normal in the market this is built
- * for, so this is a correctness rule rather than a hardening nicety.
+ * phone the previous user's account page, or show a stale streak as if it
+ * were current. Shared devices are normal in the market this is built for,
+ * so this is a correctness rule rather than a hardening nicety.
  *
- * The free curriculum is the opposite case: it is identical for everyone and
- * is exactly what should still work on a train.
+ * The public catalogue is the opposite case: it is identical for everyone
+ * and is exactly what should still work on a train.
  */
-const PRIVATE_PATHS = /^\/(account|onboarding|dashboard|join)(\/|$)/;
+const PRIVATE_PATHS = /^\/(account|onboarding|profile|join)(\/|$)/;
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);

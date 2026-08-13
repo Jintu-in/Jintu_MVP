@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   OPTIONAL_PURPOSES,
+  normaliseIndianMobile,
   onboardingInput,
   otpRequestInput,
   otpVerifyInput,
@@ -16,9 +17,29 @@ const validOnboarding = {
   batchYear: "2027",
   isAdultConfirmed: true,
   analytics: false,
-  whatsapp_updates: false,
+  reminders: false,
   public_profile: false,
 };
+
+describe("normaliseIndianMobile", () => {
+  it.each([
+    ["9876543210", "+919876543210"],
+    ["98765 43210", "+919876543210"],
+    ["+91 98765-43210", "+919876543210"],
+    ["919876543210", "+919876543210"],
+    ["09876543210", "+919876543210"],
+    ["+919876543210", "+919876543210"],
+  ])("normalises %s", (input, expected) => {
+    expect(normaliseIndianMobile(input)).toBe(expected);
+  });
+
+  it("leaves input it cannot confidently normalise alone", () => {
+    // Returned unchanged so the schema rejects it, rather than being coerced
+    // into a number belonging to someone else.
+    expect(normaliseIndianMobile("12345")).toBe("12345");
+    expect(normaliseIndianMobile("+14155550123")).toBe("+14155550123");
+  });
+});
 
 describe("otpRequestInput", () => {
   it("accepts an email address", () => {

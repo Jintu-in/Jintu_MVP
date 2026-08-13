@@ -53,3 +53,5 @@ supabase/.bundle/
 # markdown; a stray PDF here once went into a commit by accident.
 docs/*.pdf
 docs/*.zip
+supabase/migrations.old/
+docs/tracks/

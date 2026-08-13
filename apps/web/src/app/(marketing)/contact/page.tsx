@@ -35,7 +35,7 @@ export default function ContactPage() {
       <div className="mt-8 divide-y divide-ink-100 border-y border-ink-100">
         <Row
           label="Anything about the product"
-          detail="Tracks, points, your profile, a dead link, a wrong rubric."
+          detail="Roadmaps, points, your account, a dead link, a resource that misleads."
         >
           <a className="underline hover:text-brand-800" href="mailto:hello@jintu.in">
             hello@jintu.in

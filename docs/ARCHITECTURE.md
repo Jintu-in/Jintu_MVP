@@ -1,7 +1,13 @@
-> **Superseded in part by [../V3.md](../V3.md)** — the open platform. The
-> schema, RLS and verification design below remain the reference; the cohort
-> business model, Razorpay checkout and cohort phases do not. Where this file
-> says cohort or ₹999, V3.md wins.
+> **SUPERSEDED (August 2026 pivot).** Jintu is now a free roadmap/aggregator
+> platform — curated third-party content sequenced into roadmaps → modules →
+> nodes, with progress, streaks and points. Everything below about cohorts,
+> grading, verification, tiers, votes, two point ledgers and readiness is the
+> OLD product and was deleted. What still holds: the three laws in §0 as they
+> apply to third-party content, DPDP and claims; the design system; the RLS
+> discipline in §7 (enforced by scripts/assert-schema-rules.mjs). The living
+> schema reference is `supabase/migrations/0001–0005` plus CLAUDE.md. This
+> file is kept for the parts of its reasoning that survive; do not build from
+> its product sections.
 
 # Jintu — Architecture & Phased Build Plan
 
