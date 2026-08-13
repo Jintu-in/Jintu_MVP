@@ -39,6 +39,7 @@ export type RoadmapNode = {
   position: number;
   title: string;
   summary: string | null;
+  learningObjectives: string[];
   estMinutes: number;
   points: number;
   difficulty: "intro" | "core" | "stretch" | null;
@@ -146,7 +147,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
          modules (
            id, position, title, week_range, objective, deliverable, est_hours,
            nodes (
-             id, position, title, summary, est_minutes, points, difficulty, is_optional,
+             id, position, title, summary, learning_objectives, est_minutes, points, difficulty, is_optional,
              resources (
                id, position, type, title, url, source_name, author,
                youtube_video_id, duration_sec, est_size_mb, editor_note
@@ -185,6 +186,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
             position: n.position,
             title: n.title,
             summary: n.summary,
+            learningObjectives: n.learning_objectives ?? [],
             estMinutes: n.est_minutes,
             points: n.points,
             difficulty: n.difficulty,

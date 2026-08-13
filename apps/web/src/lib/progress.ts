@@ -29,3 +29,27 @@ export async function getMyProgress(nodeIds: string[]): Promise<Map<string, Node
 
   return new Map((data ?? []).map((r) => [r.node_id, r.status as NodeStatus]));
 }
+
+/**
+ * Which of these resources the signed-in user has saved (and not yet
+ * consumed — a consumed save is done doing its job).
+ * Null when nobody is signed in.
+ */
+export async function getMySaves(resourceIds: string[]): Promise<Set<string> | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || resourceIds.length === 0) return user ? new Set() : null;
+
+  const { data, error } = await retryRead(() =>
+    supabase
+      .from("saved_resources")
+      .select("resource_id")
+      .in("resource_id", resourceIds)
+      .is("consumed_at", null),
+  );
+  if (error) throw describeSupabaseError("reading your saves", error);
+
+  return new Set((data ?? []).map((r) => r.resource_id));
+}
