@@ -40,6 +40,7 @@ export type RoadmapNode = {
   title: string;
   summary: string | null;
   estMinutes: number;
+  points: number;
   difficulty: "intro" | "core" | "stretch" | null;
   isOptional: boolean;
   resources: NodeResource[];
@@ -83,6 +84,27 @@ export type RoadmapSummary = {
 
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
 
+/**
+ * The resource row as PostgREST returns it. Declared rather than inferred:
+ * the nested select is now deep enough that supabase-js's query parser
+ * gives up on the innermost array and hands back `any`, which noImplicitAny
+ * then rejects. The columns here mirror the select string below —
+ * change one, change both.
+ */
+type RawResource = {
+  id: string;
+  position: number;
+  type: ResourceType;
+  title: string;
+  url: string;
+  source_name: string;
+  author: string | null;
+  youtube_video_id: string | null;
+  duration_sec: number | null;
+  est_size_mb: number | string | null;
+  editor_note: string | null;
+};
+
 /** Every published roadmap, for the catalogue. */
 export async function listPublishedRoadmaps(): Promise<RoadmapSummary[]> {
   const supabase = createPublicClient();
@@ -124,7 +146,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
          modules (
            id, position, title, week_range, objective, deliverable, est_hours,
            nodes (
-             id, position, title, summary, est_minutes, difficulty, is_optional,
+             id, position, title, summary, est_minutes, points, difficulty, is_optional,
              resources (
                id, position, type, title, url, source_name, author,
                youtube_video_id, duration_sec, est_size_mb, editor_note
@@ -164,9 +186,10 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
             title: n.title,
             summary: n.summary,
             estMinutes: n.est_minutes,
+            points: n.points,
             difficulty: n.difficulty,
             isOptional: n.is_optional,
-            resources: n.resources
+            resources: (n.resources as RawResource[])
               .map((res) => ({
                 id: res.id,
                 position: res.position,

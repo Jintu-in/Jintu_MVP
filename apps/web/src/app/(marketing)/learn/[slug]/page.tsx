@@ -60,6 +60,7 @@ function nodeMeta(node: RoadmapNode): string {
   if (reads) parts.push(`${reads} ${reads === 1 ? "read" : "reads"}`);
   if (videos) parts.push(`${videos} ${videos === 1 ? "video" : "videos"}`);
   parts.push(`${node.estMinutes} min`);
+  parts.push(`${node.points} pts`);
   return parts.join(" · ");
 }
 

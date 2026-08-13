@@ -89,10 +89,15 @@ check(
   (await asAnon("select 1 from public.resources")).length === specCounts.resources,
   "anon reads the full tree without an account",
 );
+// The metered-data rule bites on EMBEDDABLE videos: a specific video has a
+// knowable cost and must declare it. A channel pointer ("search this channel
+// for the current best version") has no single duration — demanding one
+// would force a fabricated number, which is the worse failure.
 const sized = await one(
-  `select count(*)::int n from public.resources where type = 'video' and (duration_sec is null or est_size_mb is null)`,
+  `select count(*)::int n from public.resources
+   where youtube_video_id is not null and (duration_sec is null or est_size_mb is null)`,
 );
-check(sized.n === 0, "every video carries duration and estimated size");
+check(sized.n === 0, "every embeddable video carries duration and estimated size");
 
 console.log("\n── deterministic re-paste ──────────────────────────────────");
 await db.exec(gen("--assume-checked"));
