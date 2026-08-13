@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   NOTICE_VERSION,
@@ -12,7 +13,44 @@ import {
   setPasswordInput,
 } from "@jintu/contracts";
 import { actionClient, UserFacingError } from "@/lib/safe-action";
+import {
+  emailRegistered,
+  existsCheckLimited,
+  passwordBackoffMinutes,
+  record,
+} from "@/lib/auth-limits";
 import { createClient } from "@/lib/supabase/server";
+
+/**
+ * Step 0 of the v3 flow (AUTH.md) — which door does this email get?
+ *
+ * One field, one Continue, and the system decides: an unknown address gets
+ * the code flow, a known one gets the password screen. The enumeration this
+ * reveals is a deliberate, documented tradeoff, contained three ways: the
+ * probe runs through a service-role RPC no client can call, this action
+ * rate-limits (6/email/hour, 20/IP/hour) BEFORE probing, and every check is
+ * recorded for abuse review.
+ *
+ * When the answer is unknowable (no service key, RPC failure) the flow
+ * degrades to `registered: false` — the code path — which is safe for an
+ * existing account too: a code sent to a registered address still verifies,
+ * and verifyOtp already handles both token types.
+ */
+export const checkEmail = actionClient
+  .inputSchema(otpRequestInput)
+  .action(async ({ parsedInput }) => {
+    const email = parsedInput.email;
+
+    if (await existsCheckLimited(email)) {
+      throw new UserFacingError(
+        "Too many tries for now. Wait a little and try again.",
+      );
+    }
+    await record("exists_check", email);
+
+    const registered = await emailRegistered(email);
+    return { registered: registered === true };
+  });
 
 /**
  * Step 1 — send a code.
@@ -242,7 +280,18 @@ export async function signOut() {
 export const signInWithPassword = actionClient
   .inputSchema(passwordSignInInput)
   .action(async ({ parsedInput }) => {
-    const supabase = await createClient();
+    // Backoff before the attempt, not after: five failures in the hour and
+    // the sixth try waits two minutes, doubling to a cap of thirty. The
+    // window is per-email, so a stranger hammering an address slows down
+    // without locking its real owner out forever.
+    const wait = await passwordBackoffMinutes(parsedInput.email);
+    if (wait > 0) {
+      throw new UserFacingError(
+        `Too many tries. Wait ${wait} ${wait === 1 ? "minute" : "minutes"} and try again, or reset your password below.`,
+      );
+    }
+
+    const supabase = await createClient({ remember: parsedInput.remember !== false });
 
     const { error } = await supabase.auth.signInWithPassword({
       email: parsedInput.email,
@@ -251,15 +300,13 @@ export const signInWithPassword = actionClient
 
     if (error) {
       console.error("[auth] password sign-in failed", error.status, error.code);
+      await record("password_fail", parsedInput.email);
 
-      // One message for a wrong password, an unknown address, and an account
-      // with no password set. Distinguishing them turns this form into an
-      // oracle for which email addresses have accounts here — and this is a
-      // site whose users are job-seeking students, which is not a list worth
-      // letting anybody enumerate.
-      throw new UserFacingError(
-        "That email and password do not match. Try again, or ask for a code instead.",
-      );
+      // AUTH.md: once you are on the password screen, a failure is just
+      // "that did not match" — never "wrong password" versus "no such
+      // account". The screen already knows the account exists; the message
+      // must not confirm anything more than that to whoever is typing.
+      throw new UserFacingError("That did not match. Try again, or reset your password.");
     }
 
     return { signedIn: true };
@@ -279,7 +326,8 @@ export const signInWithPassword = actionClient
 export const setPassword = actionClient
   .inputSchema(setPasswordInput)
   .action(async ({ parsedInput }) => {
-    const supabase = await createClient();
+    const remember = parsedInput.remember !== false;
+    const supabase = await createClient({ remember });
 
     const {
       data: { user },
@@ -310,5 +358,83 @@ export const setPassword = actionClient
       );
     }
 
+    // The session cookies were written at OTP verification, before the
+    // stay-signed-in choice existed. If the choice was "no", re-issue them
+    // through the session-cookie client so the browser drops them on close.
+    if (!remember) await supabase.auth.refreshSession();
+
     return { set: true };
+  });
+
+/**
+ * Forgot password, step 1 — the email.
+ *
+ * The response is identical whether or not the address has an account. The
+ * entry screen already reveals existence (the documented tradeoff), but this
+ * form is reachable directly, and there is no UX cost to being quiet here.
+ *
+ * The redirect target must be in config.toml's additional_redirect_urls and
+ * the dashboard's Redirect URLs list, or Supabase silently sends the user to
+ * the site root with an error fragment instead.
+ */
+export const requestPasswordReset = actionClient
+  .inputSchema(otpRequestInput)
+  .action(async ({ parsedInput }) => {
+    if (await existsCheckLimited(parsedInput.email)) {
+      throw new UserFacingError("Too many tries for now. Wait a little and try again.");
+    }
+    await record("exists_check", parsedInput.email);
+
+    const supabase = await createClient();
+    const h = await headers();
+    const proto = h.get("x-forwarded-proto") ?? "https";
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const { error } = await supabase.auth.resetPasswordForEmail(parsedInput.email, {
+      redirectTo: `${proto}://${host}/auth/reset`,
+    });
+    if (error) {
+      // Logged for the operator; the user still gets the neutral sentence —
+      // failing loudly here would leak exactly what the neutral copy hides.
+      console.error("[auth] reset email failed", error.status, error.code, error.message);
+    }
+
+    return { sent: true };
+  });
+
+/**
+ * Forgot password, step 2 — the new password, inside the recovery session
+ * the emailed link established. Every OTHER session is revoked on success:
+ * a reset after a suspected compromise that left the attacker signed in
+ * would otherwise be theatre.
+ */
+export const completePasswordReset = actionClient
+  .inputSchema(setPasswordInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new UserFacingError(
+        "That reset link has expired or was already used. Ask for a new one.",
+      );
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: parsedInput.password,
+      data: { has_password: true },
+    });
+    if (error) {
+      throw new UserFacingError(
+        error.message || "We could not set that password. Try a different one.",
+      );
+    }
+
+    const { error: revokeError } = await supabase.auth.signOut({ scope: "others" });
+    if (revokeError) {
+      console.error("[auth] revoking other sessions failed", revokeError.message);
+    }
+
+    return { reset: true };
   });
