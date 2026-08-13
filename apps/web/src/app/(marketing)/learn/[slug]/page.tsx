@@ -105,13 +105,13 @@ export default async function RoadmapPage({
       {/* ── continue ──────────────────────────────────────────────────────── */}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
         {nextNode ? (
-          <a
-            href={`#node-${nextNode.id}`}
+          <Link
+            href={`/learn/${slug}/${nextNode.id}`}
             className="inline-flex h-12 items-center justify-center rounded-lg bg-brand-700 px-6 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
           >
             {doneTotal > 0 ? "Continue — " : "Start — "}
             {nextNode.title}
-          </a>
+          </Link>
         ) : (
           <p className="text-[15px] font-medium text-ink-900">
             Every node done. That is the whole roadmap.
@@ -196,12 +196,15 @@ export default async function RoadmapPage({
                           {node.position}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block text-[15px] leading-snug text-ink-900">
+                          <Link
+                            href={`/learn/${slug}/${node.id}`}
+                            className="block text-[15px] leading-snug text-ink-900 hover:text-brand-800 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-brand-700"
+                          >
                             {node.title}
                             {node.isOptional ? (
                               <span className="ml-2 text-[13px] text-ink-500">optional</span>
                             ) : null}
-                          </span>
+                          </Link>
                           <span className="mt-0.5 block font-mono text-[13px] text-ink-500">
                             {nodeMeta(node)}
                             {!matches ? ` — no ${missingLabel} in this node` : ""}
