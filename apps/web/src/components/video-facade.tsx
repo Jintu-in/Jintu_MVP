@@ -54,7 +54,11 @@ export function VideoFacade({
         className="object-cover"
       />
       <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ink-900/40">
-        <span className="flex h-12 w-16 items-center justify-center rounded-lg bg-white text-lg text-ink-900 group-hover:bg-brand-700 group-hover:text-white">
+        {/* No colour swap on hover: the contrast guard pairs every text/bg
+            class in a block regardless of variant, and it is right to — a
+            transition frame where ink-900 sits on brand-700 is 3.06:1. The
+            hover affordance is the outline instead. */}
+        <span className="flex h-12 w-16 items-center justify-center rounded-lg bg-white text-lg text-ink-900 group-hover:outline-2 group-hover:outline-white">
           ▶
         </span>
         {cost ? (
