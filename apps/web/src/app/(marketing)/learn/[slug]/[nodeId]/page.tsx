@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddCardForm } from "@/components/add-card-form";
 import { MarkDoneButton } from "@/components/mark-done-button";
 import { ResourceIcon } from "@/components/resource-icon";
 import { SaveResourceButton } from "@/components/save-resource-button";
@@ -178,13 +179,16 @@ export default async function NodeReaderPage({ params }: { params: Promise<Param
       {/* ── done, and what's next ─────────────────────────────────────────── */}
       <div className="mt-10 space-y-4">
         {signedIn ? (
-          <MarkDoneButton
-            nodeId={node.id}
-            roadmapId={roadmap.id}
-            roadmapSlug={slug}
-            nodeTitle={node.title}
-            done={done}
-          />
+          <>
+            <MarkDoneButton
+              nodeId={node.id}
+              roadmapId={roadmap.id}
+              roadmapSlug={slug}
+              nodeTitle={node.title}
+              done={done}
+            />
+            <AddCardForm nodeId={node.id} roadmapSlug={slug} />
+          </>
         ) : (
           <p className="text-[15px] text-ink-600">
             <Link

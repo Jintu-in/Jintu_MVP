@@ -30,7 +30,8 @@
    "contrast": "node scripts/assert-contrast.mjs",
    "baseline:verify": "node scripts/assert-baseline.mjs",
    "roadmap:import": "node scripts/import-roadmap.mjs",
-   "import:verify": "node scripts/assert-import.mjs"
+   "import:verify": "node scripts/assert-import.mjs",
+   "retention:verify": "node scripts/assert-retention.mjs"
   },
   "devDependencies": {
    "@electric-sql/pglite": "^0.5.4",

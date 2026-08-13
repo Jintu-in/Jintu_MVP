@@ -51,3 +51,29 @@ export const setResourceSaved = actionClient.inputSchema(input).action(async ({ 
   revalidatePath(`/learn/${roadmapSlug}/${nodeId}`);
   return { saved };
 });
+
+/**
+ * A save leaves the queue by being consumed, not deleted — consumed_at is
+ * the difference between a queue and a graveyard, and it keeps the record
+ * that the save led to doing.
+ */
+export const consumeSave = actionClient
+  .inputSchema(z.object({ resourceId: z.string().uuid() }))
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("saved_resources")
+      .update({ consumed_at: new Date().toISOString() })
+      .eq("user_id", user.id)
+      .eq("resource_id", parsedInput.resourceId)
+      .is("consumed_at", null);
+    if (error) throw new Error(`consume failed: ${error.message}`);
+
+    revalidatePath("/dashboard");
+    return { consumed: true };
+  });

@@ -106,6 +106,7 @@ export function AvatarMenu({
         </div>
 
         <ul className="py-1 text-sm">
+          <Item href="/dashboard">Dashboard</Item>
           <Item href="/profile">Profile</Item>
           <Item href="/account">Account &amp; privacy</Item>
         </ul>
@@ -127,7 +128,7 @@ function Item({
   href,
   children,
 }: {
-  href: "/profile" | "/account";
+  href: "/dashboard" | "/profile" | "/account";
   children: React.ReactNode;
 }) {
   return (
