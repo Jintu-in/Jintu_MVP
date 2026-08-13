@@ -59,76 +59,11 @@ jobs:
       - name: Env templates
         run: pnpm env:templates
 
-      # Applies migrations to an in-process Postgres and fires the triggers.
-      # No Docker, so it runs in the fast job.
-      - name: Simulate migrations
-        run: pnpm db:simulate
-
-      # The Data Analyst curriculum is the one course a cohort actually runs
-      # on. This applies it to the simulated database twice: once to prove it
-      # publishes all six weeks, once to prove re-running is a no-op. It also
-      # asserts version 1 is left alone, since a student mid-sprint is reading
-      # it. Offline — the reference results are committed, not fetched.
-      - name: Data Analyst curriculum applies and re-applies
-        run: pnpm courses:verify
-
-      # Course proposals: one vote per browser, no voting for a real course,
-      # and anon must never be able to read the votes table — voter_key is a
-      # stable per-browser id, so readable rows would let anyone correlate
-      # which courses one browser asked for.
-      - name: Course proposal rules hold in the database
-        run: pnpm proposals:verify
-
-      # The landing page has an unauthenticated text box that writes to
-      # Postgres. Every limit on it is one a stranger will eventually test, so
-      # none of them live only in the form.
-      - name: Course request limits hold in the database
-        run: pnpm requests:verify
-
-      # Enrolment is where a person becomes a student: session and 18+ gates,
-      # the seat cap under a row lock, and RLS on who can read the result.
-      - name: Enrolment rules hold in the database
-        run: pnpm enrolment:verify
-      # The two point ledgers and the four anti-gaming rules from TRACK_MODEL
-      # Part 6 — including the wall: proof_totals never contains a
-      # consistency point.
-      - name: Points ledgers hold their rules
-        run: pnpm points:verify
-      # The planted-defect generator: every rows_affected recounted from the
-      # CSV, distractors verifiably absent, keys service-role only.
-      - name: Defect datasets tell the truth
-        run: pnpm defects:verify
-      # The spend gate for rubric_ai — invariant 2. Reserve before the money
-      # leaves, one ai_usage row per call, fail-closed when unconfigured.
-      - name: AI budget cannot leak money
-        run: pnpm ai:verify
-      # Community tier: authorship gates, and the wall — a community track
-      # never carries a paid check, enforced at all three doors.
-      - name: Community tracks never pay
-        run: pnpm community:verify
-      # V3 open start: the rolling intake, its gates, and the seat cohorts
-      # it must never touch.
-      - name: Starting a track holds its rules
-        run: pnpm start:verify
-      # The grading package must run unchanged in Node and Deno: no Node
-      # builtins in src, and the generated Deno mirror must be fresh.
-      - name: Grading engine is runtime-pure and the Deno mirror is fresh
-        run: pnpm grading:purity
-      # The authoring kit, dogfooded: the committed template must generate,
-      # validate, publish twice in real Postgres, and leak no keys. User
-      # specs are gitignored (keys live in them); the template is the one
-      # spec CI can and must hold to the same bar.
-      - name: Track template generates and verifies
-        run: pnpm track:verify docs/tracks/_template.mjs
-      # V3 review-to-unlock: claim-based peer review, the per-submission
-      # entry gate, and the ops-only collusion surface.
-      - name: Review-to-unlock holds its rules
-        run: pnpm reviews:verify
-
-      # The catch-up bundle has to apply to the project as it actually is —
-      # part-migrated, with real rows — not to an empty database.
-      - name: Catch-up bundle applies to the live shape
-        run: pnpm catchup:verify
+      # The pivot baseline: applies from scratch in in-process Postgres,
+      # RLS on every table, the catalogue public, progress private, points
+      # unmintable by clients, the 18+ and consent posture intact.
+      - name: Baseline schema holds its rules
+        run: pnpm baseline:verify
 
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the

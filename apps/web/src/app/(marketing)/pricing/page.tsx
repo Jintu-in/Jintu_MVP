@@ -1,34 +1,41 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const description =
+  "Free. The roadmaps, the progress tracking, the streaks, the review queue — all of it. Nothing on Jintu costs money today.";
+
 export const metadata: Metadata = {
   title: "Pricing",
-  description:
-    "Free. The curriculum, the grading, the points and the profile — all of it. Nothing on Jintu costs money today.",
+  description,
   alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "Pricing — free. All of it.",
+    description,
+    url: "/pricing",
+    type: "website",
+  },
 };
 
 /**
- * V3: everything is free, and this page's job is to say so plainly and then
+ * Everything is free, and this page's job is to say so plainly and then
  * survive the obvious suspicion that "free" invites. Every claim still has
  * to pass docs/LEGAL.md §3 — no outcomes promised, no figures we cannot
- * evidence. The future paid thing (a human-audited verified credential) is
- * described as a plan, not sold, because it does not exist yet.
+ * evidence.
  */
 
 const FREE = [
-  "Every curriculum, in full, readable without an account",
-  "SQL graded by running it against the expected output — not by a model",
-  "Planted-defect audits marked against a key that is not on the internet",
-  "Peer review, with authors anonymised",
-  "Points that can only be earned by work something checked",
-  "A proof-of-readiness profile you can share with anyone",
+  "Every roadmap, in full, readable without an account",
+  "Progress tracking down to the single node, across any number of roadmaps",
+  "Streaks with two auto-applied freezes a month",
+  "Points for genuine progress — momentum, not a credential",
+  "Spaced review of what you learned, in your own words",
+  "Save-for-later that stays attached to the roadmap instead of rotting in a list",
 ];
 
 const NOT_PROMISED = [
   "A job, an interview, or an introduction to any employer",
-  "One-to-one mentoring — that arrives only if enough people ask for it",
-  "Anything that expires: the curriculum stays free and public",
+  "The content itself — every read and video is free on its author's own site; we curate and sequence, we do not host",
+  "Anything that expires: the roadmaps stay free and public",
 ];
 
 export default function PricingPage() {
@@ -42,11 +49,11 @@ export default function PricingPage() {
       </h1>
       <p className="mt-4 text-lg text-pretty text-ink-600">
         <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
-          The curriculum
+          The roadmaps
         </Link>
-        , the grading, the points, the profile. No subscription, no trial that
-        expires, no card asked for. There is nothing on this site you can pay
-        for today.
+        , the progress, the streaks, the review queue. No subscription, no
+        trial that expires, no card asked for. There is nothing on this site
+        you can pay for today.
       </p>
 
       <section className="mt-10 rounded-card border border-ink-100 bg-white p-6">
@@ -89,21 +96,10 @@ export default function PricingPage() {
           How this stays free
         </h2>
         <p className="mt-2 text-pretty text-ink-600">
-          The plan is to charge, later, for exactly one thing: a verified
-          credential — your work audited by a human, with a certificate and a
-          permanent verified link. Learning, points and your profile stay free
-          when that arrives. If the plan changes, this page changes first.
-        </p>
-      </section>
-
-      <section className="mt-10" aria-labelledby="colleges">
-        <h2 id="colleges" className="text-lg font-medium text-ink-900">
-          Colleges
-        </h2>
-        <p className="mt-2 text-pretty text-ink-600">
-          A readiness dashboard for placement officers is planned for
-          institutions with a whole batch on Jintu. Write to us and we will
-          talk when you have students here.
+          Curating links costs close to nothing to serve, which is what makes
+          a free-first product survivable. If a paid layer ever arrives it
+          will sit beside the roadmaps, not in front of them — and this page
+          changes first.
         </p>
       </section>
     </main>

@@ -4,11 +4,9 @@ import Link from "next/link";
 /**
  * Terms, in the same voice as the rest of the site.
  *
- * Required before a payment gateway will activate live payments, and listed
- * in docs/LEGAL.md's checklist from the start. Written to say only things the
- * product actually does — every sentence here is a claim, and LEGAL.md §3 is
- * blunt that a claim we cannot back is a misleading advertisement under the
- * Consumer Protection Act.
+ * Written to say only things the product actually does — every sentence here
+ * is a claim, and LEGAL.md §3 is blunt that a claim we cannot back is a
+ * misleading advertisement under the Consumer Protection Act.
  *
  * NOT lawyer-reviewed. LEGAL.md §7 lists the open questions a lawyer needs to
  * settle; this page is the honest v1 that makes payments possible, not the
@@ -37,10 +35,11 @@ export default function TermsPage() {
 
       <Section title="What Jintu is">
         <p>
-          Jintu publishes free, public curricula — tracks — that anyone can
-          work through at their own pace, with submissions graded against
-          published rubrics, peer review, and a profile of finished work.
-          Reading any track is free, needs no account, and always will.
+          Jintu publishes free, public roadmaps — deep curricula built from
+          curated free content on the open internet — that anyone can work
+          through at their own pace, with progress, streaks and points to
+          keep the momentum honest. Reading any roadmap is free, needs no
+          account, and always will.
         </p>
       </Section>
 
@@ -49,27 +48,28 @@ export default function TermsPage() {
           You must be 18 or older to create an account. This is not a
           formality: our systems refuse to hold a profile without an
           affirmative confirmation of age, because Indian data protection law
-          prohibits profiling children and grading work is profiling.
+          prohibits profiling children and tracking progress is profiling.
         </p>
       </Section>
 
       <Section title="What you pay for">
         <p>
-          A cohort place costs ₹999, paid once. There is no subscription,
-          no auto-renewal, and nothing in the curriculum is held back for
-          paying students. Refunds are governed by the{" "}
+          Nothing. There is no paid product, no subscription and no
+          auto-renewal, and nothing in any roadmap is held back for a future
+          paying tier. The{" "}
           <Link href="/refunds" className="underline hover:text-brand-800">
             refund policy
-          </Link>
-          : full refund before the end of week one, for any reason.
+          </Link>{" "}
+          exists for the day that changes; today there is nothing to refund.
         </p>
       </Section>
 
       <Section title="What we promise, and what we do not">
         <p>
-          We promise your work is graded against the rubric you could read
-          before paying, that two peers review it, and that you finish with
-          work you can show to anyone.
+          We promise the roadmaps stay free and public, that every link was
+          chosen and checked by a person, and that your progress is yours and
+          private by default. Points measure momentum; they are not a
+          credential and we will never present them as one.
         </p>
         <p>
           We do not promise you a job, an interview, or a salary. We will
@@ -79,18 +79,17 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="Your work">
+      <Section title="Your notes">
         <p>
-          What you build in a cohort is yours. You grant us permission to show
-          it to your assigned peer reviewers and graders, and — only if you
-          switch it on — to display it on your public profile. That toggle is
-          off by default and withdrawing it takes effect immediately.
+          The review cards you write are yours, in your own words, and
+          private to you. Nobody else sees them and we do not use them for
+          anything except showing them back to you when they are due.
         </p>
       </Section>
 
       <Section title="Third-party material">
         <p>
-          Tracks link to documentation, articles and videos that belong to
+          Roadmaps link to documentation, articles and videos that belong to
           their publishers. We store links and titles, never copies,
           transcripts or summaries. If a link is dead, tell us and a person
           fixes it.
@@ -116,9 +115,9 @@ export default function TermsPage() {
           <a className="underline hover:text-brand-800" href="mailto:privacy@jintu.in">
             privacy@jintu.in
           </a>
-          . We can remove someone from a cohort for plagiarising work or
-          abusing peer review — with a refund if it happens in week one, and
-          an explanation whenever it happens.
+          . We can close an account that abuses the platform — scraping,
+          spam, attempts to break other people&apos;s privacy — and we will
+          say why whenever it happens.
         </p>
       </Section>
 

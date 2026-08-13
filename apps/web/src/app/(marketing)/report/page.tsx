@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Report a problem",
-  description: "A dead link, a wrong rubric, a video that moved — tell us and we fix it by hand.",
+  description: "A dead link, a video that moved, a resource that misleads — tell us and we fix it by hand.",
   alternates: { canonical: "/report" },
 };
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
  * pretends a ticketing system exists. Link health is also checked
  * automatically (resources carry ok/degraded/dead and dead links stop
  * rendering) — this page is for what the checker cannot see: a wrong number
- * in a rubric, a video that changed owners, an explanation that misleads.
+ * a video that changed owners, an explanation that misleads.
  *
  * TODO when volume justifies it: a form writing to a reports table with the
  * resource id attached, surfaced in the ops queue.
@@ -28,7 +28,7 @@ export default function ReportPage() {
         Dead links are flagged automatically and replaced by hand — never by a
         model, because silently swapping a resource under a learner mid-unit
         is worse than a dead link. Everything else needs a human to hear about
-        it: a rubric that scores the wrong thing, a video that moved, a claim
+        it: a dead link, a video that moved, a claim
         that aged badly.
       </p>
       <div className="mt-6 rounded-card border border-ink-100 bg-white p-5">

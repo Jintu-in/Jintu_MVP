@@ -1,11 +1,17 @@
 # Jintu
 
-A 6-week, cohort-based placement sprint. Free public curriculum, AI-graded
-artifacts, peer review, and a shareable proof-of-readiness profile.
+A free learning aggregator and roadmap platform: one place to find and
+follow deep roadmaps for any subject, built entirely from curated
+third-party free content — reads, videos, docs — sequenced into modules
+and nodes, with progress tracking, streaks and points to keep you coming
+back. Mobile-first, 2–10 minute sessions, no cohorts, no grading, no
+credential.
 
-**Read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) before writing code** —
-especially §0, the three architectural laws. They are not style preferences;
-they are what keeps the margin viable and the company out of court.
+**Read [`CLAUDE.md`](CLAUDE.md) before writing code** — the hard
+invariants (never store third-party content, never publish an
+unvalidated URL, 18+ only, never promise employment, points are
+momentum not credential) are not style preferences; they are what keeps
+the platform inside Section 79 safe harbour and out of court.
 
 **Read [`docs/LEGAL.md`](docs/LEGAL.md) before writing marketing copy**, adding
 a column that stores text from someone else's site, or shipping anything that

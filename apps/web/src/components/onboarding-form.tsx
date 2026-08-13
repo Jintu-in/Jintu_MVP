@@ -21,9 +21,9 @@ const firstError = (e: FieldErrors | undefined, f: string) => e?.[f]?._errors?.[
  */
 const OPTIONAL = [
   {
-    name: "whatsapp_updates",
-    label: "Deadline reminders on WhatsApp",
-    detail: "Missed submissions, peer reviews waiting on you, weekly deadlines.",
+    name: "reminders",
+    label: "A daily reminder",
+    detail: "One well-timed nudge a day, on the channel and at the time you pick.",
   },
   {
     name: "analytics",
@@ -32,8 +32,8 @@ const OPTIONAL = [
   },
   {
     name: "public_profile",
-    label: "A public proof-of-readiness profile",
-    detail: "A shareable page at jintu.in/p/… . Off until you turn it on.",
+    label: "A public profile",
+    detail: "A shareable page about your learning, if we build one. Off until you turn it on.",
   },
 ] as const;
 
@@ -57,7 +57,7 @@ export function OnboardingForm() {
           batchYear: String(fd.get("batchYear") ?? ""),
           isAdultConfirmed: fd.get("isAdultConfirmed") === "on",
           analytics: fd.get("analytics") === "on",
-          whatsapp_updates: fd.get("whatsapp_updates") === "on",
+          reminders: fd.get("reminders") === "on",
           public_profile: fd.get("public_profile") === "on",
         })
       }

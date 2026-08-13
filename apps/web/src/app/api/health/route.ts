@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { grade } from "@jintu/grading";
 import { getSupabaseEnvStatus } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 
@@ -52,17 +51,17 @@ export async function GET() {
   /**
    * One representative table per migration, not just the first one.
    *
-   * The earlier version probed `tracks` alone and reported a healthy database
-   * while the deployment was two migrations behind — /p/[slug] was returning
+   * An earlier version probed one table alone and reported a healthy database
+   * while the deployment was two migrations behind — pages were returning
    * 500 and this endpoint said ok. A health check that goes green on a
    * half-applied schema is worse than none, because it is the thing you check
    * before concluding the problem is elsewhere.
    */
   const EXPECTED = [
-    { table: "profiles", migration: "init_identity" },
-    { table: "waitlist_signups", migration: "waitlist" },
-    { table: "tracks", migration: "curriculum" },
-    { table: "public_profiles", migration: "sprint_loop" },
+    { table: "profiles", migration: "0001_identity" },
+    { table: "roadmaps", migration: "0002_roadmaps" },
+    { table: "node_progress", migration: "0003_progress" },
+    { table: "point_events", migration: "0004_engagement" },
   ] as const;
 
   if (env.configured) {
@@ -103,37 +102,6 @@ export async function GET() {
         detail: e instanceof Error ? e.message : String(e),
       });
     }
-  }
-
-  // The grading engine, exercised in the Next runtime itself. Canned input,
-  // structural checkers only — no cost, no user data, no model. This is the
-  // Node half of the dual-runtime proof (the Deno half is the mirror smoke
-  // test): if a bundler change ever breaks the package inside Next, this
-  // endpoint goes 503 rather than the first submission going ungraded.
-  try {
-    const report = await grade(
-      { id: "health", payload: { text: "select 1 from a join b" } },
-      {
-        criteria: [
-          { key: "words", label: "not empty", weight: 1, check: "structural", checker: "non_empty" },
-          { key: "join", label: "has a join", weight: 1, check: "structural", checker: "contains_pattern:join" },
-        ],
-      },
-    );
-    checks.push({
-      name: "grading engine",
-      ok: report.score === 2 && report.fullyVerified,
-      detail:
-        report.score === 2
-          ? "grade() runs in this runtime"
-          : `grade() returned ${report.score}/2 on the canned check`,
-    });
-  } catch (e) {
-    checks.push({
-      name: "grading engine",
-      ok: false,
-      detail: e instanceof Error ? e.message : String(e),
-    });
   }
 
   const ok = checks.every((c) => c.ok);

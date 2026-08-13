@@ -5,12 +5,12 @@ import { useEffect } from "react";
 
 /**
  * The root segment boundary — everything the marketing group's own error.tsx
- * does not cover: /dashboard, /account, /onboarding, /join and /p/[slug].
+ * does not cover: /account, /onboarding and /join.
  *
  * Those are the pages that talk to Supabase on every request, so they are
  * exactly the ones a database blip turns into React error #441 and a blank
- * screen. A student who has just submitted work and sees white has no way to
- * know whether the submission survived. Saying so is the whole job here.
+ * screen. Someone who just ticked a node and sees white has no way to know
+ * whether the tick survived. Saying so is the whole job here.
  */
 export default function RootError({
   error,
@@ -35,8 +35,8 @@ export default function RootError({
         something you did.
       </p>
       <p className="mt-3 text-pretty text-ink-600">
-        Anything you had already submitted is saved — submissions are written
-        before this page is drawn, so a failure here cannot lose one.
+        Your progress is saved — it is written before this page is drawn, so
+        a failure here cannot lose it.
       </p>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">

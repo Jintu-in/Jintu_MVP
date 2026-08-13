@@ -1,14 +1,40 @@
 import { z } from "zod";
-import { NOTICE_VERSION, normaliseIndianMobile } from "./waitlist";
 
-export { NOTICE_VERSION };
+/**
+ * The privacy notice the user is shown at the point of consent. Written to
+ * `consents.notice_version` on every row.
+ *
+ * Bump this whenever the notice changes materially, and never edit a
+ * published notice in place — a consent record that cannot show which text
+ * the user actually read proves nothing (docs/LEGAL.md §2.2).
+ */
+// v3 (2026-08-13): the product pivoted from graded submissions to roadmap
+// progress tracking, so the notice's account of what is collected and why
+// changed wholesale — submissions and readiness scores out, progress,
+// streaks, points and review cards in; the WhatsApp-specific reminder
+// purpose became a channel-neutral one.
+export const NOTICE_VERSION = "2026-08-13.v3";
 
 const E164_INDIAN_MOBILE = /^\+91[6-9]\d{9}$/;
 
 /**
- * An Indian mobile, in the shape `profiles.phone` and `waitlist_signups.phone`
- * both require. Shared by onboarding and the waitlist so there is one
- * definition of "a number we can reach you on".
+ * Accepts what people actually type — "98765 43210", "+91-98765-43210",
+ * "919876543210" — and returns E.164. Anything it cannot confidently
+ * normalise is returned unchanged so the refine below rejects it, rather
+ * than being coerced into a number that belongs to someone else.
+ */
+export function normaliseIndianMobile(raw: string): string {
+  const digits = raw.replace(/[\s()\-.]/g, "");
+  if (E164_INDIAN_MOBILE.test(digits)) return digits;
+  if (/^[6-9]\d{9}$/.test(digits)) return `+91${digits}`;
+  if (/^91[6-9]\d{9}$/.test(digits)) return `+${digits}`;
+  if (/^0[6-9]\d{9}$/.test(digits)) return `+91${digits.slice(1)}`;
+  return digits;
+}
+
+/**
+ * An Indian mobile, in the shape `profiles.phone` requires — one definition
+ * of "a number we can reach you on".
  */
 export const indianMobile = z
   .string()
@@ -34,9 +60,9 @@ export const indianMobile = z
  * behaves the same either way. Switching back is this file plus the two calls
  * in apps/web/src/actions/auth.ts, not a rewrite.
  *
- * The phone number is still collected, at onboarding: WhatsApp is the nudge
- * channel in Phase 2, and ops needs to reach a paying student. It is just no
- * longer the thing that proves who you are.
+ * The phone number is still collected, at onboarding: it is how the one
+ * daily reminder reaches someone who asked for it. It is just not the thing
+ * that proves who you are.
  */
 export const otpRequestInput = z.object({
   email: z
@@ -69,7 +95,7 @@ export const otpVerifyInput = z.object({
  */
 export const OPTIONAL_PURPOSES = [
   "analytics",
-  "whatsapp_updates",
+  "reminders",
   "public_profile",
 ] as const;
 
@@ -91,11 +117,10 @@ export const onboardingInput = z.object({
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
 
-  // Collected here rather than at sign-in, because sign-in is by email now.
-  // Required: deadline nudges are the product, and a cohort we cannot reach is
-  // a cohort that silently stops submitting. The purpose is stated on the form
-  // and in the privacy notice — storing it is not consent to message it, which
-  // is what the separate whatsapp_updates purpose below is for.
+  // Collected here rather than at sign-in, because sign-in is by email.
+  // The purpose is stated on the form and in the privacy notice — storing it
+  // is not consent to message it, which is what the separate reminders
+  // purpose below is for.
   phone: indianMobile,
 
   batchYear: z
@@ -106,10 +131,10 @@ export const onboardingInput = z.object({
       message: "Enter a four-digit graduation year.",
     }),
 
-  // Law 3. DPDP restricts profiling of children and a readiness score is
-  // profiling, so this is not a formality — it is the condition on which the
-  // profile row is allowed to exist at all. The database agrees: profiles has
-  // a CHECK constraint that makes a false value unrepresentable.
+  // DPDP restricts profiling of children, and tracking progress, streaks and
+  // points is profiling — so this is not a formality, it is the condition on
+  // which the profile row is allowed to exist at all. The database agrees:
+  // profiles has a CHECK constraint that makes a false value unrepresentable.
   isAdultConfirmed: z.boolean().refine((v) => v, {
     message: "Jintu is only open to people aged 18 and over.",
   }),
@@ -117,7 +142,7 @@ export const onboardingInput = z.object({
   // Each optional purpose arrives as its own boolean, never bundled. Absent
   // means not granted; there is no third state.
   analytics: z.boolean(),
-  whatsapp_updates: z.boolean(),
+  reminders: z.boolean(),
   public_profile: z.boolean(),
 });
 
@@ -183,8 +208,8 @@ export const passwordSignInInput = z.object({
  * Choosing a password once you are already signed in.
  *
  * Ten characters, not the Supabase default of six. Six is two guesses shy of
- * useless and this account will eventually hold a phone number and a
- * readiness score. No composition rules — no "one capital and one symbol" —
+ * useless and this account holds a phone number and a person's learning
+ * history. No composition rules — no "one capital and one symbol" —
  * because they push people towards Password1! and away from length, which is
  * the only property that actually helps.
  */
