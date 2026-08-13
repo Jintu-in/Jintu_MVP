@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AvatarMenu } from "@/components/avatar-menu";
+import { getMyMomentum } from "@/lib/momentum";
 import { getViewer, initialsFor } from "@/lib/session";
 
 /**
@@ -33,6 +34,8 @@ export default async function MarketingLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const viewer = await getViewer();
+  // The header's momentum chip. Only worth a query when there is a person.
+  const momentum = viewer?.hasProfile ? await getMyMomentum() : null;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -68,17 +71,24 @@ export default async function MarketingLayout({
             </span>
           </Link>
 
-          {/* Three links plus the wordmark have to fit a 360px viewport
-              without wrapping. Search points at /learn because that is where
-              the search input lives until the search screen exists — a nav
-              item that opens a working page beats a dead route. */}
+          {/* Everything plus the wordmark has to fit a 360px viewport without
+              wrapping. Search lost its nav slot to the momentum chip: search
+              lives inside /learn (one tap away via Roadmaps), whereas the
+              streak is the thing a daily-habit product should surface on
+              every page — seeing the number is half of keeping it. */}
           <nav className="ml-auto flex items-center gap-4 text-sm">
             <Link href="/learn" className="font-medium text-ink-600 hover:text-ink-900">
               Roadmaps
             </Link>
-            <Link href="/learn?q=" className="font-medium text-ink-600 hover:text-ink-900">
-              Search
-            </Link>
+            {momentum ? (
+              <Link
+                href="/dashboard"
+                aria-label={`${momentum.streakDays}-day streak, ${momentum.totalPoints} points — open dashboard`}
+                className="font-mono text-[13px] text-ink-600 hover:text-ink-900"
+              >
+                {momentum.streakDays}d · {momentum.totalPoints} pts
+              </Link>
+            ) : null}
 
             {/*
               Three states, not two. Someone who has authenticated but not
