@@ -202,6 +202,10 @@ export const passwordSignInInput = z.object({
   // password; applying them at sign-in would tell somebody with an older,
   // shorter password that their own password is invalid.
   password: z.string().min(1, "Enter your password."),
+  // "Stay signed in on this device." Defaulted ON by the form — this is a
+  // habit product, not a bank; a session that expires weekly breaks the
+  // streak and makes the login screen the most-used screen in the product.
+  remember: z.boolean().optional(),
 });
 
 /**
@@ -218,6 +222,7 @@ export const setPasswordInput = z.object({
     .string()
     .min(10, "Use at least ten characters. Length beats punctuation.")
     .max(72, "Passwords are limited to 72 characters."),
+  remember: z.boolean().optional(),
 });
 
 export type PasswordSignInInput = z.infer<typeof passwordSignInInput>;

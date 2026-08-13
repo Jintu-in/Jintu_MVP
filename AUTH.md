@@ -1,269 +1,176 @@
-# Jintu — auth spec v2
-### Email OTP + Google OAuth. Cheaper, faster, one fewer regulator.
+# Jintu — auth spec v3
+### Verify the email, then set a password. Long sessions.
 
-> Supersedes the phone-first flow (auth spec v1). Same principles, different rails.
-
----
-
-## Why this is better, not just cheaper
-
-Phone OTP had three costs: money per message, TRAI DLT registration on the critical path, and a WABA approval you couldn't rush.
-
-Email plus Google removes all three. And Google OAuth is a genuinely better fit for India than phone: Android dominance means near-universal Google account penetration, and it's **one tap with no code to wait for**. Expect the majority of your signups to never touch the email flow at all.
-
-| Method | Setup cost | Per-signup cost | Lead time | Notes |
-|---|---|---|---|---|
-| **Google OAuth** | Free | **₹0** | Hours | Will be ~80%+ of Indian signups |
-| **Email OTP** | Free | ~₹0.02–0.05 | Hours | Fallback for non-Google users |
-| Phone SMS OTP | DLT registration | ₹0.15–0.25 | Days–weeks | Dropped |
-| WhatsApp OTP | WABA + template | BSP rates | Days | Dropped |
-| Apple OAuth | **$99/yr + JWT rotation every 6 months** | ₹0 | Days | **Deferred — see below** |
+> Supersedes v2 (passwordless email OTP). That spec was written for a
+> six-week cohort where people signed in rarely. For a daily-habit product
+> it is wrong: a streak app where signing in means switching to your email
+> client and waiting for a code is a streak app people stop opening.
 
 ---
 
-## Apple: skip it, and here's the reasoning
+## The thing that matters more than the login screen
 
-Sign in with Apple is mandated by App Store Review Guideline 4.8 — it applies to apps submitted to the App Store that use third-party login. Jintu is a PWA, and Apple does not permit PWAs in the App Store at all (Guideline 4.2.2 rejects "web clippings").
+**Session length.** If a user is signed out every week, the streak breaks,
+the habit breaks, and the login flow becomes the most-used screen in the
+product — a failure state.
 
-So the requirement doesn't reach you. What Apple would cost you:
+Dashboard settings (see the console checklist at the bottom):
 
-- **$99/year** Apple Developer Program, required to create the Services ID
-- **A client secret that expires.** Apple's secret is a signed JWT with a maximum ~6-month lifetime. You must regenerate and redeploy it, forever, or logins silently break
-- Services ID, domain verification, and key management setup
+```
+Supabase → Authentication → Sessions
+  Time-box user sessions        : never (or 90 days minimum)
+  Inactivity timeout            : never
+  Refresh token rotation        : enabled
+  Refresh token reuse interval  : 10 seconds
+```
 
-Against an iOS share in India of roughly 3–5%, and those users can still sign up with Google or email. **Add Apple only if you ever ship a native iOS app.** Note it in the docs so it doesn't get re-litigated.
-
----
-
-## Email OTP code, not magic links
-
-Supabase supports both. Choose the 6-digit code.
-
-Magic links break on mobile in ways that are hard to debug and easy to lose users to: the link opens in the device's default browser rather than the one that initiated the request, so the session lands in the wrong browser; and links opened inside the Gmail app's in-app browser frequently strand the user in a webview with no session. On a mobile-first Indian product this is a meaningful drop-off.
-
-A 6-digit code the user reads and types works in every context, and it's the same interaction they already know from every OTP in their life.
-
----
-
-## The blocker nobody expects: Supabase's default SMTP
-
-**Configure custom SMTP before you build the login screen.**
-
-Supabase's built-in email service is explicitly for testing — it's heavily rate limited (a handful of emails per hour), and new free projects can no longer customise auth email templates on it. Ship on default SMTP and your signups will silently fail the moment more than a couple of people try at once.
-
-Use **Resend** (generous free tier, then roughly $20/month at volume), or Postmark / SES. Set it up in Supabase Auth → SMTP Settings, verify your sending domain with SPF, DKIM, and DMARC records, and send from `hi@jintu.in` rather than a subdomain.
-
-**Deliverability matters more than it sounds.** An OTP that lands in spam is a lost user with no recovery path. Warm the domain gently, keep the email plain and short, and test delivery to Gmail, Outlook, and Yahoo before launch — Indian students are overwhelmingly on Gmail, which is the most forgiving, but verify anyway.
-
----
-
-## The real cost of this decision — and the fix
-
-Money wasn't the only thing phone auth was buying. **It was buying you a notification channel.**
-
-Streaks, review-queue alerts, and "someone reviewed your submission" were all going to run through WhatsApp. Email nudges to Indian college students will have poor open rates, and a streak mechanic that nobody sees is a streak mechanic that doesn't work.
-
-**The fix is web push, and it's free.**
-
-| Channel | Cost | Reach | Use for |
-|---|---|---|---|
-| **Web push (PWA)** | **₹0** | Android Chrome: excellent. iOS 16.4+: works but only after home-screen install, with lower opt-in | Streaks, review alerts, submission graded |
-| Email | ~₹0.02 | Universal | Weekly digest, account matters, receipts |
-| WhatsApp | BSP rates | Excellent | **Later, optional** — collect phone after signup, when revenue justifies it |
-
-Web push is the right primary channel here: it's free, it's instant, and it's exactly what your PWA setup already supports through Serwist. The catch is that it requires the user to install the PWA and grant permission — so **prompt for install after the first successful submission**, not on first visit. Ask when they've just felt the value, not before.
-
-Keep phone as an optional field the user can add later specifically to get WhatsApp reminders. Some will. That's a bonus channel, not a dependency.
+The session refreshes in `middleware.ts` on every request (already true —
+`getUser()` in `lib/supabase/middleware.ts`). Every password screen carries
+**"Stay signed in on this device"**, defaulted **on**; unticking it strips
+`maxAge` from the auth cookies so the browser drops them on close
+(`lib/supabase/server.ts`, the `remember` option).
 
 ---
 
 ## The flow
 
 ```
-Anonymous — reads everything, no account
-      │
-      │  taps "Start learning" or "Submit"
-      ▼
-┌─────────────────────────────────────┐
-│  [ Continue with Google ]           │  ← one tap, ~80% take this
-│  ───────────  or  ───────────       │
-│  Email  [                    ]      │
-│  [ Send code ]                      │
-└─────────────────────────────────────┘
-      │
-      ├─ Google ──────────────┐
-      │                       │
-      ▼                       │
-  6-digit code ───────────────┤
-                              ▼
-                    Complete profile
-                    name · 18+ · consents
-                    (first time only)
-                              │
-                              ▼
-                          Learner
+                    ┌─ email field ─┐
+                    │   Continue     │
+                    └───────┬────────┘
+                            │
+              does an account exist for this email?
+                            │
+        ┌───────────────────┴───────────────────┐
+        │ NO — new                              │ YES — returning
+        ▼                                       ▼
+  send 6-digit code                       password field
+        │                                       │
+  verify code  ──► email is now verified        │
+        │                                       │
+  set a password                                │
+        │                                       │
+  onboarding (18+, consents, phone)             │
+        │                                       │
+        └───────────────┬───────────────────────┘
+                        ▼
+                     signed in
 ```
 
-Google first and visually dominant. Email below a divider. No separate sign-in page — same screen handles new and returning.
+**Verify first, then set a password**: no account ever exists half-made,
+and nobody types a password before knowing the address works.
+
+**Google OAuth sits above all of this** — the primary button on the entry
+screen. Expect most Indian signups to take it and never touch a code or a
+password.
+
+**One deliberate deviation from the v3 screens as drafted:** the 18+
+confirmation and the consent checkboxes stay on the onboarding screen, not
+on set-a-password. The 18+ gate is a database CHECK on `profiles`, and a
+checkbox is only real on the form whose submit that constraint can refuse —
+`profiles` also requires the phone number, which is collected there. Moving
+the checkboxes forward would make them theatre on one screen and redundant
+on the next. (If spec-exact screens matter more than this argument, make
+`profiles.phone` nullable first and say so.)
 
 ---
 
-## Screens
+## The enumeration tradeoff — decided
 
-### 1. Entry
-```
-Start learning
+Branching on "does this email exist" reveals whether an address is
+registered. **Decision: reveal it, and rate-limit hard** — the Notion/
+Linear/Google shape. For a free learning app the UX gain outweighs the
+disclosure; for a bank it would not.
 
-[  Continue with Google  ]
+Mitigations, all implemented:
 
-────────────  or  ────────────
+- The probe is a **security-definer RPC** (`email_registered`,
+  `0006_auth.sql`) with EXECUTE **revoked from anon and authenticated** —
+  only the service role can ask, and only the `checkEmail` server action
+  holds that role. No public endpoint exists.
+- **6 checks per email per hour, 20 per IP per hour**, counted in
+  `auth_attempts` (hashes only, never plaintext addresses or IPs —
+  service-role-only table).
+- Password sign-ins: **exponential backoff after 5 failures** in the hour
+  (2 min, 4, 8… capped at 30), and every failure is recorded with an IP
+  hash for abuse review.
+- After the branch, a failure is only ever **"That did not match."** —
+  never "wrong password" vs "no such account".
+- The forgot-password form answers identically for known and unknown
+  addresses; it is separately reachable, and quiet costs nothing there.
 
-Email     [ you@example.com ]
-
-[ Send code ]
-
-Already started? Same email, same account.
-```
-
-### 2. Code — email path only
-```
-Enter the code
-
-[ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
-
-Sent to priya@gmail.com · Change email
-Resend in 0:28
-```
-`inputmode="numeric"`, `autocomplete="one-time-code"`, auto-advance, auto-submit on the sixth digit, paste fills all six.
-
-### 3. Complete profile — first time only
-```
-Almost there
-
-Name       [ prefilled from Google if available ]
-College    [ search... ]  optional
-
-Before you start
-☐  I am 18 or older.
-☐  I agree to the Terms and the Privacy notice.
-☐  Send me streak reminders.   Optional
-
-[ Start learning ]
-```
-
-Google gives you a verified email and usually a name, so this screen is short. The three checkboxes stay separate and the third stays unticked — DPDP purpose-specific consent.
+Degraded mode is safe by construction: if the service key is missing or the
+RPC fails, `checkEmail` answers "not registered" and the flow falls back to
+sending a code — which signs in an existing account correctly too
+(`verifyOtp` tries both token types).
 
 ---
 
-## Schema changes from v1
+## Password rules — NIST, not 2010
 
-```sql
-profiles (
-  id uuid primary key references auth.users on delete cascade,
-  email citext unique not null,              -- citext: case-insensitive
-  phone_e164 text unique null,               -- OPTIONAL now, for WhatsApp later
-  handle text unique not null,
-  full_name text,
-  avatar_url text,                           -- from Google
-  college_id uuid null references colleges,
-  is_adult_confirmed boolean not null default false,
-  push_subscription jsonb null,              -- web push endpoint
-  created_at timestamptz default now(),
-  last_active_on date
-);
+- Minimum **10** characters (spec says 8; stricter is allowed and this was
+  already shipped — length is the one property that helps).
+- Maximum 72, spaces and any Unicode welcome, paste always works, show-
+  password toggle on every field.
+- **No composition rules.** No "one uppercase, one symbol" — those push
+  people to `Password1!`.
+- **Leaked-password protection ON** in the dashboard (HaveIBeenPwned
+  screening); Supabase's rejection message is passed through to the form.
+- No periodic rotation, no security questions, ever.
 
-alter table profiles add constraint must_confirm_adult
-  check (is_adult_confirmed = true);
-alter table profiles add constraint handle_format
-  check (handle ~ '^[a-z0-9][a-z0-9-]{2,29}$');
+## What carries over unchanged
 
-otp_attempts (
-  id uuid primary key,
-  email citext not null,
-  ip_hash text,
-  requested_at timestamptz default now(),
-  verified_at timestamptz,
-  attempt_count int default 0
-);
-create index on otp_attempts (email, requested_at desc);
-```
+- 18+ hard gate as a CHECK constraint on `profiles`, enforced again in the
+  onboarding action.
+- Granular consents — separate rows per purpose, reminder checkbox unticked
+  by default, `core_service` never a checkbox.
+- Case-insensitive email: `email_registered` compares `lower() = lower()`
+  (no citext dependency); Supabase stores sign-up emails lowercased and the
+  contracts lowercase on input.
+- **Identity linking**: Google-then-email and email-then-Google must land in
+  one account. This is a dashboard behaviour (automatic linking for
+  verified emails); the launch checklist below tests both orderings.
+- `user.id` is the foreign key everywhere. Never the email.
 
-Two notes. Use `citext` for email so `Priya@Gmail.com` and `priya@gmail.com` are the same account — this is a real source of duplicate accounts otherwise. And `phone_e164` is now nullable, because it's a notification preference rather than an identity.
+## Files
 
----
-
-## Identity linking — the trap to handle deliberately
-
-Someone signs up with Google as `priya@gmail.com`. Two months later they use the email flow with `priya@gmail.com`. Do they get one account or two?
-
-**One.** Supabase links identities automatically when the email matches and both are verified, but you must confirm this behaviour in your Auth settings rather than assume it. Test the exact sequence both ways round before launch, because the failure mode is a user losing their points and their streak — which for a points-based platform is the single worst possible bug.
-
-Also handle: Google account whose email later changes, and Apple-style private relay addresses if you ever add Apple. Store the Supabase `user.id` as the foreign key everywhere, never the email. Email is a label, not an identity.
+| Piece | Where |
+|---|---|
+| Existence RPC + attempt ledger | `supabase/migrations/0006_auth.sql` |
+| Rate limits, backoff, hashing | `apps/web/src/lib/auth-limits.ts` |
+| All server actions | `apps/web/src/actions/auth.ts` |
+| The stepper (entry/code/create/password/forgot) | `apps/web/src/components/join-form.tsx` |
+| Reset landing | `apps/web/src/app/auth/reset/` + `reset-password-form.tsx` |
+| Session-cookie option | `apps/web/src/lib/supabase/server.ts` |
+| Reset email template | `supabase/templates/recovery.html` |
 
 ---
 
-## Abuse and bot signups
+## Owner console checklist — do these before announcing the flow
 
-Email plus OAuth is more bot-exposed than phone was, and you now have a public profile and a points leaderboard worth farming.
+Nothing here is reachable from code; every item is a dashboard or DNS task.
 
-- **Rate limit the OTP endpoint** per email (3/hour, 10/day) and per IP hash (20/hour). Return a generic message either way — never reveal whether an email is registered.
-- **Points require a verified submission**, which requires real work against a real answer key. This is your strongest anti-spam property and it comes free from the architecture. A bot can create an account; it cannot pass the SQL runner.
-- **Handle squatting**: reserve obvious names (`admin`, `jintu`, `support`) and rate-limit handle changes to one.
-- **Disposable email domains**: don't block them at signup. Block them from appearing on leaderboards if it becomes a problem. Blocking upfront catches real users.
-
----
-
-## Build order
-
-**Today — no external dependencies, all of it unblocked**
-1. Resend account, verify `jintu.in` sending domain (SPF, DKIM, DMARC)
-2. Configure custom SMTP in Supabase Auth
-3. Google OAuth: Cloud Console project, OAuth consent screen, credentials, redirect URI
-4. Schema plus the constraints, RLS on every table
-
-**Then**
-5. Entry screen with Google button and email fallback
-6. OTP screen
-7. `middleware.ts` session refresh with `@supabase/ssr`
-8. Profile completion with granular consent writes
-9. Rate limiting
-10. Handle generation and `/p/[handle]`
-
-**Phase 2**
-Web push via Serwist, prompted after first successful submission · optional phone field for WhatsApp · self-serve account deletion
-
-**Explicitly deferred**
-Apple OAuth · SMS OTP · WhatsApp OTP
-
-Note that nothing in "today" waits on an external approval. That's the real win — you went from a multi-week regulatory dependency to a stack you can stand up this afternoon.
-
----
-
-## Verify before relying on these
-
-- **Resend's current free tier and paid pricing.** Cheap either way, but confirm the numbers.
-- **Supabase's current default-SMTP limits and template restrictions.** The direction is clear — default SMTP is test-only — but the exact limits change.
-- **Supabase's automatic identity-linking behaviour** for matching verified emails across providers. Test it yourself rather than trusting docs; this is the one bug that would cost a user their points.
-- **iOS web push opt-in reality.** It works on 16.4+ but only after home-screen install, and EU iOS PWAs lost standalone mode entirely under the DMA. Not an issue for an India-focused product, but don't assume iOS push works like Android's.
-
----
-
-## Implementation state (kept by the build, not part of the decision)
-
-What already exists matches this spec closely: email 6-digit OTP is live as the
-one door (no separate sign-in/sign-up), onboarding creates the account with the
-18+ gate and granular consents, sessions refresh through @supabase/ssr.
-
-- [x] Email OTP, 6-digit code, one door for new and returning
-- [x] Onboarding: name, 18+ confirm, per-purpose consents, account created here
-- [x] "Continue with Google" in the sign-in dialog — renders only when the
-      Supabase project reports the provider enabled, so it appears the moment
-      the owner completes console setup (build-order item 3) with zero deploys
-- [ ] Owner console tasks, all unblocked today: Resend SMTP (item 1–2),
-      Google OAuth credentials (item 3)
-- [ ] citext email + optional phone_e164 + handle + avatar_url on profiles
-- [ ] otp_attempts rate-limit table (Supabase's built-in limits carry until then)
-- [ ] Handle generation + /p/[handle]
-- [ ] Web push via Serwist, prompted after first successful submission
-- The password path (an owner decision from the email-quota era) retires once
-  custom SMTP raises the OTP quota and Google absorbs most sign-ins.
+1. **Custom SMTP (Resend)** — Authentication → Emails → SMTP settings.
+   Supabase's built-in sender is test-only (~2 emails/hour) and cannot use
+   custom templates on new free projects. Verify `jintu.in` in Resend with
+   SPF + DKIM + DMARC records, then test deliverability **against Gmail
+   specifically**.
+2. **Sessions** — Authentication → Sessions: time-box *never* (or ≥90
+   days), inactivity timeout *never*, refresh token rotation *on*, reuse
+   interval 10 s.
+3. **Leaked-password protection** — Authentication → Passwords: minimum
+   length 10, leaked-password protection *on*.
+4. **Google OAuth** — Google Cloud Console OAuth client (web), authorised
+   redirect `https://nejtogeezerebdeflhfa.supabase.co/auth/v1/callback`;
+   paste client id + secret into Authentication → Providers → Google.
+5. **Redirect URLs** — Authentication → URL Configuration: add
+   `https://jintu-mvp.vercel.app/auth/reset` and
+   `https://jintu-mvp.vercel.app/auth/callback` (plus localhost variants).
+6. **Email templates** — mirror `supabase/templates/*.html` into the
+   dashboard: confirmation, magic link, email change, **recovery** (new).
+7. **Vercel env** — `SUPABASE_SECRET_KEY` must be set (the existence check
+   and rate limiting degrade to code-only sign-in without it, loudly).
+8. **Launch test** — sign up with Google, sign out, come back with email +
+   password on the same address: one account, one streak. Then the reverse
+   ordering. A duplicate account losing someone's streak is the worst bug
+   this product can ship.

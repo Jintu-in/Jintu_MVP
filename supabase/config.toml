@@ -338,6 +338,13 @@ content_path = "./supabase/templates/magic-link.html"
 subject = "Confirm your new Jintu email address"
 content_path = "./supabase/templates/email-change.html"
 
+# New with auth v3: a password flow needs a reset flow. Single-use link,
+# one-hour expiry, and completing it revokes every other session. Mirror
+# this template into the hosted dashboard alongside the others.
+[auth.email.template.recovery]
+subject = "Reset your Jintu password"
+content_path = "./supabase/templates/recovery.html"
+
 # Deliberately left stock:
 #   * recovery — there are no passwords to recover
 #   * invite — nobody is invited; enrolment is created by ops after payment
