@@ -68,14 +68,16 @@ export default async function MarketingLayout({
             </span>
           </Link>
 
-          {/* "Tracks", not "Curriculum": there is more than one now, and three links
-              plus the wordmark have to fit a 360px viewport without wrapping. */}
+          {/* Three links plus the wordmark have to fit a 360px viewport
+              without wrapping. Search points at /learn because that is where
+              the search input lives until the search screen exists — a nav
+              item that opens a working page beats a dead route. */}
           <nav className="ml-auto flex items-center gap-4 text-sm">
             <Link href="/learn" className="font-medium text-ink-600 hover:text-ink-900">
-              Tracks
+              Roadmaps
             </Link>
-            <Link href="/pricing" className="font-medium text-ink-600 hover:text-ink-900">
-              Pricing
+            <Link href="/learn?q=" className="font-medium text-ink-600 hover:text-ink-900">
+              Search
             </Link>
 
             {/*
