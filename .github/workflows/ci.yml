@@ -67,6 +67,9 @@ jobs:
       # An unchecked import must stay draft; a checked one must serve anon.
       - name: Roadmap import pipeline holds rule 2
         run: pnpm import:verify
+      # Only the server mints: node awards, caps, freezes, review points.
+      - name: Retention machinery mints exactly what it promises
+        run: pnpm retention:verify
 
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the

@@ -37,7 +37,7 @@ const serwist = new Serwist({
  * The public catalogue is the opposite case: it is identical for everyone
  * and is exactly what should still work on a train.
  */
-const PRIVATE_PATHS = /^\/(account|onboarding|profile|join)(\/|$)/;
+const PRIVATE_PATHS = /^\/(account|onboarding|profile|join|dashboard|review)(\/|$)/;
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);

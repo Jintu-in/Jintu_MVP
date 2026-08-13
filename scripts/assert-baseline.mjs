@@ -171,14 +171,17 @@ check(
   await asFails(ua, `insert into public.streaks (user_id, current_days) values ('${ua}', 400)`),
   "a client cannot write streaks",
 );
+// ub, not ua: ua's tick above already earned through the award trigger
+// (0008), so the owner-level seed insert here must use a user with no
+// award yet — the point is the uniqueness rule, not the trigger.
 await db.exec(`insert into public.point_events (user_id, source_type, source_id, points)
-               values ('${ua}', 'node', '${node.id}', 10)`);
+               values ('${ub}', 'node', '${node.id}', 10)`);
 let doubled = false;
 try {
   await db.exec(`insert into public.point_events (user_id, source_type, source_id, points)
-                 values ('${ua}', 'node', '${node.id}', 10)`);
+                 values ('${ub}', 'node', '${node.id}', 10)`);
   doubled = true;
-} catch { /* unique(user_id, source_type, source_id) */ }
+} catch { /* point_events_once_ever */ }
 check(!doubled, "finishing the same node twice earns once");
 
 console.log("\n── review cards are the user's own words, own rows ─────────");
