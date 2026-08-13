@@ -22,7 +22,10 @@ import { PGlite } from "@electric-sql/pglite";
 import { SHIM } from "./lib/pglite-shim.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SPEC_PATH = path.join(ROOT, "docs", "roadmaps", "data-analyst.mjs");
+// Every top-level spec is held to the same promises; chunk files live in subdirs.
+const SPEC_PATHS = readdirSync(path.join(ROOT, "docs", "roadmaps"))
+  .filter((f) => f.endsWith(".mjs"))
+  .map((f) => path.join(ROOT, "docs", "roadmaps", f));
 
 let passed = 0;
 const failures = [];
@@ -31,6 +34,9 @@ const check = (ok, label, detail) => {
   else { failures.push(label); console.log(`  FAIL  ${label}${detail ? ` — ${detail}` : ""}`); }
 };
 
+for (const SPEC_PATH of SPEC_PATHS) {
+console.log(`
+════ ${path.basename(SPEC_PATH)} ════`);
 const spec = (await import(pathToFileURL(SPEC_PATH).href)).default;
 const specCounts = {
   modules: spec.modules.length,
@@ -107,5 +113,6 @@ const again = await one(`
 check(again.roadmaps === 1 && again.resources === specCounts.resources, `re-paste keeps exactly one copy (${again.roadmaps}/${again.resources})`);
 
 await db.close();
+}
 console.log(`\n${passed} passed, ${failures.length} failed`);
 if (failures.length) process.exit(1);
