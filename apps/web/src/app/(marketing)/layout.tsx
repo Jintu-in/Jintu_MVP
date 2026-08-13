@@ -84,8 +84,11 @@ export default async function MarketingLayout({
               <Link
                 href="/dashboard"
                 aria-label={`${momentum.streakDays}-day streak, ${momentum.totalPoints} points — open dashboard`}
-                className="font-mono text-[13px] text-ink-600 hover:text-ink-900"
+                className="flex items-center gap-1 font-mono text-[13px] text-ink-600 hover:text-ink-900"
               >
+                {/* The one emoji in the product, by owner's call: the streak
+                    flame. Decorative — the numbers beside it carry the fact. */}
+                <span aria-hidden>🔥</span>
                 {momentum.streakDays}d · {momentum.totalPoints} pts
               </Link>
             ) : null}

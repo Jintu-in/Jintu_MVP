@@ -91,30 +91,21 @@ export default async function RoadmapsPage({ searchParams }: { searchParams: Pro
         ships.
       </p>
 
-      {/* ── search ────────────────────────────────────────────────────────── */}
-      <form action="/learn" method="get" className="mt-8 flex max-w-xl gap-2" role="search">
-        <label htmlFor="learn-q" className="sr-only">
-          Search roadmaps
-        </label>
-        <input
-          id="learn-q"
-          type="search"
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder="what do you want to learn?"
-          className="h-12 min-w-0 flex-1 rounded-lg border border-ink-200 bg-white px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-brand-700"
-        />
-        {/* Carry the active facets through a new search. */}
-        {subject ? <input type="hidden" name="subject" value={subject} /> : null}
-        {difficulty ? <input type="hidden" name="difficulty" value={difficulty} /> : null}
-        {hours ? <input type="hidden" name="hours" value={hours} /> : null}
-        <button
-          type="submit"
-          className="h-12 shrink-0 rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-        >
-          Search
-        </button>
-      </form>
+      {/* No search box here — the input lives on the homepage hero only
+          (owner's call). Arriving with ?q= from that form still filters;
+          the line below is how you see it and shed it. */}
+      {query ? (
+        <p className="mt-6 text-sm text-ink-600">
+          Showing matches for <span className="font-medium text-ink-900">&ldquo;{q}&rdquo;</span>
+          {" · "}
+          <Link
+            href={href({ ...current, q: undefined }) as `/learn?${string}`}
+            className="text-brand-700 underline hover:text-brand-800"
+          >
+            clear
+          </Link>
+        </p>
+      ) : null}
 
       {/* ── facets ────────────────────────────────────────────────────────── */}
       {all.length > 0 ? (
