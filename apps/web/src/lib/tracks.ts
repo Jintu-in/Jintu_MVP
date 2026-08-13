@@ -7,13 +7,13 @@ import type { Archetype, Track, TrackResource, Unit } from "@/lib/tracks-shared"
  *
  * The design this serves was written for the v3 schema (units,
  * assignments_public, tier='verified'); production runs modules-under-
- * versioned-paths with tier='sprint'. Rather than fork the components, this
+ * versioned-paths. Rather than fork the components, this
  * adapter maps one onto the other and the components stay schema-blind:
  *
  *   modules              -> units          (week_no -> unitNo)
  *   tracks.summary       -> oneLine
- *   tier 'sprint'        -> 'verified'     (display rename shipped before the
- *                                           column rename — V3.md ledger)
+ *   tier                 -> pass-through   (the column says 'verified' since
+ *                                           20260812090000)
  *   rubric max_score     -> points
  *   criteria label/check -> name/check     (pre-#57 rubrics carry no check;
  *                                           they fall back by assignment kind,
@@ -35,7 +35,7 @@ export async function getTrack(slug: string): Promise<Track | null> {
     slug: t.slug,
     title: t.title,
     oneLine: t.summary,
-    tier: t.tier === "community" ? "community" : "verified",
+    tier: t.tier,
     units: t.modules.map((m): Unit => {
       // One artifact per unit is the house shape; when a week carries more
       // (sql + artifact in the same week), the highest-paying one is the

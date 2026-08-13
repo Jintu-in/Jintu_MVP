@@ -58,7 +58,7 @@ export interface Track {
   slug: string;
   title: string;
   oneLine: string | null;
-  /** Display tier. The live column still says 'sprint'; the mapping is getTrack's job. */
+  /** The tier column's own values since 20260812090000 — no mapping layer. */
   tier: "verified" | "community" | "draft";
   units: Unit[];
 }

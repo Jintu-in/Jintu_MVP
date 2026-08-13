@@ -20,7 +20,7 @@ export default {
     "Six weeks of real BA work: pulling the numbers yourself, one honest " +
     "requirements memo, one metrics review, and a walkthrough you can " +
     "defend in an interview.",
-  tier: "sprint",       // 'sprint' = machine-verified (needs ≥50% machine POINTS)
+  tier: "verified",    // 'verified' = machine-checked (needs ≥50% machine POINTS)
                         // 'community' = structural + peer only, never a model
   version: 1,           // bump to ship an improved edition; never edit a published one
 
