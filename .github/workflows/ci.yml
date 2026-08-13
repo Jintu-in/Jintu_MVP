@@ -64,6 +64,9 @@ jobs:
       # unmintable by clients, the 18+ and consent posture intact.
       - name: Baseline schema holds its rules
         run: pnpm baseline:verify
+      # An unchecked import must stay draft; a checked one must serve anon.
+      - name: Roadmap import pipeline holds rule 2
+        run: pnpm import:verify
 
       # Deno resolves nothing without a file extension, and the rest of the repo
       # is deliberately extensionless. Caught statically here rather than by the
