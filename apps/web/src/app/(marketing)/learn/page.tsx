@@ -3,10 +3,12 @@ import Link from "next/link";
 import { listPublishedRoadmaps } from "@/lib/roadmaps";
 
 /**
- * The catalogue, first data-bearing version: every published roadmap as a
- * plain row. Faceted browse and search are the phase-3 catalogue screen;
- * this page's only job today is to prove the pipe — database → RLS →
- * public page — and to hold the /learn URL it has always had.
+ * The catalogue: every published roadmap as a plain row, filterable by ?q=.
+ *
+ * The filter is a server-side substring match over title, summary and tags —
+ * enough for the homepage's "what do you want to learn?" form to land
+ * somewhere honest. Faceted browse and ranked search remain the phase-3
+ * catalogue screen; this page holds the /learn URL they will inherit.
  *
  * Rendered on demand: CI builds with no Supabase configured.
  */
@@ -19,8 +21,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/learn" },
 };
 
-export default async function RoadmapsPage() {
-  const roadmaps = await listPublishedRoadmaps();
+export default async function RoadmapsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const query = (q ?? "").trim().toLowerCase();
+
+  const all = await listPublishedRoadmaps();
+  const roadmaps = query
+    ? all.filter((r) =>
+        [r.title, r.summary, ...r.subjectTags].some((s) => s.toLowerCase().includes(query)),
+      )
+    : all;
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10 sm:py-14">
@@ -34,7 +48,37 @@ export default async function RoadmapsPage() {
         ships.
       </p>
 
-      {roadmaps.length === 0 ? (
+      <form action="/learn" method="get" className="mt-8 flex max-w-xl gap-2" role="search">
+        <label htmlFor="learn-q" className="sr-only">
+          Search roadmaps
+        </label>
+        <input
+          id="learn-q"
+          type="search"
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder="what do you want to learn?"
+          className="h-12 min-w-0 flex-1 rounded-lg border border-ink-200 bg-white px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-brand-700"
+        />
+        <button
+          type="submit"
+          className="h-12 shrink-0 rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+        >
+          Search
+        </button>
+      </form>
+
+      {query && roadmaps.length === 0 ? (
+        <p className="mt-10 max-w-[62ch] border-t border-ink-100 pt-8 text-[15px] leading-[1.7] text-ink-600">
+          Nothing published matches &ldquo;{q}&rdquo; yet. New roadmaps ship
+          only after every link in them has been checked by a person — tell
+          us what you were looking for via the{" "}
+          <Link href="/contact" className="text-brand-700 underline hover:text-brand-800">
+            contact page
+          </Link>{" "}
+          and it joins the queue.
+        </p>
+      ) : roadmaps.length === 0 ? (
         <p className="mt-10 max-w-[62ch] border-t border-ink-100 pt-8 text-[15px] leading-[1.7] text-ink-600">
           The first roadmaps are in link-check right now. A roadmap ships only
           after every resource in it has been seen to resolve — a dead link on
