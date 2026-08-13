@@ -50,9 +50,9 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 
 // Every table the pivot specifies, nothing the old product left behind.
 const expected = [
-  "audit_log", "colleges", "consents", "link_checks", "modules", "nodes",
-  "node_progress", "notifications", "point_events", "profiles",
-  "review_cards", "roadmap_enrollments", "roadmaps", "resources",
+  "audit_log", "auth_attempts", "colleges", "consents", "link_checks",
+  "modules", "nodes", "node_progress", "notifications", "point_events",
+  "profiles", "review_cards", "roadmap_enrollments", "roadmaps", "resources",
   "saved_resources", "streaks",
 ].sort();
 const actual = (await rows(
@@ -61,7 +61,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the sixteen pivot tables exist`,
+  `exactly the seventeen baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
@@ -193,6 +193,27 @@ check(
   "cards are invisible across users",
 );
 
+console.log("\n── the auth v3 surface stays server-side ───────────────────");
+// The enumeration tradeoff is contained by grants: only the service role may
+// ask whether an email exists. PGlite enforces EXECUTE for assumed roles the
+// same way live Postgres does.
+const probeAs = async (role, uid) => {
+  await db.exec(`begin; set local role ${role};${uid ? ` set local jintu.uid = '${uid}';` : ""}`);
+  try { await rows(`select public.email_registered('probe@example.org')`); return "allowed"; }
+  catch { return "denied"; }
+  finally { await db.exec("rollback;"); }
+};
+check((await probeAs("anon")) === "denied", "anon cannot call email_registered");
+check((await probeAs("authenticated", ua)) === "denied", "authenticated cannot call email_registered");
+check(
+  (await one(`select public.email_registered('probe@example.org') ok`)).ok === false &&
+  (await (async () => {
+    await db.exec(`insert into auth.users (id, email) values (gen_random_uuid(), 'probe@example.org')`);
+    return (await one(`select public.email_registered('PROBE@Example.Org') ok`)).ok;
+  })()) === true,
+  "email_registered answers case-insensitively for the service role",
+);
+
 console.log("\n── the compliance posture survived the pivot ───────────────");
 let minor = false;
 try {
@@ -225,7 +246,7 @@ const deniedOrEmpty = async (role, uid, sql) => {
   catch { return true; }
   finally { await db.exec("rollback;"); }
 };
-for (const t of ["notifications", "link_checks", "audit_log"]) {
+for (const t of ["notifications", "link_checks", "audit_log", "auth_attempts"]) {
   check(
     (await deniedOrEmpty("authenticated", ua, `select * from public.${t}`)) &&
     (await deniedOrEmpty("anon", null, `select * from public.${t}`)),
