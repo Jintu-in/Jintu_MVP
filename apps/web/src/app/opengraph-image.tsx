@@ -22,40 +22,50 @@ export const contentType = "image/png";
 export default async function Image() {
   return new ImageResponse(
     (
+      // OG cards.dc.html, card 1: wordmark 72px top-left, content anchored
+      // to the same left edge, one quiet line at the bottom. Flat fills and
+      // text only — Satori needs display:flex on anything with children.
       <div
         style={{
           height: "100%",
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
+          padding: 72,
           background: "#FFFFFF",
         }}
       >
-        {/* Satori needs explicit display:flex on anything with children. */}
-        <div style={{ display: "flex", alignItems: "center", marginBottom: 40 }}>
+        <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: "#17758a" }}>
+          jintu.in
+        </div>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: 28,
+          }}
+        >
           <div
             style={{
-              width: 14,
-              height: 14,
-              borderRadius: 999,
-              background: "#43b4c8",
-              marginRight: 14,
+              display: "flex",
+              fontSize: 60,
+              fontWeight: 500,
+              lineHeight: 1.18,
+              letterSpacing: "-0.02em",
+              color: "#231f20",
+              maxWidth: 900,
             }}
-          />
-          <div style={{ fontSize: 28, color: "#17758a", letterSpacing: 1 }}>jintu.in</div>
+          >
+            Learn anything, properly.
+          </div>
+          <div style={{ display: "flex", fontSize: 28, lineHeight: 1.5, color: "#585556", maxWidth: 1010 }}>
+            Deep, free roadmaps. Every link opened by a person.
+          </div>
         </div>
-
-        <div style={{ display: "flex", fontSize: 66, color: "#231f20", lineHeight: 1.15 }}>
-          One place to learn
-        </div>
-        <div style={{ display: "flex", fontSize: 66, color: "#231f20", lineHeight: 1.15 }}>
-          anything, properly.
-        </div>
-
-        <div style={{ display: "flex", fontSize: 30, color: "#706d6e", marginTop: 36 }}>
-          Free · self-paced · every link curated by hand
+        <div style={{ display: "flex", fontSize: 22, color: "#706d6e" }}>
+          Free · No account needed to read
         </div>
       </div>
     ),
