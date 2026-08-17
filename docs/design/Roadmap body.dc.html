@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="background:#FFFFFF">
+
+<div style="padding:20px 20px 0">
+<div style="font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">Roadmaps <span style="color:#8A8A85">/</span> Data</div>
+<h1 style="margin:8px 0 0;font:500 27px/1.25 Inter,sans-serif;color:#0B0B0B">Data analyst</h1>
+<p style="margin:10px 0 0;max-width:66ch;font:400 16px/1.65 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">Learn to pull the numbers yourself, check whether they are true, and explain them to someone who did not ask for a chart.</p>
+<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+<span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#5F5E5A;border:1px solid #E8E8E5;border-radius:8px;padding:8px 10px">91 days</span>
+<span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#5F5E5A;border:1px solid #E8E8E5;border-radius:8px;padding:8px 10px">20 modules</span>
+<span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#5F5E5A;border:1px solid #E8E8E5;border-radius:8px;padding:8px 10px">~340 hours</span>
+<span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#17758A;border:1px solid #E8E8E5;border-radius:8px;padding:8px 10px">free</span>
+</div>
+</div>
+
+<div style="padding:20px 20px 0">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<div style="font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B"><span style="font-family:'JetBrains Mono',monospace">7 of 91</span> days</div>
+<div style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#8A8A85">8% · 245 pts</div>
+</div>
+<div style="margin-top:12px;height:4px;border-radius:2px;background:#E8E8E5;overflow:hidden">
+<div style="height:4px;width:7.7%;background:#1D9E75"></div>
+</div>
+<button style="margin-top:16px;width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer;padding:0 14px" style-hover="background:#12606F">Continue — Day <span style="font-family:'JetBrains Mono',monospace">8</span> · Dates and times</button>
+<div style="margin-top:10px;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#8A8A85">last opened 2 days ago · ~35 min left in module 01</div>
+</div>
+</div>
+
+<div style="padding:22px 20px 0">
+<div style="font:400 13px/1.4 Inter,sans-serif;color:#5F5E5A;margin-bottom:10px">On metered data?</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<button onClick="{{ setAll }}" style="{{ chipAll }}">Everything</button>
+<button onClick="{{ setReads }}" style="{{ chipReads }}">Reads only</button>
+<button onClick="{{ setVideos }}" style="{{ chipVideos }}">Videos only</button>
+</div>
+<div style="margin-top:10px;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#8A8A85">{{ filterNote }}</div>
+</div>
+
+<div style="padding:24px 20px 0;display:flex;flex-direction:column;gap:10px">
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div onClick="{{ toggleM1 }}" style="padding:16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start" style-hover="background:#FAFAF8">
+<div style="flex:1;min-width:0">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Module 01 · weeks 1-2</div>
+<div style="margin-top:8px;font:500 15.5px/1.4 Inter,sans-serif;color:#0B0B0B">Data foundations and your first queries</div>
+<div style="margin-top:6px;font:400 12px/1.5 Inter,sans-serif;color:#8A8A85">Spreadsheets · SQL · PostgreSQL</div>
+<div style="margin-top:12px;height:3px;border-radius:2px;background:#E8E8E5;overflow:hidden"><div style="height:3px;width:87.5%;background:#1D9E75"></div></div>
+<div style="margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">7 of 8 days · ~16 hrs</div>
+</div>
+<span style="{{ caretM1 }}"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4.5 6.8 9 11.2l4.5-4.4" stroke="#5F5E5A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+</div>
+
+<sc-if value="{{ m1Open }}" hint-placeholder-val="{{ true }}">
+<div style="border-top:1px solid #E8E8E5">
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">1</span> · What an analyst actually does</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">The question comes before the query, and it is usually vague.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">14 blocks · 3 resources · 45 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">2</span> · From a spreadsheet to a table</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Rows, columns, types, and why a column has one type.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">16 blocks · 4 resources · 55 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">3</span> · SELECT, and reading a result</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Ask for three columns, get three columns back.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">15 blocks · 3 resources · 50 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">4</span> · WHERE, and being precise</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Most wrong answers are a filter that was too loose.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">17 blocks · 4 resources · 60 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">5</span> · Sorting, limits and sampling</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Look at ten rows before you trust a million.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">13 blocks · 2 resources · 40 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">6</span> · AND, OR, and the brackets</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">One missing bracket changes the answer, not the error.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">15 blocks · 3 resources · 50 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#8A8A85">Day <span style="font-family:'JetBrains Mono',monospace">7</span> · NULL, and what it is not</span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Not zero, not an empty string, and never equal to itself.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">16 blocks · 4 resources · 55 min</span>
+</span>
+</a>
+
+<a href="#" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid #E8E8E5;background:#EFFAFC;text-decoration:none" style-hover="background:#E4F5FA">
+<span style="flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;border:1px solid #17758A;background:#FFFFFF"></span>
+<span style="flex:1;min-width:0">
+<span style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font:500 15px/1.45 Inter,sans-serif;color:#0B0B0B">Day <span style="font-family:'JetBrains Mono',monospace">8</span> · Dates and times</span><span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#17758A">next</span></span>
+<span style="display:block;margin-top:4px;font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Time zones, truncation, and the month that has 28 days.</span>
+<span style="display:block;margin-top:7px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">18 blocks · 4 resources · 60 min</span>
+</span>
+</a>
+
+<div style="padding:16px">
+<div style="background:#EFFAFC;border-radius:12px;padding:16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:10px">Module deliverable</div>
+<p style="margin:0;font:400 15px/1.7 Inter,sans-serif;color:#17505C;text-wrap:pretty">Take a public dataset with at least fifty thousand rows. Write six queries that answer six questions you actually had, and note which one you got wrong the first time.</p>
+<div style="margin-top:12px;font:400 12px/1 'JetBrains Mono',monospace;color:#17505C">~3 hrs · 60 pts</div>
+</div>
+</div>
+
+</div>
+</sc-if>
+</div>
+
+<sc-for list="{{ modules }}" as="m" hint-placeholder-count="6">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer" style-hover="background:#FAFAF8">
+<div style="flex:1;min-width:0">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">{{ m.label }}</div>
+<div style="margin-top:8px;font:500 15.5px/1.4 Inter,sans-serif;color:#0B0B0B">{{ m.title }}</div>
+<div style="margin-top:6px;font:400 12px/1.5 Inter,sans-serif;color:#8A8A85">{{ m.tools }}</div>
+<div style="margin-top:12px;height:3px;border-radius:2px;background:#E8E8E5"></div>
+<div style="margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">{{ m.meta }}</div>
+</div>
+<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin-top:-2px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4.5 6.8 9 11.2l4.5-4.4" stroke="#5F5E5A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+</div>
+</sc-for>
+
+</div>
+
+<div style="padding:24px 20px 32px">
+<div style="border-top:1px solid #E8E8E5;padding-top:16px;font:400 13px/1.7 Inter,sans-serif;color:#5F5E5A;max-width:66ch;text-wrap:pretty">Every lesson is written by us and links out for depth. Third-party text is quoted with its author, source and licence. Points and streaks record consistency — they are not a qualification.</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { filter: 'all', m1: true };
+
+  renderVals() {
+    const chip = on =>
+      'min-height:40px;padding:0 14px;border-radius:8px;cursor:pointer;font:400 13.5px Inter,sans-serif;' +
+      (on ? 'background:#17758A;border:1px solid #17758A;color:#FFFFFF' : 'background:#FFFFFF;border:1px solid #E8E8E5;color:#17758A');
+    const notes = {
+      all: 'everything shown · ~1.4 GB if you open every link',
+      reads: 'videos hidden · 74 of 91 days unchanged · ~46 MB total',
+      videos: '31 videos across 20 modules · ~1.3 GB · wifi advised'
+    };
+    const mods = [
+      ['Module 02 · weeks 2-3', 'Joining tables without losing rows', 'SQL · PostgreSQL', '0 of 5 days · ~11 hrs'],
+      ['Module 03 · weeks 3-4', 'Grouping, counting and the average trap', 'SQL · PostgreSQL', '0 of 5 days · ~10 hrs'],
+      ['Module 04 · week 4', 'Cleaning: text, casing and duplicates', 'SQL · regex', '0 of 4 days · ~8 hrs'],
+      ['Module 05 · weeks 4-5', 'Subqueries and common table expressions', 'SQL', '0 of 4 days · ~9 hrs'],
+      ['Module 06 · week 5', 'Spreadsheets, still, and where they win', 'Sheets · Excel', '0 of 4 days · ~7 hrs'],
+      ['Module 07 · weeks 5-6', 'Describing a distribution honestly', 'Statistics', '0 of 5 days · ~11 hrs'],
+      ['Module 08 · week 6', 'Sampling, bias and missing data', 'Statistics', '0 of 4 days · ~9 hrs'],
+      ['Module 09 · weeks 6-7', 'Python for tables: pandas basics', 'Python · pandas', '0 of 5 days · ~12 hrs'],
+      ['Module 10 · weeks 6-7', 'Window functions', 'SQL · PostgreSQL', '0 of 6 days · ~12 hrs'],
+      ['Module 11 · weeks 7-8', 'Charts that answer one question', 'Matplotlib · Sheets', '0 of 4 days · ~8 hrs'],
+      ['Module 12 · week 8', 'Dashboards, and when not to build one', 'Metabase', '0 of 4 days · ~9 hrs'],
+      ['Module 13 · weeks 8-9', 'Cohorts, retention and time windows', 'SQL', '0 of 5 days · ~11 hrs'],
+      ['Module 14 · week 9', 'Experiments: what a result can and cannot say', 'Statistics', '0 of 5 days · ~12 hrs'],
+      ['Module 15 · weeks 9-10', 'Modelling data for analysis', 'dbt · SQL', '0 of 5 days · ~11 hrs'],
+      ['Module 16 · week 10', 'Version control for analysts', 'Git', '0 of 3 days · ~6 hrs'],
+      ['Module 17 · weeks 10-11', 'Automating the boring parts', 'Python · cron', '0 of 4 days · ~9 hrs'],
+      ['Module 18 · week 11', 'Writing the finding, not the query', 'Writing', '0 of 4 days · ~8 hrs'],
+      ['Module 19 · weeks 11-12', 'Data ethics, privacy and consent', 'Policy', '0 of 4 days · ~8 hrs'],
+      ['Module 20 · weeks 12-13', 'A full analysis, end to end', 'SQL · Python · writing', '0 of 7 days · ~18 hrs']
+    ];
+    return {
+      modules: mods.map((m, i) => ({ id: i, label: m[0], title: m[1], tools: m[2], meta: m[3] })),
+      chipAll: chip(this.state.filter === 'all'),
+      chipReads: chip(this.state.filter === 'reads'),
+      chipVideos: chip(this.state.filter === 'videos'),
+      filterNote: notes[this.state.filter],
+      setAll: () => this.setState({ filter: 'all' }),
+      setReads: () => this.setState({ filter: 'reads' }),
+      setVideos: () => this.setState({ filter: 'videos' }),
+      m1Open: this.state.m1,
+      toggleM1: () => this.setState(s => ({ m1: !s.m1 })),
+      caretM1: 'flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin-top:-2px;transition:transform .15s ease;transform:rotate(' + (this.state.m1 ? 180 : 0) + 'deg)'
+    };
+  }
+}
+</script>
+</body>
+</html>

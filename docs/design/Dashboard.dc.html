@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:22px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:680px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#8A8A85">Jintu · signed-in dashboard</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">What do I tap now</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">Continue is the only element with a teal border, so it is found before anything is read. Everything below it is a list of things that can wait.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">360 · returning learner</div>
+<div style="width:360px;height:760px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 16px;gap:8px">
+<span style="font:500 15px/1 Inter,sans-serif;color:#17758A">Jintu</span>
+<div style="flex:1"></div>
+<button aria-label="Search" style="width:48px;height:48px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5" stroke="#0B0B0B" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+<button aria-label="Account" style="width:48px;height:48px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><span style="width:28px;height:28px;border-radius:50%;background:#EFFAFC;display:flex;align-items:center;justify-content:center;font:500 12px 'JetBrains Mono',monospace;color:#17758A">PR</span></button>
+</div>
+
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px 16px 32px;display:flex;flex-direction:column;gap:20px">
+
+<div>
+<h2 style="margin:0;font:500 20px/1.35 Inter,sans-serif;color:#0B0B0B">Good evening, Priya</h2>
+<div style="margin-top:4px;font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Tuesday · 6 minutes is enough</div>
+</div>
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<div style="display:flex;align-items:center;gap:9px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5c.6 2.4-.3 3.6-1.6 4.9C6.7 9 5 10.4 5 12.6a5 5 0 0 0 10 0c0-1.9-.9-3.2-1.8-4.3-.5 1-1.2 1.5-1.9 1.7.5-2.3.1-5-1.3-7.5Z" fill="#17758A"></path></svg>
+<span style="font:500 17px/1.25 'JetBrains Mono',monospace;color:#0B0B0B">11 day streak</span>
+</div>
+<div style="margin-top:5px;text-align:right;font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">47 days learned · never resets</div>
+<div role="img" aria-label="11 day streak, 2 days missed in the last 14" style="margin-top:12px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5;display:flex;align-items:center;justify-content:center;font:400 10px 'JetBrains Mono',monospace;color:#8A8A85">4</div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5;display:flex;align-items:center;justify-content:center;font:400 10px 'JetBrains Mono',monospace;color:#8A8A85">5</div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#EFFAFC;border:1.5px solid #17758A"></div>
+</div>
+</div>
+
+<div style="border:1px solid #17758A;border-radius:12px;padding:18px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#17758A">Data analyst · module 10</div>
+<div style="margin-top:10px;font:500 18px/1.35 Inter,sans-serif;color:#0B0B0B">Day <span style="font-family:'JetBrains Mono',monospace">45</span> · Frames</div>
+<div style="margin-top:8px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#5F5E5A">60 min · 16 blocks · 35 pts</div>
+<button style="margin-top:16px;width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer" style-hover="background:#12606F">Continue →</button>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">47</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">days learned</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">1,240</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">points</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">6</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">due</div></div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">Review</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="font:400 16px/1.5 Inter,sans-serif;color:#0B0B0B"><span style="font-family:'JetBrains Mono',monospace">6</span> cards due</div>
+<div style="margin-top:5px;font:400 13px/1.6 Inter,sans-serif;color:#5F5E5A">From days <span style="font-family:'JetBrains Mono',monospace">38</span> to <span style="font-family:'JetBrains Mono',monospace">44</span>. Oldest is <span style="font-family:'JetBrains Mono',monospace">6</span> days old.</div>
+<button style="margin-top:14px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">Review now · ~4 min</button>
+</div>
+</div>
+
+<div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">My notes</span>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">All notes</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<a href="#" style="display:block;border:1px solid #E8E8E5;border-radius:12px;padding:14px;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;border-left:2px solid #17758A;padding-left:12px;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">RANGE does not count rows, it compares values in the ORDER BY column.</span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 45 · frames</span>
+</a>
+<a href="#" style="display:block;border:1px solid #E8E8E5;border-radius:12px;padding:14px;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;border-left:2px solid #17758A;padding-left:12px;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">A left join that filters in WHERE quietly becomes an inner join.</span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 41 · outer joins</span>
+</a>
+<a href="#" style="display:block;border:1px solid #E8E8E5;border-radius:12px;padding:14px;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;border-left:2px solid #17758A;padding-left:12px;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">Check the sample before the average — one outlier moves it, the median holds.</span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 38 · distributions</span>
+</a>
+</div>
+</div>
+
+<div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Saved</span>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">All saved</a>
+</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:14px;border-bottom:1px solid #E8E8E5;text-decoration:none;min-height:48px;box-sizing:border-box" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#5F5E5A"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#5F5E5A" stroke-linecap="round"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">Window function calls, frame clause</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">postgresql.org · 12 min · ~0.3 MB</span></span>
+<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex:none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#17758A" stroke-linecap="round"></path></svg>
+</a>
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:14px;border-bottom:1px solid #E8E8E5;text-decoration:none;min-height:48px;box-sizing:border-box" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke="#5F5E5A"></rect><path d="M6.6 6.3 10 8l-3.4 1.7V6.3Z" fill="#5F5E5A"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">Frames, drawn on real data</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">youtube.com · 22 min · ~54 MB</span></span>
+<span style="flex:none;font:400 11px/1 'JetBrains Mono',monospace;color:#17758A">load</span>
+</a>
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:14px;text-decoration:none;min-height:48px;box-sizing:border-box" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#5F5E5A"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#5F5E5A" stroke-linecap="round"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">A visual explanation of joins</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">sqlbolt.com · 9 min · ~0.2 MB</span></span>
+<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex:none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#17758A" stroke-linecap="round"></path></svg>
+</a>
+</div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">Roadmaps</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<a href="#" style="display:block;padding:14px;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Data analyst</span>
+<span style="display:block;margin-top:10px;height:3px;border-radius:2px;background:#E8E8E5"><span style="display:block;height:3px;border-radius:2px;width:49%;background:#1D9E75"></span></span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">45 of 91 days</span>
+</a>
+<a href="#" style="display:block;padding:14px;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Reading research papers</span>
+<span style="display:block;margin-top:10px;height:3px;border-radius:2px;background:#E8E8E5"><span style="display:block;height:3px;border-radius:2px;width:7%;background:#1D9E75"></span></span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">2 of 28 days</span>
+</a>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">360 · first week · empty states</div>
+<div style="width:360px;height:760px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 16px;gap:8px">
+<span style="font:500 15px/1 Inter,sans-serif;color:#17758A">Jintu</span>
+<div style="flex:1"></div>
+<button aria-label="Search" style="width:48px;height:48px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5" stroke="#0B0B0B" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+<button aria-label="Account" style="width:48px;height:48px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><span style="width:28px;height:28px;border-radius:50%;background:#EFFAFC;display:flex;align-items:center;justify-content:center;font:500 12px 'JetBrains Mono',monospace;color:#17758A">PR</span></button>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px 16px 32px;display:flex;flex-direction:column;gap:20px">
+
+<div>
+<h2 style="margin:0;font:500 20px/1.35 Inter,sans-serif;color:#0B0B0B">Good evening, Priya</h2>
+<div style="margin-top:4px;font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Tuesday · 6 minutes is enough</div>
+</div>
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<div style="display:flex;align-items:center;gap:9px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5c.6 2.4-.3 3.6-1.6 4.9C6.7 9 5 10.4 5 12.6a5 5 0 0 0 10 0c0-1.9-.9-3.2-1.8-4.3-.5 1-1.2 1.5-1.9 1.7.5-2.3.1-5-1.3-7.5Z" fill="#17758A"></path></svg>
+<span style="font:500 17px/1.25 'JetBrains Mono',monospace;color:#0B0B0B">2 day streak</span>
+</div>
+<div style="margin-top:5px;text-align:right;font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">2 days learned · never resets</div>
+<div role="img" aria-label="2 day streak, today not done yet" style="margin-top:12px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#FAFAF8;border:1px solid #E8E8E5"></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div aria-hidden="true" style="aspect-ratio:1;border-radius:6px;background:#EFFAFC;border:1.5px solid #17758A"></div>
+</div>
+</div>
+
+<div style="border:1px solid #17758A;border-radius:12px;padding:18px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#17758A">Data analyst · module 01</div>
+<div style="margin-top:10px;font:500 18px/1.35 Inter,sans-serif;color:#0B0B0B">Day <span style="font-family:'JetBrains Mono',monospace">3</span> · SELECT, and reading a result</div>
+<div style="margin-top:8px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#5F5E5A">Resume at block 12 of 16 · ~20 min left</div>
+<button style="margin-top:16px;width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer" style-hover="background:#12606F">Continue →</button>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">2</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">days learned</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">70</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">points</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:12px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#8A8A85">0</div><div style="margin-top:5px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">due</div></div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">Review</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="font:400 15px/1.6 Inter,sans-serif;color:#8A8A85">Nothing due. Come back tomorrow.</div>
+</div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">My notes</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<p style="margin:0;font:400 15px/1.65 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">Highlight anything while you read and it lands here.</p>
+<div style="margin-top:10px;font:400 12px/1.6 'JetBrains Mono',monospace;color:#8A8A85">press and hold on any sentence</div>
+</div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">Saved</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<p style="margin:0;font:400 15px/1.65 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">Save a link from any lesson to read it later, on wifi.</p>
+<div style="margin-top:10px;font:400 12px/1.6 'JetBrains Mono',monospace;color:#8A8A85">day 3 has 3 resources · ~1 MB</div>
+</div>
+</div>
+
+<div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85;margin-bottom:10px">Roadmaps</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<a href="#" style="display:block;padding:14px;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="display:block;font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Data analyst</span>
+<span style="display:block;margin-top:10px;height:3px;border-radius:2px;background:#E8E8E5"><span style="display:block;height:3px;border-radius:2px;width:2%;background:#1D9E75"></span></span>
+<span style="display:block;margin-top:8px;font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">2 of 91 days</span>
+</a>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">1024 · two columns 60 / 40 · resumed mid-day</div>
+<div style="width:1024px;height:800px;box-sizing:border-box;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:56px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;gap:18px;padding:0 22px;background:#FFFFFF">
+<span style="font:500 16px/1 Inter,sans-serif;color:#17758A">Jintu</span>
+<a href="#" style="font:400 13.5px/1 Inter,sans-serif;color:#0B0B0B;text-decoration:none">Dashboard</a>
+<a href="#" style="font:400 13.5px/1 Inter,sans-serif;color:#5F5E5A;text-decoration:none">Roadmaps</a>
+<a href="#" style="font:400 13.5px/1 Inter,sans-serif;color:#5F5E5A;text-decoration:none">Notes</a>
+<div style="flex:1"></div>
+<span style="width:30px;height:30px;border-radius:50%;background:#EFFAFC;display:flex;align-items:center;justify-content:center;font:500 12px 'JetBrains Mono',monospace;color:#17758A">PR</span>
+</div>
+
+<div style="flex:1;min-height:0;overflow-y:auto;padding:26px 0 40px">
+<div style="max-width:940px;margin:0 auto;padding:0 22px">
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
+<div>
+<h2 style="margin:0;font:500 20px/1.35 Inter,sans-serif;color:#0B0B0B">Good evening, Priya</h2>
+<div style="margin-top:4px;font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Tuesday · 6 minutes is enough</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5c.6 2.4-.3 3.6-1.6 4.9C6.7 9 5 10.4 5 12.6a5 5 0 0 0 10 0c0-1.9-.9-3.2-1.8-4.3-.5 1-1.2 1.5-1.9 1.7.5-2.3.1-5-1.3-7.5Z" fill="#17758A"></path></svg>
+<span style="font:500 17px/1.25 'JetBrains Mono',monospace;color:#0B0B0B">11 day streak</span>
+<span style="font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">47 days learned · never resets</span>
+</div>
+</div>
+
+<div style="margin-top:16px;display:flex;gap:20px;align-items:flex-start">
+
+<div style="flex:0 0 60%;max-width:60%;display:flex;flex-direction:column;gap:16px">
+
+<div style="background:#FFFFFF;border:1px solid #17758A;border-radius:12px;padding:24px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#17758A">Data analyst · module 10</div>
+<div style="margin-top:12px;font:500 22px/1.3 Inter,sans-serif;color:#0B0B0B">Day <span style="font-family:'JetBrains Mono',monospace">45</span> · Frames</div>
+<div style="margin-top:10px;font:400 13px/1.5 'JetBrains Mono',monospace;color:#5F5E5A">Resume at block 12 of 16 · 25 min left · 35 pts</div>
+<div style="margin-top:14px;height:3px;border-radius:2px;background:#E8E8E5"><div style="height:3px;border-radius:2px;width:75%;background:#1D9E75"></div></div>
+<button style="margin-top:20px;width:100%;min-height:52px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 17px Inter,sans-serif;color:#FFFFFF;cursor:pointer" style-hover="background:#12606F">Continue →</button>
+<div style="margin-top:12px;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#8A8A85">last block read: ROWS against RANGE</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:20px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Review</div>
+<div style="margin-top:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<div style="flex:1;min-width:200px">
+<div style="font:400 16px/1.5 Inter,sans-serif;color:#0B0B0B"><span style="font-family:'JetBrains Mono',monospace">6</span> cards due</div>
+<div style="margin-top:4px;font:400 13px/1.6 Inter,sans-serif;color:#5F5E5A">From days <span style="font-family:'JetBrains Mono',monospace">38</span> to <span style="font-family:'JetBrains Mono',monospace">44</span>. Oldest is <span style="font-family:'JetBrains Mono',monospace">6</span> days old.</div>
+</div>
+<button style="min-height:48px;padding:0 18px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">Review now · ~4 min</button>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:20px">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Roadmaps</span>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">Browse all</a>
+</div>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
+<a href="#" style="display:block;text-decoration:none">
+<span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Data analyst</span><span style="font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">45 of 91 days</span></span>
+<span style="display:block;margin-top:9px;height:3px;border-radius:2px;background:#E8E8E5"><span style="display:block;height:3px;border-radius:2px;width:49%;background:#1D9E75"></span></span>
+</a>
+<a href="#" style="display:block;text-decoration:none">
+<span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Reading research papers</span><span style="font:400 12px/1 'JetBrains Mono',monospace;color:#5F5E5A">2 of 28 days</span></span>
+<span style="display:block;margin-top:9px;height:3px;border-radius:2px;background:#E8E8E5"><span style="display:block;height:3px;border-radius:2px;width:7%;background:#1D9E75"></span></span>
+</a>
+</div>
+</div>
+
+</div>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:16px">
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:14px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">47</div><div style="margin-top:6px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">days learned</div></div>
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:14px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">1,240</div><div style="margin-top:6px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">points</div></div>
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:14px"><div style="font:500 19px/1.1 'JetBrains Mono',monospace;color:#0B0B0B">6</div><div style="margin-top:6px;font:400 12px/1.4 Inter,sans-serif;color:#8A8A85">due</div></div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:20px">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">My notes</span>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">All notes</a>
+</div>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:14px">
+<a href="#" style="display:block;text-decoration:none;border-left:2px solid #17758A;padding-left:12px">
+<span style="display:block;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">RANGE does not count rows, it compares values in the ORDER BY column.</span>
+<span style="display:block;margin-top:6px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 45 · frames</span>
+</a>
+<a href="#" style="display:block;text-decoration:none;border-left:2px solid #17758A;padding-left:12px">
+<span style="display:block;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">A left join that filters in WHERE quietly becomes an inner join.</span>
+<span style="display:block;margin-top:6px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 41 · outer joins</span>
+</a>
+<a href="#" style="display:block;text-decoration:none;border-left:2px solid #17758A;padding-left:12px">
+<span style="display:block;font:400 15px/1.7 Inter,sans-serif;color:#0B0B0B">Check the sample before the average — one outlier moves it, the median holds.</span>
+<span style="display:block;margin-top:6px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">day 38 · distributions</span>
+</a>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:20px">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Saved</span>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">All saved</a>
+</div>
+<div style="margin-top:12px;display:flex;flex-direction:column">
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#5F5E5A"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#5F5E5A" stroke-linecap="round"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">Window function calls, frame clause</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">postgresql.org · 12 min · ~0.3 MB</span></span>
+<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex:none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#17758A" stroke-linecap="round"></path></svg>
+</a>
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #E8E8E5;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke="#5F5E5A"></rect><path d="M6.6 6.3 10 8l-3.4 1.7V6.3Z" fill="#5F5E5A"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">Frames, drawn on real data</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">youtube.com · 22 min · ~54 MB</span></span>
+<span style="flex:none;font:400 11px/1 'JetBrains Mono',monospace;color:#17758A">load</span>
+</a>
+<a href="#" style="display:flex;gap:12px;align-items:center;padding:12px 0;text-decoration:none" style-hover="background:#FAFAF8">
+<span style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#5F5E5A"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#5F5E5A" stroke-linecap="round"></path></svg></span>
+<span style="flex:1;min-width:0"><span style="display:block;font:400 15px/1.45 Inter,sans-serif;color:#0B0B0B">A visual explanation of joins</span><span style="display:block;margin-top:4px;font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">sqlbolt.com · 9 min · ~0.2 MB</span></span>
+<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex:none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#17758A" stroke-linecap="round"></path></svg>
+</a>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1900,&quot;height&quot;:1000}}"></script>
+</body>
+</html>
