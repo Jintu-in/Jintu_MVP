@@ -27,25 +27,22 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
       {/* ── the streak, first ─────────────────────────────────────────────── */}
+      {/* Never "0 day streak": a lapsed user reads "Start again today", a
+          brand-new one reads how day 1 begins. The number that survives a
+          break — total days — sits beside whichever headline shows. */}
       <section aria-labelledby="streak">
         <h1 id="streak" className="text-2xl font-medium tracking-tight text-ink-900">
           {streak && streak.currentDays > 0
-            ? `${streak.currentDays}-day streak`
-            : "Start your streak today"}
+            ? `${streak.currentDays}-day streak${streak.doneToday ? "" : " — keep it alive today"}`
+            : streak && streak.totalDays > 0
+              ? "Start again today"
+              : "Day 1 starts when you finish something"}
         </h1>
         <p className="mt-1 font-mono text-[13px] text-ink-500">
-          {streak
-            ? `longest ${streak.longestDays} · ${streak.freezesRemaining} ${
-                streak.freezesRemaining === 1 ? "freeze" : "freezes"
-              } left this month · ${pointsThisWeek} pts this week`
-            : "Finish any node and the counter begins."}
+          {streak && streak.totalDays > 0
+            ? `${streak.totalDays} total ${streak.totalDays === 1 ? "day" : "days"} — never resets · longest ${streak.longestDays} · ${pointsThisWeek} pts this week`
+            : "Finish any day of any roadmap and the counter begins."}
         </p>
-        {streak && streak.freezesRemaining > 0 ? (
-          <p className="mt-2 max-w-[62ch] text-sm text-pretty text-ink-500">
-            A missed day uses a freeze on its own — no button to press, no
-            begging. Two per month.
-          </p>
-        ) : null}
       </section>
 
       {/* ── review due ────────────────────────────────────────────────────── */}

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 const FREE = [
   "Every roadmap, in full, readable without an account",
   "Progress tracking down to the single node, across any number of roadmaps",
-  "Streaks with two auto-applied freezes a month",
+  "A streak for showing up, and a total-days count that never resets even when the streak does",
   "Points for genuine progress — momentum, not a credential",
   "Spaced review of what you learned, in your own words",
   "Save-for-later that stays attached to the roadmap instead of rotting in a list",

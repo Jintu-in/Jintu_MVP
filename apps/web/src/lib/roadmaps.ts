@@ -35,6 +35,9 @@ export type NodeResource = {
   health: "unchecked" | "ok" | "flaky" | "broken";
 };
 
+export type NodeTopic = { position: number; title: string; detail: string };
+export type NodeCheck = { position: number; question: string; answer: string };
+
 export type RoadmapNode = {
   id: string;
   slug: string;
@@ -42,6 +45,14 @@ export type RoadmapNode = {
   title: string;
   summary: string | null;
   learningObjectives: string[];
+  /** The day-page blocks (0010). All optional: a day renders what it has. */
+  whyToday: string | null;
+  commonMistake: string | null;
+  principle: string | null;
+  challenge: string | null;
+  challengeMinutes: number | null;
+  topics: NodeTopic[];
+  checks: NodeCheck[];
   estMinutes: number;
   points: number;
   difficulty: "intro" | "core" | "stretch" | null;
@@ -150,7 +161,11 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
          modules (
            id, position, title, week_range, objective, deliverable, est_hours,
            nodes (
-             id, slug, position, title, summary, learning_objectives, est_minutes, points, difficulty, is_optional,
+             id, slug, position, title, summary, learning_objectives,
+             why_today, common_mistake, principle, challenge, challenge_minutes,
+             est_minutes, points, difficulty, is_optional,
+             node_topics ( position, title, detail ),
+             node_checks ( position, question, answer ),
              resources (
                id, position, type, title, url, source_name, author,
                youtube_video_id, duration_sec, est_size_mb, editor_note, health
@@ -191,6 +206,13 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
             title: n.title,
             summary: n.summary,
             learningObjectives: n.learning_objectives ?? [],
+            whyToday: n.why_today,
+            commonMistake: n.common_mistake,
+            principle: n.principle,
+            challenge: n.challenge,
+            challengeMinutes: n.challenge_minutes,
+            topics: ((n.node_topics ?? []) as NodeTopic[]).slice().sort(byPosition),
+            checks: ((n.node_checks ?? []) as NodeCheck[]).slice().sort(byPosition),
             estMinutes: n.est_minutes,
             points: n.points,
             difficulty: n.difficulty,

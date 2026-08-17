@@ -69,6 +69,17 @@ for (const [mi, m] of spec.modules.entries()) {
     if (n.difficulty && !DIFF_NODE.includes(n.difficulty)) fail(`${at} difficulty`);
     if (n.points !== undefined && (!Number.isInteger(n.points) || n.points < 5 || n.points > 100))
       fail(`${at} points ${n.points} — 5–100 or omit for the default`);
+    // The day-page blocks (0010), all optional.
+    if (n.challengeMinutes !== undefined &&
+        (!Number.isInteger(n.challengeMinutes) || n.challengeMinutes < 5 || n.challengeMinutes > 120))
+      fail(`${at} challengeMinutes ${n.challengeMinutes} — 5–120`);
+    for (const [ti, t] of (n.topics ?? []).entries()) {
+      if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);
+    }
+    for (const [ci, c] of (n.checks ?? []).entries()) {
+      if (!c.question || !c.answer) fail(`${at} check ${ci + 1} needs question and answer`);
+    }
+    if ((n.checks ?? []).length > 5) fail(`${at}: ${n.checks.length} checks — three is the model, five the ceiling`);
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -157,9 +168,15 @@ for (const [mi, m] of spec.modules.entries()) {
   push(`  values (rm, ${mi + 1}, ${q(m.title)}, ${q(m.weekRange ?? null)}, ${q(m.objective ?? null)}, ${q(m.deliverable ?? null)}, ${qn(m.estHours)})`);
   push(`  returning id into m;`);
   for (const [ni, n] of m.nodes.entries()) {
-    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, est_minutes, difficulty, is_optional, points)`);
-    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
+    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, est_minutes, difficulty, is_optional, points)`);
+    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
     push(`  returning id into n;`);
+    for (const [ti, t] of (n.topics ?? []).entries()) {
+      push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);
+    }
+    for (const [ci, c] of (n.checks ?? []).entries()) {
+      push(`  insert into public.node_checks (node_id, position, question, answer) values (n, ${ci}, ${q(c.question)}, ${q(c.answer)});`);
+    }
     for (const [ri, r] of n.resources.entries()) {
       push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
       push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${verified ? "false, now(), 'ok'" : "true"});`);

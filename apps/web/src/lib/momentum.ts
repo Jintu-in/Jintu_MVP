@@ -21,7 +21,7 @@ export async function getMyMomentum(): Promise<Momentum | null> {
     if (!user) return null;
 
     const [streakRes, pointsRes] = await Promise.all([
-      supabase.from("streaks").select("current_days").maybeSingle(),
+      supabase.from("streak_status").select("current_days").maybeSingle(), // the decaying view — never the raw table
       supabase.from("point_events").select("points"),
     ]);
     if (streakRes.error || pointsRes.error) return null;

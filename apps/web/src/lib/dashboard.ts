@@ -22,8 +22,8 @@ export type DashboardData = {
   streak: {
     currentDays: number;
     longestDays: number;
-    freezesRemaining: number;
-    lastActiveOn: string | null;
+    totalDays: number;
+    doneToday: boolean;
   } | null;
   dueCount: number;
   pointsThisWeek: number;
@@ -86,7 +86,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
   const weekStart = monday.toISOString().slice(0, 10);
 
   const [streakRes, dueRes, pointsRes, enrolRes, savesRes] = await Promise.all([
-    retryRead(() => supabase.from("streaks").select("*").maybeSingle()),
+    retryRead(() => supabase.from("streak_status").select("*").maybeSingle()),
     retryRead(() =>
       supabase
         .from("review_cards")
@@ -125,8 +125,8 @@ export async function getDashboard(): Promise<DashboardData | null> {
       ? {
           currentDays: streakRes.data.current_days,
           longestDays: streakRes.data.longest_days,
-          freezesRemaining: streakRes.data.freezes_remaining,
-          lastActiveOn: streakRes.data.last_active_on,
+          totalDays: streakRes.data.total_days,
+          doneToday: streakRes.data.done_today,
         }
       : null,
     dueCount: dueRes.count ?? 0,
