@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
  */
 
 /** Inline rich text: prose runs and code spans, nothing more. */
-export type Rich = { kind: "text" | "code"; text: string }[];
+export type Rich = { kind: "text" | "code" | "mono"; text: string }[];
 
 export type LessonBlock = { id: string; railTitle: string; done: boolean } & (
   | { kind: "brief"; text: Rich }
@@ -47,8 +47,14 @@ export type LessonBlock = { id: string; railTitle: string; done: boolean } & (
       solution?: Rich[];
     }
   | { kind: "figure"; svg: React.ReactNode; caption: string }
-  | { kind: "table"; sections: { label: string; rows: { term: string; text: string }[] }[] }
+  | {
+      kind: "compare";
+      heading?: string;
+      columns: [string, string];
+      rows: { label: string; cells: [Rich, Rich] }[];
+    }
   | { kind: "gotcha"; text: Rich }
+  | { kind: "note"; text: Rich }
   | { kind: "warning"; text: Rich }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | {
@@ -96,6 +102,8 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
         <code key={i} className={cn("font-mono text-[15px]", codeClass)}>
           {s.text}
         </code>
+      ) : s.kind === "mono" ? (
+        <span key={i} className="font-mono">{s.text}</span>
       ) : (
         <span key={i}>{s.text}</span>
       ),
@@ -449,28 +457,103 @@ function BlockBody({
         </div>
       );
 
-    case "table":
+    case "compare":
+      // One matrix, two renderings (Lesson blocks §05): stacked cards under
+      // lg — each aspect label as a section header, one row per option —
+      // and a true <table> from lg up. Same data, no duplication.
       return (
-        <div className="overflow-hidden rounded-card border border-ink-100">
-          {b.sections.map((s, si) => (
-            <div key={s.label} className="flex flex-col">
-              <div
-                className={cn(
-                  "bg-ink-50 px-3 py-2 font-mono text-[11px] leading-[1.4] tracking-[.06em] uppercase",
-                  body,
-                  si > 0 && "border-t border-ink-100",
-                )}
-              >
-                {s.label}
-              </div>
-              {s.rows.map((r) => (
-                <div key={r.term} className="border-t border-ink-100 p-3">
-                  <div className={cn("mb-[3px] text-[13px] font-medium", body)}>{r.term}</div>
-                  <div className={cn("text-[16px] leading-[1.75]", body)}>{r.text}</div>
+        <div>
+          {b.heading ? (
+            <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>
+              {b.heading}
+            </h2>
+          ) : null}
+          {/* stacked, < lg */}
+          <div className="overflow-hidden rounded-card border border-ink-100 lg:hidden">
+            {b.rows.map((r, ri) => (
+              <div key={r.label} className="flex flex-col">
+                <div
+                  className={cn(
+                    "bg-ink-50 px-3 py-2 font-mono text-[11px] leading-[1.4] tracking-[.06em] uppercase",
+                    body,
+                    ri > 0 && "border-t border-ink-100",
+                  )}
+                >
+                  {r.label}
                 </div>
-              ))}
-            </div>
-          ))}
+                {r.cells.map((cell, ci) => (
+                  <div key={b.columns[ci]} className="border-t border-ink-100 p-3">
+                    <div className={cn("mb-[3px] text-[13px] font-medium", body)}>
+                      {b.columns[ci]}
+                    </div>
+                    <div className={cn("text-[16px] leading-[1.75]", body)}>
+                      <RichText segments={cell} codeClass={body} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          {/* true table, lg+ */}
+          <div className="hidden overflow-hidden rounded-card border border-ink-100 lg:block">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-ink-50">
+                  <th className={cn("px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase", b.done ? "text-ink-500" : "text-ink-600")} />
+                  {b.columns.map((c) => (
+                    <th
+                      key={c}
+                      className={cn(
+                        "px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase",
+                        b.done ? "text-ink-500" : "text-ink-600",
+                      )}
+                    >
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {b.rows.map((r) => (
+                  <tr key={r.label}>
+                    <td className={cn("border-t border-ink-100 px-3.5 py-3 text-[14px] leading-[1.6] font-medium", body)}>
+                      {r.label}
+                    </td>
+                    {r.cells.map((cell, ci) => (
+                      <td
+                        key={b.columns[ci]}
+                        className={cn(
+                          "border-t border-ink-100 px-3.5 py-3 text-[15px] leading-[1.6]",
+                          b.done ? "text-ink-500" : "text-ink-600",
+                        )}
+                      >
+                        <RichText segments={cell} codeClass={body} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+
+    case "note":
+      // The third callout variant (Lesson blocks §06): quiet ink-50 card,
+      // no accent border — informational, not cautionary.
+      return (
+        <div className="rounded-card bg-ink-50 px-4 py-3.5">
+          <div
+            className={cn(
+              "mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] uppercase",
+              b.done ? "text-ink-500" : "text-ink-600",
+            )}
+          >
+            Note
+          </div>
+          <p className={cn("m-0 text-[16px] leading-[1.75] text-pretty", body)}>
+            <RichText segments={b.text} codeClass={codeTone} />
+          </p>
         </div>
       );
 
