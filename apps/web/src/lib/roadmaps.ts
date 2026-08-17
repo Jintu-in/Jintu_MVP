@@ -32,6 +32,7 @@ export type NodeResource = {
   durationSec: number | null;
   estSizeMb: number | null;
   editorNote: string | null;
+  health: "unchecked" | "ok" | "flaky" | "broken";
 };
 
 export type RoadmapNode = {
@@ -105,6 +106,7 @@ type RawResource = {
   duration_sec: number | null;
   est_size_mb: number | string | null;
   editor_note: string | null;
+  health: "unchecked" | "ok" | "flaky" | "broken";
 };
 
 /** Every published roadmap, for the catalogue. */
@@ -151,7 +153,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
              id, slug, position, title, summary, learning_objectives, est_minutes, points, difficulty, is_optional,
              resources (
                id, position, type, title, url, source_name, author,
-               youtube_video_id, duration_sec, est_size_mb, editor_note
+               youtube_video_id, duration_sec, est_size_mb, editor_note, health
              )
            )
          )`,
@@ -206,6 +208,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
                 durationSec: res.duration_sec,
                 estSizeMb: res.est_size_mb === null ? null : Number(res.est_size_mb),
                 editorNote: res.editor_note,
+                health: res.health,
               }))
               .sort(byPosition),
           }))
