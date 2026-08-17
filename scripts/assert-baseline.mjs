@@ -50,9 +50,10 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 
 // Every table the pivot specifies, nothing the old product left behind.
 const expected = [
-  "audit_log", "auth_attempts", "colleges", "consents", "link_checks",
-  "modules", "nodes", "node_progress", "notifications", "point_events",
-  "profiles", "review_cards", "roadmap_enrollments", "roadmaps", "resources",
+  "activity_days", "audit_log", "auth_attempts", "colleges", "consents",
+  "link_checks", "modules", "nodes", "node_checks", "node_progress",
+  "node_topics", "notifications", "point_events", "profiles",
+  "review_cards", "roadmap_enrollments", "roadmaps", "resources",
   "saved_resources", "streaks",
 ].sort();
 const actual = (await rows(
@@ -61,7 +62,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the seventeen baseline tables exist`,
+  `exactly the twenty baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
