@@ -149,6 +149,16 @@ export default async function NodeReaderPage({ params }: { params: Promise<Param
                       {r.sourceName}
                       {r.author ? ` · ${r.author}` : ""}
                     </p>
+                    {r.health === "broken" ? (
+                      <p className="mt-2 text-sm text-ink-600">
+                        This link failed our last check — it may have moved.
+                        If it is dead for you too,{" "}
+                        <Link href="/report" className="underline hover:text-ink-900">
+                          tell us
+                        </Link>{" "}
+                        and a person fixes it.
+                      </p>
+                    ) : null}
                     {r.editorNote ? (
                       <p className="mt-2 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
                         {r.editorNote}
