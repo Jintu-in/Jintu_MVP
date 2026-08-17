@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:56px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:640px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#8A8A85">Jintu · lesson page · 360px</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">Content block library</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">Every block carries a 20px tick target on its right edge, inside a 48px tap area. Done blocks drop body text to #8A8A85 and stay in place — nothing collapses, nothing is hidden. Content is from day 34 of the Postgres roadmap.</p>
+</div>
+
+<!-- BRIEF -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">01</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Brief</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">17px, no heading, sits directly under the page title</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="padding:20px 20px 6px">
+<div style="font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">Day 34 · 20 of 91</div>
+<h2 style="margin:8px 0 0;font:400 22px/1.35 Inter,sans-serif;color:#0B0B0B">How an index decides to be used</h2>
+</div>
+<div style="display:flex;align-items:flex-start;gap:8px;padding:14px 8px 22px 20px">
+<p style="flex:1;min-width:0;margin:0;font:400 17px/1.65 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">An index is not a promise. The planner looks at your query, guesses how many rows come back, and then decides whether reading the index is cheaper than reading the whole table. Today you learn how that guess is made.</p>
+<div style="width:48px;height:48px;margin:-12px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="padding:20px 20px 6px">
+<div style="font:400 12px/1 'JetBrains Mono',monospace;color:#8A8A85">Day 34 · 20 of 91</div>
+<h2 style="margin:8px 0 0;font:400 22px/1.35 Inter,sans-serif;color:#0B0B0B">How an index decides to be used</h2>
+</div>
+<div style="display:flex;align-items:flex-start;gap:8px;padding:14px 8px 22px 20px">
+<p style="flex:1;min-width:0;margin:0;font:400 17px/1.65 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">An index is not a promise. The planner looks at your query, guesses how many rows come back, and then decides whether reading the index is cheaper than reading the whole table. Today you learn how that guess is made.</p>
+<div style="width:48px;height:48px;margin:-12px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- CONCEPT -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">02</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Concept</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">16px / 1.75, measure held at 66ch, optional 16px/500 heading</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0;max-width:66ch">
+<h3 style="margin:0 0 10px;font:500 16px/1.5 Inter,sans-serif;color:#0B0B0B">Selectivity, in plain words</h3>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Selectivity is the share of rows a condition keeps. <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">status = 'refunded'</code> might keep two rows in a million. <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">status = 'paid'</code> might keep nine hundred thousand. Same column, same index, opposite decisions.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">The planner does not run your query to find out. It reads statistics that were collected earlier, during <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">ANALYZE</code>: a sample of rows, the most common values in each column, and a histogram of everything else.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">From those it estimates a row count. If the estimate is small, an index scan wins: jump to a few places on disk, read a few pages, done. If the estimate is large, the jumps stop being worth it, because each one is a random read and reading the table straight through is sequential.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">So when an index is ignored, the useful question is rarely "why is Postgres wrong". It is "what does Postgres think this query returns, and is that number close to the truth".</p>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0;max-width:66ch">
+<h3 style="margin:0 0 10px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">Selectivity, in plain words</h3>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Selectivity is the share of rows a condition keeps. <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">status = 'refunded'</code> might keep two rows in a million. <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">status = 'paid'</code> might keep nine hundred thousand. Same column, same index, opposite decisions.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">The planner does not run your query to find out. It reads statistics that were collected earlier, during <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ANALYZE</code>: a sample of rows, the most common values in each column, and a histogram of everything else.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">From those it estimates a row count. If the estimate is small, an index scan wins: jump to a few places on disk, read a few pages, done. If the estimate is large, the jumps stop being worth it, because each one is a random read and reading the table straight through is sequential.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">So when an index is ignored, the useful question is rarely "why is Postgres wrong". It is "what does Postgres think this query returns, and is that number close to the truth".</p>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- DIAGRAM -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">03</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Diagram</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Our own SVG, full-bleed to the text column, caption 13px</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<div style="background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:16px 14px">
+<svg width="100%" viewBox="0 0 268 168" fill="none" style="display:block">
+<rect x="0.5" y="0.5" width="112" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="56" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#0B0B0B">Query arrives</text>
+<path d="M56 31v18" stroke="#8A8A85" stroke-width="1"></path><path d="M52.5 45.5 56 49.5 59.5 45.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="0.5" y="50.5" width="112" height="44" rx="7" fill="#EFFAFC" stroke="#17758A"></rect>
+<text x="56" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#0B0B0B">Planner reads</text>
+<text x="56" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#0B0B0B">statistics</text>
+<path d="M56 95v18" stroke="#8A8A85" stroke-width="1"></path><path d="M52.5 109.5 56 113.5 59.5 109.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="0.5" y="114.5" width="112" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="56" y="134" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#0B0B0B">rows ≈ 2</text>
+<path d="M113 72h22" stroke="#8A8A85" stroke-width="1"></path><path d="M131 68.5 135 72l-4 3.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="136.5" y="114.5" width="131" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="202" y="134" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#0B0B0B">rows ≈ 900 000</text>
+<path d="M56 145v10h146v-10" stroke="#E8E8E5" stroke-width="1"></path>
+<rect x="0.5" y="0.5" width="0" height="0"></rect>
+<text x="66" y="107" text-anchor="start" font-family="Inter,sans-serif" font-size="11" fill="#17758A">index scan</text>
+<text x="202" y="107" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#5F5E5A">sequential scan</text>
+<text x="202" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#5F5E5A">same index,</text>
+<text x="202" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#5F5E5A">different value</text>
+<text x="129" y="166" font-family="JetBrains Mono,monospace" font-size="10.5" fill="#8A8A85" text-anchor="middle">estimate decides, not the index</text>
+</svg>
+</div>
+<p style="margin:10px 0 0;font:400 13px/1.6 Inter,sans-serif;color:#5F5E5A">The same index on the same column is used or ignored depending on how many rows the planner expects back.</p>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<div style="background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:16px 14px">
+<svg width="100%" viewBox="0 0 268 168" fill="none" style="display:block">
+<rect x="0.5" y="0.5" width="112" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="56" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#5F5E5A">Query arrives</text>
+<path d="M56 31v18" stroke="#8A8A85" stroke-width="1"></path><path d="M52.5 45.5 56 49.5 59.5 45.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="0.5" y="50.5" width="112" height="44" rx="7" fill="#EFFAFC" stroke="#17758A"></rect>
+<text x="56" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#5F5E5A">Planner reads</text>
+<text x="56" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#5F5E5A">statistics</text>
+<path d="M56 95v18" stroke="#8A8A85" stroke-width="1"></path><path d="M52.5 109.5 56 113.5 59.5 109.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="0.5" y="114.5" width="112" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="56" y="134" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#5F5E5A">rows ≈ 2</text>
+<path d="M113 72h22" stroke="#8A8A85" stroke-width="1"></path><path d="M131 68.5 135 72l-4 3.5" stroke="#8A8A85" stroke-width="1" stroke-linecap="round"></path>
+<rect x="136.5" y="114.5" width="131" height="30" rx="7" stroke="#E8E8E5" fill="#FFFFFF"></rect>
+<text x="202" y="134" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#5F5E5A">rows ≈ 900 000</text>
+<path d="M56 145v10h146v-10" stroke="#E8E8E5" stroke-width="1"></path>
+<text x="66" y="107" text-anchor="start" font-family="Inter,sans-serif" font-size="11" fill="#8A8A85">index scan</text>
+<text x="202" y="107" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#8A8A85">sequential scan</text>
+<text x="202" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#8A8A85">same index,</text>
+<text x="202" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#8A8A85">different value</text>
+<text x="129" y="166" font-family="JetBrains Mono,monospace" font-size="10.5" fill="#8A8A85" text-anchor="middle">estimate decides, not the index</text>
+</svg>
+</div>
+<p style="margin:10px 0 0;font:400 13px/1.6 Inter,sans-serif;color:#8A8A85">The same index on the same column is used or ignored depending on how many rows the planner expects back.</p>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- EXAMPLE -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">04</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Worked example</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Copy button top-right, solution hidden until asked. Both buttons live.</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default · collapsed</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#0B0B0B">Read the estimate against reality</h3>
+<div style="position:relative;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:14px 14px 14px 14px">
+<button onClick="{{ copyA }}" aria-label="Copy code" style="position:absolute;top:8px;right:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;cursor:pointer;padding:0" style-hover="border-color:#17758A">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="#17758A"></rect><path d="M10.5 3.5A2 2 0 0 0 8.5 2H4.5a2 2 0 0 0-2 2v4a2 2 0 0 0 1.5 1.9" stroke="#17758A" stroke-linecap="round"></path></svg>
+</button>
+<pre style="margin:0;font:400 13px/1.7 'JetBrains Mono',monospace;color:#0B0B0B;white-space:pre-wrap;padding-right:52px">EXPLAIN ANALYZE
+SELECT id FROM orders
+WHERE status = 'refunded';
+
+Seq Scan on orders
+  rows=1 000 000 → actual rows=2
+  time: 412 ms</pre>
+</div>
+<div style="margin-top:12px;font:400 12px/1 'JetBrains Mono',monospace;color:#1D9E75;height:12px">{{ copyMsgA }}</div>
+<button onClick="{{ toggleSolA }}" style="margin-top:10px;min-height:48px;width:100%;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">{{ solLabelA }}</button>
+<sc-if value="{{ solOpenA }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5">
+<p style="margin:0 0 12px;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">The estimate is a million rows; the truth is two. The planner is not choosing badly, it is choosing from a bad number.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Run <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">ANALYZE orders;</code> and ask again. With fresh statistics the estimate drops, the index scan becomes the cheaper plan, and the same query returns in under a millisecond.</p>
+</div>
+</sc-if>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default · solution revealed</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#0B0B0B">Read the estimate against reality</h3>
+<div style="position:relative;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<button onClick="{{ copyB }}" aria-label="Copy code" style="position:absolute;top:8px;right:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;cursor:pointer;padding:0" style-hover="border-color:#17758A">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="#17758A"></rect><path d="M10.5 3.5A2 2 0 0 0 8.5 2H4.5a2 2 0 0 0-2 2v4a2 2 0 0 0 1.5 1.9" stroke="#17758A" stroke-linecap="round"></path></svg>
+</button>
+<pre style="margin:0;font:400 13px/1.7 'JetBrains Mono',monospace;color:#0B0B0B;white-space:pre-wrap;padding-right:52px">EXPLAIN ANALYZE
+SELECT id FROM orders
+WHERE status = 'refunded';
+
+Seq Scan on orders
+  rows=1 000 000 → actual rows=2
+  time: 412 ms</pre>
+</div>
+<div style="margin-top:12px;font:400 12px/1 'JetBrains Mono',monospace;color:#1D9E75;height:12px">{{ copyMsgB }}</div>
+<button onClick="{{ toggleSolB }}" style="margin-top:10px;min-height:48px;width:100%;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">{{ solLabelB }}</button>
+<sc-if value="{{ solOpenB }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5">
+<p style="margin:0 0 12px;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">The estimate is a million rows; the truth is two. The planner is not choosing badly, it is choosing from a bad number.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Run <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">ANALYZE orders;</code> and ask again. With fresh statistics the estimate drops, the index scan becomes the cheaper plan, and the same query returns in under a millisecond.</p>
+</div>
+</sc-if>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">Read the estimate against reality</h3>
+<div style="position:relative;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<button aria-label="Copy code" style="position:absolute;top:8px;right:8px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;cursor:pointer;padding:0">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="#17758A"></rect><path d="M10.5 3.5A2 2 0 0 0 8.5 2H4.5a2 2 0 0 0-2 2v4a2 2 0 0 0 1.5 1.9" stroke="#17758A" stroke-linecap="round"></path></svg>
+</button>
+<pre style="margin:0;font:400 13px/1.7 'JetBrains Mono',monospace;color:#8A8A85;white-space:pre-wrap;padding-right:52px">EXPLAIN ANALYZE
+SELECT id FROM orders
+WHERE status = 'refunded';
+
+Seq Scan on orders
+  rows=1 000 000 → actual rows=2
+  time: 412 ms</pre>
+</div>
+<div style="margin-top:10px;padding-top:14px;border-top:1px solid #E8E8E5">
+<p style="margin:0 0 12px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">The estimate is a million rows; the truth is two. The planner is not choosing badly, it is choosing from a bad number.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Run <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ANALYZE orders;</code> and ask again. With fresh statistics the estimate drops, the index scan becomes the cheaper plan, and the same query returns in under a millisecond.</p>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- COMPARE -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">05</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Compare</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Stacked pairs at 360px — never a horizontal scroll. Table form shown for 1024px.</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default · 360px stacked</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#0B0B0B">Index scan against sequential scan</h3>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="display:flex;flex-direction:column">
+<div style="padding:8px 12px;background:#FAFAF8;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A">Reads</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Index scan</div><div style="font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">A few pages, at random positions</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Sequential scan</div><div style="font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Every page, in order</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A">Wins when</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Index scan</div><div style="font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Under roughly <span style="font-family:'JetBrains Mono',monospace">5%</span> of rows match</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Sequential scan</div><div style="font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Most of the table matches</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A">Cost on 1 M rows</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Index scan</div><div style="font:400 15px/1.6 'JetBrains Mono',monospace;color:#5F5E5A">0.8 ms</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#0B0B0B;margin-bottom:3px">Sequential scan</div><div style="font:400 15px/1.6 'JetBrains Mono',monospace;color:#5F5E5A">412 ms</div></div>
+</div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done · 360px stacked</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 20px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">Index scan against sequential scan</h3>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="display:flex;flex-direction:column">
+<div style="padding:8px 12px;background:#FAFAF8;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Reads</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Index scan</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">A few pages, at random positions</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Sequential scan</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Every page, in order</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Wins when</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Index scan</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Under roughly <span style="font-family:'JetBrains Mono',monospace">5%</span> of rows match</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Sequential scan</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Most of the table matches</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Cost on 1 M rows</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Index scan</div><div style="font:400 15px/1.6 'JetBrains Mono',monospace;color:#8A8A85">0.8 ms</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">Sequential scan</div><div style="font:400 15px/1.6 'JetBrains Mono',monospace;color:#8A8A85">412 ms</div></div>
+</div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Same block at 1024px · true table</div>
+<div style="width:620px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:22px 8px 24px 24px">
+<div style="flex:1;min-width:0">
+<h3 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#0B0B0B">Index scan against sequential scan</h3>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<table style="width:100%;border-collapse:collapse">
+<thead><tr style="background:#FAFAF8"><th style="text-align:left;padding:10px 14px;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A"></th><th style="text-align:left;padding:10px 14px;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A">Index scan</th><th style="text-align:left;padding:10px 14px;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#5F5E5A">Sequential scan</th></tr></thead>
+<tbody>
+<tr><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:500 14px/1.6 Inter,sans-serif;color:#0B0B0B">Reads</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">A few pages, at random positions</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Every page, in order</td></tr>
+<tr><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:500 14px/1.6 Inter,sans-serif;color:#0B0B0B">Wins when</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Under roughly <span style="font-family:'JetBrains Mono',monospace">5%</span> of rows match</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 Inter,sans-serif;color:#5F5E5A">Most of the table matches</td></tr>
+<tr><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:500 14px/1.6 Inter,sans-serif;color:#0B0B0B">Cost on 1 M rows</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 'JetBrains Mono',monospace;color:#5F5E5A">0.8 ms</td><td style="padding:12px 14px;border-top:1px solid #E8E8E5;font:400 15px/1.6 'JetBrains Mono',monospace;color:#5F5E5A">412 ms</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- CALLOUT -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">06</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Callout</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Note, gotcha, warning — mono label 11px uppercase</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Note · default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#FAFAF8;border-radius:12px;padding:14px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#5F5E5A;margin-bottom:8px">Note</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Autovacuum runs <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">ANALYZE</code> for you on most tables. You rarely need to run it by hand outside a bulk load.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Note · done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#FAFAF8;border-radius:12px;padding:14px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85;margin-bottom:8px">Note</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Autovacuum runs <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ANALYZE</code> for you on most tables. You rarely need to run it by hand outside a bulk load.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Gotcha · default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#EFFAFC;border-left:2px solid #17758A;border-radius:0 12px 12px 0;padding:14px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:8px">Gotcha</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">A function on the left side of a comparison hides the index. <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">lower(email) = 'a@b.c'</code> cannot use an index on <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">email</code> — only one on <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">lower(email)</code>.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Gotcha · done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#EFFAFC;border-left:2px solid #17758A;border-radius:0 12px 12px 0;padding:14px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85;margin-bottom:8px">Gotcha</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">A function on the left side of a comparison hides the index. <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">lower(email) = 'a@b.c'</code> cannot use an index on <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">email</code> — only one on <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">lower(email)</code>.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Warning · default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;border-left:2px solid #BA7517;padding:2px 16px 2px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#BA7517;margin-bottom:8px">Warning</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Building an index on a live table locks writes. On anything in production use <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">CREATE INDEX CONCURRENTLY</code>, and expect it to take longer.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Warning · done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;border-left:2px solid #BA7517;padding:2px 16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85;margin-bottom:8px">Warning</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Building an index on a live table locks writes. On anything in production use <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">CREATE INDEX CONCURRENTLY</code>, and expect it to take longer.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- RESOURCE -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">07</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Resource</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">The editorial note carries the weight — it is the proof a person chose this link</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#5F5E5A"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#5F5E5A" stroke-linecap="round"></path></svg>
+</div>
+<div style="flex:1;min-width:0">
+<a href="#" style="display:block;font:500 15px/1.45 Inter,sans-serif;color:#17758A;text-decoration:none" style-hover="text-decoration:underline">Row estimation examples <span style="display:inline-block;transform:translateY(1px)"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#17758A" stroke-linecap="round"></path></svg></span></a>
+<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#8A8A85">postgresql.org · 18 min · ~0.4 MB</div>
+</div>
+</div>
+<div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:12px 14px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:7px">Why this one</div>
+<p style="margin:0;font:italic 400 13.5px/1.7 Inter,sans-serif;color:#17758A;text-wrap:pretty">Read sections 1-3 only — the rest is about replication. Section 2 is the one that makes the histogram click; skip the maths in 3.4.</p>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#8A8A85"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#8A8A85" stroke-linecap="round"></path></svg>
+</div>
+<div style="flex:1;min-width:0">
+<a href="#" style="display:block;font:500 15px/1.45 Inter,sans-serif;color:#5F5E5A;text-decoration:none">Row estimation examples <span style="display:inline-block;transform:translateY(1px)"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#8A8A85" stroke-linecap="round"></path></svg></span></a>
+<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#8A8A85">postgresql.org · 18 min · ~0.4 MB</div><div style="margin-top:3px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#1D9E75">opened</div>
+</div>
+</div>
+<div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:12px 14px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:7px">Why this one</div>
+<p style="margin:0;font:italic 400 13.5px/1.7 Inter,sans-serif;color:#17758A;text-wrap:pretty">Read sections 1-3 only — the rest is about replication. Section 2 is the one that makes the histogram click; skip the maths in 3.4.</p>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Video · data cost stated before the load</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke="#5F5E5A"></rect><path d="M6.6 6.3 10 8l-3.4 1.7V6.3Z" fill="#5F5E5A"></path></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font:500 15px/1.45 Inter,sans-serif;color:#0B0B0B">Explaining EXPLAIN, talk from PGConf</div>
+<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#8A8A85">youtube.com · 41 min · ~98 MB</div>
+</div>
+</div>
+<div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:12px 14px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:7px">Why this one</div>
+<p style="margin:0;font:italic 400 13.5px/1.7 Inter,sans-serif;color:#17758A;text-wrap:pretty">Optional. Everything up to 14:00 repeats today's lesson — start there only if the diagram did not land. Watch on wifi.</p>
+</div>
+<sc-if value="{{ vidOff }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ loadVideo }}" style="margin-top:12px;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:9px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#17758A"></circle><path d="M6.8 5.6 10.4 8l-3.6 2.4V5.6Z" fill="#17758A"></path></svg>
+Load player · ~98 MB
+</button>
+</sc-if>
+<sc-if value="{{ vidOn }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:12px;height:150px;border-radius:12px;background:#43B4C8;display:flex;align-items:center;justify-content:center">
+<span style="font:400 12px 'JetBrains Mono',monospace;color:#FFFFFF">player loaded · streaming</span>
+</div>
+</sc-if>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- QUESTION -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">08</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Self-check question</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Tapping anywhere toggles — try it</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default · collapsed</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div onClick="{{ toggleQA }}" style="flex:1;min-width:0;border:1px solid #E8E8E5;border-radius:12px;padding:14px 14px;cursor:pointer" style-hover="border-color:#17758A">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85;flex:none">01</span>
+<p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Your query returns two rows but the plan says a sequential scan. What is the first thing you check?</p>
+<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#17758A"></path><circle cx="9" cy="9" r="2.1" stroke="#17758A"></circle></svg>
+</span>
+</div>
+<sc-if value="{{ qOpenA }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5;padding-left:25px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">The estimated row count in the plan. If it says a million and reality is two, the statistics are stale — run <code style="font:400 14px 'JetBrains Mono',monospace">ANALYZE</code> before touching the index.</p>
+</div>
+</sc-if>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default · expanded</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div onClick="{{ toggleQB }}" style="flex:1;min-width:0;border:1px solid #E8E8E5;border-radius:12px;padding:14px;cursor:pointer" style-hover="border-color:#17758A">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85;flex:none">01</span>
+<p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Your query returns two rows but the plan says a sequential scan. What is the first thing you check?</p>
+<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#17758A"></path><circle cx="9" cy="9" r="2.1" stroke="#17758A"></circle></svg>
+</span>
+</div>
+<sc-if value="{{ qOpenB }}" hint-placeholder-val="{{ true }}">
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5;padding-left:25px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">The estimated row count in the plan. If it says a million and reality is two, the statistics are stale — run <code style="font:400 14px 'JetBrains Mono',monospace">ANALYZE</code> before touching the index.</p>
+</div>
+</sc-if>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85;flex:none">01</span>
+<p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Your query returns two rows but the plan says a sequential scan. What is the first thing you check?</p>
+<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#8A8A85"></path><circle cx="9" cy="9" r="2.1" stroke="#8A8A85"></circle></svg>
+</span>
+</div>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5;padding-left:25px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">The estimated row count in the plan. If it says a million and reality is two, the statistics are stale — run <code style="font:400 14px 'JetBrains Mono',monospace">ANALYZE</code> before touching the index.</p>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- QUOTE -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">09</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Quote</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Attribution and licence are designed elements, not fine print</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0">
+<blockquote style="margin:0;border-left:2px solid #E8E8E5;padding:2px 0 2px 16px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">The planner is not trying to be fast. It is trying to be cheap, by its own cost model, on the numbers it happens to have.</p>
+</blockquote>
+<div style="margin-top:12px;margin-left:18px;display:flex;align-items:flex-start;gap:10px;border:1px solid #E8E8E5;border-radius:8px;padding:11px 12px">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.3" stroke="#5F5E5A"></circle><path d="M5.6 9.4a2.6 2.6 0 1 0 0-2.9M10.4 9.4a2.6 2.6 0 1 0 0-2.9" stroke="#5F5E5A" stroke-width=".9"></path></svg>
+<div style="min-width:0">
+<div style="font:400 12px/1.45 Inter,sans-serif;color:#0B0B0B">Jared Kimball, on Stack Overflow</div>
+<div style="margin-top:4px"><span style="display:inline-block;background:#EFFAFC;border-radius:4px;padding:3px 7px;font:400 12px/1.35 'JetBrains Mono',monospace;color:#17758A">CC BY-SA 4.0 · unchanged</span></div>
+</div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Done · attribution keeps full contrast</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0">
+<blockquote style="margin:0;border-left:2px solid #E8E8E5;padding:2px 0 2px 16px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">The planner is not trying to be fast. It is trying to be cheap, by its own cost model, on the numbers it happens to have.</p>
+</blockquote>
+<div style="margin-top:12px;margin-left:18px;display:flex;align-items:flex-start;gap:10px;border:1px solid #E8E8E5;border-radius:8px;padding:11px 12px">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.3" stroke="#5F5E5A"></circle><path d="M5.6 9.4a2.6 2.6 0 1 0 0-2.9M10.4 9.4a2.6 2.6 0 1 0 0-2.9" stroke="#5F5E5A" stroke-width=".9"></path></svg>
+<div style="min-width:0">
+<div style="font:400 12px/1.45 Inter,sans-serif;color:#0B0B0B">Jared Kimball, on Stack Overflow</div>
+<div style="margin-top:4px"><span style="display:inline-block;background:#EFFAFC;border-radius:4px;padding:3px 7px;font:400 12px/1.35 'JetBrains Mono',monospace;color:#17758A">CC BY-SA 4.0 · unchanged</span></div>
+</div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- SUMMARY + CHALLENGE -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">10</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Summary and challenge</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">The two closing blocks of a day</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Summary · default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#EFFAFC;border-radius:12px;padding:16px">
+<div style="font:400 16px/1.6 Inter,sans-serif;color:#17505C;margin-bottom:10px">You should now be able to</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;gap:9px"><span style="color:#17505C;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#17505C">read the estimated and actual row counts in a plan</span></div>
+<div style="display:flex;gap:9px"><span style="color:#17505C;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#17505C">say why one value uses an index and another does not</span></div>
+<div style="display:flex;gap:9px"><span style="color:#17505C;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#17505C">decide when stale statistics, not the index, are the problem</span></div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Summary · done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#FAFAF8;border-radius:12px;padding:16px">
+<div style="font:400 16px/1.6 Inter,sans-serif;color:#8A8A85;margin-bottom:10px">You should now be able to</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;gap:9px"><span style="color:#8A8A85;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">read the estimated and actual row counts in a plan</span></div>
+<div style="display:flex;gap:9px"><span style="color:#8A8A85;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">say why one value uses an index and another does not</span></div>
+<div style="display:flex;gap:9px"><span style="color:#8A8A85;font:400 16px/1.6 Inter,sans-serif">·</span><span style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">decide when stale statistics, not the index, are the problem</span></div>
+</div>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Challenge · default</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#FFFFFF;border:1px solid #17758A;border-radius:12px;padding:16px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:10px">Today's challenge · ~25 min</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Take any table you have with more than ten thousand rows. Find one value that uses the index and one that does not, and write down the estimated row count for each.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Challenge · done</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px">
+<div style="flex:1;min-width:0;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">Today's challenge · ~25 min</span><span style="font:400 11px/1 'JetBrains Mono',monospace;color:#1D9E75">done</span></div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Take any table you have with more than ten thousand rows. Find one value that uses the index and one that does not, and write down the estimated row count for each.</p>
+</div>
+<div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px">
+<div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- SELECTION POPOVER -->
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">11</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Selection popover</span><span style="font:400 13px/1.5 Inter,sans-serif;color:#8A8A85">Select any text on this page and the live pill appears above it</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">On selection</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="padding:34px 20px 24px;position:relative">
+<div style="position:absolute;top:14px;left:20px;display:inline-flex;align-items:center;background:#0B0B0B;border-radius:8px;overflow:hidden">
+<button style="min-height:40px;padding:0 14px;display:flex;align-items:center;gap:7px;background:transparent;border:0;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 9.2 8.4 3.3a1.6 1.6 0 0 1 2.3 2.3L4.8 11.5H2.5V9.2Z" stroke="#FFFFFF"></path></svg>Highlight</button>
+<span style="width:1px;height:18px;background:#5F5E5A"></span>
+<button style="min-height:40px;padding:0 14px;display:flex;align-items:center;gap:7px;background:transparent;border:0;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 3.5h9M2.5 7h9M2.5 10.5h5.5" stroke="#FFFFFF" stroke-linecap="round"></path></svg>Add note</button>
+</div>
+<div style="position:absolute;top:54px;left:44px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #0B0B0B"></div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">The planner does not run your query to find out. <span style="background:#CFEDF4">It reads statistics that were collected earlier, during ANALYZE</span>: a sample of rows, the most common values in each column, and a histogram of everything else.</p>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85">After highlighting · note saved</div>
+<div style="width:360px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px">
+<div style="padding:24px 20px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">The planner does not run your query to find out. <span style="background:#EFFAFC;border-bottom:1px solid #17758A">It reads statistics that were collected earlier, during ANALYZE</span>: a sample of rows, the most common values in each column, and a histogram of everything else.</p>
+<div style="margin-top:14px;border-left:2px solid #E8E8E5;padding-left:14px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85;margin-bottom:6px">Your note · day 34</div>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">check whether our nightly job runs analyze after the import</p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+</div>
+
+<sc-if value="{{ popShown }}" hint-placeholder-val="{{ false }}">
+<div style="{{ popStyle }}">
+<button onClick="{{ noop }}" style="min-height:40px;padding:0 14px;display:flex;align-items:center;gap:7px;background:transparent;border:0;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 9.2 8.4 3.3a1.6 1.6 0 0 1 2.3 2.3L4.8 11.5H2.5V9.2Z" stroke="#FFFFFF"></path></svg>Highlight</button>
+<span style="width:1px;height:18px;background:#5F5E5A"></span>
+<button onClick="{{ noop }}" style="min-height:40px;padding:0 14px;display:flex;align-items:center;gap:7px;background:transparent;border:0;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 3.5h9M2.5 7h9M2.5 10.5h5.5" stroke="#FFFFFF" stroke-linecap="round"></path></svg>Add note</button>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { solA: false, solB: true, qA: false, qB: true, vid: false, copied: null, pop: null };
+
+  componentDidMount() {
+    this._onUp = () => {
+      const s = window.getSelection();
+      if (!s || s.isCollapsed || !s.toString().trim()) { this.setState({ pop: null }); return; }
+      const r = s.getRangeAt(0).getBoundingClientRect();
+      if (!r || !r.width) { this.setState({ pop: null }); return; }
+      this.setState({ pop: { x: r.left + r.width / 2, y: r.top } });
+    };
+    document.addEventListener('mouseup', this._onUp);
+    document.addEventListener('touchend', this._onUp);
+    this._onDown = () => this.setState({ pop: null });
+    document.addEventListener('mousedown', this._onDown);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('mouseup', this._onUp);
+    document.removeEventListener('touchend', this._onUp);
+    document.removeEventListener('mousedown', this._onDown);
+  }
+
+  copy(key) {
+    const code = "EXPLAIN ANALYZE\nSELECT id FROM orders\nWHERE status = 'refunded';";
+    if (navigator.clipboard) navigator.clipboard.writeText(code).catch(() => {});
+    this.setState({ copied: key });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ copied: null }), 1800);
+  }
+
+  renderVals() {
+    const p = this.state.pop;
+    return {
+      solOpenA: this.state.solA,
+      solOpenB: this.state.solB,
+      solLabelA: this.state.solA ? 'Hide solution' : 'Show solution',
+      solLabelB: this.state.solB ? 'Hide solution' : 'Show solution',
+      toggleSolA: () => this.setState(s => ({ solA: !s.solA })),
+      toggleSolB: () => this.setState(s => ({ solB: !s.solB })),
+      qOpenA: this.state.qA,
+      qOpenB: this.state.qB,
+      toggleQA: () => this.setState(s => ({ qA: !s.qA })),
+      toggleQB: () => this.setState(s => ({ qB: !s.qB })),
+      vidOn: this.state.vid,
+      vidOff: !this.state.vid,
+      loadVideo: () => this.setState({ vid: true }),
+      copyA: () => this.copy('a'),
+      copyB: () => this.copy('b'),
+      copyMsgA: this.state.copied === 'a' ? 'copied' : '',
+      copyMsgB: this.state.copied === 'b' ? 'copied' : '',
+      popShown: !!p,
+      popStyle: p
+        ? 'position:fixed;z-index:60;left:' + p.x + 'px;top:' + (p.y - 10) + 'px;transform:translate(-50%,-100%);display:inline-flex;align-items:center;background:#0B0B0B;border-radius:8px;overflow:hidden'
+        : 'display:none',
+      noop: () => this.setState({ pop: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
