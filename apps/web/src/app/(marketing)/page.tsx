@@ -17,7 +17,9 @@ import { listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
  * this form.
  */
 export const metadata: Metadata = {
-  title: "Jintu — learn anything, properly",
+  // absolute: the layout's "%s · Jintu" template would otherwise double the
+  // brand — "Jintu — learn anything, properly · Jintu" shipped once already.
+  title: { absolute: "Jintu — learn anything, properly" },
   description:
     "Deep, free roadmaps built from the best free material on the internet. " +
     "Reads, videos and docs in the order that teaches, with your progress tracked.",
@@ -29,6 +31,18 @@ export const metadata: Metadata = {
     siteName: "Jintu",
     locale: "en_IN",
     type: "website",
+    // Explicit, because a page-level openGraph block replaces the layout's
+    // wholesale — shipping this object without images is what made the
+    // homepage preview imageless in WhatsApp. The URL is the file-based
+    // card at app/opengraph-image.tsx; metadataBase absolutizes it.
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Jintu — one place to learn anything, properly. Free roadmaps, curated links, your progress tracked.",
+      },
+    ],
   },
   twitter: { card: "summary_large_image" },
 };

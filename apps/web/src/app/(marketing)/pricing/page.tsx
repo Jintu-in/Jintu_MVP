@@ -13,6 +13,16 @@ export const metadata: Metadata = {
     description,
     url: "/pricing",
     type: "website",
+    // Same lesson as the homepage: a page-level openGraph without images
+    // suppresses the root card. Explicit or imageless — no third option.
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Jintu — one place to learn anything, properly. Free roadmaps, curated links, your progress tracked.",
+      },
+    ],
   },
 };
 
