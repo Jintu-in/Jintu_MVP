@@ -264,12 +264,13 @@ export function SavedNoteCard({ excerpt, metaLine, note, onEdit, onDelete }: Sav
 
 /* ── 03 · loading, offline, broken link ─────────────────────────────── */
 
-/** One pulsing block shape. The design's #F2F2EF is not in the palette;
- *  ink-100 is the nearest token that stays visible on white. */
+/** One pulsing block shape. ink-50 since the August 2026 palette pass, which
+ *  lightened skeletons to the page tone (#FAFAF8) — a loading card should
+ *  shimmer, not block. */
 const Skel = ({ className }: { className?: string }) => (
   <div
     aria-hidden
-    className={cn("animate-[jskel_1.4s_ease-in-out_infinite] rounded bg-ink-100", className)}
+    className={cn("animate-[jskel_1.4s_ease-in-out_infinite] rounded bg-ink-50", className)}
   />
 );
 
@@ -395,7 +396,8 @@ export function DeadLinkNotice({
         </div>
       </div>
       <div className="mt-3 border-l-2 border-warn-600 px-3.5 py-0.5">
-        <div className="mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-600 uppercase">
+        {/* Label darkened to the -ink step in the August 2026 palette pass. */}
+        <div className="mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-700 uppercase">
           Link broken
         </div>
         <p className="m-0 text-[15px] leading-[1.7] text-pretty text-ink-900">

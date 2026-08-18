@@ -10,22 +10,22 @@
 <div style="background:#FFFFFF">
 
 <div style="padding:20px 20px 0">
-<div style="font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">Data analyst <span style="color:#8A8A85">/</span> Module 10 · Window functions</div>
+<div style="font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A">Data analyst <span style="color:#75746F">/</span> Module 10 · Window functions</div>
 <h1 style="margin:8px 0 0;font:500 26px/1.3 Inter,sans-serif;color:#0B0B0B">Frames</h1>
-<div style="margin-top:8px;font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85">Day 45 of 91 · 60 min · 35 pts</div>
+<div style="margin-top:8px;font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F">Day 45 of 91 · 60 min · 35 pts</div>
 </div>
 
 <div id="b1" style="display:flex;align-items:flex-start;gap:8px;padding:20px 8px 20px 20px;scroll-margin-top:60px">
-<p style="flex:1;min-width:0;max-width:66ch;margin:0;font:400 17px/1.65 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">A window function needs two answers before it can compute anything: which rows are in view, and in what order. The frame is the first answer. Today you set it deliberately instead of taking the default, and you see why the default surprises people.</p>
+<p style="flex:1;min-width:0;max-width:66ch;margin:0;font:400 17px/1.65 Inter,sans-serif;color:#75746F;text-wrap:pretty">A window function needs two answers before it can compute anything: which rows are in view, and in what order. The frame is the first answer. Today you set it deliberately instead of taking the default, and you see why the default surprises people.</p>
 <div style="width:48px;height:48px;margin:-12px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
 
 <div id="b2" style="display:flex;align-items:flex-start;gap:8px;padding:8px 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch">
 <h2 style="margin:0 0 10px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">What a frame is</h2>
-<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">A partition is the whole group — one customer, one city, one month. A frame is the slice of that group visible from the row being computed right now. It moves with the row.</p>
-<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">For a running total, the frame is everything from the start of the partition up to here. For a seven-day moving average, it is the six rows behind plus this one. Same function, same data, different answer — the frame is what changed.</p>
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">You write it after <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ORDER BY</code>, inside the <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">OVER</code> clause. If you leave it out, the database picks one for you, and that choice is the subject of most of this lesson.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">A partition is the whole group — one customer, one city, one month. A frame is the slice of that group visible from the row being computed right now. It moves with the row.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">For a running total, the frame is everything from the start of the partition up to here. For a seven-day moving average, it is the six rows behind plus this one. Same function, same data, different answer — the frame is what changed.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">You write it after <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">ORDER BY</code>, inside the <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">OVER</code> clause. If you leave it out, the database picks one for you, and that choice is the subject of most of this lesson.</p>
 </div>
 <div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
@@ -35,9 +35,9 @@
 <h2 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">A running total, written out</h2>
 <div style="position:relative;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
 <div style="position:absolute;top:8px;right:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px">
-<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="#8A8A85"></rect><path d="M10.5 3.5A2 2 0 0 0 8.5 2H4.5a2 2 0 0 0-2 2v4a2 2 0 0 0 1.5 1.9" stroke="#8A8A85" stroke-linecap="round"></path></svg>
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="2" stroke="#75746F"></rect><path d="M10.5 3.5A2 2 0 0 0 8.5 2H4.5a2 2 0 0 0-2 2v4a2 2 0 0 0 1.5 1.9" stroke="#75746F" stroke-linecap="round"></path></svg>
 </div>
-<pre style="margin:0;font:400 13px/1.7 'JetBrains Mono',monospace;color:#8A8A85;white-space:pre-wrap;padding-right:52px">SELECT day, revenue,
+<pre style="margin:0;font:400 13px/1.7 'JetBrains Mono',monospace;color:#75746F;white-space:pre-wrap;padding-right:52px">SELECT day, revenue,
   SUM(revenue) OVER (
     ORDER BY day
     ROWS BETWEEN UNBOUNDED PRECEDING
@@ -46,7 +46,7 @@
 FROM daily_sales;</pre>
 </div>
 <div style="margin-top:12px;padding-top:14px;border-top:1px solid #E8E8E5">
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Read the frame line out loud: from the first row of the partition, to this row. That is the whole idea. Everything else on this page is a variation on where those two edges sit.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">Read the frame line out loud: from the first row of the partition, to this row. That is the whole idea. Everything else on this page is a variation on where those two edges sit.</p>
 </div>
 </div>
 <div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
@@ -56,7 +56,7 @@ FROM daily_sales;</pre>
 <div style="flex:1;min-width:0;max-width:66ch">
 <div style="background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:16px 14px">
 <svg width="100%" viewBox="0 0 268 150" fill="none" style="display:block">
-<text x="0" y="10" font-family="JetBrains Mono,monospace" font-size="10" fill="#8A8A85">rows in the partition, ordered by day</text>
+<text x="0" y="10" font-family="JetBrains Mono,monospace" font-size="10" fill="#75746F">rows in the partition, ordered by day</text>
 <rect x="0.5" y="20.5" width="26" height="26" rx="5" stroke="#E8E8E5" fill="#FFFFFF"></rect>
 <rect x="30.5" y="20.5" width="26" height="26" rx="5" stroke="#E8E8E5" fill="#FFFFFF"></rect>
 <rect x="60.5" y="20.5" width="26" height="26" rx="5" stroke="#E8E8E5" fill="#FFFFFF"></rect>
@@ -67,16 +67,16 @@ FROM daily_sales;</pre>
 <rect x="0" y="56" width="147" height="18" rx="4" fill="#EFFAFC"></rect>
 <rect x="0.5" y="56.5" width="146" height="17" rx="4" stroke="#17758A"></rect>
 <text x="6" y="69" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#17758A">unbounded preceding → current row</text>
-<path d="M133 50v4" stroke="#8A8A85" stroke-width="1"></path>
+<path d="M133 50v4" stroke="#75746F" stroke-width="1"></path>
 <text x="128" y="88" font-family="Inter,sans-serif" font-size="10.5" fill="#5F5E5A" text-anchor="middle">running total at row 5</text>
 <rect x="60" y="100" width="87" height="18" rx="4" fill="#EFFAFC"></rect>
 <rect x="60.5" y="100.5" width="86" height="17" rx="4" stroke="#17758A"></rect>
 <text x="66" y="113" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#17758A">2 preceding → current row</text>
 <text x="103" y="132" font-family="Inter,sans-serif" font-size="10.5" fill="#5F5E5A" text-anchor="middle">3-row moving average at row 5</text>
-<text x="0" y="148" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#8A8A85">the row stays put · the frame moves</text>
+<text x="0" y="148" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#75746F">the row stays put · the frame moves</text>
 </svg>
 </div>
-<p style="margin:10px 0 0;font:400 13px/1.6 Inter,sans-serif;color:#8A8A85">Two frames evaluated at the same row. The window function sees only the shaded rows.</p>
+<p style="margin:10px 0 0;font:400 13px/1.6 Inter,sans-serif;color:#75746F">Two frames evaluated at the same row. The window function sees only the shaded rows.</p>
 </div>
 <div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
@@ -84,8 +84,8 @@ FROM daily_sales;</pre>
 <div id="b5" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch">
 <h2 style="margin:0 0 10px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">The frame you get when you write none</h2>
-<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Write <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">OVER (ORDER BY day)</code> with no frame and you do not get "no frame". You get <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, which is close to what most people want and not the same thing.</p>
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">The difference is the word RANGE. It does not count rows. It compares values in the <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ORDER BY</code> column, so every row holding the same value is inside the frame together, whether you meant it or not.</p>
+<p style="margin:0 0 14px;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">Write <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">OVER (ORDER BY day)</code> with no frame and you do not get "no frame". You get <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, which is close to what most people want and not the same thing.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">The difference is the word RANGE. It does not count rows. It compares values in the <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">ORDER BY</code> column, so every row holding the same value is inside the frame together, whether you meant it or not.</p>
 </div>
 <div style="width:48px;height:48px;margin:-14px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
@@ -95,15 +95,15 @@ FROM daily_sales;</pre>
 <h2 style="margin:0 0 12px;font:500 16px/1.5 Inter,sans-serif;color:#5F5E5A">ROWS against RANGE</h2>
 <div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
 <div style="display:flex;flex-direction:column">
-<div style="padding:8px 12px;background:#FAFAF8;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Counts</div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Physical rows, in order</div></div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Values in the ORDER BY column</div></div>
-<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">With three rows on the same day</div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Three different running totals</div></div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">One total, repeated three times</div></div>
-<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8A8A85">Reach for it when</div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Moving averages, last n rows</div></div>
-<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#8A8A85;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#8A8A85">Totals that must agree per day</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F">Counts</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">Physical rows, in order</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">Values in the ORDER BY column</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F">With three rows on the same day</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">Three different running totals</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">One total, repeated three times</div></div>
+<div style="padding:8px 12px;background:#FAFAF8;border-top:1px solid #E8E8E5;font:400 11px/1.4 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F">Reach for it when</div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">ROWS</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">Moving averages, last n rows</div></div>
+<div style="padding:12px;border-top:1px solid #E8E8E5"><div style="font:500 13px Inter,sans-serif;color:#75746F;margin-bottom:3px">RANGE</div><div style="font:400 16px/1.75 Inter,sans-serif;color:#75746F">Totals that must agree per day</div></div>
 </div>
 </div>
 </div>
@@ -112,8 +112,8 @@ FROM daily_sales;</pre>
 
 <div id="b7" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch;background:#EFFAFC;border-left:2px solid #17758A;border-radius:0 12px 12px 0;padding:14px 16px">
-<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A8A85;margin-bottom:8px">Gotcha</div>
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">A moving average written with the default frame is not a moving average. <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">AVG(x) OVER (ORDER BY day)</code> averages everything up to today, so the line looks smooth and drifts less over time — which reads as a real trend and is not one. Write <code style="font:400 15px 'JetBrains Mono',monospace;color:#8A8A85">ROWS BETWEEN 6 PRECEDING AND CURRENT ROW</code> and check the first six rows before you trust the chart.</p>
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F;margin-bottom:8px">Gotcha</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">A moving average written with the default frame is not a moving average. <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">AVG(x) OVER (ORDER BY day)</code> averages everything up to today, so the line looks smooth and drifts less over time — which reads as a real trend and is not one. Write <code style="font:400 15px 'JetBrains Mono',monospace;color:#75746F">ROWS BETWEEN 6 PRECEDING AND CURRENT ROW</code> and check the first six rows before you trust the chart.</p>
 </div>
 <div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
@@ -121,12 +121,12 @@ FROM daily_sales;</pre>
 <div id="b8" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
 <div style="display:flex;gap:12px;align-items:flex-start">
-<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85;flex:none">01</span>
-<p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">Three orders share one date. You want each row to show the total of everything up to and including its own row. ROWS or RANGE?</p>
-<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#8A8A85"></path><circle cx="9" cy="9" r="2.1" stroke="#8A8A85"></circle></svg></span>
+<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F;flex:none">01</span>
+<p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">Three orders share one date. You want each row to show the total of everything up to and including its own row. ROWS or RANGE?</p>
+<span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#75746F"></path><circle cx="9" cy="9" r="2.1" stroke="#75746F"></circle></svg></span>
 </div>
 <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5;padding-left:25px">
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">ROWS. RANGE would give all three the same total, because it groups by the value of the date, not by position. Add a tiebreaker to the ORDER BY as well, or the three rows have no stable order to count in.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">ROWS. RANGE would give all three the same total, because it groups by the value of the date, not by position. Add a tiebreaker to the ORDER BY as well, or the three rows have no stable order to count in.</p>
 </div>
 </div>
 <div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
@@ -135,11 +135,11 @@ FROM daily_sales;</pre>
 <div id="b9" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch">
 <div style="display:flex;gap:12px;align-items:flex-start">
-<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#8A8A85"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#8A8A85" stroke-linecap="round"></path></svg></div>
+<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#75746F"></path><path d="M9 2.5v3h3M5.8 8.5h4.4M5.8 11h3" stroke="#75746F" stroke-linecap="round"></path></svg></div>
 <div style="flex:1;min-width:0">
-<a href="#" style="display:block;font:500 15px/1.45 Inter,sans-serif;color:#5F5E5A;text-decoration:none">Window function calls, frame clause <span style="display:inline-block;transform:translateY(1px)"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#8A8A85" stroke-linecap="round"></path></svg></span></a>
-<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#8A8A85">postgresql.org · 12 min · ~0.3 MB</div>
-<div style="margin-top:3px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#1D9E75">opened</div>
+<a href="#" style="display:block;font:500 15px/1.45 Inter,sans-serif;color:#5F5E5A;text-decoration:none">Window function calls, frame clause <span style="display:inline-block;transform:translateY(1px)"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 2.5h5.5V8M9.3 2.7 2.5 9.5" stroke="#75746F" stroke-linecap="round"></path></svg></span></a>
+<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#75746F">postgresql.org · 12 min · ~0.3 MB</div>
+<div style="margin-top:3px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#12606F">opened</div>
 </div>
 </div>
 <div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:12px 14px">
@@ -153,18 +153,18 @@ FROM daily_sales;</pre>
 <div id="b10" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch">
 <div style="display:flex;gap:12px;align-items:flex-start">
-<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke="#8A8A85"></rect><path d="M6.6 6.3 10 8l-3.4 1.7V6.3Z" fill="#8A8A85"></path></svg></div>
+<div style="width:32px;height:32px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke="#75746F"></rect><path d="M6.6 6.3 10 8l-3.4 1.7V6.3Z" fill="#75746F"></path></svg></div>
 <div style="flex:1;min-width:0">
-<div style="font:500 15px/1.45 Inter,sans-serif;color:#8A8A85">Frames, drawn on real data</div>
-<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#8A8A85">youtube.com · 22 min · ~54 MB</div>
-<div style="margin-top:3px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#1D9E75">watched</div>
+<div style="font:500 15px/1.45 Inter,sans-serif;color:#75746F">Frames, drawn on real data</div>
+<div style="margin-top:5px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#75746F">youtube.com · 22 min · ~54 MB</div>
+<div style="margin-top:3px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#12606F">watched</div>
 </div>
 </div>
 <div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:12px 14px">
 <div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:7px">Why this one</div>
 <p style="margin:0;font:italic 400 13.5px/1.7 Inter,sans-serif;color:#17758A;text-wrap:pretty">Optional. The animation from 4:10 to 9:30 shows the frame sliding row by row, which is hard to get from text. Everything after that repeats the table above. On mobile data, skip it.</p>
 </div>
-<button style="margin-top:12px;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:9px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#8A8A85;cursor:pointer"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#8A8A85"></circle><path d="M6.8 5.6 10.4 8l-3.6 2.4V5.6Z" fill="#8A8A85"></path></svg>Load player · ~54 MB</button>
+<button style="margin-top:12px;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:9px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#75746F;cursor:pointer"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#75746F"></circle><path d="M6.8 5.6 10.4 8l-3.6 2.4V5.6Z" fill="#75746F"></path></svg>Load player · ~54 MB</button>
 </div>
 <div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>
 </div>
@@ -172,7 +172,7 @@ FROM daily_sales;</pre>
 <div id="b11" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch">
 <blockquote style="margin:0;border-left:2px solid #E8E8E5;padding:2px 0 2px 16px">
-<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#8A8A85;text-wrap:pretty">If two rows tie in the ORDER BY and you used RANGE, they are the same row as far as the frame is concerned. Most people discover this in a dashboard, on a Monday.</p>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F;text-wrap:pretty">If two rows tie in the ORDER BY and you used RANGE, they are the same row as far as the frame is concerned. Most people discover this in a dashboard, on a Monday.</p>
 </blockquote>
 <div style="margin-top:12px;margin-left:18px;display:flex;align-items:flex-start;gap:10px;border:1px solid #E8E8E5;border-radius:8px;padding:11px 12px">
 <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><circle cx="8" cy="8" r="6.3" stroke="#5F5E5A"></circle><path d="M5.6 9.4a2.6 2.6 0 1 0 0-2.9M10.4 9.4a2.6 2.6 0 1 0 0-2.9" stroke="#5F5E5A" stroke-width=".9"></path></svg>
@@ -198,7 +198,7 @@ FROM daily_sales;</pre>
   ) AS avg_7d
 FROM daily_sales;</pre>
 </div>
-<div style="margin-top:12px;font:400 12px/1 'JetBrains Mono',monospace;color:#1D9E75;height:12px">{{ copyMsg }}</div>
+<div style="margin-top:12px;font:400 12px/1 'JetBrains Mono',monospace;color:#12606F;height:12px">{{ copyMsg }}</div>
 <button onClick="{{ toggleSol }}" style="margin-top:10px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">{{ solLabel }}</button>
 <sc-if value="{{ solOpen }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E8E8E5">
@@ -213,7 +213,7 @@ FROM daily_sales;</pre>
 <div id="b13" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div onClick="{{ toggleQ }}" style="flex:1;min-width:0;max-width:66ch;border:1px solid #E8E8E5;border-radius:12px;padding:14px;cursor:pointer" style-hover="border-color:#17758A">
 <div style="display:flex;gap:12px;align-items:flex-start">
-<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#8A8A85;flex:none">02</span>
+<span style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F;flex:none">02</span>
 <p style="flex:1;margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Your seven-day average starts high on day one and settles by day seven. Is the data wrong?</p>
 <span style="flex:none;width:24px;height:24px;display:flex;align-items:center;justify-content:center;margin:-2px -2px 0 0"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1.5 9S4.4 4 9 4s7.5 5 7.5 5-2.9 5-7.5 5S1.5 9 1.5 9Z" stroke="#17758A"></path><circle cx="9" cy="9" r="2.1" stroke="#17758A"></circle></svg></span>
 </div>
@@ -228,7 +228,7 @@ FROM daily_sales;</pre>
 
 <div id="b14" style="display:flex;align-items:flex-start;gap:8px;padding:0 8px 22px 20px;scroll-margin-top:60px">
 <div style="flex:1;min-width:0;max-width:66ch;border-left:2px solid #BA7517;padding:2px 16px">
-<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#BA7517;margin-bottom:8px">Warning</div>
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A5410;margin-bottom:8px">Warning</div>
 <p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">A frame without <code style="font:400 15px 'JetBrains Mono',monospace;color:#17758A">ORDER BY</code> is legal and almost never what you meant: the whole partition sits in the frame, so every row gets the same number. If your running total is a flat line, check the ORDER BY first.</p>
 </div>
 <div style="width:48px;height:48px;margin:-8px -8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px"><div style="width:20px;height:20px;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></div></div>
@@ -257,7 +257,7 @@ FROM daily_sales;</pre>
 <div style="padding:8px 20px 28px;border-top:1px solid #E8E8E5;margin-top:8px">
 <button style="margin-top:22px;width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer" style-hover="background:#12606F">Mark day <span style="font-family:'JetBrains Mono',monospace">45</span> done</button>
 <button style="margin-top:10px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 16px Inter,sans-serif;color:#17758A;cursor:pointer" style-hover="border-color:#17758A">Save for later</button>
-<div style="margin-top:12px;text-align:center;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#8A8A85">+35 pts · adds 3 cards to review</div>
+<div style="margin-top:12px;text-align:center;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#75746F">+35 pts · adds 3 cards to review</div>
 </div>
 
 <div style="border-top:1px solid #E8E8E5;display:flex;flex-direction:column">
