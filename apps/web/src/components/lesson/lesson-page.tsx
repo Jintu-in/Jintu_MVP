@@ -66,6 +66,14 @@ export type LessonBlock = { id: string; railTitle: string; done: boolean } & (
       status?: string;
       why: string;
       loadLabel?: string;
+      /**
+       * A ready-made player (the nocookie VideoFacade) rendered below the
+       * row. When set it replaces the loadLabel button — the facade is
+       * itself the click-to-load affordance, so two load buttons would
+       * fight. Built client-side by the route wrapper; invariant 1 lives
+       * in the facade, not here.
+       */
+      player?: React.ReactNode;
     }
   | { kind: "quote"; text: Rich; attribution: { name: string; license: string } }
   | { kind: "summary"; lead: string; bullets: string[] }
@@ -173,14 +181,18 @@ export default function LessonPage({
             {roadmapTitle} <span className="text-ink-500">/</span> {moduleLabel}
           </div>
           <div className="px-1 font-mono text-[13px] text-ink-600">{doneOfTotal}</div>
-          <button
-            type="button"
-            aria-label="Bookmark"
-            onClick={onBookmark}
-            className="flex size-12 items-center justify-center text-brand-700 lg:size-9"
-          >
-            <BookmarkIcon />
-          </button>
+          {/* No handler, no button: a dead bookmark is worse than a missing
+              one. The design's affordance returns the day saving ships. */}
+          {onBookmark ? (
+            <button
+              type="button"
+              aria-label="Bookmark"
+              onClick={onBookmark}
+              className="flex size-12 items-center justify-center text-brand-700 lg:size-9"
+            >
+              <BookmarkIcon />
+            </button>
+          ) : null}
         </div>
         <div className="h-[3px] bg-ink-100">
           {/* Inline on purpose: a computed percentage is genuinely dynamic. */}
@@ -257,13 +269,15 @@ export default function LessonPage({
                 >
                   {footer.markDoneLabel}
                 </button>
-                <button
-                  type="button"
-                  onClick={onSaveForLater}
-                  className="mt-2.5 flex min-h-12 w-full items-center justify-center rounded-lg border border-ink-100 bg-white text-[16px] font-medium text-brand-700 hover:border-brand-700"
-                >
-                  {footer.saveLabel}
-                </button>
+                {footer.saveLabel ? (
+                  <button
+                    type="button"
+                    onClick={onSaveForLater}
+                    className="mt-2.5 flex min-h-12 w-full items-center justify-center rounded-lg border border-ink-100 bg-white text-[16px] font-medium text-brand-700 hover:border-brand-700"
+                  >
+                    {footer.saveLabel}
+                  </button>
+                ) : null}
                 <div className="mt-3 text-center font-mono text-[12.5px] leading-[1.6] text-ink-500">
                   {footer.earnsLine}
                 </div>
@@ -678,16 +692,21 @@ function BlockBody({
               ) : null}
             </div>
           </div>
-          {/* The editorial note keeps full contrast even when done: evidence. */}
-          <div className="mt-3 rounded-lg bg-brand-50 px-3.5 py-3">
-            <div className="mb-[7px] font-mono text-[11px] leading-none font-medium tracking-[.08em] text-brand-700 uppercase">
-              Why this one
+          {/* The editorial note keeps full contrast even when done: evidence.
+              Live data may not carry a note yet — no note, no empty card. */}
+          {b.why ? (
+            <div className="mt-3 rounded-lg bg-brand-50 px-3.5 py-3">
+              <div className="mb-[7px] font-mono text-[11px] leading-none font-medium tracking-[.08em] text-brand-700 uppercase">
+                Why this one
+              </div>
+              <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-brand-700 italic">
+                {b.why}
+              </p>
             </div>
-            <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-brand-700 italic">
-              {b.why}
-            </p>
-          </div>
-          {b.loadLabel ? (
+          ) : null}
+          {b.player ? (
+            <div className="mt-3">{b.player}</div>
+          ) : b.loadLabel ? (
             <button
               type="button"
               onClick={() => onLoadVideo?.(b.id)}

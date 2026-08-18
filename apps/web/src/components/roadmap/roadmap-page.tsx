@@ -172,14 +172,18 @@ export default function RoadmapPage({
           <div className="hidden px-1 font-mono text-[13px] leading-none text-ink-600 lg:block">
             {progress.daysCount}
           </div>
-          <button
-            type="button"
-            aria-label="Bookmark"
-            onClick={onBookmark}
-            className="flex size-12 items-center justify-center text-brand-700 lg:size-9"
-          >
-            <BookmarkIcon />
-          </button>
+          {/* No handler, no button: a dead bookmark is worse than a missing
+              one. The design's affordance returns when roadmap saving ships. */}
+          {onBookmark ? (
+            <button
+              type="button"
+              aria-label="Bookmark"
+              onClick={onBookmark}
+              className="flex size-12 items-center justify-center text-brand-700 lg:size-9"
+            >
+              <BookmarkIcon />
+            </button>
+          ) : null}
         </div>
       </div>
 
