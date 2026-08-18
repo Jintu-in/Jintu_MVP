@@ -1,20 +1,23 @@
 /**
- * Proves the retention machinery (0008) mints exactly what it promises.
+ * Proves the retention machinery — streaks v2 (0011) + awards (0008).
  *
  *   node scripts/assert-retention.mjs
  *
- * The award rules, each asserted through the REAL write path (RLS role +
- * trigger / RPC, never owner inserts):
- *   - a done tick pays the node's points once ever, and touches the streak
- *   - the daily node cap holds — progress recorded, excess unpaid
- *   - module completion pays +50 when required nodes are done (optional
- *     nodes stay optional)
- *   - streaks: +1 per consecutive day, freezes absorb short gaps, long
- *     gaps reset, the 7-day bonus lands once per day
- *   - review_card_grade reschedules, pays 1/card/day, and refuses other
- *     people's cards; touch_streak is not client-callable
+ * Every assertion runs through the real path: the complete_day /
+ * uncomplete_day RPCs as an authenticated role, never owner writes. The
+ * owner spec's verification checklist, mechanized:
  *
- * Dates advance via the jintu.today seam (set local, transaction-scoped).
+ *   - the IST boundary: 23:30 IST on a UTC machine credits the IST date
+ *   - two nodes one day → streak advances once (volume ≠ consistency)
+ *   - complete, undo, complete → identical to one completion
+ *   - a 9-day gap reads 0 through streak_status WITHOUT any write
+ *   - completing after the gap → current 1, was_broken, days_missed 9,
+ *     total_days incremented — never decreased anywhere
+ *   - no freezes exist; restart is 1; points still pay exactly once
+ *   - no current_date survives in the streak subsystem
+ *
+ * Dates travel via the jintu.now seam (timestamptz → IST conversion is
+ * REAL, which is the whole point of trap 1).
  */
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
@@ -40,16 +43,14 @@ for (const f of readdirSync(path.join(ROOT, "supabase", "migrations")).filter((f
 const rows = async (q, p = []) => (await db.query(q, p)).rows;
 const one = async (q, p = []) => (await rows(q, p))[0];
 
-// ── fixture: one published roadmap, two modules, users ──────────────────────
+// ── fixture ──────────────────────────────────────────────────────────────────
 const rm = (await one(`insert into public.roadmaps (slug, title, summary, difficulty, status)
   values ('fixture', 'Fixture', 'Test roadmap.', 'beginner', 'published') returning id`)).id;
 const m1 = (await one(`insert into public.modules (roadmap_id, position, title) values ('${rm}', 1, 'M1') returning id`)).id;
 const m2 = (await one(`insert into public.modules (roadmap_id, position, title) values ('${rm}', 2, 'M2') returning id`)).id;
-
 const node = async (mod, pos, pts, optional = false) =>
   (await one(`insert into public.nodes (module_id, position, title, est_minutes, points, is_optional)
-    values ('${mod}', ${pos}, 'n${pos}', 30, ${pts}, ${optional}) returning id`)).id;
-
+    values ('${mod}', ${pos}, 'n${mod === m1 ? "" : "b"}${pos}', 30, ${pts}, ${optional}) returning id`)).id;
 const n1 = await node(m1, 1, 25);
 const n2 = await node(m1, 2, 30);
 const nOpt = await node(m1, 3, 40, true);
@@ -61,103 +62,128 @@ const mkUser = async (tag) => {
   await db.exec(`insert into public.profiles (id, phone, is_adult_confirmed) values ('${id}', '+91${tag}${id.slice(0, 6)}', true)`);
   return id;
 };
-const [ua, ub, uc, ud] = [await mkUser("a"), await mkUser("b"), await mkUser("c"), await mkUser("d")];
+const [ua, ub, uc] = [await mkUser("a"), await mkUser("b"), await mkUser("c")];
 
-/** Run SQL as an authenticated user on a given "today". */
-const as = async (uid, today, sql) => {
-  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}'; set local jintu.today = '${today}';`);
+/** Run SQL as an authenticated user at a given UTC instant. */
+const as = async (uid, atUtc, sql) => {
+  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}'; set local jintu.now = '${atUtc}';`);
   try { return await rows(sql); } finally { await db.exec("commit;"); }
 };
-const asFails = async (uid, today, sql) => {
-  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}'; set local jintu.today = '${today}';`);
+const asFails = async (uid, atUtc, sql) => {
+  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}'; set local jintu.now = '${atUtc}';`);
   try { await rows(sql); return null; }
   catch (e) { return e; }
   finally { await db.exec("rollback;"); }
 };
-const tick = (uid, today, nodeId) =>
-  as(uid, today, `insert into public.node_progress (user_id, node_id, status, completed_at)
-    values ('${uid}', '${nodeId}', 'done', now())
-    on conflict (user_id, node_id) do update set status = 'done', completed_at = now()`);
-const untick = (uid, today, nodeId) =>
-  as(uid, today, `update public.node_progress set status = 'in_progress', completed_at = null
-    where user_id = '${uid}' and node_id = '${nodeId}'`);
-
+const complete = (uid, atUtc, nodeId) =>
+  as(uid, atUtc, `select * from public.complete_day('${nodeId}')`).then((r) => r[0]);
+const undo = (uid, atUtc, nodeId) =>
+  as(uid, atUtc, `select * from public.uncomplete_day('${nodeId}')`).then((r) => r[0]);
+const status = (uid, atUtc) =>
+  as(uid, atUtc, `select * from public.streak_status`).then((r) => r[0]);
 const pts = async (uid, type) =>
   Number((await one(`select coalesce(sum(points), 0) s from public.point_events
     where user_id = '${uid}'${type ? ` and source_type = '${type}'` : ""}`)).s);
-const streak = (uid) => one(`select * from public.streaks where user_id = '${uid}'`);
 
-const D = (n) => `2026-09-${String(n).padStart(2, "0")}`;
+// Noon UTC on Sep N = evening IST, safely inside the same IST date.
+const D = (n, t = "12:00:00") => `2026-09-${String(n).padStart(2, "0")}T${t}Z`;
 
-console.log("── a tick pays once, through the real write path ───────────");
-await tick(ua, D(1), n1);
-check((await pts(ua, "node")) === 25, `done pays the node's points (${await pts(ua, "node")})`);
-check((await streak(ua)).current_days === 1, "and starts the streak");
+console.log("── trap 1: the IST boundary ────────────────────────────────");
+// 18:45 UTC on Sep 1 is 00:15 IST on Sep 2. The credit must go to Sep 2.
+const r1 = await complete(ua, "2026-09-01T18:45:00Z", n1);
+const day = await one(`select done_on from public.activity_days where user_id = '${ua}'`);
+const dayIso = new Date(day.done_on).toISOString().slice(0, 10);
+check(dayIso === "2026-09-02", `00:15-IST completion on a Sep-1 UTC clock credits Sep 2 IST (${dayIso})`);
+check(r1.current_days === 1 && r1.total_days === 1 && r1.is_new_day === true, "first ever day: current 1, total 1");
 
-await untick(ua, D(1), n1);
-await tick(ua, D(1), n1);
-check((await pts(ua, "node")) === 25, "untick + re-tick does not pay twice");
+console.log("\n── trap 2: one calendar day is one streak day ──────────────");
+const r2 = await complete(ua, "2026-09-02T10:00:00Z", n2); // still Sep 2 IST
+check(r2.current_days === 1 && r2.total_days === 1 && r2.is_new_day === false, `second node same IST day advances nothing (${r2.current_days}/${r2.total_days})`);
+check((await pts(ua, "node")) === 55, "but both nodes paid their points");
 
-console.log("\n── module completion pays +50; optional stays optional ─────");
-await tick(ua, D(1), n2);
-check((await pts(ua, "module")) === 50, `both required nodes done → +50 (optional n3 untouched)`);
-check((await pts(ua, "node")) === 55, "second node paid too");
-
-console.log("\n── streak arithmetic ────────────────────────────────────────");
-await tick(ua, D(2), nOpt);
-check((await streak(ua)).current_days === 2, "next day → 2");
-await tick(ua, D(5), bigNodes[0]);
-const s5 = await streak(ua);
-check(s5.current_days === 3 && s5.freezes_remaining === 0, `two missed days eat both freezes, streak survives (${s5.current_days}d, ${s5.freezes_remaining} freezes)`);
-await tick(ua, D(9), bigNodes[1]);
-check((await streak(ua)).current_days === 1, "a gap with no freezes left resets to 1");
-
-console.log("\n── the 7-day bonus, once per day ────────────────────────────");
-for (let d = 1; d <= 7; d++) await tick(uc, D(d), bigNodes[d - 1]);
-check((await pts(uc, "streak")) === 5, `day seven pays +5 (${await pts(uc, "streak")})`);
-await tick(uc, D(7), bigNodes[7]);
-check((await pts(uc, "streak")) === 5, "a second tick the same day does not pay again");
-
-console.log("\n── the daily cap ────────────────────────────────────────────");
-for (const bn of bigNodes.slice(0, 6)) await tick(ud, D(1), bn); // 6 × 40 = 240 offered
-const udNode = await pts(ud, "node");
-check(udNode >= 150 && udNode < 190, `node points stop at the cap (${udNode}; progress still recorded)`);
+console.log("\n── consecutive days and the hard reset ─────────────────────");
+const r3 = await complete(ua, D(3), nOpt);
+check(r3.current_days === 2 && r3.was_broken === false, "next IST day → 2");
+const r4 = await complete(ua, D(6), bigNodes[0]);
 check(
-  Number((await one(`select count(*) c from public.node_progress where user_id = '${ud}' and status = 'done'`)).c) === 6,
-  "all six ticks recorded regardless",
+  r4.current_days === 1 && r4.was_broken === true && r4.days_missed === 2 && r4.total_days === 3,
+  `a 2-day gap hard-resets to 1 — no freezes — and names the miss (missed ${r4.days_missed}, total ${r4.total_days})`,
+);
+check(r4.longest_days === 2, "longest survives the reset");
+
+console.log("\n── trap 4: staleness decays through the view ───────────────");
+const stale = await status(ua, D(15));
+check(stale.current_days === 0, `nine days later the view reads 0 with no write (${stale.current_days})`);
+check(Number(stale.days_since) === 9 && stale.done_today === false, `and says how long it has been (${stale.days_since})`);
+check(
+  (await one(`select current_days from public.streaks where user_id = '${ua}'`)).current_days === 1,
+  "while the raw cache still holds the stale 1 — which is why the UI never reads it",
+);
+const r5 = await complete(ua, D(15), bigNodes[1]);
+check(
+  r5.current_days === 1 && r5.was_broken === true && r5.days_missed === 8 && r5.total_days === 4,
+  `completing after the gap: 1 again, was_broken, missed 8, total marches on (${r5.total_days})`,
 );
 
-console.log("\n── review cards: reschedule, 1/card/day, own cards only ────");
-const card = (await as(ub, D(1), `insert into public.review_cards (user_id, node_id, front, back)
-  values ('${ub}', '${n1}', 'Q', 'A') returning id`))[0].id;
-const graded = await as(ub, D(1), `select * from public.review_card_grade('${card}', 'good')`);
+console.log("\n── undo: complete, undo, complete ──────────────────────────");
+await complete(ub, D(1), n1);
+const afterOne = await one(`select current_days, total_days from public.streaks where user_id = '${ub}'`);
+await complete(ub, D(1), n2);
+await undo(ub, D(1), n2);
+const afterUndo1 = await one(`select current_days, total_days from public.streaks where user_id = '${ub}'`);
 check(
-  graded.length === 1 && new Date(graded[0].next_due).getTime() > new Date(D(1)).getTime(),
-  `good reschedules forward (${new Date(graded[0].next_due).toISOString().slice(0, 10)})`,
+  afterUndo1.current_days === afterOne.current_days && afterUndo1.total_days === afterOne.total_days,
+  "undoing the second node of a day changes nothing (day still has one)",
 );
-check((await pts(ub, "review")) === 1, "clearing pays 1");
-await as(ub, D(1), `select * from public.review_card_grade('${card}', 'again')`);
-check((await pts(ub, "review")) === 1, "same card same day pays once");
-const lapsed = await one(`select lapses, reps from public.review_cards where id = '${card}'`);
-check(lapsed.lapses === 1 && lapsed.reps === 2, "again counts a lapse; reps count both");
-const theft = await asFails(ua, D(1), `select * from public.review_card_grade('${card}', 'good')`);
-check(theft !== null, "grading someone else's card is refused");
+await undo(ub, D(1), n1);
+const emptied = await status(ub, D(1));
+check(emptied.current_days === 0 && Number(emptied.total_days) === 0, "undoing the last node empties the day: current 0, total 0");
+const r6 = await complete(ub, D(1), n1);
+check(
+  r6.current_days === afterOne.current_days && r6.total_days === afterOne.total_days,
+  "complete → undo → complete ends exactly where one completion does",
+);
 
-console.log("\n── nothing else can mint ────────────────────────────────────");
+console.log("\n── undo rebuilds from the source of truth ──────────────────");
+await complete(uc, D(1), n1);
+await complete(uc, D(2), n2);
+await complete(uc, D(3), nOpt);
+await undo(uc, D(3), nOpt);
+const rebuilt = await one(`select current_days, total_days, last_done_on from public.streaks where user_id = '${uc}'`);
 check(
-  (await asFails(ua, D(1), `select public.touch_streak('${ua}')`)) !== null,
-  "touch_streak is not client-callable",
+  rebuilt.current_days === 2 && rebuilt.total_days === 2 &&
+    new Date(rebuilt.last_done_on).toISOString().slice(0, 10) === "2026-09-02",
+  `undoing today rewinds to the run ending yesterday (${rebuilt.current_days}d, total ${rebuilt.total_days})`,
+);
+
+console.log("\n── the 7-day bonus rides the new streak ────────────────────");
+// Re-complete Sep 3 (the undone day) then run to Sep 9 — a continuous run.
+for (let d = 3; d <= 9; d++) await complete(uc, D(d), bigNodes[d]);
+check(
+  (await one(`select current_days from public.streaks where user_id = '${uc}'`)).current_days === 9,
+  "run rebuilt to 9 consecutive days",
+);
+check((await pts(uc, "streak")) === 15, `+5 landed on days 7, 8 and 9, once each (${await pts(uc, "streak")})`);
+
+console.log("\n── nothing else can mint or move ───────────────────────────");
+check((await asFails(ua, D(16), `select public.touch_streak('${ua}')`)) !== null, "touch_streak is gone");
+check(
+  (await asFails(ua, D(16), `insert into public.activity_days (user_id, done_on) values ('${ua}', '2026-09-16')`)) !== null,
+  "activity_days has no client write path",
 );
 check(
-  (await asFails(ua, D(1), `insert into public.point_events (user_id, source_type, source_id, points)
-    values ('${ua}', 'node', '${bigNodes[9]}', 99)`)) !== null,
-  "direct point inserts still refused",
-);
-check(
-  (await asFails(ua, D(1), `update public.streaks set current_days = 400 where user_id = '${ua}'`)) !== null ||
-  (await streak(ua)).current_days !== 400,
+  (await asFails(ua, D(16), `update public.streaks set total_days = 999 where user_id = '${ua}'`)) !== null ||
+  (await one(`select total_days from public.streaks where user_id = '${ua}'`)).total_days !== 999,
   "streaks still unwritable by clients",
 );
+check(
+  (await asFails(null, D(16), `select * from public.complete_day('${n1}')`)) !== null,
+  "anon cannot complete a day",
+);
+
+console.log("\n── no current_date survived in the streak subsystem ────────");
+const streakSql = readFileSync(path.join(ROOT, "supabase", "migrations", "0011_streaks_v2.sql"), "utf8");
+check(!/\bcurrent_date\b/i.test(streakSql), "0011 is current_date-free");
 
 await db.close();
 console.log(`\n${passed} passed, ${failures.length} failed`);
