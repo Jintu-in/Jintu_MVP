@@ -402,15 +402,19 @@ function BlockBody({
               {b.heading}
             </h2>
           ) : null}
+          {/* August 2026 palette pass: visible chrome is a 32px box, the
+              tap area stays the full 48px button around it. */}
           <div className="relative rounded-card border border-ink-100 bg-ink-50 p-3.5">
             {b.copyable ? (
               <button
                 type="button"
                 aria-label="Copy code"
                 onClick={copy}
-                className="absolute top-2 right-2 flex size-12 items-center justify-center rounded-lg border border-ink-100 bg-white text-brand-700 hover:border-brand-700"
+                className="group absolute top-2 right-2 flex size-12 items-center justify-center text-brand-700"
               >
-                <CopyIcon />
+                <span className="flex size-8 items-center justify-center rounded-lg border border-ink-100 bg-white group-hover:border-brand-700">
+                  <CopyIcon />
+                </span>
               </button>
             ) : (
               <span className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-lg border border-ink-100 bg-white text-ink-500">
@@ -421,8 +425,10 @@ function BlockBody({
               {b.code}
             </pre>
           </div>
+          {/* Success as TEXT is teal-dark since the August 2026 palette
+              pass (#12606F → brand-800); the green stays a fill colour. */}
           {b.copyable ? (
-            <div className="mt-3 h-3 font-mono text-[12px] leading-none text-check-machine-ink">
+            <div className="mt-3 h-3 font-mono text-[12px] leading-none text-brand-800">
               {copied ? "copied" : ""}
             </div>
           ) : null}
@@ -586,7 +592,9 @@ function BlockBody({
     case "warning":
       return (
         <div className="border-l-2 border-warn-600 px-4 py-0.5">
-          <div className="mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-600 uppercase">
+          {/* Rule stays warn-600 (a border), the label darkened to the -ink
+              step in the August 2026 palette pass (#8A5410 ≈ warn-700). */}
+          <div className="mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-700 uppercase">
             Warning
           </div>
           <p className={cn("m-0 text-[16px] leading-[1.75] text-pretty", body)}>
@@ -686,7 +694,7 @@ function BlockBody({
                 {b.meta}
               </div>
               {b.status ? (
-                <div className="mt-[3px] font-mono text-[12px] leading-normal text-check-machine-ink">
+                <div className="mt-[3px] font-mono text-[12px] leading-normal text-brand-800">
                   {b.status}
                 </div>
               ) : null}
