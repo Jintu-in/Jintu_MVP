@@ -32,6 +32,7 @@
     "roadmap:import": "node scripts/import-roadmap.mjs",
     "import:verify": "node scripts/assert-import.mjs",
     "retention:verify": "node scripts/assert-retention.mjs",
+    "progress:demo": "node scripts/demo-progress.mjs",
     "links:check": "node scripts/check-links.mjs"
   },
   "devDependencies": {

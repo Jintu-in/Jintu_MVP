@@ -170,6 +170,11 @@ export const completeOnboarding = actionClient
       full_name: parsedInput.fullName ?? null,
       batch_year: parsedInput.batchYear ?? null,
       is_adult_confirmed: parsedInput.isAdultConfirmed,
+      // Omitted rather than nulled when the browser gives nothing: the column
+      // is NOT NULL with a default, and a wrong clock is worse than a
+      // conservative one. The user can be moved later; the account is not
+      // worth blocking over a timezone.
+      ...(parsedInput.timezone ? { timezone: parsedInput.timezone } : {}),
     });
 
     if (profileError) {

@@ -144,6 +144,20 @@ export const onboardingInput = z.object({
   analytics: z.boolean(),
   reminders: z.boolean(),
   public_profile: z.boolean(),
+
+  // The streak day boundary is this person's midnight, so the zone has to be
+  // captured at signup — read from the browser, never guessed from an IP.
+  // Shape-checked only ("Area/Location"): the database validates the name
+  // against pg_timezone_names, which is the list that actually matters, and
+  // an absent or unparseable value falls back to the column default rather
+  // than blocking an account over a clock.
+  timezone: z
+    .string()
+    .trim()
+    .max(64)
+    .regex(/^[A-Za-z]+(?:\/[A-Za-z0-9_+-]+){1,2}$/, "Not an IANA timezone name.")
+    .optional()
+    .catch(undefined),
 });
 
 export type OnboardingInput = z.infer<typeof onboardingInput>;
