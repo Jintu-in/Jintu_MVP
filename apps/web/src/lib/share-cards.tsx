@@ -62,7 +62,10 @@ export function streakShareCard({ daysLearned, detailLine, last14 }: StreakShare
               width: 66,
               height: 66,
               borderRadius: 10,
-              background: done ? "#43b4c8" : "#f7f7f7",
+              // Done squares are the done GREEN since the August 2026 palette
+              // pass — the same fill as the contribution grid, so "a done day"
+              // looks identical everywhere. Brand teal is decorative-only.
+              background: done ? "#1d9e75" : "#f7f7f7",
               border: done ? "none" : "1px solid #ededed",
             }}
           />

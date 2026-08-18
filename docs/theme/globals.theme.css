@@ -1,0 +1,31 @@
+@theme {
+  /* Brand. #43B4C8 is 2.44:1 on white — DECORATIVE ONLY, never text or
+     buttons. #17758A is 5.32:1 and is the interactive colour. */
+  --color-brand-500: #43B4C8;   /* logo, decorative fills, large blocks */
+  --color-brand-700: #17758A;   /* buttons, links, teal text */
+  --color-brand-800: #12606F;   /* hover on brand-700 — 7.17:1 */
+  --color-brand-tint: #EFFAFC;  /* callout background */
+  --color-brand-on-tint: #17505C; /* text on brand-tint — 8.98:1 */
+
+  /* Text. Every value here passes AA at body size. */
+  --color-ink:        #0B0B0B;  /* 19.68:1 */
+  --color-ink-soft:   #5F5E5A;  /* 6.49:1  secondary */
+  --color-ink-muted:  #75746F;  /* 4.68:1  muted — WAS #8A8A85 at 3.47:1 */
+
+  /* Decorative only. Never a color: value on text. */
+  --color-hairline:   #E8E8E5;
+  --color-fill-quiet: #8A8A85;  /* empty grid squares, borders. 3.47:1 */
+
+  --color-surface:    #FFFFFF;
+  --color-page:       #FAFAF8;
+
+  /* Semantic. Safe as fills with a white glyph (3:1 for graphics). For TEXT
+     at body size use the -ink variants. */
+  --color-done:       #1D9E75;  /* 3.39:1  fill only */
+  --color-done-ink:   #12606F;  /* 7.17:1  done as text */
+  --color-warn:       #BA7517;  /* 3.72:1  fill/border only */
+  --color-warn-ink:   #8A5410;
+  --color-danger:     #D85A30;  /* 3.87:1  fill/border only */
+  --color-danger-ink: #B8441F;
+  --color-selection:  #CFEDF4;
+}

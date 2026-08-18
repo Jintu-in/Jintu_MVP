@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+input::placeholder{color:#75746F}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:22px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:680px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#75746F">Jintu · /learn filter states · 360px</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">Five states around finding a roadmap</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">Zero-count facets are removed, never greyed or shown as "0". No-results turns the small catalogue into a request instead of a dead end.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">A · nothing selected</div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="padding:18px 20px 0">
+<div style="position:relative">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="position:absolute;left:16px;top:16px;pointer-events:none"><circle cx="8" cy="8" r="5" stroke="#75746F" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg>
+<input placeholder="What do you want to learn?" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 16px 0 42px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+</div>
+</div>
+<div style="padding:16px 0 0 20px">
+<div style="display:flex;gap:8px;overflow-x:auto;padding:0 20px 4px 0">
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#17758A;border:1px solid #17758A;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer;display:flex;align-items:center;gap:6px">All <span style="font:400 12px 'JetBrains Mono',monospace">4</span></button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:6px">Marketing <span style="font:400 12px 'JetBrains Mono',monospace;color:#75746F">1</span></button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:6px">Data <span style="font:400 12px 'JetBrains Mono',monospace;color:#75746F">1</span></button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:6px">Engineering <span style="font:400 12px 'JetBrains Mono',monospace;color:#75746F">1</span></button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:6px">Thinking <span style="font:400 12px 'JetBrains Mono',monospace;color:#75746F">1</span></button>
+</div>
+</div>
+<div style="padding:12px 20px 0">
+<button style="min-height:48px;padding:0 16px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:500 14px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:8px">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4.5 8h7M7 12h2" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"></path></svg>Filters</button>
+</div>
+<div style="padding:20px 20px 24px">
+<div style="font:400 13px/1 'JetBrains Mono',monospace;color:#75746F">4 roadmaps</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">B · one subject active</div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="padding:18px 20px 0">
+<div style="position:relative">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="position:absolute;left:16px;top:16px;pointer-events:none"><circle cx="8" cy="8" r="5" stroke="#75746F" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg>
+<input placeholder="What do you want to learn?" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 16px 0 42px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+</div>
+</div>
+<div style="padding:16px 0 0 20px">
+<div style="display:flex;gap:8px;overflow-x:auto;padding:0 20px 4px 0">
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer">All</button>
+<button style="flex:none;min-height:40px;padding:0 10px 0 14px;border-radius:8px;background:#EFFAFC;border:1px solid #EFFAFC;font:400 13.5px Inter,sans-serif;color:#17505C;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap">Data &amp; analytics <span style="width:18px;height:18px;border-radius:50%;background:#17505C;display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="m2 2 6 6M8 2 2 8" stroke="#EFFAFC" stroke-width="1.3" stroke-linecap="round"></path></svg></span></button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer">Engineering <span style="font:400 12px 'JetBrains Mono',monospace;color:#75746F">1</span></button>
+</div>
+</div>
+<div style="padding:12px 20px 0">
+<button style="min-height:48px;padding:0 16px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:500 14px Inter,sans-serif;color:#0B0B0B;cursor:pointer;display:flex;align-items:center;gap:8px">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4.5 8h7M7 12h2" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"></path></svg>Filters</button>
+</div>
+<div style="padding:20px 20px 24px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<div style="font:400 13px/1 'JetBrains Mono',monospace;color:#75746F">1 roadmap in Data &amp; analytics</div>
+<a href="#" style="font:400 13px/1 Inter,sans-serif;color:#17758A;text-decoration:none">Clear</a>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">C · search with results</div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="padding:18px 20px 0">
+<div style="position:relative">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="position:absolute;left:16px;top:16px;pointer-events:none"><circle cx="8" cy="8" r="5" stroke="#75746F" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg>
+<input value="sql" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 42px 0 42px;border:1px solid #17758A;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+<button aria-label="Clear search" style="position:absolute;right:8px;top:8px;width:32px;height:32px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m2 2 8 8M10 2 2 10" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+</div>
+</div>
+<div style="padding:20px 20px 24px">
+<div style="font:400 13px/1 'JetBrains Mono',monospace;color:#75746F">2 roadmaps matching sql</div>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="font:500 16px/1.35 Inter,sans-serif;color:#0B0B0B">Data analyst</div>
+<div style="margin-top:5px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">beginner · ~13 weeks</div>
+</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="font:500 16px/1.35 Inter,sans-serif;color:#0B0B0B">Java &amp; Spring Boot backend developer</div>
+<div style="margin-top:5px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">beginner · ~14 weeks</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">D · no results</div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="padding:18px 20px 0">
+<div style="position:relative">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="position:absolute;left:16px;top:16px;pointer-events:none"><circle cx="8" cy="8" r="5" stroke="#75746F" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg>
+<input value="kubernetes" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 42px 0 42px;border:1px solid #17758A;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+<button aria-label="Clear search" style="position:absolute;right:8px;top:8px;width:32px;height:32px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m2 2 8 8M10 2 2 10" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+</div>
+</div>
+<div style="padding:32px 20px 28px">
+<div style="font:500 18px/1.4 Inter,sans-serif;color:#0B0B0B">Nothing matches that yet.</div>
+<p style="margin:10px 0 0;font:400 15px/1.65 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">We have four roadmaps so far, and we are writing more. Tell us what you were looking for and it goes on the list.</p>
+<div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+<input placeholder="What should we build next?" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+<button style="width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer">Send</button>
+</div>
+<div style="margin-top:18px"><a href="#" style="font:500 14.5px/1.4 Inter,sans-serif;color:#17758A;text-decoration:none">Show all roadmaps</a></div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">E · mobile filter sheet</div>
+<div style="width:360px;height:560px;box-sizing:border-box;background:#F1F0EC;border-radius:12px;position:relative;overflow:hidden">
+<div style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-top-left-radius:16px;border-top-right-radius:16px;box-sizing:border-box;height:520px;display:flex;flex-direction:column">
+<div style="flex:none;padding:12px 20px 16px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;justify-content:space-between">
+<a href="#" style="font:400 14px/1 Inter,sans-serif;color:#17758A;text-decoration:none">Clear all</a>
+<div style="font:500 15px/1 Inter,sans-serif;color:#0B0B0B">Filters</div>
+<button aria-label="Close" style="width:32px;height:32px;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m3 3 8 8M11 3l-8 8" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+</div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:18px 20px">
+<div style="font:500 12px/1 Inter,sans-serif;color:#0B0B0B;margin-bottom:6px">Level</div>
+<div style="display:flex;flex-direction:column">
+<label style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;border-bottom:1px solid #E8E8E5;cursor:pointer"><span style="display:flex;align-items:center;gap:10px;font:400 15px Inter,sans-serif;color:#0B0B0B"><input type="checkbox" style="accent-color:#17758A;width:16px;height:16px" />Beginner</span><span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#75746F">2</span></label>
+<label style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;cursor:pointer"><span style="display:flex;align-items:center;gap:10px;font:400 15px Inter,sans-serif;color:#0B0B0B"><input type="checkbox" style="accent-color:#17758A;width:16px;height:16px" />Intermediate</span><span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#75746F">2</span></label>
+</div>
+<div style="font:500 12px/1 Inter,sans-serif;color:#0B0B0B;margin:18px 0 6px">Time</div>
+<div style="display:flex;flex-direction:column">
+<label style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;border-bottom:1px solid #E8E8E5;cursor:pointer"><span style="display:flex;align-items:center;gap:10px;font:400 15px Inter,sans-serif;color:#0B0B0B"><input type="checkbox" style="accent-color:#17758A;width:16px;height:16px" />Under 12 weeks</span><span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#75746F">1</span></label>
+<label style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;cursor:pointer"><span style="display:flex;align-items:center;gap:10px;font:400 15px Inter,sans-serif;color:#0B0B0B"><input type="checkbox" style="accent-color:#17758A;width:16px;height:16px" />12 weeks or more</span><span style="font:400 12.5px/1 'JetBrains Mono',monospace;color:#75746F">3</span></label>
+</div>
+</div>
+<div style="flex:none;padding:14px 20px;border-top:1px solid #E8E8E5">
+<button style="width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer">Show 4 roadmaps</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1560,&quot;height&quot;:900}}"></script>
+</body>
+</html>
