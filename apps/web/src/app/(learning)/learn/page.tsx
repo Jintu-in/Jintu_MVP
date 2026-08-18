@@ -14,11 +14,33 @@ import { getViewer } from "@/lib/session";
  */
 export const dynamic = "force-dynamic";
 
+const DESCRIPTION =
+  "Deep, free roadmaps for any subject — curated reads, videos and docs in the order that teaches. Browse by subject, difficulty and time.";
+
 export const metadata: Metadata = {
   title: "Roadmaps",
-  description:
-    "Deep, free roadmaps for any subject — curated reads, videos and docs in the order that teaches. Browse by subject, difficulty and time.",
+  description: DESCRIPTION,
   alternates: { canonical: "/learn" },
+  // Page-specific OG, not the layout's: og:title must say what THIS page
+  // is and og:url must be the canonical /learn — otherwise every share of
+  // the catalogue resolves to the homepage. images stays explicit because
+  // a page-level openGraph replaces the layout's wholesale and would
+  // silently drop the root card (the #93 regression).
+  openGraph: {
+    type: "website",
+    title: "Roadmaps · Jintu",
+    description: DESCRIPTION,
+    url: "/learn",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Jintu — one place to learn anything, properly.",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image", title: "Roadmaps · Jintu", description: DESCRIPTION },
 };
 
 const sentence = (s: string) => (s ? s[0]!.toUpperCase() + s.slice(1) : s);

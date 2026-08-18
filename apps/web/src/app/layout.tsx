@@ -43,14 +43,16 @@ export const metadata: Metadata = {
     siteName: "Jintu",
     locale: "en_IN",
     url: "/",
-    title: "Jintu — learn anything, then prove it",
+    // "properly", never "prove it" — proving was the deleted product, and
+    // this string is what every WhatsApp preview leads with.
+    title: "Jintu — learn anything, properly",
     description: DESCRIPTION,
   },
   twitter: {
     // Not "summary". That renders a ~120px thumbnail beside the text; the
     // generated image below is 1200×630 and is the whole point of the link.
     card: "summary_large_image",
-    title: "Jintu — learn anything, then prove it",
+    title: "Jintu — learn anything, properly",
     description: DESCRIPTION,
   },
 };
