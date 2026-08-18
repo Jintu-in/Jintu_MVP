@@ -59,6 +59,10 @@ export function OnboardingForm() {
           analytics: fd.get("analytics") === "on",
           reminders: fd.get("reminders") === "on",
           public_profile: fd.get("public_profile") === "on",
+          // Not a field on the form — the browser already knows, and asking
+          // someone their timezone is a question with no good answer. The
+          // streak's day boundary is this value's midnight.
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || undefined,
         })
       }
     >
