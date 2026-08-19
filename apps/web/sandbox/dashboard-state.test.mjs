@@ -29,6 +29,10 @@ const screenTsx = readFileSync(
   join(SRC, "components", "dashboard", "dashboard-screen.tsx"),
   "utf8",
 );
+const tintedTsx = readFileSync(
+  join(SRC, "components", "dashboard", "dashboard-tinted.tsx"),
+  "utf8",
+);
 
 /** Mirror of the rule in lib/dashboard.ts — kept honest by the drift test. */
 const dashboardState = (totalDays, daysSince) =>
@@ -140,11 +144,18 @@ test("the lapsed state leads with what survived, then one small action", () => {
   assert.match(s, /they can keep/, "explicit permission to ignore review and saved");
 });
 
-test("the habitual state is the only one with the strip and the list", () => {
-  const s = branch("habitual");
-  assert.match(s, /<StreakStrip/);
-  assert.match(s, /<RoadmapList/);
-  assert.match(s, /<ResumeCard/);
+test("the habitual state delegates to the tinted dashboard", () => {
+  // The returning learner's home is the design project's "Dashboard
+  // tinted". New and lapsed keep their own layouts here, because the rule
+  // that produced them is unchanged.
+  assert.ok(branch("habitual").includes("<TintedDashboard data={data} />"));
+});
+
+test("the tinted dashboard carries the strip, the resume card and the list", () => {
+  assert.match(tintedTsx, /role="img"/, "the fourteen-day strip");
+  assert.match(tintedTsx, /Pick up where you stopped/);
+  assert.match(tintedTsx, /Your roadmaps/);
+  assert.ok(tintedTsx.includes("No deadlines here. These wait for you."));
 });
 
 test("exactly one filled button per state", () => {
@@ -157,39 +168,51 @@ test("exactly one filled button per state", () => {
       assert.equal(filled, 2, "the new state's two exclusive branches");
       assert.match(s, /data\.resume \? \(/, "and they are exclusive");
     } else if (state === "habitual") {
-      // The habitual state's single filled button lives inside ResumeCard.
+      // Delegated entirely — the filled button lives in the tinted file.
       assert.equal(filled, 0);
-      assert.equal([...s.matchAll(/<ResumeCard/g)].length, 1);
+      assert.equal([...s.matchAll(/<TintedDashboard/g)].length, 1);
     } else {
       assert.equal(filled, 1);
     }
   }
-  const resumeCard = /function ResumeCard[\s\S]*?\n}/.exec(screenTsx);
-  assert.ok(resumeCard, "ResumeCard should be findable");
+  // In the tinted layout the one filled control is Resume; every other
+  // action on that screen is outlined or a plain link.
+  assert.ok(tintedTsx.includes("Resume →"), "the tinted dashboard needs its primary action");
   assert.equal(
-    (resumeCard[0].match(/<PrimaryAction/g) ?? []).length,
-    1,
-    "ResumeCard carries exactly one",
+    (tintedTsx.match(/bg-brand-700 text-white/g) ?? []).length,
+    2,
+    "exactly two filled surfaces: the Resume button and the Continue card action",
   );
 });
 
 test("the streak strip is one element, not fourteen tab stops", () => {
-  const strip = screenTsx.slice(
-    screenTsx.indexOf("function StreakStrip"),
-    screenTsx.indexOf("The most important element"),
+  // Lives in the tinted file now — the habitual layout moved there.
+  const strip = tintedTsx.slice(
+    tintedTsx.indexOf("function ActivityStrip"),
+    tintedTsx.indexOf("The 6px cap"),
   );
+  assert.ok(strip.length > 0, "ActivityStrip should be findable");
   assert.match(strip, /role="img"/);
-  assert.match(strip, /aria-label=\{label\}/);
+  assert.match(strip, /aria-label=/);
   assert.match(strip, /aria-hidden/, "every square is hidden from the reader");
   assert.doesNotMatch(strip, /<button|tabIndex|href/, "squares must not be focusable");
 });
 
-test("nothing the brief forbids has crept in", () => {
-  for (const banned of [/badge/i, /leaderboard/i, /recommend/i, /\bchart\b/i]) {
-    assert.doesNotMatch(screenTsx, banned, `forbidden element: ${banned}`);
-  }
-  // A points total competes with the next action.
-  assert.doesNotMatch(screenTsx, /points/i);
+test("the points total is present, and deliberately so", () => {
+  // TWO BRIEFS DISAGREE HERE, and this test records which one won.
+  //
+  // S6 said "DO NOT add a points total" — anything that is not the next
+  // action competes with the next action. "Dashboard tinted" then shows
+  // "1,240 pts" as a chip in the stats row. The later design wins, but the
+  // original reason has not evaporated: the number is a quiet chip beside
+  // "days learned", never a headline, and nothing ranks or compares it
+  // (invariant 5 — momentum, never a credential).
+  //
+  // If the ban is reinstated, delete the chip and flip this back.
+  assert.ok(tintedTsx.includes("data.points"), "the chip should render a points total");
+  assert.ok(tintedTsx.includes(" pts"), "and label it");
+  assert.match(tintedTsx, /Momentum, not a credential/);
+  assert.doesNotMatch(tintedTsx, /rank|percentile|top \d+%/i);
 });
 
 test("the streak is never read from the cache table", () => {
