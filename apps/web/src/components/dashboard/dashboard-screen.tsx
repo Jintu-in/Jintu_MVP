@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
+import TintedDashboard from "@/components/dashboard/dashboard-tinted";
 import type { DashboardData } from "@/lib/dashboard";
-import { cn } from "@/lib/utils";
 
 /**
  * The dashboard, in three shapes.
@@ -53,137 +53,6 @@ const SecondaryAction = ({ href, children }: { href: Route; children: React.Reac
     {children}
   </Link>
 );
-
-/**
- * Fourteen days as ONE element. Nobody tabs through fourteen divs, and a
- * screen reader should hear the fact, not the fourteen.
- */
-function StreakStrip({ last14, label }: { last14: { date: string; done: boolean }[]; label: string }) {
-  return (
-    <div
-      role="img"
-      aria-label={label}
-      className="mt-4 grid grid-cols-7 gap-1"
-    >
-      {last14.map((d) => (
-        <span
-          key={d.date}
-          aria-hidden
-          className={cn(
-            "aspect-square rounded-[3px]",
-            d.done ? "bg-check-machine" : "border border-ink-100 bg-ink-50",
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-/**
- * The most important element on the screen.
- *
- * It names MINUTES REMAINING, never the day's full length: sixty minutes is
- * unstartable on a metro platform and nine is startable. An unopened day has
- * no remaining figure, so it shows its real length and says Start.
- */
-function ResumeCard({ resume }: { resume: NonNullable<DashboardData["resume"]> }) {
-  const started = resume.blockPosition !== null;
-  return (
-    <section className="mt-5 rounded-card border border-brand-700 bg-white p-4">
-      <h2 className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-brand-700 uppercase">
-        {started ? "Pick up where you stopped" : "Start here"}
-      </h2>
-      <p className="mt-3 text-[18px] leading-[1.35] font-medium text-ink-900">{resume.nodeTitle}</p>
-      <p className="mt-1.5 font-mono text-[12.5px] leading-[1.5] text-ink-500">
-        Day {resume.dayNumber}
-        {started ? (
-          <>
-            {" · "}block {resume.blockPosition} of {resume.blocks}
-            {" · "}
-            <span className="text-ink-900">~{resume.minutesLeft} min</span> left
-          </>
-        ) : (
-          <>
-            {" · "}
-            {resume.roadmapTitle}
-            {" · "}~{resume.estMinutes} min
-          </>
-        )}
-      </p>
-      <PrimaryAction href={resume.href as Route}>
-        {started ? "Resume" : `Start day ${resume.dayNumber}`}
-      </PrimaryAction>
-    </section>
-  );
-}
-
-/** One of the two side-by-side cards. Honest when empty rather than hidden. */
-function CountCard({
-  label,
-  count,
-  minutes,
-  href,
-  action,
-  emptyLine,
-}: {
-  label: string;
-  count: number;
-  minutes: number;
-  href: Route;
-  action: string;
-  emptyLine: string;
-}) {
-  return (
-    <div className="flex flex-col rounded-card border border-ink-100 bg-white p-4">
-      <div className="font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
-        {label}
-      </div>
-      {count > 0 ? (
-        <>
-          <div className="mt-2.5 text-[15px] leading-[1.4] text-ink-900">
-            {count} {label === "Review" ? (count === 1 ? "card due" : "cards due") : count === 1 ? "saved" : "saved"}
-          </div>
-          <div className="mt-1 font-mono text-[12px] leading-none text-ink-500">
-            {minutes > 0 ? `~${minutes} min` : "—"}
-          </div>
-          <Link
-            href={href}
-            className="mt-auto flex min-h-12 items-center pt-3 text-[15px] font-medium text-brand-700"
-          >
-            {action}
-          </Link>
-        </>
-      ) : (
-        <div className="mt-2.5 text-[15px] leading-[1.6] text-ink-500">{emptyLine}</div>
-      )}
-    </div>
-  );
-}
-
-function RoadmapList({ roadmaps }: { roadmaps: DashboardData["roadmaps"] }) {
-  if (!roadmaps.length) return null;
-  return (
-    <section className="mt-6">
-      <h2 className="font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
-        Your roadmaps
-      </h2>
-      <div className="mt-2.5 overflow-hidden rounded-card border border-ink-100">
-        {roadmaps.map((r) => (
-          <Link
-            key={r.slug}
-            href={r.href as Route}
-            className="flex min-h-12 items-baseline justify-between gap-3 border-b border-ink-100 px-4 py-3.5 last:border-b-0 hover:bg-ink-50"
-          >
-            <span className="text-[15px] leading-[1.4] text-ink-900">{r.title}</span>
-            <span className="shrink-0 font-mono text-[12px] leading-none text-ink-500">
-              {r.doneDays} of {r.totalDays}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 export default function DashboardScreen({ data }: { data: DashboardData }) {
   const name = data.firstName;
@@ -298,50 +167,13 @@ export default function DashboardScreen({ data }: { data: DashboardData }) {
   }
 
   // ── HABITUAL ───────────────────────────────────────────────────────────────
-  const { streak } = data;
-  return (
-    <Shell>
-      <Greeting text={name ? `${data.greeting}, ${name}` : data.greeting} />
-
-      <div className="mt-4 flex items-baseline justify-between gap-3">
-        <span className="font-mono text-[15px] leading-none text-ink-900">
-          {streak.currentDays} day streak
-        </span>
-        <span className="font-mono text-[12.5px] leading-none text-ink-500">
-          {streak.totalDays} days learned
-        </span>
-      </div>
-      <StreakStrip
-        last14={streak.last14}
-        label={`${streak.currentDays} day streak, ${streak.missedInLast14} ${
-          streak.missedInLast14 === 1 ? "day" : "days"
-        } missed in the last 14`}
-      />
-
-      {data.resume ? <ResumeCard resume={data.resume} /> : null}
-
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <CountCard
-          label="Review"
-          count={data.review.count}
-          minutes={data.review.minutes}
-          href={"/review" as Route}
-          action="Review"
-          emptyLine="Nothing due. Come back tomorrow."
-        />
-        <CountCard
-          label="Saved"
-          count={data.saved.count}
-          minutes={data.saved.minutes}
-          href={"/saved" as Route}
-          action="Open"
-          emptyLine="Nothing saved yet."
-        />
-      </div>
-
-      <RoadmapList roadmaps={data.roadmaps} />
-    </Shell>
-  );
+  // The returning learner's home is the tinted design (Dashboard tinted).
+  // Its own content assumes somebody with a streak, a roadmap in progress
+  // and a points total, which is exactly this state — so the new and
+  // lapsed layouts above are untouched. A wall of stats on day two still
+  // makes the product feel dead, and a full grid shown to somebody who
+  // just lapsed is still a rebuke.
+  return <TintedDashboard data={data} />;
 }
 
 /**

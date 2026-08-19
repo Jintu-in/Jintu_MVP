@@ -49,6 +49,8 @@ export type DashboardRoadmap = {
   href: string;
   doneDays: number;
   totalDays: number;
+  /** Subject tags, at most two — the row has room for two chips. */
+  tags: string[];
 };
 
 export type DashboardData = {
@@ -68,6 +70,11 @@ export type DashboardData = {
   resume: ResumeTarget | null;
   /** The day before the resume target — the lapsed state's escape hatch. */
   previousDay: { href: string; dayNumber: number; title: string } | null;
+  /**
+   * The lifetime points total. Momentum, never a credential — the UI that
+   * shows it says so, and it is awarded server-side only (invariant 5).
+   */
+  points: number;
   review: { count: number; minutes: number };
   saved: { count: number; minutes: number };
   roadmaps: DashboardRoadmap[];
@@ -141,7 +148,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
     .slice(0, 10);
 
   // One query per concern, all at once.
-  const [statusRes, daysRes, resumeRes, dueRes, savedRes, enrolRes] = await Promise.all([
+  const [statusRes, daysRes, resumeRes, dueRes, savedRes, enrolRes, pointsRes] = await Promise.all([
     retryRead(() => supabase.from("streak_status").select("*").maybeSingle()),
     retryRead(() => supabase.from("activity_days").select("done_on").gte("done_on", since)),
     retryRead(() =>
@@ -168,6 +175,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
     retryRead(() =>
       supabase.from("roadmap_enrollments").select("roadmaps ( slug, title, status )"),
     ),
+    retryRead(() => supabase.from("point_events").select("points")),
   ]);
 
   for (const [what, res] of [
@@ -177,6 +185,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
     ["your review queue", dueRes],
     ["your saved links", savedRes],
     ["your roadmaps", enrolRes],
+    ["your points", pointsRes],
   ] as const) {
     if (res.error) throw describeSupabaseError(`reading ${what}`, res.error);
   }
@@ -285,6 +294,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
         href: `/learn/${tree.slug}`,
         doneDays: all.filter((n) => doneIds.has(n.id)).length,
         totalDays: all.length,
+        tags: tree.subjectTags.slice(0, 2),
       });
     });
   }
@@ -307,6 +317,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
     },
     resume,
     previousDay,
+    points: (pointsRes.data ?? []).reduce((a, r) => a + (r.points ?? 0), 0),
     review: {
       count: reviewCount,
       minutes: Math.max(1, Math.round((reviewCount * SECONDS_PER_CARD) / 60)),
