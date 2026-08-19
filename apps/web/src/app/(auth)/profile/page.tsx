@@ -64,6 +64,21 @@ export default async function ProfilePage() {
         </section>
       ) : null}
 
+      {/* Notes and saved. Notes are S7 — the user_notes table does not exist
+          yet, so this links only what is real rather than showing a count of
+          nothing behind a dead link. */}
+      <section className="border-t border-ink-100 py-6">
+        <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Saved</h2>
+        <Link
+          href="/profile/saved"
+          className="mt-3 inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
+        >
+          {account.counts.saved > 0
+            ? `${account.counts.saved} saved to read`
+            : "Saved to read"}
+        </Link>
+      </section>
+
       {/* How your day is counted */}
       <TimezoneCard current={account.timezone} />
 
