@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BackIcon,
   BookmarkIcon,
@@ -53,7 +53,24 @@ export type LessonBlock = { id: string; railTitle: string; done: boolean } & (
       columns: [string, string];
       rows: { label: string; cells: [Rich, Rich] }[];
     }
-  | { kind: "gotcha"; text: Rich }
+  | { kind: "gotcha"; heading?: string; text: Rich }
+  | { kind: "topics"; heading: string; items: { title: string; detail: string }[] }
+  | {
+      kind: "resources";
+      heading: string;
+      items: {
+        id: string;
+        typeLabel: string;
+        resType: "doc" | "video";
+        title: string;
+        href: string;
+        meta: string;
+        why: string;
+        dead: boolean;
+        player?: React.ReactNode;
+      }[];
+    }
+  | { kind: "checks"; heading: string; items: { question: string; answer: string }[] }
   | { kind: "note"; text: Rich }
   | { kind: "warning"; text: Rich }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
@@ -86,16 +103,42 @@ export interface LessonPageProps {
   title: string;
   dayLabel: string;
   metaLine: string;
-  doneOfTotal: string;
+  /**
+   * The day's one-line argument, italic and unheaded between the meta and
+   * the first section. Not tickable and not counted — it is the claim the
+   * six sections then earn.
+   */
+  principle?: string;
   blocks: LessonBlock[];
   footer: {
     markDoneLabel: React.ReactNode;
     saveLabel: string;
     earnsLine: string;
+    /**
+     * The mark-done failure. Named, inline, and persistent — never a toast.
+     * This is the single action the product depends on, and the people who
+     * hit it are on a patchy train connection, so it must still be on
+     * screen when they look back at the page.
+     */
+    failure?: { line: string; onRetry: () => void };
+    /** Replaces the button entirely once the day is done. */
+    doneCard?: React.ReactNode;
   };
+  /**
+   * Strips above the content — resuming, session expired. Inline and
+   * dismissible; the day stays fully readable beneath them.
+   */
+  lead?: React.ReactNode;
   prev?: { label: React.ReactNode; href: string };
   next?: { label: React.ReactNode; href: string };
   railFooter: string[];
+  /**
+   * Where per-section ticks persist. localStorage, because there is no
+   * block_progress table — node_progress.last_block_position (0012) is a
+   * single furthest-point bookmark, not a per-section set. When that table
+   * lands, this is the seam that changes.
+   */
+  tickStorageKey?: string;
   onBack?: () => void;
   onBookmark?: () => void;
   onMarkDone?: () => void;
@@ -119,18 +162,47 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
   </>
 );
 
-/** The 20px tick inside its 48px tap column, bleeding into the right padding. */
-const TickColumn = ({ done }: { done: boolean }) => (
-  <div className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1">
-    {done ? (
-      <span className="flex size-5 items-center justify-center rounded-full bg-check-machine text-white">
-        <TickIcon />
-      </span>
-    ) : (
-      <span className="size-5 rounded-full border border-ink-100 bg-white" />
-    )}
-  </div>
-);
+/**
+ * The 20px tick inside its 48px tap target, bleeding into the right padding.
+ *
+ * Tickable by anyone, signed in or not: a tick is reading progress, not a
+ * progress event, and the person working through a page without an account
+ * still needs to know where they were. Marking the DAY done is the separate,
+ * signed-in action at the foot of the page.
+ */
+const TickColumn = ({
+  ticked,
+  label,
+  onToggle,
+}: {
+  ticked: boolean;
+  label: string;
+  onToggle?: () => void;
+}) => {
+  const mark = ticked ? (
+    <span className="flex size-5 items-center justify-center rounded-full bg-check-machine text-white">
+      <TickIcon />
+    </span>
+  ) : (
+    <span className="size-5 rounded-full border border-ink-100 bg-white" />
+  );
+  if (!onToggle) {
+    return (
+      <div className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1">{mark}</div>
+    );
+  }
+  return (
+    <button
+      type="button"
+      aria-pressed={ticked}
+      aria-label={ticked ? `Mark "${label}" unread` : `Mark "${label}" read`}
+      onClick={onToggle}
+      className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1"
+    >
+      {mark}
+    </button>
+  );
+};
 
 export default function LessonPage({
   roadmapTitle,
@@ -138,26 +210,69 @@ export default function LessonPage({
   title,
   dayLabel,
   metaLine,
-  doneOfTotal,
+  principle,
+  lead,
   blocks,
   footer,
   prev,
   next,
   railFooter,
+  tickStorageKey,
   onBack,
   onBookmark,
   onMarkDone,
   onSaveForLater,
   onLoadVideo,
 }: LessonPageProps) {
-  // Scroll progress — the maths ported from the design's DCLogic verbatim.
+  // Scroll progress — the maths ported from the design's DCLogic verbatim,
+  // now coalesced into a frame. The handler fires on every scroll event and
+  // only the last value in a frame can be painted, so the rest are work
+  // thrown away on exactly the mid-range phone this is built for.
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const frame = useRef<number | null>(null);
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
-    const max = el.scrollHeight - el.clientHeight;
-    setProgress(max > 0 ? Math.min(100, Math.max(0, (el.scrollTop / max) * 100)) : 0);
+    if (frame.current !== null) return;
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const max = el.scrollHeight - el.clientHeight;
+      setProgress(max > 0 ? Math.min(100, Math.max(0, (el.scrollTop / max) * 100)) : 0);
+    });
   };
+
+  // Per-section ticks. The day's own done flag ticks everything, so a
+  // finished day reads as finished without needing sixteen taps.
+  const [ticks, setTicks] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    if (!tickStorageKey) return;
+    try {
+      const raw = window.localStorage.getItem(tickStorageKey);
+      if (raw) setTicks(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      // A corrupt or unavailable store must never stop the page rendering.
+    }
+  }, [tickStorageKey]);
+
+  const toggleTick = (id: string) => {
+    setTicks((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      if (tickStorageKey) {
+        try {
+          window.localStorage.setItem(tickStorageKey, JSON.stringify([...next]));
+        } catch {
+          // Private mode, quota, disabled storage — the tick still works for
+          // this session, it just will not survive a reload.
+        }
+      }
+      return next;
+    });
+  };
+
+  const isTicked = (b: LessonBlock) => b.done || ticks.has(b.id);
+  const doneCount = blocks.filter(isTicked).length;
 
   return (
     <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
@@ -180,7 +295,7 @@ export default function LessonPage({
           <div className="hidden min-w-0 flex-1 text-[13px] leading-normal text-ink-600 lg:block">
             {roadmapTitle} <span className="text-ink-500">/</span> {moduleLabel}
           </div>
-          <div className="px-1 font-mono text-[13px] text-ink-600">{doneOfTotal}</div>
+          <div className="px-1 font-mono text-[13px] text-ink-600">{`${doneCount} of ${blocks.length}`}</div>
           {/* No handler, no button: a dead bookmark is worse than a missing
               one. The design's affordance returns the day saving ships. */}
           {onBookmark ? (
@@ -219,7 +334,7 @@ export default function LessonPage({
                 href={`#${b.id}`}
                 className="flex min-h-[34px] items-center gap-2.5 px-5 py-1.5 no-underline"
               >
-                {b.done ? (
+                {isTicked(b) ? (
                   <span className="flex size-3.5 flex-none items-center justify-center rounded-full bg-check-machine text-white">
                     <TickIcon size={9} />
                   </span>
@@ -227,7 +342,10 @@ export default function LessonPage({
                   <span className="size-3.5 flex-none rounded-full border border-ink-100 bg-white" />
                 )}
                 <span
-                  className={cn("text-[13px] leading-[1.4]", b.done ? "text-ink-500" : "text-ink-900")}
+                  className={cn(
+                    "text-[13px] leading-[1.4]",
+                    isTicked(b) ? "text-ink-500" : "text-ink-900",
+                  )}
                 >
                   {b.railTitle}
                 </span>
@@ -235,6 +353,11 @@ export default function LessonPage({
             ))}
           </div>
           <div className="mt-4 border-t border-ink-100 px-5 pt-3.5 font-mono text-[12px] leading-[1.7] text-ink-500">
+            {/* The count leads: it is the one line in the rail that answers
+                "how much is left", which is why the rail is there at all. */}
+            <div>
+              {doneCount} of {blocks.length} done
+            </div>
             {railFooter.map((line) => (
               <div key={line}>{line}</div>
             ))}
@@ -254,21 +377,57 @@ export default function LessonPage({
                 <div className="mt-2 font-mono text-[13px] leading-normal text-ink-500">
                   {dayLabel} · {metaLine}
                 </div>
+                {/* Unheaded and italic: the claim the six sections earn. Not
+                    tickable, not counted, full contrast always. */}
+                {principle ? (
+                  <p className="mt-4 max-w-[62ch] text-[16px] leading-[1.7] text-pretty text-ink-900 italic">
+                    {principle}
+                  </p>
+                ) : null}
               </div>
 
+              {lead ? <div className="px-5 pb-1">{lead}</div> : null}
+
               {blocks.map((b) => (
-                <Block key={b.id} block={b} onLoadVideo={onLoadVideo} />
+                <Block
+                  key={b.id}
+                  block={b}
+                  ticked={isTicked(b)}
+                  onToggleTick={() => toggleTick(b.id)}
+                  onLoadVideo={onLoadVideo}
+                />
               ))}
 
               {/* footer actions */}
               <div className="mt-2 border-t border-ink-100 px-5 pt-2 pb-7">
-                <button
-                  type="button"
-                  onClick={onMarkDone}
-                  className="mt-[22px] flex min-h-12 w-full items-center justify-center rounded-lg border border-brand-700 bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
-                >
-                  {footer.markDoneLabel}
-                </button>
+                {footer.doneCard ? (
+                  <div className="mt-[22px]">{footer.doneCard}</div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onMarkDone}
+                    className="mt-[22px] flex min-h-12 w-full items-center justify-center rounded-lg border border-brand-700 bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
+                  >
+                    {footer.markDoneLabel}
+                  </button>
+                )}
+
+                {/* The button returns to normal and the reason sits under
+                    it, with the retry beside it. Nothing disappears. */}
+                {footer.failure ? (
+                  <div role="alert" className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-[14px] leading-[1.6] text-warn-700">
+                      {footer.failure.line}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={footer.failure.onRetry}
+                      className="flex min-h-12 items-center text-[14px] font-medium text-brand-700"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : null}
                 {footer.saveLabel ? (
                   <button
                     type="button"
@@ -313,15 +472,22 @@ export default function LessonPage({
 /** One content block: the shared shell (tick column, spacing) + per-kind body. */
 function Block({
   block: b,
+  ticked,
+  onToggleTick,
   onLoadVideo,
 }: {
   block: LessonBlock;
+  ticked: boolean;
+  onToggleTick: () => void;
   onLoadVideo?: (blockId: string) => void;
 }) {
   // Done drops body text to the muted tone. Headings drop one step too.
-  const body = b.done ? "text-ink-500" : "text-ink-900";
-  const heading = b.done ? "text-ink-600" : "text-ink-900";
-  const codeTone = b.done ? "text-ink-500" : "text-brand-700";
+  // A ticked section dims to the muted tone and STAYS READABLE — ink-500
+  // is 5.12:1. It is never collapsed or hidden: re-reading is most of what
+  // a revisit is.
+  const body = ticked ? "text-ink-500" : "text-ink-900";
+  const heading = ticked ? "text-ink-600" : "text-ink-900";
+  const codeTone = ticked ? "text-ink-500" : "text-brand-700";
 
   return (
     <div
@@ -332,21 +498,30 @@ function Block({
       )}
     >
       <div className="min-w-0 max-w-[66ch] flex-1">
-        <BlockBody b={b} body={body} heading={heading} codeTone={codeTone} onLoadVideo={onLoadVideo} />
+        <BlockBody
+          b={b}
+          ticked={ticked}
+          body={body}
+          heading={heading}
+          codeTone={codeTone}
+          onLoadVideo={onLoadVideo}
+        />
       </div>
-      <TickColumn done={b.done} />
+      <TickColumn ticked={ticked} label={b.railTitle} onToggle={onToggleTick} />
     </div>
   );
 }
 
 function BlockBody({
   b,
+  ticked,
   body,
   heading,
   codeTone,
   onLoadVideo,
 }: {
   b: LessonBlock;
+  ticked: boolean;
   body: string;
   heading: string;
   codeTone: string;
@@ -519,13 +694,13 @@ function BlockBody({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-ink-50">
-                  <th className={cn("px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase", b.done ? "text-ink-500" : "text-ink-600")} />
+                  <th className={cn("px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase", ticked ? "text-ink-500" : "text-ink-600")} />
                   {b.columns.map((c) => (
                     <th
                       key={c}
                       className={cn(
                         "px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase",
-                        b.done ? "text-ink-500" : "text-ink-600",
+                        ticked ? "text-ink-500" : "text-ink-600",
                       )}
                     >
                       {c}
@@ -544,7 +719,7 @@ function BlockBody({
                         key={b.columns[ci]}
                         className={cn(
                           "border-t border-ink-100 px-3.5 py-3 text-[15px] leading-[1.6]",
-                          b.done ? "text-ink-500" : "text-ink-600",
+                          ticked ? "text-ink-500" : "text-ink-600",
                         )}
                       >
                         <RichText segments={cell} codeClass={body} />
@@ -566,7 +741,7 @@ function BlockBody({
           <div
             className={cn(
               "mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] uppercase",
-              b.done ? "text-ink-500" : "text-ink-600",
+              ticked ? "text-ink-500" : "text-ink-600",
             )}
           >
             Note
@@ -581,11 +756,61 @@ function BlockBody({
       return (
         <div className="rounded-r-card border-l-2 border-brand-700 bg-brand-50 px-4 py-3.5">
           <div className={cn("mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] uppercase", body)}>
-            Gotcha
+            {b.heading ?? "Gotcha"}
           </div>
           <p className={cn("m-0 text-[16px] leading-[1.75] text-pretty", body)}>
             <RichText segments={b.text} codeClass={body} />
           </p>
+        </div>
+      );
+
+    case "topics":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <ol className="m-0 flex list-none flex-col gap-3.5 p-0">
+            {b.items.map((t, i) => (
+              <li key={t.title} className="flex gap-3">
+                <span className="w-6 shrink-0 font-mono text-[12px] leading-[1.7] text-ink-500">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className={cn("block text-[16px] leading-[1.7] text-pretty", body)}>
+                    {t.title}
+                  </span>
+                  {t.detail ? (
+                    <span className={cn("mt-1 block text-[15px] leading-[1.7] text-pretty", body)}>
+                      {t.detail}
+                    </span>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      );
+
+    case "resources":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <div className="flex flex-col gap-4">
+            {b.items.map((r) => (
+              <ResourceRow key={r.id} r={r} body={body} />
+            ))}
+          </div>
+        </div>
+      );
+
+    case "checks":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <div className="flex flex-col gap-2.5">
+            {b.items.map((c, i) => (
+              <CheckRow key={c.question} q={c} openByDefault={i === 0} body={body} />
+            ))}
+          </div>
         </div>
       );
 
@@ -605,14 +830,14 @@ function BlockBody({
 
     case "check": {
       // A done check shows its answer inline; a pending one reveals on tap.
-      const open = b.done || qOpen;
+      const open = ticked || qOpen;
       return (
         <div
-          role={b.done ? undefined : "button"}
-          tabIndex={b.done ? undefined : 0}
-          onClick={b.done ? undefined : () => setQOpen((s) => !s)}
+          role={ticked ? undefined : "button"}
+          tabIndex={ticked ? undefined : 0}
+          onClick={ticked ? undefined : () => setQOpen((s) => !s)}
           onKeyDown={
-            b.done
+            ticked
               ? undefined
               : (e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -623,7 +848,7 @@ function BlockBody({
           }
           className={cn(
             "rounded-card border border-ink-100 p-3.5",
-            !b.done && "cursor-pointer hover:border-brand-700",
+            !ticked && "cursor-pointer hover:border-brand-700",
           )}
         >
           <div className="flex items-start gap-3">
@@ -636,7 +861,7 @@ function BlockBody({
             <span
               className={cn(
                 "-mt-0.5 -mr-0.5 flex size-6 flex-none items-center justify-center",
-                b.done ? "text-ink-500" : "text-brand-700",
+                ticked ? "text-ink-500" : "text-brand-700",
               )}
             >
               <EyeIcon />
@@ -649,7 +874,7 @@ function BlockBody({
                   key={i}
                   className={cn(
                     "text-[16px] leading-[1.75] text-pretty",
-                    b.done ? "text-ink-500" : "text-ink-600",
+                    ticked ? "text-ink-500" : "text-ink-600",
                     i < b.answer.length - 1 ? "mb-3" : "mb-0",
                   )}
                 >
@@ -677,16 +902,16 @@ function BlockBody({
                   rel="noopener noreferrer"
                   className={cn(
                     "block text-[15px] leading-[1.45] font-medium no-underline",
-                    b.done ? "text-ink-600" : "text-ink-900",
+                    ticked ? "text-ink-600" : "text-ink-900",
                   )}
                 >
                   {b.title}{" "}
                   <span className="inline-block translate-y-px">
-                    <ExternalIcon className={b.done ? "text-ink-500" : "text-brand-700"} />
+                    <ExternalIcon className={ticked ? "text-ink-500" : "text-brand-700"} />
                   </span>
                 </a>
               ) : (
-                <div className={cn("text-[15px] leading-[1.45] font-medium", b.done ? "text-ink-500" : "text-ink-900")}>
+                <div className={cn("text-[15px] leading-[1.45] font-medium", ticked ? "text-ink-500" : "text-ink-900")}>
                   {b.title}
                 </div>
               )}
@@ -720,7 +945,7 @@ function BlockBody({
               onClick={() => onLoadVideo?.(b.id)}
               className={cn(
                 "mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-ink-100 bg-white text-[15px] font-medium",
-                b.done ? "text-ink-500" : "text-brand-700 hover:border-brand-700",
+                ticked ? "text-ink-500" : "text-brand-700 hover:border-brand-700",
               )}
             >
               <PlayCircleIcon />
@@ -780,4 +1005,121 @@ function BlockBody({
         </div>
       );
   }
+}
+
+/**
+ * One row in "Read & do".
+ *
+ * The editorial note is the row's argument: italic, brand-700, labelled
+ * "Why this one". It keeps full contrast even when the section is ticked,
+ * because it is the proof a person chose this link rather than a crawler —
+ * the one thing a competitor cannot fake. It must never flatten into grey.
+ *
+ * A dead link keeps its row and its place, struck through and named, with
+ * a way to report it. Removing it would leave an unexplained hole in the
+ * day; pretending it works would waste a tap on a 404.
+ */
+function ResourceRow({
+  r,
+  body,
+}: {
+  r: Extract<LessonBlock, { kind: "resources" }>["items"][number];
+  body: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-start gap-3">
+        <div className="flex size-8 flex-none items-center justify-center rounded-lg border border-ink-100 bg-ink-50 text-ink-500">
+          {r.resType === "video" ? <VideoTileIcon /> : <DocFileIcon />}
+        </div>
+        <div className="min-w-0 flex-1">
+          {r.dead ? (
+            <div className={cn("text-[15px] leading-[1.45] font-medium line-through", body)}>
+              {r.title}
+            </div>
+          ) : (
+            <a
+              href={r.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn("block text-[15px] leading-[1.45] font-medium no-underline", body)}
+            >
+              {r.title}{" "}
+              <span className="inline-block translate-y-px">
+                <ExternalIcon className="text-brand-700" />
+              </span>
+            </a>
+          )}
+          <div className="mt-[5px] font-mono text-[12px] leading-normal text-ink-500">{r.meta}</div>
+        </div>
+      </div>
+
+      {r.dead ? (
+        <div className="mt-2.5 border-l-2 border-warn-600 px-3.5 py-0.5">
+          <div className="mb-1.5 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-700 uppercase">
+            Link broken
+          </div>
+          <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-ink-600">
+            This source stopped responding. A replacement is being chosen by hand.
+          </p>
+          <a
+            href="/report"
+            className="mt-1 inline-flex min-h-12 items-center text-[13.5px] font-medium text-brand-700"
+          >
+            Report
+          </a>
+        </div>
+      ) : null}
+
+      {r.why ? (
+        <div className="mt-3 rounded-lg bg-brand-50 px-3.5 py-3">
+          <div className="mb-[7px] font-mono text-[11px] leading-none font-medium tracking-[.08em] text-brand-700 uppercase">
+            Why this one
+          </div>
+          {/* Full contrast even when ticked: this is evidence, not chrome. */}
+          <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-brand-700 italic">
+            {r.why}
+          </p>
+        </div>
+      ) : null}
+
+      {r.player ? <div className="mt-3">{r.player}</div> : null}
+    </div>
+  );
+}
+
+/** One retrieval question. The first is open; the rest reveal on tap. */
+function CheckRow({
+  q,
+  openByDefault,
+  body,
+}: {
+  q: { question: string; answer: string };
+  openByDefault: boolean;
+  body: string;
+}) {
+  const [open, setOpen] = useState(openByDefault);
+  return (
+    <div className="rounded-card border border-ink-100 bg-white">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((s) => !s)}
+        className={cn(
+          "flex min-h-12 w-full items-center justify-between gap-3 px-3.5 py-3 text-left text-[15px] leading-[1.5]",
+          body,
+        )}
+      >
+        <span className="min-w-0 flex-1">{q.question}</span>
+        <span className="flex-none text-ink-500">
+          <EyeIcon />
+        </span>
+      </button>
+      {open ? (
+        <p className="m-0 border-t border-ink-100 px-3.5 py-3 text-[15px] leading-[1.7] text-pretty text-ink-700">
+          {q.answer}
+        </p>
+      ) : null}
+    </div>
+  );
 }

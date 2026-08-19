@@ -10,7 +10,7 @@ export default [
       "Describe honestly, quantify uncertainty, test hypotheses without fooling yourself.",
     nodes: [
       {
-        title: "Day 75 — Descriptive statistics",
+        title: "Descriptive statistics",
         summary: "Report the median when the mean would flatter you. Report both when it matters.",
         learningObjectives: [
           "Mean, median, mode; when the mean lies",
@@ -38,7 +38,7 @@ export default [
         ],
       },
       {
-        title: "Day 76 — Distributions",
+        title: "Distributions",
         summary: "The central limit theorem is why everything else works.",
         learningObjectives: [
           "Normal, uniform, binomial, Poisson — what each describes in the real world",
@@ -78,7 +78,7 @@ export default [
         ],
       },
       {
-        title: "Day 77 — Sampling and uncertainty",
+        title: "Sampling and uncertainty",
         summary: "A number without an interval is a guess wearing a suit.",
         learningObjectives: [
           "Population vs sample; sampling bias",
@@ -102,7 +102,7 @@ export default [
         ],
       },
       {
-        title: "Day 78 — Correlation",
+        title: "Correlation",
         summary: "The first question after a correlation is: what else could explain this?",
         learningObjectives: [
           "Pearson vs Spearman; when each",
@@ -125,7 +125,7 @@ export default [
         ],
       },
       {
-        title: "Day 79 — Hypothesis testing",
+        title: "Hypothesis testing",
         summary: "A p-value is not the probability your hypothesis is true. Almost every misuse starts there.",
         learningObjectives: [
           "Null and alternative; one- vs two-tailed",
@@ -149,7 +149,7 @@ export default [
         ],
       },
       {
-        title: "Day 80 — Choosing and running a test",
+        title: "Choosing and running a test",
         summary: "Three tests on your data, one sentence of conclusion each.",
         learningObjectives: [
           "One-sample, two-sample, paired t-tests",
@@ -179,7 +179,7 @@ export default [
       "Design an experiment before running it, read one without fooling yourself, and report a null result well.",
     nodes: [
       {
-        title: "Day 81 — Experiment design",
+        title: "Experiment design",
         summary:
           "Decide the sample size before you start, or you will stop the test when you like the number.",
         learningObjectives: [
@@ -201,7 +201,7 @@ export default [
         ],
       },
       {
-        title: "Day 82 — Running and reading a test",
+        title: "Running and reading a test",
         summary: "Sample ratio mismatch is the first check, always.",
         learningObjectives: [
           "SRM; peeking and why it inflates false positives",
@@ -223,7 +223,7 @@ export default [
         ],
       },
       {
-        title: "Day 83 — Multiple comparisons and honest reporting",
+        title: "Multiple comparisons and honest reporting",
         summary: "An experiment that finds nothing has still bought you information. Report it that way.",
         learningObjectives: [
           "Why testing twenty metrics finds one \"significant\" result by chance",
@@ -245,7 +245,7 @@ export default [
         ],
       },
       {
-        title: "Day 84 — Metrics that businesses actually track",
+        title: "Metrics that businesses actually track",
         summary: "Define five metrics for a business you know — including how each could be gamed.",
         learningObjectives: [
           "SaaS: MRR, ARR, churn, LTV, CAC, NRR",
@@ -276,7 +276,7 @@ export default [
     deliverable: "A published, publicly viewable dashboard with a three-line handover note.",
     nodes: [
       {
-        title: "Day 85 — Getting into Power BI or Tableau",
+        title: "Getting into Power BI or Tableau",
         summary: "Pick one. Power BI if you are Microsoft-adjacent, Tableau otherwise.",
         learningObjectives: [
           "Connecting data; import vs live",
@@ -303,7 +303,7 @@ export default [
         ],
       },
       {
-        title: "Day 86 — Calculations",
+        title: "Calculations",
         summary: "In DAX, understanding filter context is the whole language. Everything else is syntax.",
         learningObjectives: [
           "Power BI: calculated columns vs measures; row vs filter context; CALCULATE, ALL, SUMX",
@@ -324,7 +324,7 @@ export default [
         ],
       },
       {
-        title: "Day 87 — Dashboard design",
+        title: "Dashboard design",
         summary: "Build a one-page dashboard; then delete a third of it and check nothing was lost.",
         learningObjectives: [
           "Top-left is the most valuable space on the page",
@@ -346,7 +346,7 @@ export default [
         ],
       },
       {
-        title: "Day 88 — Publishing and the handover",
+        title: "Publishing and the handover",
         summary:
           "The handover note: who it is for, what decision it supports, what it deliberately does not show.",
         learningObjectives: [
@@ -369,7 +369,7 @@ export default [
     deliverable: "A complete capstone project on GitHub: question, data, method, finding, caveats.",
     nodes: [
       {
-        title: "Day 89 — The capstone",
+        title: "The capstone",
         summary:
           "Full pipeline on one real dataset and one real question: SQL extraction → Python cleaning → analysis → visualisation → written finding.",
         learningObjectives: [
@@ -396,7 +396,7 @@ export default [
         ],
       },
       {
-        title: "Day 90 — Portfolio and profile",
+        title: "Portfolio and profile",
         summary: "Nobody is impressed that you used pandas. They are impressed by what changed.",
         learningObjectives: [
           "Three projects, not ten: a dashboard, a SQL analysis, a Python EDA",
@@ -418,7 +418,7 @@ export default [
         ],
       },
       {
-        title: "Day 91 — Interview preparation",
+        title: "Interview preparation",
         summary: "The strongest answer names its own limitation before the interviewer does.",
         learningObjectives: [
           "SQL live-coding patterns: top-N per group, running totals, cohort retention, gaps and islands, dedup",

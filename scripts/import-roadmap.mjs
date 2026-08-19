@@ -64,6 +64,13 @@ for (const [mi, m] of spec.modules.entries()) {
   for (const [ni, n] of m.nodes.entries()) {
     const at = `module ${mi + 1} node ${ni + 1}`;
     if (!n.title) fail(`${at} title`);
+    // The day number lives in `position` and every surface renders it from
+    // there, so a title that repeats it prints "Day 3 · Day 3 — ...". This
+    // is how 91 nodes acquired the prefix; the database now has a CHECK for
+    // it too (0014), and failing here gives a sentence instead of a
+    // constraint violation halfway through a paste.
+    if (/^Day\s+\d+\s*[—·-]\s*/.test(n.title))
+      fail(`${at}: drop the "Day N" prefix from the title — the number comes from position, and keeping both renders it twice`);
     if (!Number.isInteger(n.estMinutes) || n.estMinutes < 2 || n.estMinutes > 120)
       fail(`${at} estMinutes ${n.estMinutes} — one sitting is 2–120 minutes`);
     if (n.difficulty && !DIFF_NODE.includes(n.difficulty)) fail(`${at} difficulty`);

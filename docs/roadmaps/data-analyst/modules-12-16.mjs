@@ -10,7 +10,7 @@ export default [
       "Write small honest scripts: data structures, control flow, functions, files — and put them in version control.",
     nodes: [
       {
-        title: "Day 53 — Setup and the basics",
+        title: "Setup and the basics",
         summary: "Environment set up, first script computing something real from your dataset's numbers.",
         learningObjectives: [
           "Install Python; VS Code or Jupyter; venv",
@@ -36,7 +36,7 @@ export default [
         ],
       },
       {
-        title: "Day 54 — Data structures",
+        title: "Data structures",
         summary: "A list of dicts is the shape most data arrives in.",
         learningObjectives: [
           "Lists: indexing, slicing, methods",
@@ -57,7 +57,7 @@ export default [
         ],
       },
       {
-        title: "Day 55 — Control flow",
+        title: "Control flow",
         summary: "If you are writing a triple-nested loop over data, a library already solved it faster.",
         learningObjectives: [
           "if / elif / else; comparison and logical operators",
@@ -78,7 +78,7 @@ export default [
         ],
       },
       {
-        title: "Day 56 — Functions and comprehensions",
+        title: "Functions and comprehensions",
         summary: "Refactor yesterday's loops into three functions and two comprehensions.",
         learningObjectives: [
           "def, parameters, defaults, return, scope",
@@ -99,7 +99,7 @@ export default [
         ],
       },
       {
-        title: "Day 57 — Files, errors and modules",
+        title: "Files, errors and modules",
         summary: "A script that dies on one bad row is a script you will babysit forever.",
         learningObjectives: [
           "open and context managers; csv and json modules",
@@ -120,7 +120,7 @@ export default [
         ],
       },
       {
-        title: "Day 58 — Git and GitHub",
+        title: "Git and GitHub",
         summary: "Your GitHub is your portfolio whether you intended it to be or not.",
         learningObjectives: [
           "init, add, commit, status, log, diff",
@@ -159,7 +159,7 @@ export default [
       "Stop looping: arrays, masks and broadcasting, and the habit of vectorising anything numeric.",
     nodes: [
       {
-        title: "Day 59 — Arrays",
+        title: "Arrays",
         summary: "Why arrays beat lists for numbers.",
         learningObjectives: [
           "dtype; creating arrays; shape, reshape, ndim",
@@ -186,7 +186,7 @@ export default [
         ],
       },
       {
-        title: "Day 60 — Vectorised operations",
+        title: "Vectorised operations",
         summary: "In analysis code, a visible loop over rows is usually a mistake.",
         learningObjectives: [
           "Element-wise arithmetic; broadcasting rules",
@@ -207,7 +207,7 @@ export default [
         ],
       },
       {
-        title: "Day 61 — Series and DataFrames",
+        title: "Series and DataFrames",
         summary: "Load your dataset with correct types on the first attempt — no post-hoc casting.",
         learningObjectives: [
           "Series vs DataFrame; the index and why it matters",
@@ -235,7 +235,7 @@ export default [
       "Select without warnings, document every null decision, fix types and strings, and audit before analysing.",
     nodes: [
       {
-        title: "Day 62 — Selecting and filtering",
+        title: "Selecting and filtering",
         summary: "Chained assignment is the source of most silent pandas bugs. Use .loc.",
         learningObjectives: [
           "loc vs iloc — label vs position",
@@ -257,7 +257,7 @@ export default [
         ],
       },
       {
-        title: "Day 63 — Missing data",
+        title: "Missing data",
         summary: "Every null you fill is a decision. Write it down or you will not remember it.",
         learningObjectives: [
           "isna, notna, nulls per column",
@@ -278,7 +278,7 @@ export default [
         ],
       },
       {
-        title: "Day 64 — Types, strings and duplicates",
+        title: "Types, strings and duplicates",
         summary: "dayfirst=True exists because the world does not agree on dates. Indian data usually needs it.",
         learningObjectives: [
           "astype; to_numeric with errors; to_datetime with format and dayfirst",
@@ -300,7 +300,7 @@ export default [
         ],
       },
       {
-        title: "Day 65 — Outliers and validation",
+        title: "Outliers and validation",
         summary: "Domain-impossible values and statistical outliers are different problems.",
         learningObjectives: [
           "describe and quantiles; IQR; z-scores",
@@ -321,7 +321,7 @@ export default [
         ],
       },
       {
-        title: "Day 66 — groupby",
+        title: "groupby",
         summary: "transform is the pandas answer to a window function.",
         learningObjectives: [
           "Split-apply-combine as a mental model",
@@ -350,7 +350,7 @@ export default [
       "Pivot, melt, merge with validation, resample time series, and turn the first hour on any dataset into a checklist.",
     nodes: [
       {
-        title: "Day 67 — Reshaping",
+        title: "Reshaping",
         summary: "Tidy data: each variable a column, each observation a row.",
         learningObjectives: [
           "pivot_table with values, index, columns, aggfunc, margins",
@@ -370,7 +370,7 @@ export default [
         ],
       },
       {
-        title: "Day 68 — Merging",
+        title: "Merging",
         summary: "validate='one_to_many' turns a silent fan-out into a loud error. Use it every time.",
         learningObjectives: [
           "merge with how, on, suffixes",
@@ -392,7 +392,7 @@ export default [
         ],
       },
       {
-        title: "Day 69 — Time series in pandas",
+        title: "Time series in pandas",
         summary: "Monthly resample, 3-month rolling average, month-on-month change.",
         learningObjectives: [
           "DatetimeIndex; resample to D/W/M/Q",
@@ -413,7 +413,7 @@ export default [
         ],
       },
       {
-        title: "Day 70 — A repeatable EDA workflow",
+        title: "A repeatable EDA workflow",
         summary: "A repeatable first hour on any dataset is worth more than any single clever technique.",
         learningObjectives: [
           "The checklist: shape, types, nulls, duplicates, distributions, correlations, outliers",
@@ -443,7 +443,7 @@ export default [
       "A notebook that loads raw data, cleans it, and produces five charts with a written finding under each.",
     nodes: [
       {
-        title: "Day 71 — Matplotlib fundamentals",
+        title: "Matplotlib fundamentals",
         summary: "Recreate one chart from a news article using your own data.",
         learningObjectives: [
           "Figure and axes; the object-oriented interface vs pyplot",
@@ -470,7 +470,7 @@ export default [
         ],
       },
       {
-        title: "Day 72 — Seaborn",
+        title: "Seaborn",
         summary: "Six charts, each answering a different question about your dataset.",
         learningObjectives: [
           "Distribution: histplot, kdeplot, ecdfplot",
@@ -491,7 +491,7 @@ export default [
         ],
       },
       {
-        title: "Day 73 — Choosing the right chart",
+        title: "Choosing the right chart",
         summary: "The chart's job is the fastest honest path to the point. Nothing else.",
         learningObjectives: [
           "Comparison, trend, distribution, relationship, part-to-whole — a default chart for each",
@@ -519,7 +519,7 @@ export default [
         ],
       },
       {
-        title: "Day 74 — Review and visual EDA build",
+        title: "Review and visual EDA build",
         summary:
           "The deliverable day: raw data in, five charts out, a written finding under each.",
         learningObjectives: [

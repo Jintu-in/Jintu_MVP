@@ -10,7 +10,7 @@ export default [
       "Understand why databases exist, draw the tables behind an app, and load real data into PostgreSQL with constraints.",
     nodes: [
       {
-        title: "Day 21 — Review",
+        title: "Review",
         summary: "Week 3 closes with review only: redo the Power Query pipeline steps from memory and clear your cards.",
         learningObjectives: [
           "Re-run the week's Power Query work without notes",
@@ -22,7 +22,7 @@ export default [
         resources: [],
       },
       {
-        title: "Day 22 — Why databases exist",
+        title: "Why databases exist",
         summary: "Every many-to-many relationship hides a table nobody has drawn yet.",
         learningObjectives: [
           "The problems a spreadsheet cannot solve: concurrency, size, integrity, related entities",
@@ -45,7 +45,7 @@ export default [
         ],
       },
       {
-        title: "Day 23 — Normalisation, plainly",
+        title: "Normalisation, plainly",
         summary: "Normalise to store, denormalise to analyse.",
         learningObjectives: [
           "1NF, 2NF, 3NF through one badly-designed table being fixed step by step",
@@ -66,7 +66,7 @@ export default [
         ],
       },
       {
-        title: "Day 24 — Setting up and loading data",
+        title: "Setting up and loading data",
         summary: "This is the day most people quit. Budget extra time and finish it.",
         learningObjectives: [
           "Install PostgreSQL; a GUI client (DBeaver or pgAdmin)",
@@ -108,7 +108,7 @@ export default [
       "SELECT, filter and band rows — and format every query as though a colleague will read it, because one will.",
     nodes: [
       {
-        title: "Day 25 — SELECT",
+        title: "SELECT",
         summary: "Format every query as though a colleague will read it, because one will.",
         learningObjectives: [
           "SELECT, FROM, aliases with AS",
@@ -136,7 +136,7 @@ export default [
         ],
       },
       {
-        title: "Day 26 — WHERE and predicates",
+        title: "WHERE and predicates",
         summary:
           "NULL is not a value. It is the absence of one, and it infects every comparison it touches.",
         learningObjectives: [
@@ -160,7 +160,7 @@ export default [
         ],
       },
       {
-        title: "Day 27 — CASE and conditional logic",
+        title: "CASE and conditional logic",
         summary: "CASE is how business rules enter SQL. Write them once, comment them well.",
         learningObjectives: [
           "CASE WHEN, searched and simple forms",
@@ -188,7 +188,7 @@ export default [
         ],
       },
       {
-        title: "Day 28 — Review and practice block",
+        title: "Review and practice block",
         summary: "Twenty mixed SELECT/WHERE/CASE problems, then clear review cards.",
         learningObjectives: [
           "Twenty mixed problems from SQLZoo or pgexercises",
@@ -215,7 +215,7 @@ export default [
       "Join with intent: inner, outer, anti, cross and self — and check the row count after every one.",
     nodes: [
       {
-        title: "Day 29 — INNER JOIN",
+        title: "INNER JOIN",
         summary:
           "Check the row count after every join. A join that multiplies rows is the most common silent bug in analysis.",
         learningObjectives: [
@@ -244,7 +244,7 @@ export default [
         ],
       },
       {
-        title: "Day 30 — LEFT and RIGHT JOIN",
+        title: "LEFT and RIGHT JOIN",
         summary:
           "A condition in ON filters before joining; in WHERE it filters after. That is not a style choice.",
         learningObjectives: [
@@ -266,7 +266,7 @@ export default [
         ],
       },
       {
-        title: "Day 31 — FULL OUTER, CROSS, SELF",
+        title: "FULL OUTER, CROSS, SELF",
         summary: "The only cross join you want is the one you meant.",
         learningObjectives: [
           "FULL OUTER JOIN for reconciliation between two systems",
@@ -294,7 +294,7 @@ export default [
         ],
       },
       {
-        title: "Day 32 — Multi-table joins",
+        title: "Multi-table joins",
         summary: "If your total went up after adding a join, you are double-counting.",
         learningObjectives: [
           "Chaining four and five tables; join order and readability",
@@ -322,7 +322,7 @@ export default [
         ],
       },
       {
-        title: "Day 33 — Set operations",
+        title: "Set operations",
         summary: "UNION deduplicates and costs a sort. If you do not need it, do not pay for it.",
         learningObjectives: [
           "UNION vs UNION ALL — why UNION ALL is usually what you want",
@@ -342,7 +342,7 @@ export default [
         ],
       },
       {
-        title: "Day 34 — Join practice block",
+        title: "Join practice block",
         summary:
           "Twenty-five join problems. Keep one query you are proud of and one you found hard, with notes on why.",
         learningObjectives: [
@@ -369,7 +369,7 @@ export default [
       "Group, filter groups, pivot with conditional aggregation, and build gap-free time series.",
     nodes: [
       {
-        title: "Day 35 — GROUP BY",
+        title: "GROUP BY",
         summary: "COUNT(*) counts rows. COUNT(column) counts non-nulls. Confusing them changes the answer.",
         learningObjectives: [
           "COUNT(*) vs COUNT(column) vs COUNT(DISTINCT column)",
@@ -396,7 +396,7 @@ export default [
         ],
       },
       {
-        title: "Day 36 — HAVING and filter order",
+        title: "HAVING and filter order",
         summary: "Learn the logical execution order once and half of SQL's surprises disappear.",
         learningObjectives: [
           "HAVING vs WHERE",
@@ -416,7 +416,7 @@ export default [
         ],
       },
       {
-        title: "Day 37 — Conditional aggregation",
+        title: "Conditional aggregation",
         summary: "Conditional aggregation is how you pivot without leaving the database.",
         learningObjectives: [
           "SUM(CASE WHEN … THEN 1 ELSE 0 END) — pivoting inside SQL",
@@ -444,7 +444,7 @@ export default [
         ],
       },
       {
-        title: "Day 38 — Working with dates in SQL",
+        title: "Working with dates in SQL",
         summary: "A time series with missing months is a chart that lies.",
         learningObjectives: [
           "DATE_TRUNC for month/week/quarter grouping",
@@ -466,7 +466,7 @@ export default [
         ],
       },
       {
-        title: "Day 39 — Aggregation practice block",
+        title: "Aggregation practice block",
         summary: "Twenty aggregation problems; at least five using conditional aggregation.",
         learningObjectives: ["Twenty aggregation problems, five conditional"],
         estMinutes: 60,
@@ -490,7 +490,7 @@ export default [
       "Nest when useful, chain CTEs when readable, and know which of the three shapes answers a question best.",
     nodes: [
       {
-        title: "Day 40 — Subqueries",
+        title: "Subqueries",
         summary: "A correlated subquery runs once per row. Sometimes that is fine. Know when it is not.",
         learningObjectives: [
           "Scalar subqueries; IN, EXISTS, ANY, ALL",
@@ -511,7 +511,7 @@ export default [
         ],
       },
       {
-        title: "Day 41 — CTEs",
+        title: "CTEs",
         summary: "A CTE chain is a paragraph. A nested subquery is a run-on sentence.",
         learningObjectives: [
           "WITH clauses; chaining and naming CTEs as steps in an argument",
@@ -532,7 +532,7 @@ export default [
         ],
       },
       {
-        title: "Day 42 — Review",
+        title: "Review",
         summary: "Close the module and the week: redo the hardest problems, clear review cards.",
         learningObjectives: ["Review the module's patterns", "Clear review cards"],
         estMinutes: 40,

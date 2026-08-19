@@ -79,11 +79,17 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       title={node.title}
       dayLabel={`Day ${dayNumber} of ${flat.length}`}
       metaLine={metaLine}
+      principle={node.principle ?? undefined}
       dayNumber={dayNumber}
       points={node.points}
       signedIn={signedIn}
       initialDone={done}
       seeds={seeds}
+      // The done card names the next day in full; the nav link is terse.
+      nextDayNumber={next ? String(at + 2) : undefined}
+      nextTitle={next?.node.title}
+      nextMeta={next ? `${next.node.estMinutes} min · ${next.node.points} pts` : undefined}
+      stopLine={`or stop here — day ${at + 1} of ${flat.length} done`}
       prev={prev ? { label: `← Day ${at} · ${prev.node.title}`, href: `/learn/${slug}/${prev.node.slug}` } : undefined}
       next={
         next

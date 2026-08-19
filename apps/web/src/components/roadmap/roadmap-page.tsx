@@ -219,10 +219,17 @@ export default function RoadmapPage({
             <div className="px-5 pt-5">
               <div className="rounded-card border border-ink-100 p-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  <div className="text-[15px] leading-[1.4] text-ink-900">
+                  {/* The count also sits in the sticky bar — but only from lg
+                      up, where that bar has room for it. So this copy hides
+                      at lg rather than disappearing outright: exactly one
+                      count at every width, and mobile (the primary device)
+                      does not lose the number entirely. */}
+                  <div className="text-[15px] leading-[1.4] text-ink-900 lg:hidden">
                     <span className="font-mono">{progress.daysCount}</span> days
                   </div>
-                  <div className="font-mono text-[12.5px] leading-none text-ink-500">
+                  {/* ml-auto at lg keeps this on the right once the count
+                      above it is hidden and justify-between has one child. */}
+                  <div className="font-mono text-[12.5px] leading-none text-ink-500 lg:ml-auto">
                     {progress.statLine}
                   </div>
                 </div>

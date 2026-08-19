@@ -2,18 +2,26 @@ import type { LessonBlockSeed } from "@/components/lesson/lesson-route";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
 /**
- * A day's content blocks, in the spec's fixed order: context before content,
- * content before doing, doing before self-testing, self-testing before the
- * reward. "Check yourself" sits after the challenge because that makes it
- * retrieval practice; before it, it would be a quiz. Do not rearrange.
+ * A day is SIX tickable sections, in this order:
  *
- * This lives here rather than in the lesson route because two screens have
- * to agree on it. The dashboard says "block 12 of 16", and that 16 has to be
- * the same 16 the reader scrolls through — a count computed twice is a count
- * that drifts.
+ *   Why today · Today · Read & do · Today's challenge · Check yourself ·
+ *   The mistake almost everyone makes
  *
- * Every block is optional: a day renders what it has, so content written
- * before the day-page model existed still works.
+ * Check Yourself sits after the challenge because retrieval practice after
+ * doing is learning; the same questions before doing it are a quiz. Do not
+ * rearrange. (docs/design/Node reader body.)
+ *
+ * The principle is NOT one of the six — it is an unheaded italic line
+ * between the meta and the first section, and it is not tickable. Nor is
+ * the summary: the day's one-line argument is the principle, and the
+ * summary already does its work in the breadcrumb metadata and the OG card.
+ *
+ * A section whose field is null is omitted entirely — never an empty
+ * heading. So "3 of 6" on a full day may honestly be "2 of 4" on a sparse
+ * one, and the rail counts what exists.
+ *
+ * Two screens depend on this list agreeing with itself: the reader renders
+ * it, and the dashboard says "block 12 of 16" against its length.
  */
 const text = (t: string) => [{ kind: "text" as const, text: t }];
 
@@ -26,127 +34,119 @@ const TYPE_LABEL: Record<RoadmapNode["resources"][number]["type"], string> = {
   latest: "Latest",
 };
 
-function dataCost(r: RoadmapNode["resources"][number]): string | null {
+/** "Quartz · github.com · 30 min · ~98 MB" — the design's mono meta line. */
+function resourceMeta(r: RoadmapNode["resources"][number]): string {
+  let host: string;
+  try {
+    host = new URL(r.url).hostname.replace(/^www\./, "");
+  } catch {
+    // A malformed URL is a curation bug, not a render-time crash.
+    host = "";
+  }
   const mins = r.durationSec ? Math.round(r.durationSec / 60) : null;
-  const parts = [
-    mins ? (mins >= 90 ? `${Math.floor(mins / 60)} h ${mins % 60} min` : `${mins} min`) : null,
+  return [
+    r.sourceName,
+    host && host !== r.sourceName ? host : "",
+    mins ? (mins >= 90 ? `${Math.floor(mins / 60)} h ${mins % 60} min` : `${mins} min`) : "",
     r.estSizeMb
       ? r.estSizeMb >= 1000
-        ? `~${(r.estSizeMb / 1000).toFixed(1)} GB data`
-        : `~${Math.round(r.estSizeMb)} MB data`
-      : null,
-  ].filter(Boolean);
-  return parts.length ? parts.join(" · ") : null;
+        ? `~${(r.estSizeMb / 1000).toFixed(1)} GB`
+        : `~${Math.round(r.estSizeMb)} MB`
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 export function buildLessonBlocks(node: RoadmapNode): LessonBlockSeed[] {
   const seeds: LessonBlockSeed[] = [];
 
-  if (node.summary) {
-    seeds.push({ id: "brief", railTitle: "Brief", kind: "brief", text: text(node.summary) });
-  }
   if (node.whyToday) {
     seeds.push({
       id: "why-today",
       railTitle: "Why today",
       kind: "concept",
-      heading: "Why today exists",
+      heading: "Why today",
       paragraphs: [text(node.whyToday)],
     });
   }
-  if (node.topics.length > 0) {
-    for (const t of node.topics) {
-      seeds.push({
-        id: `topic-${t.position}`,
-        railTitle: t.title,
-        kind: "concept",
-        heading: t.title,
-        paragraphs: [text(t.detail)],
-      });
-    }
-  } else if (node.learningObjectives.length > 0) {
-    seeds.push({
-      id: "objectives",
-      railTitle: "Today",
-      kind: "concept",
-      heading: "Today",
-      paragraphs: node.learningObjectives.map(text),
-    });
+
+  // "Today" — the numbered list, one section. Learning objectives stand in
+  // when a day predates the topics model.
+  const topics = node.topics.length
+    ? node.topics.map((t) => ({ title: t.title, detail: t.detail }))
+    : node.learningObjectives.map((o) => ({ title: o, detail: "" }));
+  if (topics.length) {
+    seeds.push({ id: "today", railTitle: "Today", kind: "topics", heading: "Today", items: topics });
   }
 
-  for (const r of node.resources) {
-    const cost = dataCost(r);
-    const metaParts = [
-      TYPE_LABEL[r.type],
-      [r.sourceName, r.author].filter(Boolean).join(" · "),
-      cost ?? "",
-      // Rule 2's state on the surface that matters: a link that failed the
-      // last check says so where the person is about to tap it.
-      r.health === "broken" ? "link failed our last check — it may have moved" : "",
-    ].filter(Boolean);
+  if (node.resources.length) {
     seeds.push({
-      id: `res-${r.id}`,
-      railTitle: `${TYPE_LABEL[r.type]} · ${r.title}`,
-      kind: "resource",
-      resType: r.type === "video" ? "video" : "doc",
-      title: r.title,
-      href: r.url,
-      meta: metaParts.join(" · "),
-      why: r.editorNote ?? "",
-      video: r.youtubeVideoId
-        ? { videoId: r.youtubeVideoId, durationSec: r.durationSec, estSizeMb: r.estSizeMb }
-        : undefined,
+      id: "read-and-do",
+      railTitle: "Read & do",
+      kind: "resources",
+      heading: "Read & do",
+      items: node.resources.map((r) => ({
+        id: r.id,
+        typeLabel: TYPE_LABEL[r.type],
+        resType: r.type === "video" ? ("video" as const) : ("doc" as const),
+        title: r.title,
+        href: r.url,
+        meta: resourceMeta(r),
+        why: r.editorNote ?? "",
+        // A dead link keeps its row, its tick and its place — struck
+        // through, named, and reportable. Hiding it would leave a hole in
+        // the day with no explanation.
+        dead: r.health === "broken",
+        video: r.youtubeVideoId
+          ? { videoId: r.youtubeVideoId, durationSec: r.durationSec, estSizeMb: r.estSizeMb }
+          : undefined,
+      })),
     });
   }
 
   if (node.challenge) {
     seeds.push({
       id: "challenge",
-      railTitle: "Challenge",
+      railTitle: "Today's challenge",
       kind: "challenge",
       label: `Today's challenge${node.challengeMinutes ? ` · ~${node.challengeMinutes} min` : ""}`,
       text: text(node.challenge),
     });
   }
-  for (const c of node.checks) {
+
+  // After the challenge. Never before it.
+  if (node.checks.length) {
     seeds.push({
-      id: `check-${c.position}`,
-      railTitle: `Check ${String(c.position).padStart(2, "0")}`,
-      kind: "check",
-      number: String(c.position).padStart(2, "0"),
-      question: text(c.question),
-      answer: [text(c.answer)],
+      id: "check-yourself",
+      railTitle: "Check yourself",
+      kind: "checks",
+      heading: "Check yourself",
+      items: node.checks.map((c) => ({ question: c.question, answer: c.answer })),
     });
   }
+
   if (node.commonMistake) {
     seeds.push({
       id: "mistake",
-      railTitle: "Gotcha",
+      railTitle: "The mistake",
       kind: "gotcha",
+      heading: "The mistake almost everyone makes",
       text: text(node.commonMistake),
-    });
-  }
-  if (node.principle) {
-    seeds.push({
-      id: "principle",
-      railTitle: "The principle",
-      kind: "summary",
-      lead: node.principle,
-      bullets: [],
     });
   }
 
   return seeds;
 }
 
-/** How many blocks this day has. The denominator in "block 12 of 16". */
+/** How many sections this day has. The denominator in "3 of 6 done". */
 export const countBlocks = (node: RoadmapNode): number => buildLessonBlocks(node).length;
 
 /**
- * Minutes left in a day, from how far through the blocks they are.
+ * Minutes left in a day, from how far through the sections they are.
  *
  * The dashboard's whole argument is that "~9 min left" is startable on a
- * metro platform and "60 min" is not, so this is proportional to blocks
+ * metro platform and "60 min" is not, so this is proportional to sections
  * remaining rather than the day's full length. Never returns 0 for an
  * unfinished day — "0 min left" on something you have not finished reads
  * as broken.
