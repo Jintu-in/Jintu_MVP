@@ -21,14 +21,14 @@ const page = readFileSync(
 );
 
 test("marking read sets consumed_at and does not delete", () => {
-  const fn = /export const consumeSave[\s\S]*?\n  \}\);/.exec(actions);
+  const fn = /export const consumeSave[\s\S]*?\n {2}\}\);/.exec(actions);
   assert.ok(fn, "consumeSave should exist");
   assert.match(fn[0], /update\(\{ consumed_at/);
   assert.doesNotMatch(fn[0], /\.delete\(\)/, "consuming must never delete the row");
 });
 
 test("removing is a different act, and does delete", () => {
-  const fn = /export const removeSave[\s\S]*?\n  \}\);/.exec(actions);
+  const fn = /export const removeSave[\s\S]*?\n {2}\}\);/.exec(actions);
   assert.ok(fn, "removeSave should exist");
   assert.match(fn[0], /\.delete\(\)/);
 });
