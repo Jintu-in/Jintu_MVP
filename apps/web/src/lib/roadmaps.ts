@@ -239,3 +239,19 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
       .sort(byPosition),
   };
 }
+
+/**
+ * How many curated links exist across published roadmaps.
+ *
+ * Exists so the homepage's "curated links" figure is derived rather than
+ * typed in. A number in marketing copy drifts the moment content changes;
+ * this one cannot.
+ */
+export async function countPublishedResources(): Promise<number> {
+  const supabase = createPublicClient();
+  const { count, error } = await supabase
+    .from("resources")
+    .select("id", { count: "exact", head: true });
+  if (error) throw describeSupabaseError("counting resources", error);
+  return count ?? 0;
+}

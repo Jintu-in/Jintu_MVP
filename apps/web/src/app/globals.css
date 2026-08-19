@@ -53,3 +53,71 @@
     }
   }
 }
+
+/* ── Marketing homepage only ──────────────────────────────────────────────
+   Ported from the design project's "Marketing homepage". Everything here is
+   scoped to .jhome so none of it can leak into the app: the reading surface
+   stays plain, which is the point of spending the effect budget in one
+   place. Motion is gated three ways — a reduced-motion query that removes
+   animations outright rather than freezing them mid-frame, an in-view class
+   so nothing animates off-screen, and hover/fine-pointer for the spotlight.
+   ------------------------------------------------------------------------ */
+@keyframes jdrift { 0% { transform: translate(0, 0) } 50% { transform: translate(30px, -20px) } 100% { transform: translate(0, 0) } }
+@keyframes jmarquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@keyframes jreveal-anim { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
+
+.jhome .jglow1 { animation: jdrift 24s ease-in-out infinite; animation-play-state: paused }
+.jhome .jglow2 { animation: jdrift 24s ease-in-out infinite reverse; animation-play-state: paused }
+.jhome .jmarquee-track { animation: jmarquee 40s linear infinite; animation-play-state: paused }
+.jhome .jloop.in-view .jglow1,
+.jhome .jloop.in-view .jglow2,
+.jhome .jloop.in-view .jmarquee-track { animation-play-state: running }
+.jhome .jmarquee-track:hover { animation-play-state: paused }
+
+/* Reveals fill forwards and never reset, so re-entering a section does not
+   replay it. Chromium uses the scroll timeline; Safari and Firefox get the
+   one-shot IntersectionObserver in homepage-effects.tsx. */
+.jhome .jreveal { opacity: 0; transform: translateY(24px) }
+@supports (animation-timeline: view()) {
+  .jhome .jreveal {
+    animation: jreveal-anim 1s linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 32%;
+  }
+}
+.jhome .jreveal-done {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity .4s ease-out, transform .4s ease-out;
+}
+
+/* brand-500 as a 1px gradient edge and as a radial wash: decorative fills,
+   never text. Both are the one place the brand colour is allowed to be
+   itself. */
+.jhome .jgrad-border { position: relative; border-radius: 12px }
+.jhome .jgrad-border::before {
+  content: ''; position: absolute; inset: 0; border-radius: 12px; padding: 1px;
+  background: linear-gradient(135deg, var(--color-brand-500), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+}
+/* Both stops are dark teals that pass AA on the page ground — a gradient is
+   not an excuse to put 2.44:1 on text. */
+.jhome .jgrad-text {
+  background: linear-gradient(90deg, #0e6e80, var(--color-brand-700));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.jhome .jspot { position: relative }
+.jhome .jspot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 12px; pointer-events: none;
+  opacity: 0; transition: opacity .15s ease-out;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), #43b4c822, transparent 70%);
+}
+.jhome .jspot:hover::after { opacity: 1 }
+
+@media (prefers-reduced-motion: reduce) {
+  .jhome .jglow1, .jhome .jglow2, .jhome .jmarquee-track, .jhome .jreveal { animation: none !important }
+  .jhome .jreveal { opacity: 1; transform: none }
+}
