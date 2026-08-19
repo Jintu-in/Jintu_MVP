@@ -46,7 +46,28 @@ export type LessonBlockSeed = { id: string; railTitle: string } & (
       question: { kind: "text" | "code" | "mono"; text: string }[];
       answer: { kind: "text" | "code" | "mono"; text: string }[][];
     }
-  | { kind: "gotcha"; text: { kind: "text" | "code" | "mono"; text: string }[] }
+  | {
+      kind: "gotcha";
+      heading?: string;
+      text: { kind: "text" | "code" | "mono"; text: string }[];
+    }
+  | { kind: "topics"; heading: string; items: { title: string; detail: string }[] }
+  | {
+      kind: "resources";
+      heading: string;
+      items: {
+        id: string;
+        typeLabel: string;
+        resType: "doc" | "video";
+        title: string;
+        href: string;
+        meta: string;
+        why: string;
+        dead: boolean;
+        video?: { videoId: string; durationSec: number | null; estSizeMb: number | null };
+      }[];
+    }
+  | { kind: "checks"; heading: string; items: { question: string; answer: string }[] }
   | { kind: "summary"; lead: string; bullets: string[] }
 );
 
@@ -60,6 +81,7 @@ export interface LessonRouteProps {
   title: string;
   dayLabel: string;
   metaLine: string;
+  principle?: string;
   /** Numerals only — the mono number in "Mark day 45 done". */
   dayNumber: string;
   points: number;
@@ -81,6 +103,7 @@ export default function LessonRoute({
   title,
   dayLabel,
   metaLine,
+  principle,
   dayNumber,
   points,
   signedIn,
@@ -106,19 +129,23 @@ export default function LessonRoute({
   const blocks = useMemo<LessonBlock[]>(
     () =>
       seeds.map((s) => {
-        if (s.kind === "resource") {
-          const { video, ...rest } = s;
+        if (s.kind === "resources") {
           return {
-            ...rest,
+            ...s,
             done,
-            player: video ? (
-              <VideoFacade
-                videoId={video.videoId}
-                title={s.title}
-                durationSec={video.durationSec}
-                estSizeMb={video.estSizeMb}
-              />
-            ) : undefined,
+            items: s.items.map(({ video, ...r }) => ({
+              ...r,
+              // The nocookie facade is the click-to-load affordance itself;
+              // no iframe exists until someone asks for one.
+              player: video ? (
+                <VideoFacade
+                  videoId={video.videoId}
+                  title={r.title}
+                  durationSec={video.durationSec}
+                  estSizeMb={video.estSizeMb}
+                />
+              ) : undefined,
+            })),
           };
         }
         return { ...s, done };
@@ -158,6 +185,7 @@ export default function LessonRoute({
       title={title}
       dayLabel={dayLabel}
       metaLine={metaLine}
+      principle={principle}
       blocks={blocks}
       footer={{
         markDoneLabel: !signedIn ? (

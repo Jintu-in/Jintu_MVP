@@ -79,6 +79,7 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       title={node.title}
       dayLabel={`Day ${dayNumber} of ${flat.length}`}
       metaLine={metaLine}
+      principle={node.principle ?? undefined}
       dayNumber={dayNumber}
       points={node.points}
       signedIn={signedIn}

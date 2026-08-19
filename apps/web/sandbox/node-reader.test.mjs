@@ -20,7 +20,7 @@ const facade = readFileSync(join(SRC, "components", "video-facade.tsx"), "utf8")
 
 test("check yourself comes after the challenge", () => {
   const challenge = blocks.indexOf('id: "challenge"');
-  const check = blocks.indexOf("id: `check-");
+  const check = blocks.indexOf('id: "check-yourself"');
   const mistake = blocks.indexOf('id: "mistake"');
   assert.ok(challenge > 0 && check > 0, "both sections should be built");
   assert.ok(check > challenge, "retrieval practice belongs after doing, not before");
@@ -28,17 +28,55 @@ test("check yourself comes after the challenge", () => {
 });
 
 test("a null section is omitted, never rendered as an empty heading", () => {
-  for (const guard of [
-    "if (node.summary)",
-    "if (node.whyToday)",
-    "if (node.challenge)",
-    "if (node.commonMistake)",
-    "if (node.principle)",
-  ]) {
+  for (const guard of ["if (node.whyToday)", "if (node.challenge)", "if (node.commonMistake)"]) {
     assert.ok(blocks.includes(guard), `${guard} missing — a null field would render an empty block`);
   }
-  assert.match(blocks, /if \(node\.topics\.length > 0\)/);
-  assert.match(blocks, /for \(const c of node\.checks\)/);
+  assert.match(blocks, /if \(topics\.length\)/);
+  assert.match(blocks, /if \(node\.resources\.length\)/);
+  assert.match(blocks, /if \(node\.checks\.length\)/);
+});
+
+test("a day is six sections, in the design's order", () => {
+  const order = ["why-today", "today", "read-and-do", "challenge", "check-yourself", "mistake"];
+  const at = order.map((id) => blocks.indexOf(`id: "${id}"`));
+  assert.ok(
+    at.every((i) => i > 0),
+    `missing section: ${order.filter((_, i) => at[i] < 0).join(", ")}`,
+  );
+  assert.deepEqual(at, [...at].sort((a, b) => a - b), "the six sections are out of order");
+});
+
+test("the principle is a lead, not one of the six", () => {
+  // An unheaded italic line under the meta — never pushed as a section, so
+  // it is not tickable and not counted.
+  assert.doesNotMatch(blocks, /id: "principle"/);
+  assert.match(page, /\{principle\}/);
+  assert.match(page, /italic/);
+});
+
+/** ResourceRow's body — bounded by the next top-level function, since the
+ *  destructured signature contains a brace at column 0 of its own. */
+function resourceRowSource() {
+  const start = page.indexOf("function ResourceRow");
+  const end = page.indexOf("function CheckRow", start);
+  assert.ok(start > 0 && end > start, "ResourceRow should exist before CheckRow");
+  return page.slice(start, end);
+}
+
+test("the editorial note keeps full contrast when the section is ticked", () => {
+  // It is the proof a person curated the page. Dimming it to grey with the
+  // rest of the section would flatten the one thing a crawler cannot fake.
+  const row = resourceRowSource();
+  assert.match(row, /Why this one/);
+  assert.match(row, /text-brand-700 italic/);
+});
+
+test("a dead resource keeps its row, struck through, with a report link", () => {
+  const row = resourceRowSource();
+  assert.match(row, /line-through/);
+  assert.match(row, /Link broken/);
+  assert.match(row, /This source stopped responding/);
+  assert.match(row, /\/report/);
 });
 
 test("signed out renders everything, with only the action inert", () => {

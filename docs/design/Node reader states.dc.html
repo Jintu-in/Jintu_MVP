@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:22px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:680px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#75746F">Jintu · node reader states · 360px</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">Six states around a single day</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">Reading never requires an account; finishing sometimes does. No state hides or blurs content — only the action area and top strip change.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">A · signed out</div>
+<div style="width:360px;height:780px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</span>
+<span style="font:400 13px/1 'JetBrains Mono',monospace;color:#5F5E5A;padding:0 12px">0 of 6</span>
+</div>
+<div style="height:3px;background:#E8E8E5"><div style="height:3px;width:0%;background:#0B0B0B"></div></div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px">
+<div style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F">Day 3 of 91 · 55 min · 40 pts</div>
+<h2 style="margin:10px 0 0;font:500 22px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</h2>
+<div style="margin-top:20px;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:16px;border-bottom:1px solid #E8E8E5;position:relative">
+<span style="flex:none;width:20px;height:20px;margin-top:1px;border-radius:50%;border:1px solid #E8E8E5;background:#FAFAF8"></span>
+<p style="margin:0;font:400 16px/1.6 Inter,sans-serif;color:#0B0B0B">Rows, columns, granularity — "what does one row mean here?" is always the first question</p>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:16px">
+<span style="flex:none;width:20px;height:20px;margin-top:1px;border-radius:50%;border:1px solid #E8E8E5;background:#FAFAF8"></span>
+<p style="margin:0;font:400 16px/1.6 Inter,sans-serif;color:#0B0B0B">Data types, and why a number stored as text ruins a SUM silently</p>
+</div>
+</div>
+<div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;background:#0B0B0B;border-radius:6px;padding:6px 10px"><span style="font:400 12px/1.3 Inter,sans-serif;color:#FFFFFF">Sign in to keep your progress.</span></div>
+</div>
+<div style="flex:none;border-top:1px solid #E8E8E5;padding:16px 20px">
+<div style="font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B;margin-bottom:10px">Sign in to mark this day done</div>
+<button style="width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer">Sign in</button>
+<div style="margin-top:10px;text-align:center;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#75746F">earns 40 pts · counts toward today's streak</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">B · in progress · 55%</div>
+<div style="width:360px;height:780px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</span>
+<span style="font:400 13px/1 'JetBrains Mono',monospace;color:#5F5E5A;padding:0 12px">3 of 6</span>
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5.5 3.5h9v13l-4.5-3.4-4.5 3.4v-13Z" fill="#17758A" stroke="#17758A" stroke-width="1.3" stroke-linejoin="round"></path></svg></span>
+</div>
+<div style="height:3px;background:#E8E8E5"><div style="height:3px;width:55%;background:#0B0B0B"></div></div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;margin-bottom:10px">On this page</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E8E8E5"><span style="width:16px;height:16px;flex:none;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#75746F">Why today</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E8E8E5"><span style="width:16px;height:16px;flex:none;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#75746F">Today</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E8E8E5"><span style="width:16px;height:16px;flex:none;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#75746F">Read &amp; do</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E8E8E5"><span style="width:16px;height:16px;flex:none;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#0B0B0B">Today's challenge</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #E8E8E5"><span style="width:16px;height:16px;flex:none;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#0B0B0B">Check yourself</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px"><span style="width:16px;height:16px;flex:none;border-radius:50%;border:1px solid #E8E8E5;background:#FFFFFF"></span><span style="font:400 14px/1.4 Inter,sans-serif;color:#0B0B0B">The mistake</span></div>
+</div>
+</div>
+<div style="flex:none;border-top:1px solid #E8E8E5;padding:16px 20px">
+<button style="width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer">Mark day 3 done</button>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">C · done</div>
+<div style="width:360px;height:780px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</span>
+<span style="font:400 13px/1 'JetBrains Mono',monospace;color:#5F5E5A;padding:0 12px">6 of 6</span>
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5.5 3.5h9v13l-4.5-3.4-4.5 3.4v-13Z" fill="#17758A" stroke="#17758A" stroke-width="1.3" stroke-linejoin="round"></path></svg></span>
+</div>
+<div style="height:3px;background:#E8E8E5"><div style="height:3px;width:100%;background:#0B0B0B"></div></div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px">
+<div style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F">Day 3 of 91 · 55 min · 40 pts</div>
+<h2 style="margin:10px 0 0;font:500 22px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</h2>
+<div style="margin-top:20px;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:18px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F;margin-bottom:10px">The mistake almost everyone makes</div>
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#75746F">Opening a dataset and going straight to a chart. You get an answer in four minutes and spend two days finding out the grain was wrong.</p>
+</div>
+</div>
+<div style="flex:none;border-top:1px solid #E8E8E5;padding:16px 20px">
+<button style="width:100%;min-height:48px;background:#1D9E75;border:1px solid #1D9E75;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>Day 3 done</button>
+<div style="margin-top:10px;text-align:center;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#75746F">+40 pts · 12 day streak · 3 cards added to review</div>
+<div style="margin-top:16px;border:1px solid #17758A;border-radius:12px;padding:14px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:8px">Up next</div>
+<div style="font:500 15px/1.35 Inter,sans-serif;color:#0B0B0B">Day 4 · Navigation and the habits that compound</div>
+<div style="margin-top:6px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">50 min</div>
+<button style="margin-top:12px;width:100%;min-height:44px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 14.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer">Start</button>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">D · resuming</div>
+<div style="width:360px;height:780px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</span>
+<span style="font:400 13px/1 'JetBrains Mono',monospace;color:#5F5E5A;padding:0 12px">0 of 6</span>
+</div>
+<div style="height:3px;background:#E8E8E5"><div style="height:3px;width:0%;background:#0B0B0B"></div></div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px">
+<div style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F">Day 3 of 91 · 55 min · 40 pts</div>
+<h2 style="margin:10px 0 0;font:500 22px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</h2>
+<div style="margin-top:16px;background:#EFFAFC;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;min-width:0">
+<div style="font:400 14.5px/1.45 Inter,sans-serif;color:#0B0B0B">You stopped at Read &amp; do</div>
+<a href="#" style="display:inline-block;margin-top:6px;font:500 14.5px/1.4 Inter,sans-serif;color:#17758A;text-decoration:none">Jump there →</a>
+</div>
+<button aria-label="Dismiss" style="width:32px;height:32px;flex:none;background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m3 3 8 8M11 3l-8 8" stroke="#5F5E5A" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">E · a dead resource</div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:20px">
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<span style="flex:none;width:20px;height:20px;margin-top:1px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<div style="width:28px;height:28px;flex:none;border:1px solid #E8E8E5;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#FAFAF8"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h5l3 3v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5Z" stroke="#75746F"></path><path d="m5.6 12.6 5-5" stroke="#BA7517" stroke-width="1.2" stroke-linecap="round"></path></svg></div>
+<div style="flex:1;min-width:0">
+<div style="font:400 15px/1.4 Inter,sans-serif;color:#75746F;text-decoration:line-through">The Quartz guide to bad data</div>
+<div style="margin-top:4px;font:400 12px/1.5 'JetBrains Mono',monospace;color:#75746F">Quartz · github.com · 30 min</div>
+</div>
+</div>
+<div style="margin-top:12px;margin-left:60px;border-left:2px solid #BA7517;padding:2px 12px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A5410;margin-bottom:8px">Link broken</div>
+<p style="margin:0;font:400 14px/1.65 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">This source stopped responding. A replacement is being chosen by hand.</p>
+</div>
+<div style="margin-top:10px;margin-left:60px"><a href="#" style="font:400 14px/1 Inter,sans-serif;color:#17758A;text-decoration:none">Report</a></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">F · last day of a module</div>
+<div style="width:360px;height:780px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Day 3 · Reading a dataset</span>
+<span style="font:400 13px/1 'JetBrains Mono',monospace;color:#5F5E5A;padding:0 12px">6 of 6</span>
+<span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5.5 3.5h9v13l-4.5-3.4-4.5 3.4v-13Z" fill="#17758A" stroke="#17758A" stroke-width="1.3" stroke-linejoin="round"></path></svg></span>
+</div>
+<div style="height:3px;background:#E8E8E5"><div style="height:3px;width:100%;background:#0B0B0B"></div></div>
+<div style="flex:1;min-height:0;overflow-y:auto;padding:20px">
+<div style="font:400 13px/1.5 'JetBrains Mono',monospace;color:#75746F">Day 3 of 91 · 55 min · 40 pts</div>
+<h2 style="margin:10px 0 0;font:500 22px/1.3 Inter,sans-serif;color:#0B0B0B">Reading a dataset before you touch it</h2>
+</div>
+<div style="flex:none;border-top:1px solid #E8E8E5;padding:16px 20px">
+<button style="width:100%;min-height:48px;background:#1D9E75;border:1px solid #1D9E75;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>Day 3 done</button>
+<div style="margin-top:10px;text-align:center;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#75746F">+40 pts · 12 day streak · 3 cards added to review</div>
+<div style="margin-top:16px;background:#FAFAF8;border:1px solid #E8E8E5;border-radius:12px;padding:14px">
+<div style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F;margin-bottom:8px">Module 01 done · 3 of 3 days</div>
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#17758A;margin-bottom:6px;margin-top:10px">Up next</div>
+<div style="font:500 15px/1.35 Inter,sans-serif;color:#0B0B0B">Module 02 · Spreadsheet foundations</div>
+<div style="margin-top:6px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">7 days</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1560,&quot;height&quot;:900}}"></script>
+</body>
+</html>

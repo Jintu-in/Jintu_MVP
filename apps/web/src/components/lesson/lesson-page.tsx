@@ -53,7 +53,24 @@ export type LessonBlock = { id: string; railTitle: string; done: boolean } & (
       columns: [string, string];
       rows: { label: string; cells: [Rich, Rich] }[];
     }
-  | { kind: "gotcha"; text: Rich }
+  | { kind: "gotcha"; heading?: string; text: Rich }
+  | { kind: "topics"; heading: string; items: { title: string; detail: string }[] }
+  | {
+      kind: "resources";
+      heading: string;
+      items: {
+        id: string;
+        typeLabel: string;
+        resType: "doc" | "video";
+        title: string;
+        href: string;
+        meta: string;
+        why: string;
+        dead: boolean;
+        player?: React.ReactNode;
+      }[];
+    }
+  | { kind: "checks"; heading: string; items: { question: string; answer: string }[] }
   | { kind: "note"; text: Rich }
   | { kind: "warning"; text: Rich }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
@@ -86,6 +103,12 @@ export interface LessonPageProps {
   title: string;
   dayLabel: string;
   metaLine: string;
+  /**
+   * The day's one-line argument, italic and unheaded between the meta and
+   * the first section. Not tickable and not counted — it is the claim the
+   * six sections then earn.
+   */
+  principle?: string;
   blocks: LessonBlock[];
   footer: {
     markDoneLabel: React.ReactNode;
@@ -173,6 +196,7 @@ export default function LessonPage({
   title,
   dayLabel,
   metaLine,
+  principle,
   blocks,
   footer,
   prev,
@@ -338,6 +362,13 @@ export default function LessonPage({
                 <div className="mt-2 font-mono text-[13px] leading-normal text-ink-500">
                   {dayLabel} · {metaLine}
                 </div>
+                {/* Unheaded and italic: the claim the six sections earn. Not
+                    tickable, not counted, full contrast always. */}
+                {principle ? (
+                  <p className="mt-4 max-w-[62ch] text-[16px] leading-[1.7] text-pretty text-ink-900 italic">
+                    {principle}
+                  </p>
+                ) : null}
               </div>
 
               {blocks.map((b) => (
@@ -687,11 +718,61 @@ function BlockBody({
       return (
         <div className="rounded-r-card border-l-2 border-brand-700 bg-brand-50 px-4 py-3.5">
           <div className={cn("mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] uppercase", body)}>
-            Gotcha
+            {b.heading ?? "Gotcha"}
           </div>
           <p className={cn("m-0 text-[16px] leading-[1.75] text-pretty", body)}>
             <RichText segments={b.text} codeClass={body} />
           </p>
+        </div>
+      );
+
+    case "topics":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <ol className="m-0 flex list-none flex-col gap-3.5 p-0">
+            {b.items.map((t, i) => (
+              <li key={t.title} className="flex gap-3">
+                <span className="w-6 shrink-0 font-mono text-[12px] leading-[1.7] text-ink-500">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className={cn("block text-[16px] leading-[1.7] text-pretty", body)}>
+                    {t.title}
+                  </span>
+                  {t.detail ? (
+                    <span className={cn("mt-1 block text-[15px] leading-[1.7] text-pretty", body)}>
+                      {t.detail}
+                    </span>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      );
+
+    case "resources":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <div className="flex flex-col gap-4">
+            {b.items.map((r) => (
+              <ResourceRow key={r.id} r={r} body={body} />
+            ))}
+          </div>
+        </div>
+      );
+
+    case "checks":
+      return (
+        <div>
+          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <div className="flex flex-col gap-2.5">
+            {b.items.map((c, i) => (
+              <CheckRow key={c.question} q={c} openByDefault={i === 0} body={body} />
+            ))}
+          </div>
         </div>
       );
 
@@ -886,4 +967,121 @@ function BlockBody({
         </div>
       );
   }
+}
+
+/**
+ * One row in "Read & do".
+ *
+ * The editorial note is the row's argument: italic, brand-700, labelled
+ * "Why this one". It keeps full contrast even when the section is ticked,
+ * because it is the proof a person chose this link rather than a crawler —
+ * the one thing a competitor cannot fake. It must never flatten into grey.
+ *
+ * A dead link keeps its row and its place, struck through and named, with
+ * a way to report it. Removing it would leave an unexplained hole in the
+ * day; pretending it works would waste a tap on a 404.
+ */
+function ResourceRow({
+  r,
+  body,
+}: {
+  r: Extract<LessonBlock, { kind: "resources" }>["items"][number];
+  body: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-start gap-3">
+        <div className="flex size-8 flex-none items-center justify-center rounded-lg border border-ink-100 bg-ink-50 text-ink-500">
+          {r.resType === "video" ? <VideoTileIcon /> : <DocFileIcon />}
+        </div>
+        <div className="min-w-0 flex-1">
+          {r.dead ? (
+            <div className={cn("text-[15px] leading-[1.45] font-medium line-through", body)}>
+              {r.title}
+            </div>
+          ) : (
+            <a
+              href={r.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn("block text-[15px] leading-[1.45] font-medium no-underline", body)}
+            >
+              {r.title}{" "}
+              <span className="inline-block translate-y-px">
+                <ExternalIcon className="text-brand-700" />
+              </span>
+            </a>
+          )}
+          <div className="mt-[5px] font-mono text-[12px] leading-normal text-ink-500">{r.meta}</div>
+        </div>
+      </div>
+
+      {r.dead ? (
+        <div className="mt-2.5 border-l-2 border-warn-600 px-3.5 py-0.5">
+          <div className="mb-1.5 font-mono text-[11px] leading-none font-medium tracking-[.08em] text-warn-700 uppercase">
+            Link broken
+          </div>
+          <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-ink-600">
+            This source stopped responding. A replacement is being chosen by hand.
+          </p>
+          <a
+            href="/report"
+            className="mt-1 inline-flex min-h-12 items-center text-[13.5px] font-medium text-brand-700"
+          >
+            Report
+          </a>
+        </div>
+      ) : null}
+
+      {r.why ? (
+        <div className="mt-3 rounded-lg bg-brand-50 px-3.5 py-3">
+          <div className="mb-[7px] font-mono text-[11px] leading-none font-medium tracking-[.08em] text-brand-700 uppercase">
+            Why this one
+          </div>
+          {/* Full contrast even when ticked: this is evidence, not chrome. */}
+          <p className="m-0 text-[13.5px] leading-[1.7] text-pretty text-brand-700 italic">
+            {r.why}
+          </p>
+        </div>
+      ) : null}
+
+      {r.player ? <div className="mt-3">{r.player}</div> : null}
+    </div>
+  );
+}
+
+/** One retrieval question. The first is open; the rest reveal on tap. */
+function CheckRow({
+  q,
+  openByDefault,
+  body,
+}: {
+  q: { question: string; answer: string };
+  openByDefault: boolean;
+  body: string;
+}) {
+  const [open, setOpen] = useState(openByDefault);
+  return (
+    <div className="rounded-card border border-ink-100 bg-white">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((s) => !s)}
+        className={cn(
+          "flex min-h-12 w-full items-center justify-between gap-3 px-3.5 py-3 text-left text-[15px] leading-[1.5]",
+          body,
+        )}
+      >
+        <span className="min-w-0 flex-1">{q.question}</span>
+        <span className="flex-none text-ink-500">
+          <EyeIcon />
+        </span>
+      </button>
+      {open ? (
+        <p className="m-0 border-t border-ink-100 px-3.5 py-3 text-[15px] leading-[1.7] text-pretty text-ink-700">
+          {q.answer}
+        </p>
+      ) : null}
+    </div>
+  );
 }
