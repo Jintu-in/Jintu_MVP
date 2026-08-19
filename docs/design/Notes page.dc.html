@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+input::placeholder{color:#75746F}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:22px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:680px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#75746F">Jintu · /profile/notes · 360px</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">Your highlights</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">Grouped by day, newest first. Row actions stay hidden until tapped so the list reads as a record, not a set of controls.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">populated</div>
+<div style="width:360px;height:800px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<button aria-label="Back" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:8px"><span style="font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Your highlights</span><span style="font:400 12px/1 'JetBrains Mono',monospace;color:#75746F">38</span></div>
+</div>
+
+<div style="flex:1;min-height:0;overflow-y:auto">
+
+<div style="padding:16px 20px 0">
+<div style="position:relative">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="position:absolute;left:16px;top:16px;pointer-events:none"><circle cx="8" cy="8" r="5" stroke="#75746F" stroke-width="1.3"></circle><path d="m12 12 4 4" stroke="#75746F" stroke-width="1.3" stroke-linecap="round"></path></svg>
+<input placeholder="Search your notes" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 16px 0 42px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+</div>
+</div>
+
+<div style="padding:14px 0 0 20px">
+<div style="display:flex;gap:8px;overflow-x:auto;padding:0 20px 4px 0">
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#17758A;border:1px solid #17758A;font:400 13.5px Inter,sans-serif;color:#FFFFFF;cursor:pointer;white-space:nowrap">All</button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;white-space:nowrap">Data analyst</button>
+<button style="flex:none;min-height:40px;padding:0 14px;border-radius:8px;background:#FFFFFF;border:1px solid #E8E8E5;font:400 13.5px Inter,sans-serif;color:#0B0B0B;cursor:pointer;white-space:nowrap">Thinking under uncertainty</button>
+</div>
+</div>
+
+<div style="padding:20px 20px 8px;font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F">Today · 17 August</div>
+
+<div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:16px">
+
+<div onClick="{{ toggleA }}" style="border-left:2px solid #E8E8E5;padding-left:14px;cursor:pointer">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">It compares values in the ORDER BY column, so every row holding the same value is inside the frame together.</p>
+<div style="margin-top:8px;background:#FAFAF8;border-radius:8px;padding:10px 12px">
+<p style="margin:0;font:400 14.5px/1.6 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">this is why the daily revenue report showed the same number three times</p>
+</div>
+<div style="margin-top:8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<a href="#" style="font:400 12.5px/1.4 'JetBrains Mono',monospace;color:#17758A;text-decoration:none">Data analyst · Day 45 · Frames</a>
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:#75746F">2:40 pm</span>
+</div>
+<sc-if value="{{ openA }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:10px;display:flex;gap:8px">
+<button style="flex:1;min-height:40px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:400 13px Inter,sans-serif;color:#17758A;cursor:pointer">Edit note</button>
+<button style="flex:1;min-height:40px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:400 13px Inter,sans-serif;color:#17758A;cursor:pointer">Copy</button>
+<button style="flex:1;min-height:40px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:400 13px Inter,sans-serif;color:#B8441F;cursor:pointer">Delete</button>
+</div>
+</sc-if>
+</div>
+
+<div style="border-left:2px solid #E8E8E5;padding-left:14px;cursor:pointer">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">RANGE does not count rows, it compares values in the ORDER BY column.</p>
+<div style="margin-top:8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<a href="#" style="font:400 12.5px/1.4 'JetBrains Mono',monospace;color:#17758A;text-decoration:none">Data analyst · Day 45 · Frames</a>
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:#75746F">11:05 am</span>
+</div>
+</div>
+
+</div>
+
+<div style="padding:8px 20px 8px;font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;border-top:1px solid #E8E8E5;margin-top:4px">Yesterday · 16 August</div>
+
+<div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:16px">
+
+<div style="border-left:2px solid #E8E8E5;padding-left:14px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">A left join that filters in WHERE quietly becomes an inner join.</p>
+<div style="margin-top:8px;background:#FAFAF8;border-radius:8px;padding:10px 12px">
+<p style="margin:0;font:400 14.5px/1.6 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">check the report that dropped null regions last week</p>
+</div>
+<div style="margin-top:8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<a href="#" style="font:400 12.5px/1.4 'JetBrains Mono',monospace;color:#17758A;text-decoration:none">Data analyst · Day 41 · Outer joins</a>
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:#75746F">6:12 pm</span>
+</div>
+</div>
+
+<div style="border-left:2px solid #E8E8E5;padding-left:14px">
+<p style="margin:0;font:400 16px/1.75 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Bayesian updating means the posterior is only as good as the prior you were honest about.</p>
+<div style="margin-top:8px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<a href="#" style="font:400 12.5px/1.4 'JetBrains Mono',monospace;color:#17758A;text-decoration:none">Thinking under uncertainty · Day 12</a>
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;color:#75746F">9:48 am</span>
+</div>
+</div>
+
+</div>
+
+<div style="padding:8px 20px 28px;text-align:center">
+<button style="min-height:44px;padding:0 20px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 14px Inter,sans-serif;color:#17758A;cursor:pointer">Show more</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#75746F">empty</div>
+<div style="width:360px;height:800px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="flex:none;height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<button aria-label="Back" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:8px"><span style="font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Your highlights</span><span style="font:400 12px/1 'JetBrains Mono',monospace;color:#75746F">0</span></div>
+</div>
+<div style="padding:40px 24px 0">
+<p style="margin:0;font:400 15px/1.7 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">Select any text while you read and choose Highlight. It lands here with a link back to where you found it.</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { openA: true };
+  renderVals() {
+    return { openA: this.state.openA, toggleA: () => this.setState(s => ({ openA: !s.openA })) };
+  }
+}
+</script>
+</body>
+</html>

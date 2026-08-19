@@ -74,6 +74,35 @@ export const consumeSave = actionClient
       .is("consumed_at", null);
     if (error) throw new Error(`consume failed: ${error.message}`);
 
+    revalidatePath("/profile/saved");
     revalidatePath("/dashboard");
     return { consumed: true };
+  });
+
+/**
+ * Take something out of the queue without having read it.
+ *
+ * Distinct from consuming: this deletes the row, because "I do not want
+ * this" and "I read this" are different facts and the queue should not
+ * remember the first as if it were the second.
+ */
+export const removeSave = actionClient
+  .inputSchema(z.object({ resourceId: z.string().uuid() }))
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("saved_resources")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("resource_id", parsedInput.resourceId);
+    if (error) throw new UserFacingError(`Could not remove that: ${error.message}`);
+
+    revalidatePath("/profile/saved");
+    revalidatePath("/dashboard");
+    return { removed: true };
   });

@@ -54,7 +54,7 @@ const expected = [
   "link_checks", "modules", "nodes", "node_checks", "node_progress",
   "node_topics", "notifications", "point_events", "profiles",
   "review_cards", "roadmap_enrollments", "roadmaps", "resources",
-  "saved_resources", "streaks",
+  "public_profiles", "reminder_prefs", "saved_resources", "streaks",
 ].sort();
 const actual = (await rows(
   `select relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -62,7 +62,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the twenty baseline tables exist`,
+  `exactly the twenty-two baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
