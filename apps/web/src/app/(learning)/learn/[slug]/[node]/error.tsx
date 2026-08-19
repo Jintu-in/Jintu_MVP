@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 /**
  * The route-level boundary for the reader.
  *
@@ -24,12 +26,12 @@ export default function NodeError({ reset }: { error: Error; reset: () => void }
         >
           Try again
         </button>
-        <a
+        <Link
           href="/learn"
           className="flex h-12 w-full items-center justify-center rounded-lg border border-ink-100 bg-white text-[15px] font-medium text-brand-700 hover:border-brand-700"
         >
           Open the roadmaps
-        </a>
+        </Link>
       </div>
     </main>
   );

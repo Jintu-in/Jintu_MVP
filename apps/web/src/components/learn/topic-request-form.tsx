@@ -36,7 +36,10 @@ export function TopicRequestForm({ fromSlug }: { fromSlug?: string }) {
         <button
           type="submit"
           disabled={status === "executing" || wanted.trim().length < 2}
-          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 text-[16px] font-medium text-white hover:bg-brand-800 disabled:bg-ink-300"
+          // Disabled keeps the brand fill at reduced opacity rather than
+          // swapping to a pale grey: white on ink-300 is 1.89:1, which is
+          // an unreadable label on the button people are trying to press.
+          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 text-[16px] font-medium text-white hover:bg-brand-800 disabled:opacity-60"
         >
           Send
         </button>
