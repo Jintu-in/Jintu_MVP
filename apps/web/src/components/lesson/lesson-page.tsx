@@ -114,7 +114,21 @@ export interface LessonPageProps {
     markDoneLabel: React.ReactNode;
     saveLabel: string;
     earnsLine: string;
+    /**
+     * The mark-done failure. Named, inline, and persistent — never a toast.
+     * This is the single action the product depends on, and the people who
+     * hit it are on a patchy train connection, so it must still be on
+     * screen when they look back at the page.
+     */
+    failure?: { line: string; onRetry: () => void };
+    /** Replaces the button entirely once the day is done. */
+    doneCard?: React.ReactNode;
   };
+  /**
+   * Strips above the content — resuming, session expired. Inline and
+   * dismissible; the day stays fully readable beneath them.
+   */
+  lead?: React.ReactNode;
   prev?: { label: React.ReactNode; href: string };
   next?: { label: React.ReactNode; href: string };
   railFooter: string[];
@@ -197,6 +211,7 @@ export default function LessonPage({
   dayLabel,
   metaLine,
   principle,
+  lead,
   blocks,
   footer,
   prev,
@@ -371,6 +386,8 @@ export default function LessonPage({
                 ) : null}
               </div>
 
+              {lead ? <div className="px-5 pb-1">{lead}</div> : null}
+
               {blocks.map((b) => (
                 <Block
                   key={b.id}
@@ -383,13 +400,34 @@ export default function LessonPage({
 
               {/* footer actions */}
               <div className="mt-2 border-t border-ink-100 px-5 pt-2 pb-7">
-                <button
-                  type="button"
-                  onClick={onMarkDone}
-                  className="mt-[22px] flex min-h-12 w-full items-center justify-center rounded-lg border border-brand-700 bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
-                >
-                  {footer.markDoneLabel}
-                </button>
+                {footer.doneCard ? (
+                  <div className="mt-[22px]">{footer.doneCard}</div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onMarkDone}
+                    className="mt-[22px] flex min-h-12 w-full items-center justify-center rounded-lg border border-brand-700 bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
+                  >
+                    {footer.markDoneLabel}
+                  </button>
+                )}
+
+                {/* The button returns to normal and the reason sits under
+                    it, with the retry beside it. Nothing disappears. */}
+                {footer.failure ? (
+                  <div role="alert" className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-[14px] leading-[1.6] text-warn-700">
+                      {footer.failure.line}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={footer.failure.onRetry}
+                      className="flex min-h-12 items-center text-[14px] font-medium text-brand-700"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : null}
                 {footer.saveLabel ? (
                   <button
                     type="button"

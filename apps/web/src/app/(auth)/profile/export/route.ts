@@ -31,6 +31,7 @@ const TABLES = [
   ["notifications", "*", "Messages we queued or sent you."],
   ["reminder_prefs", "*", "Your reminder settings."],
   ["public_profiles", "*", "Your public handle and whether the page is on."],
+  ["topic_requests", "*", "Subjects you asked us to write, and when."],
 ] as const;
 
 export async function GET() {

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useAction } from "next-safe-action/hooks";
 import { setNodeDone, type StreakResult } from "@/actions/progress";
 import LessonPage, { type LessonBlock } from "@/components/lesson/lesson-page";
+import { EndOfDayCard, ResumeStrip } from "@/components/lesson/lesson-states";
 import { VideoFacade } from "@/components/video-facade";
 
 /**
@@ -90,6 +91,14 @@ export interface LessonRouteProps {
   seeds: LessonBlockSeed[];
   prev?: { label: string; href: string };
   next?: { label: string; href: string };
+  /** The next day, spelled out for the done card's "Up next". */
+  nextDayNumber?: string;
+  nextTitle?: string;
+  nextMeta?: string;
+  /** The honest alternative to carrying on, e.g. "or stop here — 3 of 91 days done". */
+  stopLine?: string;
+  /** Where they stopped last time, when they did not finish. */
+  resumePoint?: { label: string; href: string };
   railFooter: string[];
 }
 
@@ -111,19 +120,33 @@ export default function LessonRoute({
   seeds,
   prev,
   next,
+  nextDayNumber,
+  nextTitle,
+  nextMeta,
+  stopLine,
+  resumePoint,
   railFooter,
 }: LessonRouteProps) {
   const router = useRouter();
   const [done, setDone] = useState(initialDone);
   const [streak, setStreak] = useState<StreakResult | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [resumeDismissed, setResumeDismissed] = useState(false);
   const { execute, isExecuting, result } = useAction(setNodeDone, {
     onSuccess: ({ data }) => {
+      setFailed(false);
       if (data) {
         setDone(data.done);
         setStreak(data.streak);
       }
     },
-    onError: () => setDone(initialDone),
+    // The optimistic flip is reversed and the failure is NAMED. A silent
+    // revert is the worst outcome here: the button looks untouched and the
+    // day is not saved.
+    onError: () => {
+      setDone(initialDone);
+      setFailed(true);
+    },
   });
 
   const blocks = useMemo<LessonBlock[]>(
@@ -159,18 +182,25 @@ export default function LessonRoute({
       return;
     }
     if (isExecuting) return;
+    setFailed(false);
     setDone(!done); // optimistic — under 200ms perceived
     setStreak(null);
     execute({ nodeId, roadmapId, roadmapSlug: slug, done: !done });
+  };
+
+  // Retry repeats the attempt that failed, not the inverse of whatever the
+  // button now shows — the optimistic flip was already reversed.
+  const onRetry = () => {
+    if (isExecuting) return;
+    setFailed(false);
+    execute({ nodeId, roadmapId, roadmapSlug: slug, done: !initialDone });
   };
 
   // The one mono line under the button carries the whole streak story:
   // what a tap earns beforehand, what it counted for afterwards. Same
   // copy discipline as the streak spec — the break is named, the total
   // is protected in the same sentence.
-  const earnsLine = result.serverError
-    ? result.serverError
-    : streak && done
+  const earnsLine = streak && done
       ? streak.wasBroken
         ? `You missed ${streak.daysMissed} ${streak.daysMissed === 1 ? "day" : "days"}. Streak restarted at 1 — your ${streak.totalDays} total days are safe.`
         : streak.isNewDay
@@ -201,7 +231,35 @@ export default function LessonRoute({
         // yet, and a dead control is worse than a missing one.
         saveLabel: "",
         earnsLine,
+        failure: failed
+          ? {
+              line: result.serverError ?? "That did not save. Your place is kept — try again.",
+              onRetry,
+            }
+          : undefined,
+        doneCard:
+          done && streak && next ? (
+            <EndOfDayCard
+              dayNumber={dayNumber}
+              streakFrom={String(Math.max(0, streak.currentDays - 1))}
+              streakTo={`${streak.currentDays} ${streak.currentDays === 1 ? "day" : "days"}`}
+              pointsLine={`+${points}`}
+              reviewLine={`${streak.totalDays} days learned`}
+              next={{ dayNumber: nextDayNumber ?? "", title: nextTitle ?? "", metaLine: nextMeta ?? "" }}
+              stopLine={stopLine ?? ""}
+              onOpenNext={() => router.push(next.href as never)}
+            />
+          ) : undefined,
       }}
+      lead={
+        resumePoint && !done && !resumeDismissed ? (
+          <ResumeStrip
+            stoppedAt={resumePoint.label}
+            jumpHref={resumePoint.href}
+            onDismiss={() => setResumeDismissed(true)}
+          />
+        ) : undefined
+      }
       prev={prev}
       next={next}
       railFooter={railFooter}
