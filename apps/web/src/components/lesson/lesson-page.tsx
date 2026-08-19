@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BackIcon,
   BookmarkIcon,
@@ -86,7 +86,6 @@ export interface LessonPageProps {
   title: string;
   dayLabel: string;
   metaLine: string;
-  doneOfTotal: string;
   blocks: LessonBlock[];
   footer: {
     markDoneLabel: React.ReactNode;
@@ -96,6 +95,13 @@ export interface LessonPageProps {
   prev?: { label: React.ReactNode; href: string };
   next?: { label: React.ReactNode; href: string };
   railFooter: string[];
+  /**
+   * Where per-section ticks persist. localStorage, because there is no
+   * block_progress table — node_progress.last_block_position (0012) is a
+   * single furthest-point bookmark, not a per-section set. When that table
+   * lands, this is the seam that changes.
+   */
+  tickStorageKey?: string;
   onBack?: () => void;
   onBookmark?: () => void;
   onMarkDone?: () => void;
@@ -119,18 +125,47 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
   </>
 );
 
-/** The 20px tick inside its 48px tap column, bleeding into the right padding. */
-const TickColumn = ({ done }: { done: boolean }) => (
-  <div className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1">
-    {done ? (
-      <span className="flex size-5 items-center justify-center rounded-full bg-check-machine text-white">
-        <TickIcon />
-      </span>
-    ) : (
-      <span className="size-5 rounded-full border border-ink-100 bg-white" />
-    )}
-  </div>
-);
+/**
+ * The 20px tick inside its 48px tap target, bleeding into the right padding.
+ *
+ * Tickable by anyone, signed in or not: a tick is reading progress, not a
+ * progress event, and the person working through a page without an account
+ * still needs to know where they were. Marking the DAY done is the separate,
+ * signed-in action at the foot of the page.
+ */
+const TickColumn = ({
+  ticked,
+  label,
+  onToggle,
+}: {
+  ticked: boolean;
+  label: string;
+  onToggle?: () => void;
+}) => {
+  const mark = ticked ? (
+    <span className="flex size-5 items-center justify-center rounded-full bg-check-machine text-white">
+      <TickIcon />
+    </span>
+  ) : (
+    <span className="size-5 rounded-full border border-ink-100 bg-white" />
+  );
+  if (!onToggle) {
+    return (
+      <div className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1">{mark}</div>
+    );
+  }
+  return (
+    <button
+      type="button"
+      aria-pressed={ticked}
+      aria-label={ticked ? `Mark "${label}" unread` : `Mark "${label}" read`}
+      onClick={onToggle}
+      className="-mr-2 flex h-12 w-12 shrink-0 items-start justify-center pt-1"
+    >
+      {mark}
+    </button>
+  );
+};
 
 export default function LessonPage({
   roadmapTitle,
@@ -138,26 +173,67 @@ export default function LessonPage({
   title,
   dayLabel,
   metaLine,
-  doneOfTotal,
   blocks,
   footer,
   prev,
   next,
   railFooter,
+  tickStorageKey,
   onBack,
   onBookmark,
   onMarkDone,
   onSaveForLater,
   onLoadVideo,
 }: LessonPageProps) {
-  // Scroll progress — the maths ported from the design's DCLogic verbatim.
+  // Scroll progress — the maths ported from the design's DCLogic verbatim,
+  // now coalesced into a frame. The handler fires on every scroll event and
+  // only the last value in a frame can be painted, so the rest are work
+  // thrown away on exactly the mid-range phone this is built for.
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const frame = useRef<number | null>(null);
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
-    const max = el.scrollHeight - el.clientHeight;
-    setProgress(max > 0 ? Math.min(100, Math.max(0, (el.scrollTop / max) * 100)) : 0);
+    if (frame.current !== null) return;
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const max = el.scrollHeight - el.clientHeight;
+      setProgress(max > 0 ? Math.min(100, Math.max(0, (el.scrollTop / max) * 100)) : 0);
+    });
   };
+
+  // Per-section ticks. The day's own done flag ticks everything, so a
+  // finished day reads as finished without needing sixteen taps.
+  const [ticks, setTicks] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    if (!tickStorageKey) return;
+    try {
+      const raw = window.localStorage.getItem(tickStorageKey);
+      if (raw) setTicks(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      // A corrupt or unavailable store must never stop the page rendering.
+    }
+  }, [tickStorageKey]);
+
+  const toggleTick = (id: string) => {
+    setTicks((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      if (tickStorageKey) {
+        try {
+          window.localStorage.setItem(tickStorageKey, JSON.stringify([...next]));
+        } catch {
+          // Private mode, quota, disabled storage — the tick still works for
+          // this session, it just will not survive a reload.
+        }
+      }
+      return next;
+    });
+  };
+
+  const isTicked = (b: LessonBlock) => b.done || ticks.has(b.id);
+  const doneCount = blocks.filter(isTicked).length;
 
   return (
     <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
@@ -180,7 +256,7 @@ export default function LessonPage({
           <div className="hidden min-w-0 flex-1 text-[13px] leading-normal text-ink-600 lg:block">
             {roadmapTitle} <span className="text-ink-500">/</span> {moduleLabel}
           </div>
-          <div className="px-1 font-mono text-[13px] text-ink-600">{doneOfTotal}</div>
+          <div className="px-1 font-mono text-[13px] text-ink-600">{`${doneCount} of ${blocks.length}`}</div>
           {/* No handler, no button: a dead bookmark is worse than a missing
               one. The design's affordance returns the day saving ships. */}
           {onBookmark ? (
@@ -219,7 +295,7 @@ export default function LessonPage({
                 href={`#${b.id}`}
                 className="flex min-h-[34px] items-center gap-2.5 px-5 py-1.5 no-underline"
               >
-                {b.done ? (
+                {isTicked(b) ? (
                   <span className="flex size-3.5 flex-none items-center justify-center rounded-full bg-check-machine text-white">
                     <TickIcon size={9} />
                   </span>
@@ -227,7 +303,10 @@ export default function LessonPage({
                   <span className="size-3.5 flex-none rounded-full border border-ink-100 bg-white" />
                 )}
                 <span
-                  className={cn("text-[13px] leading-[1.4]", b.done ? "text-ink-500" : "text-ink-900")}
+                  className={cn(
+                    "text-[13px] leading-[1.4]",
+                    isTicked(b) ? "text-ink-500" : "text-ink-900",
+                  )}
                 >
                   {b.railTitle}
                 </span>
@@ -235,6 +314,11 @@ export default function LessonPage({
             ))}
           </div>
           <div className="mt-4 border-t border-ink-100 px-5 pt-3.5 font-mono text-[12px] leading-[1.7] text-ink-500">
+            {/* The count leads: it is the one line in the rail that answers
+                "how much is left", which is why the rail is there at all. */}
+            <div>
+              {doneCount} of {blocks.length} done
+            </div>
             {railFooter.map((line) => (
               <div key={line}>{line}</div>
             ))}
@@ -257,7 +341,13 @@ export default function LessonPage({
               </div>
 
               {blocks.map((b) => (
-                <Block key={b.id} block={b} onLoadVideo={onLoadVideo} />
+                <Block
+                  key={b.id}
+                  block={b}
+                  ticked={isTicked(b)}
+                  onToggleTick={() => toggleTick(b.id)}
+                  onLoadVideo={onLoadVideo}
+                />
               ))}
 
               {/* footer actions */}
@@ -313,15 +403,22 @@ export default function LessonPage({
 /** One content block: the shared shell (tick column, spacing) + per-kind body. */
 function Block({
   block: b,
+  ticked,
+  onToggleTick,
   onLoadVideo,
 }: {
   block: LessonBlock;
+  ticked: boolean;
+  onToggleTick: () => void;
   onLoadVideo?: (blockId: string) => void;
 }) {
   // Done drops body text to the muted tone. Headings drop one step too.
-  const body = b.done ? "text-ink-500" : "text-ink-900";
-  const heading = b.done ? "text-ink-600" : "text-ink-900";
-  const codeTone = b.done ? "text-ink-500" : "text-brand-700";
+  // A ticked section dims to the muted tone and STAYS READABLE — ink-500
+  // is 5.12:1. It is never collapsed or hidden: re-reading is most of what
+  // a revisit is.
+  const body = ticked ? "text-ink-500" : "text-ink-900";
+  const heading = ticked ? "text-ink-600" : "text-ink-900";
+  const codeTone = ticked ? "text-ink-500" : "text-brand-700";
 
   return (
     <div
@@ -332,21 +429,30 @@ function Block({
       )}
     >
       <div className="min-w-0 max-w-[66ch] flex-1">
-        <BlockBody b={b} body={body} heading={heading} codeTone={codeTone} onLoadVideo={onLoadVideo} />
+        <BlockBody
+          b={b}
+          ticked={ticked}
+          body={body}
+          heading={heading}
+          codeTone={codeTone}
+          onLoadVideo={onLoadVideo}
+        />
       </div>
-      <TickColumn done={b.done} />
+      <TickColumn ticked={ticked} label={b.railTitle} onToggle={onToggleTick} />
     </div>
   );
 }
 
 function BlockBody({
   b,
+  ticked,
   body,
   heading,
   codeTone,
   onLoadVideo,
 }: {
   b: LessonBlock;
+  ticked: boolean;
   body: string;
   heading: string;
   codeTone: string;
@@ -519,13 +625,13 @@ function BlockBody({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-ink-50">
-                  <th className={cn("px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase", b.done ? "text-ink-500" : "text-ink-600")} />
+                  <th className={cn("px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase", ticked ? "text-ink-500" : "text-ink-600")} />
                   {b.columns.map((c) => (
                     <th
                       key={c}
                       className={cn(
                         "px-3.5 py-2.5 text-left font-mono text-[11px] leading-[1.4] font-normal tracking-[.06em] uppercase",
-                        b.done ? "text-ink-500" : "text-ink-600",
+                        ticked ? "text-ink-500" : "text-ink-600",
                       )}
                     >
                       {c}
@@ -544,7 +650,7 @@ function BlockBody({
                         key={b.columns[ci]}
                         className={cn(
                           "border-t border-ink-100 px-3.5 py-3 text-[15px] leading-[1.6]",
-                          b.done ? "text-ink-500" : "text-ink-600",
+                          ticked ? "text-ink-500" : "text-ink-600",
                         )}
                       >
                         <RichText segments={cell} codeClass={body} />
@@ -566,7 +672,7 @@ function BlockBody({
           <div
             className={cn(
               "mb-2 font-mono text-[11px] leading-none font-medium tracking-[.08em] uppercase",
-              b.done ? "text-ink-500" : "text-ink-600",
+              ticked ? "text-ink-500" : "text-ink-600",
             )}
           >
             Note
@@ -605,14 +711,14 @@ function BlockBody({
 
     case "check": {
       // A done check shows its answer inline; a pending one reveals on tap.
-      const open = b.done || qOpen;
+      const open = ticked || qOpen;
       return (
         <div
-          role={b.done ? undefined : "button"}
-          tabIndex={b.done ? undefined : 0}
-          onClick={b.done ? undefined : () => setQOpen((s) => !s)}
+          role={ticked ? undefined : "button"}
+          tabIndex={ticked ? undefined : 0}
+          onClick={ticked ? undefined : () => setQOpen((s) => !s)}
           onKeyDown={
-            b.done
+            ticked
               ? undefined
               : (e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -623,7 +729,7 @@ function BlockBody({
           }
           className={cn(
             "rounded-card border border-ink-100 p-3.5",
-            !b.done && "cursor-pointer hover:border-brand-700",
+            !ticked && "cursor-pointer hover:border-brand-700",
           )}
         >
           <div className="flex items-start gap-3">
@@ -636,7 +742,7 @@ function BlockBody({
             <span
               className={cn(
                 "-mt-0.5 -mr-0.5 flex size-6 flex-none items-center justify-center",
-                b.done ? "text-ink-500" : "text-brand-700",
+                ticked ? "text-ink-500" : "text-brand-700",
               )}
             >
               <EyeIcon />
@@ -649,7 +755,7 @@ function BlockBody({
                   key={i}
                   className={cn(
                     "text-[16px] leading-[1.75] text-pretty",
-                    b.done ? "text-ink-500" : "text-ink-600",
+                    ticked ? "text-ink-500" : "text-ink-600",
                     i < b.answer.length - 1 ? "mb-3" : "mb-0",
                   )}
                 >
@@ -677,16 +783,16 @@ function BlockBody({
                   rel="noopener noreferrer"
                   className={cn(
                     "block text-[15px] leading-[1.45] font-medium no-underline",
-                    b.done ? "text-ink-600" : "text-ink-900",
+                    ticked ? "text-ink-600" : "text-ink-900",
                   )}
                 >
                   {b.title}{" "}
                   <span className="inline-block translate-y-px">
-                    <ExternalIcon className={b.done ? "text-ink-500" : "text-brand-700"} />
+                    <ExternalIcon className={ticked ? "text-ink-500" : "text-brand-700"} />
                   </span>
                 </a>
               ) : (
-                <div className={cn("text-[15px] leading-[1.45] font-medium", b.done ? "text-ink-500" : "text-ink-900")}>
+                <div className={cn("text-[15px] leading-[1.45] font-medium", ticked ? "text-ink-500" : "text-ink-900")}>
                   {b.title}
                 </div>
               )}
@@ -720,7 +826,7 @@ function BlockBody({
               onClick={() => onLoadVideo?.(b.id)}
               className={cn(
                 "mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-ink-100 bg-white text-[15px] font-medium",
-                b.done ? "text-ink-500" : "text-brand-700 hover:border-brand-700",
+                ticked ? "text-ink-500" : "text-brand-700 hover:border-brand-700",
               )}
             >
               <PlayCircleIcon />

@@ -14,10 +14,11 @@ import { VideoFacade } from "@/components/video-facade";
  * that cannot be — the nocookie video player and the mark-done action —
  * are assembled here.
  *
- * Done is all-or-nothing: progress is tracked per day, not per block, so
- * every block carries the day's done flag and the header count reads
- * 0-of-N or N-of-N. Honest until per-block tracking exists — the rail
- * still maps the page either way.
+ * Marking the DAY done is the progress event: it moves the streak and
+ * pays the points, and it ticks every section at once. Per-section ticks
+ * are reading progress and live in localStorage inside LessonPage —
+ * there is no block_progress table, and node_progress.last_block_position
+ * (0012) is a single furthest-point bookmark rather than a set.
  */
 
 /** A LessonBlock the server can send: no done flag, no React nodes. */
@@ -157,7 +158,6 @@ export default function LessonRoute({
       title={title}
       dayLabel={dayLabel}
       metaLine={metaLine}
-      doneOfTotal={`${done ? blocks.length : 0} of ${blocks.length}`}
       blocks={blocks}
       footer={{
         markDoneLabel: !signedIn ? (
@@ -177,6 +177,8 @@ export default function LessonRoute({
       prev={prev}
       next={next}
       railFooter={railFooter}
+      // Per-node, so ticks on day 45 do not follow you to day 46.
+      tickStorageKey={`jintu:ticks:${nodeId}`}
       onBack={() => router.push(`/learn/${slug}`)}
       onMarkDone={onMarkDone}
     />

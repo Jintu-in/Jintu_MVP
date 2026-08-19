@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 
 /** Suites that must exist. Add a line when a suite becomes load-bearing. */
-const REQUIRED = ["retry.test.mjs", "initials.test.mjs", "dashboard-state.test.mjs", "export-completeness.test.mjs", "saved-queue.test.mjs", "day-number.test.mjs"];
+const REQUIRED = ["retry.test.mjs", "initials.test.mjs", "dashboard-state.test.mjs", "export-completeness.test.mjs", "saved-queue.test.mjs", "day-number.test.mjs", "node-reader.test.mjs"];
 
 const found = readdirSync(here).filter((f) => f.endsWith(".test.mjs"));
 
