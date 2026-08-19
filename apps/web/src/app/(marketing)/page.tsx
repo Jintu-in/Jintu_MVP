@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
+import Homepage from "@/components/marketing/homepage";
+import { countPublishedResources, listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
+import { getViewer } from "@/lib/session";
 
 /**
  * The homepage: hero question, one flagship roadmap, three plain sections.
@@ -50,128 +51,34 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
-  // A homepage that 500s because the database blinked is worse than one
-  // missing its flagship card; the rest of the page is static words.
   const roadmaps: RoadmapSummary[] = await listPublishedRoadmaps().catch(() => []);
-  const flagship = [...roadmaps].sort((a, b) => b.nodeCount - a.nodeCount)[0] ?? null;
+  const viewer = await getViewer().catch(() => null);
+
+  // Every figure in the numbers band is derived, never typed in. The design
+  // said "500+ curated links"; there are 228, and a marketing page that
+  // rounds up is the one that gets quoted back at you.
+  const days = roadmaps.reduce((a, r) => a + r.nodeCount, 0);
+  const links = await countPublishedResources().catch(() => 0);
 
   return (
-    <main className="mx-auto max-w-3xl px-5">
-      {/* ── hero ─────────────────────────────────────────────────────────── */}
-      <section className="pt-16 pb-18 sm:pt-24">
-        <h1 className="text-[30px] leading-tight font-medium text-balance text-ink-900 sm:text-[40px]">
-          Learn anything, properly.
-        </h1>
-
-        <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          An AI writes you a plan in five seconds and forgets it. These are
-          deep roadmaps — every day sequenced, every link opened by a person
-          before it shipped. Free, and readable without an account.
-        </p>
-
-        <form action="/learn" method="get" className="mt-8 flex max-w-xl gap-2" role="search">
-          <label htmlFor="home-q" className="sr-only">
-            What do you want to learn?
-          </label>
-          <input
-            id="home-q"
-            type="search"
-            name="q"
-            placeholder="what do you want to learn?"
-            className="h-12 min-w-0 flex-1 rounded-lg border border-ink-200 bg-white px-4 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-brand-700"
-          />
-          <button
-            type="submit"
-            aria-label="Search roadmaps"
-            className="h-12 shrink-0 rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-          >
-            →
-          </button>
-        </form>
-
-        {/* One real example plus the open door — a chip list of one is a
-            recommendation, not a taxonomy. */}
-        <p className="mt-3 text-sm text-ink-500">
-          <Link
-            href="/learn/data-analyst"
-            className="text-brand-700 underline hover:text-brand-800"
-          >
-            Data analyst
-          </Link>
-          {" · "}
-          <Link href="/learn" className="text-brand-700 underline hover:text-brand-800">
-            Something else
-          </Link>
-        </p>
-      </section>
-
-      {/* ── start today ──────────────────────────────────────────────────── */}
-      {flagship ? (
-        <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="start">
-          <h2 id="start" className="text-lg font-medium text-ink-900">
-            Start today
-          </h2>
-
-          <div className="mt-6 rounded-card border border-ink-100 bg-white p-6">
-            <p className="text-[17px] font-medium text-ink-900">
-              {flagship.title}
-              {flagship.estimatedWeeks ? ` — ${flagship.estimatedWeeks} weeks` : ""}
-            </p>
-            <p className="mt-1 font-mono text-[13px] text-ink-500">
-              {flagship.moduleCount} modules · {flagship.nodeCount} nodes
-              {flagship.estimatedHours ? ` · ~${flagship.estimatedHours} hours` : ""} · free
-            </p>
-            <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-              {flagship.summary}
-            </p>
-            <Link
-              href={`/learn/${flagship.slug}`}
-              className="mt-5 inline-flex h-12 items-center rounded-lg bg-brand-700 px-6 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-            >
-              Open the roadmap →
-            </Link>
-          </div>
-        </section>
-      ) : null}
-
-      {/* ── built for two minutes at a time ──────────────────────────────── */}
-      <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="sessions">
-        <h2 id="sessions" className="text-lg font-medium text-ink-900">
-          Built for two minutes at a time
-        </h2>
-        <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          Every node says how long it takes before you open it, and a
-          reads-only mode for when you are on mobile data. Come back and it
-          remembers where you stopped.
-        </p>
-      </section>
-
-      {/* ── what keeps you going ─────────────────────────────────────────── */}
-      <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="momentum">
-        <h2 id="momentum" className="text-lg font-medium text-ink-900">
-          What keeps you going
-        </h2>
-        <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-ink-600">
-          A streak that survives a bad week, points for what you actually get
-          through, and review that stops week three evaporating by week nine.
-        </p>
-      </section>
-
-      {/* ── what this is not ─────────────────────────────────────────────── */}
-      <section className="border-t border-ink-100 py-18 sm:py-24" aria-labelledby="not">
-        <h2 id="not" className="text-lg font-medium text-ink-900">
-          What this is not
-        </h2>
-        <div className="mt-4 max-w-[62ch] space-y-3 text-[15px] leading-[1.7] text-ink-600">
-          <p>We do not promise you a job.</p>
-          <p>
-            We do not host anyone else&apos;s work — every resource links out
-            to the person who made it, and nothing here was paywalled when a
-            human last checked.
-          </p>
-          <p>Points are for momentum, not a credential.</p>
-        </div>
-      </section>
-    </main>
+    <Homepage
+      signedIn={Boolean(viewer?.hasProfile)}
+      counts={{ roadmaps: roadmaps.length, days, links }}
+      roadmaps={roadmaps.map((r) => ({
+        slug: r.slug,
+        title: r.title,
+        metaLine: [r.difficulty, r.estimatedWeeks ? `~${r.estimatedWeeks} weeks` : null]
+          .filter(Boolean)
+          .join(" · "),
+        summary: r.summary,
+        sizeLine: [
+          `${r.moduleCount} modules`,
+          `${r.nodeCount} days`,
+          r.estimatedHours ? `~${r.estimatedHours} hours` : null,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+      }))}
+    />
   );
 }
