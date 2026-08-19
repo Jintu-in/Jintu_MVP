@@ -34,14 +34,24 @@ Duolingo.
 | `#17758A` | the interactive teal — ALL buttons, links, active states, teal text |
 | `#EFFAFC` | brand tint, accent callouts |
 | `#0B0B0B` | primary text |
-| `#5F5E5A` | secondary text |
-| `#8A8A85` | muted text |
+| `#5F5E5A` | secondary text (6.49:1) |
+| `#75746F` | muted text (4.68:1) — use for ALL muted text at any size |
+| `#8A8A85` | 3.47:1, FAILS AA for normal text. Decorative fills and borders only, never a `color:` value |
 | `#E8E8E5` | hairlines |
 | `#FFFFFF` | surface |
 | `#FAFAF8` | page |
-| `#1D9E75` | done / success |
+| `#1D9E75` | done / success — as a FILL (white check on green circle is a graphical object, 3:1 threshold) |
+| `#12606F` | success as TEXT (7.17:1) — mono "opened", "watched", "done" labels |
 | `#BA7517` | warning |
-| `#D85A30` | destructive |
+| `#D85A30` | destructive as a BORDER |
+| `#B8441F` | destructive as TEXT — e.g. the delete button label |
+
+Contrast rationale: the original brief specified `#8A8A85` for muted text without
+measuring it. It fails AA below 24px (18.66px at weight 500), which covered every
+label, meta line, caption and mono line in the product. `#75746F` replaced it as a
+straight substitution in August 2026 with no change to size, weight, spacing or
+layout. Success and destructive colours split the same way: the app-legible fill
+value and the AA-passing text value are different tokens, and both are listed above.
 
 ### Typography
 - Inter for prose. JetBrains Mono for anything measured — points, minutes,

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F1F0EC;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#17758A}a:hover{color:#0B0B0B}
+::selection{background:#CFEDF4;color:#0B0B0B}
+</style>
+</helmet>
+
+<div style="padding:44px 44px 80px;display:flex;flex-direction:column;gap:22px">
+
+<div style="display:flex;flex-direction:column;gap:8px;max-width:680px">
+<div style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#75746F">Jintu · /profile states · 360px</div>
+<h1 style="margin:0;font:400 26px/1.3 Inter,sans-serif;color:#0B0B0B">Five profile states</h1>
+<p style="margin:0;font:400 14px/1.7 Inter,sans-serif;color:#5F5E5A">A new account never renders zeros, deletion gets a page and typed confirmation rather than a modal, and consent rows separate required from optional by more than a disabled look.</p>
+</div>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">A</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Public profile on</span></div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:18px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+<span style="font:400 15px/1.4 Inter,sans-serif;color:#0B0B0B">Show a public profile at <span style="font-family:'JetBrains Mono',monospace;color:#5F5E5A">jintu.in/u/priya</span></span>
+<button role="switch" aria-checked="true" style="width:48px;height:28px;border-radius:14px;border:0;cursor:pointer;padding:2px;display:flex;align-items:center;justify-content:flex-end;background:#17758A"><span style="width:24px;height:24px;border-radius:50%;background:#FFFFFF;display:block"></span></button>
+</div>
+<div style="margin-top:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;min-height:44px;display:flex;align-items:center;padding:0 12px;border:1px solid #E8E8E5;border-radius:8px;font:400 13.5px/1 'JetBrains Mono',monospace;color:#5F5E5A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">jintu.in/u/priya</div>
+<button style="flex:none;min-height:44px;padding:0 14px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 13.5px Inter,sans-serif;color:#17758A;cursor:pointer">Copy</button>
+</div>
+<button style="margin-top:10px;width:100%;min-height:44px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 14px Inter,sans-serif;color:#17758A;cursor:pointer">Share card</button>
+<div style="margin-top:16px;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;white-space:nowrap;flex-shrink:0">What a stranger would see</span>
+<span style="display:flex;align-items:center;gap:5px;font:400 11px/1 'JetBrains Mono',monospace;color:#1D9E75"><span style="width:6px;height:6px;border-radius:50%;background:#1D9E75"></span>live</span>
+</div>
+<div style="margin-top:10px;border:1px solid #E8E8E5;border-radius:12px;padding:14px;background:#FAFAF8">
+<div style="display:flex;gap:10px;align-items:center">
+<div aria-hidden="true" style="width:34px;height:34px;flex:none;border-radius:9px;background:#EFFAFC;display:flex;align-items:center;justify-content:center;font:500 13px 'JetBrains Mono',monospace;color:#17505C">PR</div>
+<div style="font:400 14px/1.3 'JetBrains Mono',monospace;color:#5F5E5A">/u/priya</div>
+</div>
+<div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+<div style="border:1px solid #E8E8E5;border-radius:6px;background:#FFFFFF;padding:6px;text-align:center"><div style="font:500 13px/1 'JetBrains Mono',monospace;color:#0B0B0B">47</div><div style="margin-top:3px;font:400 9px/1.2 Inter,sans-serif;color:#75746F">days</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:6px;background:#FFFFFF;padding:6px;text-align:center"><div style="font:500 13px/1 'JetBrains Mono',monospace;color:#0B0B0B">12</div><div style="margin-top:3px;font:400 9px/1.2 Inter,sans-serif;color:#75746F">streak</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:6px;background:#FFFFFF;padding:6px;text-align:center"><div style="font:500 13px/1 'JetBrains Mono',monospace;color:#0B0B0B">21</div><div style="margin-top:3px;font:400 9px/1.2 Inter,sans-serif;color:#75746F">longest</div></div>
+<div style="border:1px solid #E8E8E5;border-radius:6px;background:#FFFFFF;padding:6px;text-align:center"><div style="font:500 13px/1 'JetBrains Mono',monospace;color:#0B0B0B">1,240</div><div style="margin-top:3px;font:400 9px/1.2 Inter,sans-serif;color:#75746F">points</div></div>
+</div>
+</div>
+<div style="margin-top:14px;font:400 13px/1.6 Inter,sans-serif;color:#75746F">Your email is never shown. You can turn this off at any time and the page disappears immediately.</div>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">B</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Brand new account</span></div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:18px 0">
+<div style="padding:0 18px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;margin-bottom:12px">Your record</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:18px">
+<p style="margin:0;font:400 15px/1.65 Inter,sans-serif;color:#0B0B0B;text-wrap:pretty">Your record starts when you finish your first day.</p>
+<button style="margin-top:14px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer">Open Data analyst</button>
+</div>
+</div>
+<div style="height:32px"></div>
+<div style="border-top:1px solid #E8E8E5;padding:20px 18px 0">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;margin-bottom:12px">Public profile</div>
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+<span style="font:400 14px/1.4 Inter,sans-serif;color:#0B0B0B">Show a public profile</span>
+<button role="switch" aria-checked="false" style="width:48px;height:28px;border-radius:14px;border:0;cursor:pointer;padding:2px;display:flex;align-items:center;justify-content:flex-start;background:#E8E8E5"><span style="width:24px;height:24px;border-radius:50%;background:#FFFFFF;display:block"></span></button>
+</div>
+</div>
+</div>
+</div>
+<div style="max-width:360px;font:400 12.5px/1.6 'JetBrains Mono',monospace;color:#75746F">no roadmaps section · no zero stats · settings below still fully functional</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">C</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Consent list</span></div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<button aria-label="Back" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<div style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">What you agreed to</div>
+</div>
+<div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px">
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px;background:#FAFAF8">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<span style="font:500 15px/1.4 Inter,sans-serif;color:#0B0B0B">Core service</span>
+<span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F">required</span>
+</div>
+<div style="margin-top:6px;font:400 13.5px/1.5 Inter,sans-serif;color:#5F5E5A">Needed to hold an account</div>
+</div>
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+<span style="font:500 15px/1.4 Inter,sans-serif;color:#0B0B0B">Daily reminders</span>
+<button role="switch" aria-checked="true" style="width:44px;height:26px;border-radius:13px;border:0;cursor:pointer;padding:2px;display:flex;align-items:center;justify-content:flex-end;background:#17758A"><span style="width:22px;height:22px;border-radius:50%;background:#FFFFFF;display:block"></span></button>
+</div>
+<div style="margin-top:6px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">Agreed 12 July 2026</div>
+</div>
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+<span style="font:500 15px/1.4 Inter,sans-serif;color:#0B0B0B">Public profile</span>
+<button role="switch" aria-checked="false" style="width:44px;height:26px;border-radius:13px;border:0;cursor:pointer;padding:2px;display:flex;align-items:center;justify-content:flex-start;background:#E8E8E5"><span style="width:22px;height:22px;border-radius:50%;background:#FFFFFF;display:block"></span></button>
+</div>
+<div style="margin-top:6px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">Not agreed</div>
+</div>
+
+<div style="border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+<span style="font:500 15px/1.4 Inter,sans-serif;color:#0B0B0B">Analytics</span>
+<button role="switch" aria-checked="true" style="width:44px;height:26px;border-radius:13px;border:0;cursor:pointer;padding:2px;display:flex;align-items:center;justify-content:flex-end;background:#17758A"><span style="width:22px;height:22px;border-radius:50%;background:#FFFFFF;display:block"></span></button>
+</div>
+<div style="margin-top:6px;font:400 12.5px/1.5 'JetBrains Mono',monospace;color:#75746F">Agreed 12 July 2026</div>
+</div>
+
+<div style="border-top:1px solid #E8E8E5;padding-top:14px;font:400 13px/1.6 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">Withdrawing consent stops that use immediately. It does not delete anything you have already done.</div>
+</div>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">D</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Delete confirmation · dedicated page</span></div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;overflow:hidden">
+<div style="height:52px;border-bottom:1px solid #E8E8E5;display:flex;align-items:center;padding:0 4px">
+<button aria-label="Back" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;cursor:pointer;padding:0"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<div style="flex:1;min-width:0;font:400 13px/1.3 Inter,sans-serif;color:#0B0B0B">Delete account</div>
+</div>
+<div style="padding:22px 18px 24px">
+<h2 style="margin:0;font:500 20px/1.35 Inter,sans-serif;color:#0B0B0B">Delete your account?</h2>
+<div style="margin-top:16px;border:1px solid #E8E8E5;border-radius:12px;padding:16px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;margin-bottom:10px">This removes</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:400 14.5px/1.5 Inter,sans-serif;color:#0B0B0B">47 days of progress</div>
+<div style="font:400 14.5px/1.5 Inter,sans-serif;color:#0B0B0B">38 highlights</div>
+<div style="font:400 14.5px/1.5 Inter,sans-serif;color:#0B0B0B">your public profile</div>
+<div style="font:400 14.5px/1.5 Inter,sans-serif;color:#0B0B0B">your account</div>
+</div>
+</div>
+<p style="margin:16px 0 0;font:400 14px/1.65 Inter,sans-serif;color:#5F5E5A;text-wrap:pretty">This is immediate and cannot be undone. Download your data first if you want it.</p>
+<button style="margin-top:16px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#17758A;cursor:pointer">Download everything first</button>
+
+<div style="margin-top:22px;border-top:1px solid #E8E8E5;padding-top:18px">
+<label style="display:block;font:400 13px/1.5 Inter,sans-serif;color:#5F5E5A;margin-bottom:8px">Type <span style="font-family:'JetBrains Mono',monospace;color:#0B0B0B">priya.raghavan@gmail.com</span> to confirm</label>
+<input placeholder="your email" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF" />
+<button disabled style="margin-top:10px;width:100%;min-height:48px;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:8px;font:500 15px Inter,sans-serif;color:#8A8A85;cursor:not-allowed">Delete my account</button>
+</div>
+
+<button style="margin-top:20px;width:100%;min-height:48px;background:#17758A;border:1px solid #17758A;border-radius:8px;font:500 16px Inter,sans-serif;color:#FFFFFF;cursor:pointer">Cancel, keep my account</button>
+</div>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.08em;color:#0B0B0B;background:#E8E8E5;padding:4px 7px;border-radius:4px">E</span><span style="font:500 14px Inter,sans-serif;color:#0B0B0B">Timezone changed</span></div>
+<div style="width:360px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E8E8E5;border-radius:12px;padding:18px">
+<div style="font:400 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#75746F;margin-bottom:8px">Timezone</div>
+<div style="position:relative">
+<select style="width:100%;box-sizing:border-box;min-height:48px;padding:0 36px 0 14px;border:1px solid #E8E8E5;border-radius:8px;font:400 15px Inter,sans-serif;color:#0B0B0B;background:#FFFFFF;appearance:none">
+<option>America/New_York</option>
+</select>
+<svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="position:absolute;right:14px;top:18px;pointer-events:none"><path d="M3 5.5 7 9.5l4-4" stroke="#5F5E5A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="margin-top:12px;background:#EFFAFC;border-radius:8px;padding:14px">
+<p style="margin:0;font:400 14px/1.65 Inter,sans-serif;color:#17505C;text-wrap:pretty">Now using America/New_York. Your streak day ends at midnight there from tomorrow. Your 47 finished days keep their original dates.</p>
+</div>
+<p style="margin:14px 0 0;font:400 13px/1.6 Inter,sans-serif;color:#75746F;text-wrap:pretty">Changing this affects future days only. Days you have already finished keep their original date.</p>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1300,&quot;height&quot;:2800}}"></script>
+</body>
+</html>
