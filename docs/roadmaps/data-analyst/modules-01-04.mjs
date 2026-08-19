@@ -16,7 +16,7 @@ export default [
       "Say what the job is, where the analyst sits in the toolchain, and read a dataset before touching it.",
     nodes: [
       {
-        title: "Day 1 — What a data analyst actually does",
+        title: "What a data analyst actually does",
         summary:
           "The job is turning a vague question into an answerable one. The tools are downstream of that.",
         learningObjectives: [
@@ -40,7 +40,7 @@ export default [
         ],
       },
       {
-        title: "Day 2 — The analyst's toolchain and how it fits together",
+        title: "The analyst's toolchain and how it fits together",
         summary:
           "You will spend more time on messy inputs than on clever analysis. Plan for that.",
         learningObjectives: [
@@ -70,7 +70,7 @@ export default [
         ],
       },
       {
-        title: "Day 3 — Reading a dataset before you touch it",
+        title: "Reading a dataset before you touch it",
         summary: "If you cannot say what one row means, you cannot analyse the table.",
         learningObjectives: [
           "Rows, columns, granularity — \"what does one row mean here?\" is always the first question",
@@ -107,7 +107,7 @@ export default [
       "Navigate without the mouse, aggregate with conditions, clean text with formulas, and handle dates that lie.",
     nodes: [
       {
-        title: "Day 4 — Navigation, structure and the habits that compound",
+        title: "Navigation, structure and the habits that compound",
         summary: "Mouse-driven analysis does not scale past a few hundred rows.",
         learningObjectives: [
           "Keyboard navigation: Ctrl+arrows, Ctrl+Shift+arrows, F2, F4",
@@ -143,7 +143,7 @@ export default [
         ],
       },
       {
-        title: "Day 5 — Core formulas and the aggregation family",
+        title: "Core formulas and the aggregation family",
         summary:
           "Hardcode a criterion into a formula and you have built something nobody can change.",
         learningObjectives: [
@@ -172,7 +172,7 @@ export default [
         ],
       },
       {
-        title: "Day 6 — Text functions and cleaning inside a sheet",
+        title: "Text functions and cleaning inside a sheet",
         summary:
           "If you cannot re-run your cleaning on next month's file, you have not cleaned anything.",
         learningObjectives: [
@@ -196,7 +196,7 @@ export default [
         ],
       },
       {
-        title: "Day 7 — Review",
+        title: "Review",
         summary:
           "Redo three exercises from days 4–6 from memory, then clear your review cards. No new material on day seven — spaced review is what stops week 3 evaporating by week 9.",
         learningObjectives: [
@@ -209,7 +209,7 @@ export default [
         resources: [],
       },
       {
-        title: "Day 8 — Dates, times and the arithmetic that goes wrong",
+        title: "Dates, times and the arithmetic that goes wrong",
         summary:
           "A date column with mixed formats is a data quality bug, not a formatting preference.",
         learningObjectives: [
@@ -233,7 +233,7 @@ export default [
         ],
       },
       {
-        title: "Day 9 — Conditional formatting and visual audit",
+        title: "Conditional formatting and visual audit",
         summary: "Use colour to find problems, not to decorate.",
         learningObjectives: [
           "Highlight rules, top/bottom, data bars, colour scales",
@@ -255,7 +255,7 @@ export default [
         ],
       },
       {
-        title: "Day 10 — Sorting, filtering and data validation",
+        title: "Sorting, filtering and data validation",
         summary: "Stop bad data at entry and you will not clean it later.",
         learningObjectives: [
           "Multi-level sort; custom sort orders",
@@ -285,7 +285,7 @@ export default [
       "Encode business rules with logical functions, look anything up without fear, and let dynamic arrays do the reporting.",
     nodes: [
       {
-        title: "Day 11 — Logical functions",
+        title: "Logical functions",
         summary: "IFERROR that hides a real problem is worse than the error.",
         learningObjectives: [
           "IF, nested IF, and the point where nesting becomes unreadable",
@@ -307,7 +307,7 @@ export default [
         ],
       },
       {
-        title: "Day 12 — Lookups",
+        title: "Lookups",
         summary: "If you are nesting VLOOKUPs you have outgrown VLOOKUP.",
         learningObjectives: [
           "VLOOKUP exact vs approximate — why the fourth argument ruins careers",
@@ -330,7 +330,7 @@ export default [
         ],
       },
       {
-        title: "Day 13 — Dynamic arrays",
+        title: "Dynamic arrays",
         summary: "A formula that replaces a manual monthly step pays for itself forever.",
         learningObjectives: [
           "Spill behaviour and the # operator",
@@ -353,7 +353,7 @@ export default [
         ],
       },
       {
-        title: "Day 14 — Review and first mini-build",
+        title: "Review and first mini-build",
         summary:
           "Build a one-page summary sheet: five conditional aggregations, one lookup table, one dynamic-array list. Then clear review cards.",
         learningObjectives: [
@@ -376,7 +376,7 @@ export default [
       "An Excel file where replacing the source data updates every number with one refresh.",
     nodes: [
       {
-        title: "Day 15 — Why ETL exists",
+        title: "Why ETL exists",
         summary: "If a cleaning step is not in a query, it will be forgotten next month.",
         learningObjectives: [
           "Extract, transform, load — and why doing it by hand is the mistake this module cures",
@@ -404,7 +404,7 @@ export default [
         ],
       },
       {
-        title: "Day 16 — Importing from everywhere",
+        title: "Importing from everywhere",
         summary: "Any report you rebuild monthly should be a folder query.",
         learningObjectives: [
           "From CSV, Excel, folder, web page, JSON",
@@ -425,7 +425,7 @@ export default [
         ],
       },
       {
-        title: "Day 17 — Transformations",
+        title: "Transformations",
         summary:
           "\"Change type with locale\" solves more Indian data problems than any other single button.",
         learningObjectives: [
@@ -448,7 +448,7 @@ export default [
         ],
       },
       {
-        title: "Day 18 — Reshaping",
+        title: "Reshaping",
         summary: "Most spreadsheets are wide for humans; almost all analysis wants long.",
         learningObjectives: [
           "Unpivot — turning a wide monthly report into a tidy long table",
@@ -470,7 +470,7 @@ export default [
         ],
       },
       {
-        title: "Day 19 — Merging and appending",
+        title: "Merging and appending",
         summary: "Check the row count after every merge. If it grew, your key is not unique.",
         learningObjectives: [
           "Merge queries: inner, left/right/full outer, anti joins",
@@ -492,7 +492,7 @@ export default [
         ],
       },
       {
-        title: "Day 20 — Build day: the auto-refreshing report",
+        title: "Build day: the auto-refreshing report",
         summary:
           "One pipeline: import a folder → clean types → unpivot → merge a lookup → group → load to a pivot. Swap in a new month's file and every number updates with one refresh.",
         learningObjectives: [

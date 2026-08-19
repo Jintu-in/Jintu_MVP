@@ -10,7 +10,7 @@ export default [
       "Keep the row, see the neighbours: ranking, frames, LAG/LEAD and a full cohort retention table from raw transactions.",
     nodes: [
       {
-        title: "Day 43 — The window concept",
+        title: "The window concept",
         summary: "GROUP BY collapses rows. OVER keeps them and adds context.",
         learningObjectives: [
           "OVER() — a row keeps its identity while seeing its neighbours",
@@ -38,7 +38,7 @@ export default [
         ],
       },
       {
-        title: "Day 44 — Ranking",
+        title: "Ranking",
         summary:
           "If ties are possible and you used ROW_NUMBER, you have made a silent arbitrary choice.",
         learningObjectives: [
@@ -61,7 +61,7 @@ export default [
         ],
       },
       {
-        title: "Day 45 — Frames",
+        title: "Frames",
         summary: "The default frame is RANGE, not ROWS. That difference has broken many dashboards.",
         learningObjectives: [
           "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — the running total",
@@ -83,7 +83,7 @@ export default [
         ],
       },
       {
-        title: "Day 46 — Positional functions",
+        title: "Positional functions",
         summary: "LAST_VALUE without an explicit frame returns the current row. Almost nobody wants that.",
         learningObjectives: [
           "LAG and LEAD with offsets and defaults",
@@ -111,7 +111,7 @@ export default [
         ],
       },
       {
-        title: "Day 47 — Cohort retention end to end",
+        title: "Cohort retention end to end",
         summary: "The hardest part of retention is defining the cohort, not writing the window function.",
         learningObjectives: [
           "Assign each customer a cohort month from first purchase",
@@ -133,7 +133,7 @@ export default [
         ],
       },
       {
-        title: "Day 48 — Window practice block",
+        title: "Window practice block",
         summary: "Twenty window-function problems from DataLemur or StrataScratch.",
         learningObjectives: ["Twenty window problems under light time pressure"],
         estMinutes: 60,
@@ -158,7 +158,7 @@ export default [
     deliverable: "A commented .sql file with an end-to-end analysis plus a short written finding.",
     nodes: [
       {
-        title: "Day 49 — Indexes and why queries are slow",
+        title: "Indexes and why queries are slow",
         summary: "Measure before optimising. Intuition about query speed is usually wrong.",
         learningObjectives: [
           "What an index is; B-tree basics without the theory",
@@ -180,7 +180,7 @@ export default [
         ],
       },
       {
-        title: "Day 50 — Views, materialised views and query organisation",
+        title: "Views, materialised views and query organisation",
         summary: "Structure an analysis into layers: raw → cleaned → aggregated.",
         learningObjectives: [
           "CREATE VIEW for reusable logic — when it helps, when it hides cost",
@@ -200,7 +200,7 @@ export default [
         ],
       },
       {
-        title: "Day 51 — Data quality checks in SQL",
+        title: "Data quality checks in SQL",
         summary: "Run your quality checks before your analysis, not after someone questions your number.",
         learningObjectives: [
           "Duplicates with GROUP BY … HAVING COUNT(*) > 1",
@@ -222,7 +222,7 @@ export default [
         ],
       },
       {
-        title: "Day 52 — Review and SQL capstone",
+        title: "Review and SQL capstone",
         summary:
           "One end-to-end SQL analysis of a real business question: CTEs, joins, aggregation and at least one window function, delivered as a commented .sql file with a written finding.",
         learningObjectives: [
