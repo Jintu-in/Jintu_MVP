@@ -55,6 +55,16 @@ jobs:
       - name: Contrast
         run: pnpm contrast
 
+      # Prints first-load JS on every PR, pass or fail. The ceiling is the
+      # CURRENT measured worst case, not the target: the site ships ~342 KB
+      # gzipped against a 130 KB goal, and failing every PR from day one
+      # turns a signal into noise people learn to ignore. This number
+      # ratchets DOWN as the bundle work lands — never up without saying so.
+      - name: Bundle budget
+        run: pnpm bundle:budget
+        env:
+          BUNDLE_BUDGET_KB: "350"
+
       # A committed .env.example must never contain a real credential.
       - name: Env templates
         run: pnpm env:templates

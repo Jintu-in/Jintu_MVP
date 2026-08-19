@@ -33,7 +33,9 @@
     "import:verify": "node scripts/assert-import.mjs",
     "retention:verify": "node scripts/assert-retention.mjs",
     "progress:demo": "node scripts/demo-progress.mjs",
-    "links:check": "node scripts/check-links.mjs"
+    "links:check": "node scripts/check-links.mjs",
+    "metrics:demo": "node scripts/demo-metrics.mjs",
+    "bundle:budget": "node scripts/assert-bundle-budget.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",
