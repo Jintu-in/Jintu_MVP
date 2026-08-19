@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { AnalyticsProvider } from "@/components/analytics-provider";
 import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
@@ -79,6 +80,7 @@ export default function RootLayout({
           do not default it to true.
         */}
         <AnalyticsProvider consented={false}>{children}</AnalyticsProvider>
+        <Analytics />
       </body>
     </html>
   );
