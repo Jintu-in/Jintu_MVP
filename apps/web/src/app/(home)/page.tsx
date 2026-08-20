@@ -66,6 +66,8 @@ export default async function LandingPage() {
   // Summed across all four, not one of them. The design's pill said
   // "~340 hours", which is the data analyst alone.
   const hours = roadmaps.reduce((a, r) => a + (r.estimatedHours ?? 0), 0);
+  // Chips above the roadmap cards: the first tag of each roadmap, deduped.
+  const subjects = [...new Set(roadmaps.map((r) => r.subjectTags[0]).filter(Boolean))].slice(0, 4) as string[];
   const [links, sources] = await Promise.all([
     countPublishedResources().catch(() => 0),
     topSourceNames(8).catch(() => []),
@@ -76,6 +78,20 @@ export default async function LandingPage() {
       signedIn={Boolean(viewer?.hasProfile)}
       counts={{ roadmaps: roadmaps.length, days, hours, links }}
       sources={sources}
+      subjects={subjects}
+      roadmaps={roadmaps.map((r) => ({
+        slug: r.slug,
+        title: r.title,
+        kicker: [r.subjectTags[0], r.difficulty].filter(Boolean).join(" · "),
+        summary: r.summary,
+        sizeLine: [
+          `${r.moduleCount} modules`,
+          `${r.nodeCount} days`,
+          r.estimatedHours ? `~${r.estimatedHours} hrs` : null,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+      }))}
     />
   );
 }

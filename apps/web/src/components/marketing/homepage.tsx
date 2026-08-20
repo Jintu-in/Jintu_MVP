@@ -5,32 +5,41 @@ import { HomepageEffects } from "@/components/marketing/homepage-effects";
 /**
  * The marketing homepage — v2, from the design project.
  *
- * A teal hero the page falls out of, a wall of the sources the material
- * actually comes from, one day shown in full, a bento of the four things
- * that make it work, ninety-one squares, and a close. Every effect is
- * scoped under `.jhome` in globals.css: none of it can reach a roadmap or
- * a day, which is the whole trade. A reading surface that shimmers is one
+ * Eleven sections: nav, hero, source wall, roadmaps, how it works,
+ * pricing, one day in full, the bento, ninety-one squares, the close, the
+ * footer. Every effect is scoped under `.jhome` in globals.css so none of
+ * it can reach a roadmap or a day — a reading surface that shimmers is one
  * people leave.
  *
  * THE NUMBERS ARE DERIVED, NOT WRITTEN. The design's pills say "~340 hours"
  * and "500+ links checked". There are 890 hours across the four roadmaps —
- * 340 is the data analyst alone — and 228 links, not 500. Both come from
- * the database now, so the page cannot drift from the product and nobody
- * has to remember to update it.
+ * 340 is the data analyst alone — and 228 links. Both are computed, so the
+ * page cannot drift from the product.
+ *
+ * The search fields are real GET forms pointed at /learn, which already
+ * takes `?q=`. They work with JavaScript switched off, and they land
+ * somewhere that can actually answer them.
  *
  * The design carries no DCLogic; the observers live in homepage-effects.
- *
- * NOTE: v2 drops the four roadmap cards v1 had — its own section numbering
- * skips 3, 6 and 8, so they were cut upstream. The homepage no longer links
- * to individual roadmaps; /learn is one hop away from four places on the
- * page. Flagged rather than re-added, because inventing a section the
- * design removed is not conversion.
  */
 
+export interface HomepageRoadmap {
+  slug: string;
+  title: string;
+  /** "Data · Beginner" */
+  kicker: string;
+  summary: string;
+  /** "20 modules · 91 days · ~340 hrs" */
+  sizeLine: string;
+}
+
 export interface HomepageProps {
+  roadmaps: HomepageRoadmap[];
   counts: { roadmaps: number; days: number; hours: number; links: number };
   /** The places the material genuinely comes from, most-used first. */
   sources: string[];
+  /** Subject chips above the roadmap cards. */
+  subjects: string[];
   signedIn: boolean;
 }
 
@@ -41,48 +50,78 @@ const SearchGlyph = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-const ArrowGlyph = () => (
-  <svg aria-hidden width={14} height={14} viewBox="0 0 16 16" fill="none">
-    <path
-      d="M3 8h10M9 4l4 4-4 4"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-/** The search field is a link: /learn owns search, and a second box that
- *  behaved differently would be a lie about where you end up. */
-function SearchLink({ label }: { label: string }) {
+/**
+ * A real search field: a GET form to /learn, which already understands
+ * `?q=`. It submits without JavaScript, and it lands on the page that can
+ * actually answer the question rather than a decorative box.
+ */
+function SearchBar({ id }: { id: string }) {
   return (
-    <Link
-      href="/learn"
+    <form
+      action="/learn"
+      method="GET"
+      role="search"
       className="jsearch flex h-13 w-full max-w-[480px] items-center gap-2.5 rounded-full bg-white py-0 pr-2 pl-5"
     >
-      <span className="text-ink-500">
+      <label htmlFor={id} className="sr-only">
+        Search roadmaps
+      </label>
+      <span aria-hidden className="flex-none text-ink-500">
         <SearchGlyph />
       </span>
-      <span className="flex-1 text-left text-[15px] leading-none text-ink-500">{label}</span>
-      <span className="flex size-9 flex-none items-center justify-center rounded-full bg-brand-700 text-white">
-        <ArrowGlyph />
-      </span>
-    </Link>
+      <input
+        id={id}
+        name="q"
+        type="search"
+        autoComplete="off"
+        placeholder="What do you want to learn?"
+        className="min-w-0 flex-1 bg-transparent text-[15px] text-ink-900 placeholder:text-ink-500 focus:outline-none"
+      />
+      <button
+        type="submit"
+        aria-label="Search"
+        className="flex size-9 flex-none items-center justify-center rounded-full bg-brand-700 text-white hover:bg-brand-800"
+      >
+        <svg aria-hidden width={14} height={14} viewBox="0 0 16 16" fill="none">
+          <path
+            d="M3 8h10M9 4l4 4-4 4"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </form>
   );
 }
 
-/** One floating fact. White pill, ink text — never white-on-teal. */
-function StatPill({ glyph, children, className }: { glyph: string; children: React.ReactNode; className?: string }) {
+/** One floating fact. White pill, ink text — never white on teal. */
+function StatPill({
+  glyph,
+  children,
+  className,
+}: {
+  glyph: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <span
-      className={`jpill inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-2 font-mono text-[12px] leading-none text-ink-900 ${className ?? ""}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-2 font-mono text-[12px] leading-none whitespace-nowrap text-ink-900 ${className ?? ""}`}
     >
       <span aria-hidden>{glyph}</span>
       {children}
     </span>
   );
 }
+
+const STEPS = [
+  ["01", "Pick a roadmap", "Read the whole thing before you sign up."],
+  ["02", "Do one day", "45–90 min. It remembers where you stopped."],
+  ["03", "Keep the streak", "Miss a day and it resets. Your total never does."],
+  ["04", "Show what you did", "A public profile, counted not self-reported."],
+];
 
 const BULLETS = [
   "Every day states its length before you open it",
@@ -91,35 +130,46 @@ const BULLETS = [
   "One thing to make, then three questions to check yourself",
 ];
 
-export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
+const FREE_INCLUDES = [
+  "Every roadmap in full",
+  "Progress, streaks, points",
+  "No adverts, nothing sold about you",
+];
+
+const navLink =
+  "text-[14px] leading-none text-white/85 transition-colors hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900";
+
+export default function Homepage({
+  roadmaps,
+  counts,
+  sources,
+  subjects,
+  signedIn,
+}: HomepageProps) {
   return (
     <div className="jhome bg-ink-50">
       <HomepageEffects />
 
       {/* ── nav ─────────────────────────────────────────────────────────── */}
-      <nav className="jnav fixed inset-x-0 top-0 z-50 flex h-[72px] items-center gap-7 px-5 sm:px-12">
-        <Link href="/" className="text-[16px] leading-none font-medium text-white [.jscrolled_&]:text-brand-700">
+      {/* Transparent over the dark head of the hero; it only takes a solid
+          surface once the sentinel below has scrolled away. */}
+      <nav className="jnav fixed inset-x-0 top-0 z-50 flex h-[72px] items-center gap-6 px-5 sm:gap-7 sm:px-12">
+        <Link
+          href="/"
+          className="text-[16px] leading-none font-medium text-white [.jscrolled_&]:text-brand-700"
+        >
           jintu
         </Link>
         <div className="hidden flex-1 items-center gap-7 sm:flex">
-          <Link
-            href="/learn"
-            className="text-[14px] leading-none text-white/85 hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900"
-          >
+          <Link href="/learn" className={navLink}>
             Roadmaps
           </Link>
-          {/* Anchors the section that answers it — there is no separate page,
+          {/* Anchors the section that answers it. There is no such route,
               and a nav item that 404s is worse than one that scrolls. */}
-          <Link
-            href={"/#one-day" as Route}
-            className="text-[14px] leading-none text-white/85 hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900"
-          >
+          <Link href={"/#how-it-works" as Route} className={navLink}>
             How it works
           </Link>
-          <Link
-            href="/pricing"
-            className="text-[14px] leading-none text-white/85 hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900"
-          >
+          <Link href="/pricing" className={navLink}>
             Free
           </Link>
         </div>
@@ -132,24 +182,34 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
         </Link>
       </nav>
 
+      {/* The nav's transparency is driven by this, not by a scroll handler.
+          It sits at the top of the document and is as tall as the hero's
+          dark band, so the nav stays transparent while it is over teal and
+          only takes a surface once the page has scrolled past it. Sized in
+          vh so it tracks the hero, which is itself viewport-relative.
+
+          Putting this AFTER the hero is the obvious mistake: it would be
+          off-screen at rest, and the nav would render solid-white with
+          white text from the first paint. */}
+      <div aria-hidden data-nav-sentinel className="absolute top-0 h-[55vh] w-px" />
+
       {/* ── hero ────────────────────────────────────────────────────────── */}
-      {/* The gradient inserts a brand-700 stop the design does not have.
-          Its own ramp reaches brand-500 by 55%, and white body copy sits in
-          that band at 2.44:1 — unreadable. brand-700 is 5.32:1 and keeps
-          the same dark-to-pale arc. */}
-      <header className="relative -mt-[72px] flex flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#0f5566_0%,#17758a_42%,#43b4c8_72%,#f4fbfc_100%)] px-5 pb-0 sm:px-12">
+      {/* The design's gradient reaches brand-500 by 55%, and white body copy
+          sits in that band at 2.44:1. A brand-700 stop at 44% keeps the
+          dark-to-pale arc and puts the text on 5.32:1. The contrast guard
+          reads class names and cannot evaluate a gradient, so this one is
+          on us. */}
+      <header className="relative flex flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#0f5566_0%,#17758a_44%,#43b4c8_74%,#f4fbfc_100%)] px-5 pt-[104px] pb-0 sm:px-12 sm:pt-[132px]">
         <div aria-hidden className="jglow1" />
         <div aria-hidden className="jglow2" />
         <div aria-hidden className="jgrain" />
 
-        <div className="h-[72px] flex-none" />
-
-        <div className="relative z-2 flex flex-col items-center gap-6 pt-12 text-center sm:gap-7 sm:pt-16">
-          <span className="jpill rounded-full border border-white/30 bg-white/15 px-4.5 py-2 font-mono text-[12px] leading-none text-white sm:text-[13px]">
+        <div className="relative z-10 flex w-full flex-col items-center gap-6 text-center sm:gap-7">
+          <span className="rounded-full border border-white/30 bg-white/15 px-4 py-2 text-center font-mono text-[11.5px] leading-[1.4] text-white sm:text-[13px] sm:leading-none">
             Free · No account needed to read
           </span>
 
-          <h1 className="text-[40px] leading-[1.05] font-medium tracking-[-0.03em] text-white sm:text-[72px] sm:leading-[1.02] sm:tracking-[-0.035em] lg:text-[88px]">
+          <h1 className="text-[38px] leading-[1.06] font-medium tracking-[-0.03em] text-white sm:text-[64px] sm:leading-[1.02] sm:tracking-[-0.035em] lg:text-[88px]">
             Learn anything,
             <br />
             <span className="bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent">
@@ -157,39 +217,41 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             </span>
           </h1>
 
-          <p className="max-w-[54ch] text-[16px] leading-[1.5] text-pretty text-white/85 sm:text-[20px]">
+          <p className="max-w-[54ch] text-[16px] leading-[1.55] text-pretty text-white/85 sm:text-[20px] sm:leading-[1.5]">
             Deep roadmaps built from the best free material on the internet. Every link opened by a
             person before it shipped.
           </p>
 
-          <SearchLink label="What do you want to learn?" />
+          <SearchBar id="hero-search" />
         </div>
 
-        {/* The four facts, floating. Absolute on desktop where there is room
-            around the headline; a plain wrap on mobile where there is not. */}
-        <div className="relative z-2 mt-8 flex flex-wrap justify-center gap-2 lg:hidden">
+        {/* The four facts. A wrapped row everywhere; only pinned to the
+            corners at xl, where there is genuinely space beside the
+            headline. Absolute positioning at smaller widths is what was
+            colliding with the nav and the card. */}
+        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-2 xl:hidden">
           <StatPill glyph="⚡">{counts.roadmaps} roadmaps</StatPill>
           <StatPill glyph="▦">{counts.days} days written</StatPill>
           <StatPill glyph="◷">~{counts.hours} hours</StatPill>
           <StatPill glyph="✓">{counts.links} links checked</StatPill>
         </div>
-        <div aria-hidden className="hidden lg:block">
-          <StatPill glyph="⚡" className="absolute top-[230px] left-[60px]">
+        <div aria-hidden className="hidden xl:block">
+          <StatPill glyph="⚡" className="absolute top-[210px] left-[64px] opacity-95">
             {counts.roadmaps} roadmaps
           </StatPill>
-          <StatPill glyph="▦" className="absolute top-[290px] right-[90px]">
+          <StatPill glyph="▦" className="absolute top-[280px] right-[80px] opacity-90">
             {counts.days} days written
           </StatPill>
-          <StatPill glyph="◷" className="absolute top-[640px] left-[110px]">
+          <StatPill glyph="◷" className="absolute bottom-[220px] left-[104px] opacity-90">
             ~{counts.hours} hours
           </StatPill>
-          <StatPill glyph="✓" className="absolute top-[600px] right-[60px]">
+          <StatPill glyph="✓" className="absolute right-[64px] bottom-[260px] opacity-95">
             {counts.links} links checked
           </StatPill>
         </div>
 
         {/* the day card, straddling the fold */}
-        <div className="relative z-3 mt-12 w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-24 sm:p-7">
+        <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
           <div className="font-mono text-[12px] leading-[1.5] text-ink-500">Day 45 of 91</div>
           <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
             Frames
@@ -205,9 +267,8 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             ].map(([title, why]) => (
               <div key={title} className="rounded-lg border border-ink-100 p-3.5">
                 <div className="text-[14px] leading-[1.4] font-medium text-ink-900">{title}</div>
-                {/* Full contrast, italic, brand-700: this note is the proof a
-                    person chose the link, and the one thing a crawler cannot
-                    fake. It never dims. */}
+                {/* Full contrast, always: this note is the proof a person
+                    chose the link, and the one thing a crawler cannot fake. */}
                 <p className="mt-1.5 text-[13px] leading-[1.6] text-pretty text-brand-700 italic">
                   Why this one — {why}
                 </p>
@@ -224,27 +285,22 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             </Link>
           </div>
         </div>
-
-        <div className="h-16 sm:h-24" />
       </header>
-
-      {/* The nav flips to a solid surface once this scrolls out of view. */}
-      <div aria-hidden data-nav-sentinel className="h-px" />
 
       {/* ── the sources ─────────────────────────────────────────────────── */}
       {sources.length ? (
-        <section className="jreveal border-y border-ink-100 bg-white px-5 py-10 sm:px-12">
+        <section className="jreveal border-b border-ink-100 bg-white px-5 pt-24 pb-10 sm:px-12 sm:pt-32">
           <h2 className="text-center font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
             The material comes from
           </h2>
           {/* Names, never logos — a wordmark implies a relationship we do
-              not have. Derived from the resources we actually link to, so
-              the wall cannot outlive the curation. */}
+              not have. Derived from what we actually link to, so the wall
+              cannot outlive the curation it describes. */}
           <ul className="mx-auto mt-6 flex max-w-[1000px] flex-wrap items-center justify-center gap-x-8 gap-y-4">
             {sources.map((s) => (
               <li
                 key={s}
-                className="jwordmark text-[15px] leading-none font-medium text-ink-900 sm:text-[17px]"
+                className="jwordmark text-[14px] leading-none font-medium text-ink-900 sm:text-[17px]"
               >
                 {s}
               </li>
@@ -253,8 +309,139 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
         </section>
       ) : null}
 
+      {/* ── the roadmaps ────────────────────────────────────────────────── */}
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
+        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+          Roadmaps
+        </div>
+        <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
+          Start with what
+          <br className="hidden sm:block" /> you actually need.
+        </h2>
+
+        {subjects.length ? (
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link
+              href="/learn"
+              className="flex min-h-10 items-center rounded-full border border-brand-700 bg-brand-700 px-4 text-[13.5px] font-medium text-white"
+            >
+              All
+            </Link>
+            {subjects.map((s) => (
+              <Link
+                key={s}
+                href={`/learn?subject=${encodeURIComponent(s)}` as Route}
+                className="flex min-h-10 items-center rounded-full border border-ink-100 bg-white px-4 text-[13.5px] text-ink-900 hover:border-brand-700"
+              >
+                {s}
+              </Link>
+            ))}
+          </div>
+        ) : null}
+
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {roadmaps.map((r) => (
+            <Link
+              key={r.slug}
+              href={`/learn/${r.slug}`}
+              className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6"
+            >
+              <div className="font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
+                {r.kicker}
+              </div>
+              <div className="mt-2.5 text-[18px] leading-[1.35] font-medium text-ink-900">
+                {r.title}
+              </div>
+              <p className="mt-2 text-[14px] leading-[1.6] text-pretty text-ink-600">{r.summary}</p>
+              <div className="mt-4 border-t border-ink-100 pt-3 font-mono text-[12.5px] leading-[1.5] text-ink-500">
+                {r.sizeLine}
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <Link
+          href="/learn"
+          className="mt-6 inline-flex min-h-11 items-center text-[14px] font-medium text-brand-700"
+        >
+          All {counts.roadmaps} roadmaps ↗
+        </Link>
+      </section>
+
+      {/* ── how it works ────────────────────────────────────────────────── */}
+      <section
+        id="how-it-works"
+        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-16 sm:px-12 sm:py-24"
+      >
+        <div className="mx-auto max-w-[1280px]">
+          <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+            How it works
+          </div>
+          <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
+            Four steps,
+            <br className="hidden sm:block" /> then a habit.
+          </h2>
+
+          <ol className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map(([n, head, body]) => (
+              <li key={n} className="border-t border-ink-200 pt-4">
+                <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
+                <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
+                <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ── pricing ─────────────────────────────────────────────────────── */}
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+              Pricing
+            </div>
+            <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
+              Free.
+              <br className="hidden sm:block" /> All of it.
+            </h2>
+          </div>
+
+          <div className="rounded-card border border-ink-100 bg-white p-6 sm:p-8">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-[44px] leading-none font-medium text-ink-900">₹0</span>
+              <span className="text-[15px] leading-none text-ink-600">forever</span>
+            </div>
+            <ul className="mt-5 flex flex-col gap-2.5">
+              {FREE_INCLUDES.map((f) => (
+                <li key={f} className="flex gap-3 text-[15px] leading-[1.6] text-ink-800">
+                  <span aria-hidden className="text-brand-700">
+                    ✓
+                  </span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/learn"
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 sm:w-auto sm:self-start"
+            >
+              Start free
+            </Link>
+            {/* The caveat sits with the claim, which is the only thing that
+                makes "forever" honest. Do not separate them. */}
+            <p className="mt-3 text-[13px] leading-[1.6] text-ink-500">
+              If that ever changes, this page changes first.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── here is one day ─────────────────────────────────────────────── */}
-      <section id="one-day" className="jreveal mx-auto max-w-[1280px] scroll-mt-24 px-5 py-16 sm:px-12 sm:py-28">
+      <section
+        id="one-day"
+        className="jreveal mx-auto max-w-[1280px] scroll-mt-24 border-t border-ink-100 px-5 py-16 sm:px-12 sm:py-24"
+      >
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Inside a day
         </div>
@@ -263,7 +450,7 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
         </h2>
 
         <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:gap-16">
-          <div className="rounded-card border border-ink-100 bg-white p-6 sm:p-7 lg:w-[600px] lg:flex-none">
+          <div className="rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[600px] lg:flex-none">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
               Day 45 of 91 · Window functions
             </div>
@@ -293,21 +480,20 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
       </section>
 
       {/* ── the bento ───────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 pb-16 sm:px-12 sm:pb-28">
+      <section className="jreveal mx-auto max-w-[1280px] px-5 pb-16 sm:px-12 sm:pb-24">
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Platform
         </div>
         <h2 className="mt-3 text-[26px] leading-[1.25] font-medium text-ink-900 sm:text-[32px]">
           Built so
-          <br />
-          you finish.
+          <br className="hidden sm:block" /> you finish.
         </h2>
         <p className="mt-3 max-w-[52ch] text-[16px] leading-[1.65] text-pretty text-ink-600">
           The habit matters more than any single feature.
         </p>
 
         <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-6 hover:border-brand-700">
+          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
               Sequenced, not searched
             </h3>
@@ -316,7 +502,7 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             </p>
           </div>
 
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-6 hover:border-brand-700">
+          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
               Checked by a person
             </h3>
@@ -333,14 +519,14 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             </div>
           </div>
 
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-6 hover:border-brand-700">
+          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">The streak</h3>
             <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
               Miss a day and it resets. Your total never does.
             </p>
           </div>
 
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-6 hover:border-brand-700">
+          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">Yours to keep</h3>
             <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
               Every highlight and note, exportable anytime.
@@ -373,9 +559,9 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             <span
               key={i}
               aria-hidden
-              className="aspect-square rounded-[3px] bg-check-machine"
-              // Stagger by index: the grid fills as a sweep rather than all
-              // at once, which is what makes ninety-one read as a lot.
+              className="aspect-square rounded-[3px] bg-brand-500"
+              // Staggered so the grid fills as a sweep rather than all at
+              // once — which is what makes ninety-one read as a lot.
               style={{ transitionDelay: `${i * 9}ms` }}
             />
           ))}
@@ -383,7 +569,7 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
       </section>
 
       {/* ── the close ───────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto flex max-w-[1280px] flex-col items-center px-5 py-16 text-center sm:px-12 sm:py-28">
+      <section className="jreveal mx-auto flex max-w-[1280px] flex-col items-center px-5 py-16 text-center sm:px-12 sm:py-24">
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Ready when you are
         </div>
@@ -394,7 +580,7 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
           Ninety-one days. Start with one.
         </p>
         <div className="mt-7 flex w-full flex-col items-center gap-3">
-          <SearchLink label="What do you want to learn?" />
+          <SearchBar id="cta-search" />
           <Link
             href="/learn"
             className="flex min-h-12 items-center justify-center rounded-full bg-brand-700 px-7 text-[15px] font-medium text-white hover:bg-brand-800"
@@ -402,15 +588,6 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
             Start free
           </Link>
         </div>
-      </section>
-
-      {/* ── what this is not ────────────────────────────────────────────── */}
-      <section className="border-t border-ink-100 px-5 py-14 sm:px-12">
-        <p className="mx-auto max-w-[66ch] text-[15px] leading-[1.75] text-pretty text-ink-600">
-          Jintu does not promise you a job. We do not host anyone else&apos;s writing — we write our
-          own explanations and link out for depth. Points and streaks are for consistency, not a
-          credential.
-        </p>
       </section>
 
       {/* ── footer ──────────────────────────────────────────────────────── */}
@@ -425,7 +602,7 @@ export default function Homepage({ counts, sources, signedIn }: HomepageProps) {
                 head: "Product",
                 links: [
                   ["Roadmaps", "/learn"],
-                  ["How it works", "/#one-day"],
+                  ["How it works", "/#how-it-works"],
                   ["Free", "/pricing"],
                 ],
               },
