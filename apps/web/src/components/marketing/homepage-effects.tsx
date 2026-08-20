@@ -3,98 +3,76 @@
 import { useEffect } from "react";
 
 /**
- * The homepage's motion, ported from the design project's DCLogic rather
- * than reinvented. Renders nothing — it only attaches observers.
+ * The homepage's motion. Renders nothing — it only attaches observers.
  *
- * Three separate gates, each for a different reason:
+ * The v2 design carries no DCLogic, so the behaviour is defined here. Three
+ * gates, each for a different reason:
  *
- *   1. Reveals fill once. Chromium drives them from a CSS scroll timeline;
- *      Safari and Firefox get a one-shot IntersectionObserver that
- *      unobserves on first intersection. Both are forwards-filling, so
- *      scrolling back up never replays a section.
- *   2. Looping animations (glow, marquee) stay paused until their .jloop
- *      wrapper is in view, so nothing burns a phone battery off-screen.
- *   3. The cursor spotlight binds only under hover + fine pointer, so it
- *      never attaches on touch, and it is rAF-throttled: pointermove fires
- *      far more often than a frame can paint, and the extra work is thrown
- *      away by definition.
- *
- * No scroll listener drives layout anywhere here. The page scrolls at the
- * native rate and nothing is scroll-jacked.
+ *   1. Reveals and the 91-square grid fill ONCE. The observer adds the
+ *      class and immediately unobserves, so scrolling back up never
+ *      replays a section — a page that re-animates on every pass reads as
+ *      a demo rather than a product.
+ *   2. Reduced motion lands everything in its final state up front. Not
+ *      "freeze mid-animation": a half-faded section is worse than no
+ *      effect at all.
+ *   3. The nav flips to a solid surface once the hero has scrolled past.
+ *      It starts transparent with white text over the dark end of the
+ *      gradient; leaving it that way over a pale page would be white on
+ *      white. Tracked with an observer on a sentinel rather than a scroll
+ *      listener, so nothing runs on the scroll thread.
  */
 export function HomepageEffects() {
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const reveals = Array.from(document.querySelectorAll<HTMLElement>(".jhome .jreveal"));
-
-    // Reduced motion: land everything in its final state immediately. Not
-    // "freeze mid-animation" — a half-faded section is worse than no effect.
-    if (reduced) {
-      for (const el of reveals) el.classList.add("jreveal-done");
-      return;
-    }
+    const grids = Array.from(document.querySelectorAll<HTMLElement>(".jhome .jgrid91"));
+    const nav = document.querySelector<HTMLElement>(".jhome .jnav");
+    const sentinel = document.querySelector<HTMLElement>(".jhome [data-nav-sentinel]");
 
     const observers: IntersectionObserver[] = [];
 
-    const supportsTimeline =
-      typeof CSS !== "undefined" && CSS.supports?.("animation-timeline: view()");
-    if (!supportsTimeline && reveals.length) {
+    // The nav swap is not decoration — it is what keeps the links readable,
+    // so it runs even under reduced motion.
+    if (nav && sentinel) {
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry) nav.classList.toggle("jscrolled", !entry.isIntersecting);
+        },
+        { threshold: 0 },
+      );
+      io.observe(sentinel);
+      observers.push(io);
+    }
+
+    if (reduced) {
+      for (const el of reveals) el.classList.add("jrevealed");
+      for (const el of grids) el.classList.add("jgrid-in");
+      return () => {
+        for (const io of observers) io.disconnect();
+      };
+    }
+
+    const once = (els: HTMLElement[], cls: string, threshold: number) => {
+      if (!els.length) return;
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
-            e.target.classList.add("jreveal-done");
-            io.unobserve(e.target); // once, never again
+            e.target.classList.add(cls);
+            io.unobserve(e.target);
           }
         },
-        { threshold: 0.2 },
+        { threshold },
       );
-      for (const el of reveals) io.observe(el);
+      for (const el of els) io.observe(el);
       observers.push(io);
-    }
+    };
 
-    const loopers = document.querySelectorAll<HTMLElement>(".jhome .jloop");
-    if (loopers.length) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) e.target.classList.toggle("in-view", e.isIntersecting);
-        },
-        { threshold: 0.1 },
-      );
-      for (const el of loopers) io.observe(el);
-      observers.push(io);
-    }
-
-    const cleanups: (() => void)[] = [];
-    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      let frame: number | null = null;
-      let x = 0;
-      let y = 0;
-      let target: HTMLElement | null = null;
-      const apply = () => {
-        frame = null;
-        target?.style.setProperty("--mx", `${x}px`);
-        target?.style.setProperty("--my", `${y}px`);
-      };
-      for (const card of document.querySelectorAll<HTMLElement>(".jhome .jspot")) {
-        const onMove = (e: PointerEvent) => {
-          const r = card.getBoundingClientRect();
-          x = e.clientX - r.left;
-          y = e.clientY - r.top;
-          target = card;
-          if (frame === null) frame = requestAnimationFrame(apply);
-        };
-        card.addEventListener("pointermove", onMove);
-        cleanups.push(() => card.removeEventListener("pointermove", onMove));
-      }
-      cleanups.push(() => {
-        if (frame !== null) cancelAnimationFrame(frame);
-      });
-    }
+    once(reveals, "jrevealed", 0.15);
+    once(grids, "jgrid-in", 0.2);
 
     return () => {
       for (const io of observers) io.disconnect();
-      for (const c of cleanups) c();
     };
   }, []);
 

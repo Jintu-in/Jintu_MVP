@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Homepage from "@/components/marketing/homepage";
-import { countPublishedResources, listPublishedRoadmaps, type RoadmapSummary } from "@/lib/roadmaps";
+import {
+  countPublishedResources,
+  listPublishedRoadmaps,
+  topSourceNames,
+  type RoadmapSummary,
+} from "@/lib/roadmaps";
 import { getViewer } from "@/lib/session";
 
 /**
@@ -58,27 +63,19 @@ export default async function LandingPage() {
   // said "500+ curated links"; there are 228, and a marketing page that
   // rounds up is the one that gets quoted back at you.
   const days = roadmaps.reduce((a, r) => a + r.nodeCount, 0);
-  const links = await countPublishedResources().catch(() => 0);
+  // Summed across all four, not one of them. The design's pill said
+  // "~340 hours", which is the data analyst alone.
+  const hours = roadmaps.reduce((a, r) => a + (r.estimatedHours ?? 0), 0);
+  const [links, sources] = await Promise.all([
+    countPublishedResources().catch(() => 0),
+    topSourceNames(8).catch(() => []),
+  ]);
 
   return (
     <Homepage
       signedIn={Boolean(viewer?.hasProfile)}
-      counts={{ roadmaps: roadmaps.length, days, links }}
-      roadmaps={roadmaps.map((r) => ({
-        slug: r.slug,
-        title: r.title,
-        metaLine: [r.difficulty, r.estimatedWeeks ? `~${r.estimatedWeeks} weeks` : null]
-          .filter(Boolean)
-          .join(" · "),
-        summary: r.summary,
-        sizeLine: [
-          `${r.moduleCount} modules`,
-          `${r.nodeCount} days`,
-          r.estimatedHours ? `~${r.estimatedHours} hours` : null,
-        ]
-          .filter(Boolean)
-          .join(" · "),
-      }))}
+      counts={{ roadmaps: roadmaps.length, days, hours, links }}
+      sources={sources}
     />
   );
 }

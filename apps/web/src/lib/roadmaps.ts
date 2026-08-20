@@ -255,3 +255,27 @@ export async function countPublishedResources(): Promise<number> {
   if (error) throw describeSupabaseError("counting resources", error);
   return count ?? 0;
 }
+
+/**
+ * The names behind the material, most-used first.
+ *
+ * The homepage's source wall used to be a hardcoded list of famous logos.
+ * Deriving it means the wall can only ever show places we genuinely link
+ * to — and it stays true when curation changes. Names only, never logos:
+ * a wordmark implies a relationship we do not have.
+ */
+export async function topSourceNames(limit = 8): Promise<string[]> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase.from("resources").select("source_name");
+  if (error) throw describeSupabaseError("reading source names", error);
+
+  const counts = new Map<string, number>();
+  for (const r of data ?? []) {
+    const n = (r.source_name ?? "").trim();
+    if (n) counts.set(n, (counts.get(n) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([name]) => name);
+}
