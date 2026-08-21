@@ -1,6 +1,14 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { HomepageEffects } from "@/components/marketing/homepage-effects";
+import {
+  CategoryCap,
+  ContribGrid,
+  DayCardMini,
+  LinkCardMini,
+  ModuleSpine,
+  StreakStrip,
+} from "@/components/marketing/product-miniatures";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
 
@@ -26,6 +34,7 @@ import { SiteNav } from "@/components/site/site-nav";
  */
 
 export interface HomepageRoadmap {
+  category: "data" | "software" | "marketing" | "judgement";
   slug: string;
   title: string;
   /** "Data · Beginner" */
@@ -40,6 +49,19 @@ export interface HomepageProps {
   counts: { roadmaps: number; days: number; hours: number; links: number };
   /** The places the material genuinely comes from, most-used first. */
   sources: string[];
+  /**
+   * A few real curated links, each carrying the note a person wrote. Used
+   * wherever the page would otherwise be claiming that such notes exist.
+   */
+  samples: {
+    title: string;
+    sourceName: string;
+    type: string;
+    minutes: number | null;
+    editorNote: string | null;
+  }[];
+  /** The flagship roadmap's modules, in order, for the spine. */
+  spine: { position: number; title: string; weekRange: string | null }[];
   /**
    * Category chips above the roadmap cards. Four of them, ever — they used
    * to be subject_tags[0], which put "java" and "thinking" side by side as
@@ -125,30 +147,42 @@ function StatPill({
   );
 }
 
+/**
+ * The four steps, each with the component it is describing.
+ *
+ * The copy is unchanged. What changed is that "45–90 min, it remembers where
+ * you stopped" now sits beside a day card with a length on it and a bar part
+ * of the way along, so the sentence has its evidence next to it rather than
+ * asking to be believed.
+ */
 const STEPS = [
   ["01", "Pick a roadmap", "Read the whole thing before you sign up."],
   ["02", "Do one day", "45–90 min. It remembers where you stopped."],
   ["03", "Keep the streak", "Miss a day and it resets. Your total never does."],
   ["04", "Show what you did", "A public profile, counted not self-reported."],
-];
+] as const;
 
-const BULLETS = [
-  "Every day states its length before you open it",
-  "Links go to the original author, never a copy",
-  "A note on why this source and not another",
-  "One thing to make, then three questions to check yourself",
-];
-
-const FREE_INCLUDES = [
-  "Every roadmap in full",
-  "Progress, streaks, points",
-  "No adverts, nothing sold about you",
-];
+/**
+ * The day-page annotations, and where each connector meets the card.
+ *
+ * `top` is a hand-set offset in pixels, tuned against the rendered card at
+ * lg. The alternative is measuring the DOM on every resize to draw four
+ * hairlines, which is a scroll-jank generator in aid of decoration — and it
+ * is decoration: the notes read correctly stacked, and below lg they are.
+ */
+const ANNOTATIONS = [
+  { top: 4, note: "Every day states its length before you open it" },
+  { top: 26, note: "One principle, before any of the links" },
+  { top: 40, note: "Links go to the original author, never a copy" },
+  { top: 18, note: "A note on why this source and not another" },
+] as const;
 
 export default function Homepage({
   roadmaps,
   counts,
   sources,
+  samples,
+  spine,
   subjects,
   signedIn,
   initials = null,
@@ -274,9 +308,13 @@ export default function Homepage({
             The material comes from
           </h2>
           {/* Names, never logos — a wordmark implies a relationship we do
-              not have. Derived from what we actually link to, so the wall
-              cannot outlive the curation it describes. */}
-          <ul className="mx-auto mt-6 flex max-w-[1000px] flex-wrap items-center justify-center gap-x-8 gap-y-4">
+              not have, and a screenshot of somebody else's page is their
+              content on our server, which is the one line this product does
+              not cross. What CAN be shown is our own rendering of their
+              link: three real cards below, exactly as a day page draws them.
+              The names are derived from what we actually link to, so the
+              wall cannot outlive the curation it describes. */}
+          <ul className="mx-auto mt-6 flex max-w-[1000px] list-none flex-wrap items-center justify-center gap-x-8 gap-y-4 p-0">
             {sources.map((s) => (
               <li
                 key={s}
@@ -286,6 +324,14 @@ export default function Homepage({
               </li>
             ))}
           </ul>
+
+          {samples.length ? (
+            <div className="mx-auto mt-10 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
+              {samples.slice(2).map((r) => (
+                <LinkCardMini key={r.title} resource={r} />
+              ))}
+            </div>
+          ) : null}
         </section>
       ) : null}
 
@@ -324,8 +370,12 @@ export default function Homepage({
             <Link
               key={r.slug}
               href={`/learn/${r.slug}`}
-              className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6"
+              className="jcard-hover flex gap-4 rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6"
             >
+              {/* The colour cap the catalogue cards wear, so a roadmap looks
+                  like itself on both surfaces. */}
+              <CategoryCap category={r.category} className="min-h-[108px] w-12 flex-none self-stretch" />
+              <div className="min-w-0 flex-1">
               <div className="font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
                 {r.kicker}
               </div>
@@ -340,6 +390,7 @@ export default function Homepage({
               </p>
               <div className="mt-4 border-t border-ink-100 pt-3 font-mono text-[12.5px] leading-[1.5] text-ink-500">
                 {r.sizeLine}
+              </div>
               </div>
             </Link>
           ))}
@@ -371,11 +422,18 @@ export default function Homepage({
               IS the marker here, and a stylesheet change that dropped preflight
               would put a second number in front of every one of them. */}
           <ol className="mt-8 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map(([n, head, body]) => (
+            {STEPS.map(([n, head, body], i) => (
               <li key={n} className="border-t border-ink-200 pt-4">
                 <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
                 <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
                 <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
+                {/* 96px of the real thing, under the words for it. */}
+                <div className="mt-4 h-24">
+                  {i === 0 ? <ModuleSpine modules={spine} mini className="h-24" /> : null}
+                  {i === 1 ? <DayCardMini className="h-24" /> : null}
+                  {i === 2 ? <StreakStrip mini className="h-24" /> : null}
+                  {i === 3 ? <ContribGrid className="h-24" /> : null}
+                </div>
               </li>
             ))}
           </ol>
@@ -395,21 +453,24 @@ export default function Homepage({
             </h2>
           </div>
 
-          <div className="rounded-card border border-ink-100 bg-white p-6 sm:p-8">
-            <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[44px] leading-none font-medium text-ink-900">₹0</span>
-              <span className="text-[15px] leading-none text-ink-600">forever</span>
+          {/* Three ticked bullets made a free product look like a plan you
+              have to evaluate. The number is the whole argument, so it is the
+              whole card: ₹0 at display size, one line of scope, one button.
+              The bullets it replaced were "every roadmap in full", "progress,
+              streaks, points" and "nothing sold about you" — the first two
+              are shown elsewhere on this page and the third is a promise
+              about data, which belongs in the privacy policy the footer
+              links, not in a marketing tick list. */}
+          <div className="rounded-card border border-ink-100 bg-white p-6 sm:p-10">
+            <div className="flex items-end gap-3">
+              <span className="font-mono text-[92px] leading-[0.8] font-medium tracking-[-0.04em] text-ink-900 sm:text-[128px]">
+                ₹0
+              </span>
+              <span className="pb-2 text-[16px] leading-none text-ink-600">forever</span>
             </div>
-            <ul className="mt-5 flex flex-col gap-2.5">
-              {FREE_INCLUDES.map((f) => (
-                <li key={f} className="flex gap-3 text-[15px] leading-[1.6] text-ink-800">
-                  <span aria-hidden className="text-brand-700">
-                    ✓
-                  </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
+            <p className="mt-6 mb-0 max-w-[34ch] text-[16px] leading-[1.6] text-pretty text-ink-600">
+              Everything on this page. No account needed to read any of it.
+            </p>
             <Link
               href="/learn"
               className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 sm:w-auto sm:self-start"
@@ -437,8 +498,12 @@ export default function Homepage({
           Here is one day.
         </h2>
 
-        <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:gap-16">
-          <div className="rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[600px] lg:flex-none">
+        {/* The four notes used to be a plain list beside the card, so you
+            read a sentence and then went hunting for what it referred to.
+            They are anchored now — a hairline runs from each note to the row
+            it is about at lg, and below that they sit under the card. */}
+        <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-0">
+          <div className="relative rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[560px] lg:flex-none">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
               Day 45 of 91 · Window functions
             </div>
@@ -446,21 +511,35 @@ export default function Homepage({
             <p className="mt-3 text-[16px] leading-[1.65] text-pretty text-ink-600 italic">
               If you cannot say what one row means, you cannot analyse the table.
             </p>
-            <div className="mt-5 rounded-lg border border-ink-100 p-3.5">
-              <div className="text-[14px] leading-[1.4] font-medium text-ink-900">
-                RANGE vs ROWS in window frames
+            {samples[0] ? (
+              <div className="mt-5">
+                <LinkCardMini resource={samples[0]} />
               </div>
-              <p className="mt-1.5 text-[13px] leading-[1.6] text-brand-700 italic">
-                Why this one — read the first example twice.
-              </p>
-            </div>
+            ) : null}
+
+            {/* Below lg the notes follow the card inline; the connectors only
+                exist where there is a column to run them to. */}
+            <ul className="mt-6 flex list-none flex-col gap-3 p-0 lg:hidden">
+              {ANNOTATIONS.map((a) => (
+                <li key={a.note} className="flex gap-2.5 text-[14px] leading-[1.55] text-ink-600">
+                  <span aria-hidden className="mt-2 h-px w-4 flex-none bg-brand-500" />
+                  {a.note}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <ul className="flex max-w-[420px] flex-1 flex-col gap-6 lg:pt-4">
-            {BULLETS.map((b) => (
-              <li key={b} className="flex gap-3.5">
-                <span aria-hidden className="mt-[11px] h-px w-6 flex-none bg-ink-200" />
-                <span className="text-[15px] leading-[1.6] text-pretty text-ink-600">{b}</span>
+          <ul className="hidden list-none flex-1 flex-col p-0 lg:flex">
+            {ANNOTATIONS.map((a) => (
+              <li
+                key={a.note}
+                className="flex items-start text-[14px] leading-[1.55] text-pretty text-ink-600"
+                style={{ marginTop: a.top }}
+              >
+                {/* The line is the connection. Without it these are just a
+                    second list of claims, which is what they were. */}
+                <span aria-hidden className="mt-[10px] h-px w-14 flex-none bg-brand-500" />
+                <span className="pl-3.5">{a.note}</span>
               </li>
             ))}
           </ul>
@@ -485,33 +564,33 @@ export default function Homepage({
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
               Sequenced, not searched
             </h3>
-            <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
-              Twenty modules in one order, not a search results page you have to sequence yourself.
-            </p>
+            {/* The sentence that used to be here said "twenty modules in one
+                order, not a search results page". These ARE the twenty
+                modules, in order, read from the roadmap. */}
+            <ModuleSpine modules={spine} className="mt-4" />
           </div>
 
           <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
               Checked by a person
             </h3>
-            <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
-              Every link comes with a note on why it, and not another.
-            </p>
-            <div className="mt-4 rounded-lg border border-ink-100 p-3">
-              <div className="text-[13.5px] leading-[1.4] text-ink-900">
-                RANGE vs ROWS in window frames
-              </div>
-              <p className="mt-1 text-[12.5px] leading-[1.55] text-brand-700 italic">
-                Why this one — read it twice.
+            {/* One real curated link, rendered the way the day page renders
+                it. The note in teal is a person's own sentence out of the
+                database — the claim and its evidence are the same object. */}
+            {samples[1] ? (
+              <LinkCardMini resource={samples[1]} className="mt-4" />
+            ) : (
+              <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
+                Every link comes with a note on why it, and not another.
               </p>
-            </div>
+            )}
           </div>
 
           <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
             <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">The streak</h3>
-            <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
-              Miss a day and it resets. Your total never does.
-            </p>
+            {/* The gap in the middle is the claim. A strip with no missed day
+                would be illustrating something nobody said. */}
+            <StreakStrip className="mt-4" />
           </div>
 
           <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
@@ -519,9 +598,16 @@ export default function Homepage({
             <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
               Every highlight and note, exportable anytime.
             </p>
-            <blockquote className="mt-4 border-l-2 border-ink-200 pl-3 text-[13.5px] leading-[1.65] text-pretty text-ink-600 italic">
-              A null can mean missing, unknown, or not-applicable — treating them the same silently
-              changes every average.
+            <blockquote className="mt-4 border-l-2 border-brand-500 pl-3.5">
+              <p className="m-0 text-[13.5px] leading-[1.65] text-pretty text-ink-900 italic">
+                A null can mean missing, unknown, or not-applicable — treating them the same
+                silently changes every average.
+              </p>
+              {/* A highlight without its source day is a quotation with no
+                  citation, which is the opposite of "yours to keep". */}
+              <cite className="mt-2 block font-mono text-[11px] leading-none text-ink-500 not-italic">
+                Day 31 · Cleaning and missing values
+              </cite>
             </blockquote>
             <Link
               href="/profile"
@@ -557,17 +643,35 @@ export default function Homepage({
       </section>
 
       {/* ── the close ───────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto flex max-w-[1280px] flex-col items-center px-5 py-16 text-center sm:px-12 sm:py-24">
-        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+      {/* The cards behind the copy are cropped by the section, which is what
+          makes them read as a stack continuing past the edge rather than as
+          four more things to look at. Hidden below lg: at 390px there is no
+          margin to crop into, and they would sit under the search field. */}
+      <section className="jreveal relative mx-auto flex max-w-[1280px] flex-col items-center overflow-hidden px-5 py-16 text-center sm:px-12 sm:py-24">
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
+          <div className="absolute top-10 -left-16 w-[300px] rotate-[-7deg] rounded-card border border-ink-100 bg-white p-4 opacity-70">
+            <DayCardMini className="h-24" />
+          </div>
+          <div className="absolute -right-20 bottom-16 w-[320px] rotate-[6deg] rounded-card border border-ink-100 bg-white p-4 opacity-70">
+            <StreakStrip />
+          </div>
+          <div className="absolute -bottom-14 left-24 w-[260px] rotate-[3deg] rounded-card border border-ink-100 bg-white p-4 opacity-60">
+            <ContribGrid className="h-20" />
+          </div>
+          {/* Fades them out under the copy, so the words stay the thing you
+              read first. */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-ink-50)_38%,transparent_72%)]" />
+        </div>
+        <div className="relative z-10 font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Ready when you are
         </div>
-        <h2 className="mt-3 text-[28px] leading-[1.2] font-medium text-ink-900 sm:text-[40px]">
+        <h2 className="relative z-10 mt-3 text-[28px] leading-[1.2] font-medium text-ink-900 sm:text-[40px]">
           Your first day is waiting.
         </h2>
-        <p className="mt-3 text-[16px] leading-[1.6] text-ink-600 sm:text-[18px]">
+        <p className="relative z-10 mt-3 text-[16px] leading-[1.6] text-ink-600 sm:text-[18px]">
           Ninety-one days. Start with one.
         </p>
-        <div className="mt-7 flex w-full flex-col items-center gap-3">
+        <div className="relative z-10 mt-7 flex w-full flex-col items-center gap-3">
           <SearchBar id="cta-search" />
           <Link
             href="/learn"

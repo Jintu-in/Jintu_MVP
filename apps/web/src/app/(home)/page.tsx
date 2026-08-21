@@ -3,7 +3,9 @@ import Homepage from "@/components/marketing/homepage";
 import { CATEGORIES } from "@/lib/catalogue-filters";
 import {
   countPublishedResources,
+  listModules,
   listPublishedRoadmaps,
+  sampleResources,
   topSourceNames,
   type RoadmapSummary,
 } from "@/lib/roadmaps";
@@ -56,6 +58,13 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Whose modules the homepage's spine shows. The longest roadmap, because
+ * twenty bars makes the point that four would not — and named here rather
+ * than inlined so it is one edit when a longer one lands.
+ */
+const FLAGSHIP = "data-analyst";
+
 export default async function LandingPage() {
   const roadmaps: RoadmapSummary[] = await listPublishedRoadmaps().catch(() => []);
   const viewer = await getViewer().catch(() => null);
@@ -76,13 +85,21 @@ export default async function LandingPage() {
     key: c.key,
     label: c.label,
   }));
-  const [links, sources] = await Promise.all([
+  // The flagship's modules and three annotated links: the homepage shows
+  // the product rather than describing it, and both of those are the real
+  // rows. Failures degrade to an empty array, and every section that uses
+  // them renders without them.
+  const [links, sources, samples, spine] = await Promise.all([
     countPublishedResources().catch(() => 0),
     topSourceNames(8).catch(() => []),
+    sampleResources(5).catch(() => []),
+    listModules(FLAGSHIP).catch(() => []),
   ]);
 
   return (
     <Homepage
+      samples={samples}
+      spine={spine}
       signedIn={Boolean(viewer?.hasProfile)}
       initials={viewer ? initialsFor(viewer) : null}
       displayName={viewer?.fullName ?? viewer?.email ?? null}
@@ -91,6 +108,7 @@ export default async function LandingPage() {
       subjects={subjects}
       roadmaps={roadmaps.map((r) => ({
         slug: r.slug,
+        category: r.category,
         title: r.title,
         kicker: [CATEGORIES.find((c) => c.key === r.category)?.label, r.difficulty]
           .filter(Boolean)

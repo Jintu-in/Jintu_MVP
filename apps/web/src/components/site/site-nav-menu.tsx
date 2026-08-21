@@ -11,11 +11,11 @@ import { cn } from "@/lib/utils";
  * The header's one interactive control: an avatar when signed in, a menu
  * button when not.
  *
- * Below sm it is the whole navigation — Roadmaps, How it works and Free live
- * inside it, because four links plus a wordmark in 390px leaves each of them
- * about forty pixels and nothing is tappable. From sm up those links are back
- * on the bar and this holds only the account items, so a signed-out visitor
- * on a desktop sees a plain "Sign in" link and no menu at all.
+ * Below sm it is the whole navigation — Roadmaps and How it works live inside
+ * it, because links plus a wordmark plus an account control in 390px leaves
+ * nothing tappable. From sm up those links are back on the bar and this holds
+ * only the account items, so a signed-out visitor on a desktop sees a plain
+ * "Sign in" link and no menu at all.
  *
  * Closes on route change, on Escape, and on a click outside. All three,
  * because a menu that survives a navigation is the most common way a header
@@ -33,7 +33,6 @@ export interface SiteNavMenuProps {
 const NAV_LINKS: { href: Route; label: string }[] = [
   { href: "/learn" as Route, label: "Roadmaps" },
   { href: "/#how-it-works" as Route, label: "How it works" },
-  { href: "/pricing" as Route, label: "Free" },
 ];
 
 const ACCOUNT_LINKS: { href: Route; label: string }[] = [

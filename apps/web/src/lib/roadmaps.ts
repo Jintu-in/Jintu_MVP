@@ -358,3 +358,58 @@ export async function topSourceNames(limit = 8): Promise<string[]> {
     .slice(0, limit)
     .map(([name]) => name);
 }
+
+export type ModuleSpineRow = { position: number; title: string; weekRange: string | null };
+
+/**
+ * Just the module list for one roadmap — position, title, week range.
+ *
+ * Exists so the homepage can show a real spine instead of a sentence saying
+ * one exists. getRoadmap() would do it, but it pulls every node and every
+ * resource underneath, which is a few hundred rows to render twenty bars.
+ */
+export async function listModules(slug: string): Promise<ModuleSpineRow[]> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("roadmaps")
+    .select("modules ( position, title, week_range )")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw describeSupabaseError(`listing modules for ${slug}`, error);
+  return ((data?.modules ?? []) as { position: number; title: string; week_range: string | null }[])
+    .map((m) => ({ position: m.position, title: m.title, weekRange: m.week_range }))
+    .sort((a, b) => a.position - b.position);
+}
+
+export type SampleResource = {
+  title: string;
+  sourceName: string;
+  type: ResourceType;
+  minutes: number | null;
+  editorNote: string | null;
+};
+
+/**
+ * A few real curated links, for showing what one looks like.
+ *
+ * Only rows that carry an editor note, because the note is the whole claim —
+ * "checked by a person" is evidenced by the sentence a person wrote, and a
+ * link without one would be the claim with the evidence cropped out.
+ */
+export async function sampleResources(limit = 3): Promise<SampleResource[]> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("resources")
+    .select("title, source_name, type, duration_sec, editor_note")
+    .not("editor_note", "is", null)
+    .order("added_at")
+    .limit(limit);
+  if (error) throw describeSupabaseError("sampling resources", error);
+  return (data ?? []).map((r) => ({
+    title: r.title,
+    sourceName: r.source_name,
+    type: r.type,
+    minutes: r.duration_sec ? Math.round(r.duration_sec / 60) : null,
+    editorNote: r.editor_note,
+  }));
+}
