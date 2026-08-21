@@ -43,6 +43,8 @@ export interface HomepageProps {
   /** Subject chips above the roadmap cards. */
   subjects: string[];
   signedIn: boolean;
+  initials?: string | null;
+  displayName?: string | null;
 }
 
 const SearchGlyph = ({ size = 16 }: { size?: number }) => (
@@ -144,6 +146,8 @@ export default function Homepage({
   sources,
   subjects,
   signedIn,
+  initials = null,
+  displayName = null,
 }: HomepageProps) {
   return (
     <div className="jhome bg-ink-50">
@@ -151,7 +155,7 @@ export default function Homepage({
 
       {/* The one site header, in its over-the-hero variant. Every other
           screen gets the same component with variant="solid". */}
-      <SiteNav variant="overlay" signedIn={signedIn} />
+      <SiteNav variant="overlay" signedIn={signedIn} initials={initials} displayName={displayName} />
 
       {/* The nav's transparency is driven by this, not by a scroll handler.
           It sits at the top of the document and is as tall as the hero's

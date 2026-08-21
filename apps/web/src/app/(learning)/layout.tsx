@@ -1,6 +1,6 @@
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
-import { getViewer } from "@/lib/session";
+import { getViewer, initialsFor } from "@/lib/session";
 
 /**
  * The learning surfaces — the catalogue, a roadmap, a day.
@@ -19,7 +19,11 @@ export default async function LearningLayout({
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink-50">
-      <SiteNav signedIn={Boolean(viewer?.hasProfile)} />
+      <SiteNav
+        signedIn={Boolean(viewer?.hasProfile)}
+        initials={viewer ? initialsFor(viewer) : null}
+        displayName={viewer?.fullName ?? viewer?.email ?? null}
+      />
       <div className="flex-1">{children}</div>
       <SiteFooter />
     </div>

@@ -6,7 +6,7 @@ import {
   topSourceNames,
   type RoadmapSummary,
 } from "@/lib/roadmaps";
-import { getViewer } from "@/lib/session";
+import { getViewer, initialsFor } from "@/lib/session";
 
 /**
  * The homepage: hero question, one flagship roadmap, three plain sections.
@@ -76,6 +76,8 @@ export default async function LandingPage() {
   return (
     <Homepage
       signedIn={Boolean(viewer?.hasProfile)}
+      initials={viewer ? initialsFor(viewer) : null}
+      displayName={viewer?.fullName ?? viewer?.email ?? null}
       counts={{ roadmaps: roadmaps.length, days, hours, links }}
       sources={sources}
       subjects={subjects}

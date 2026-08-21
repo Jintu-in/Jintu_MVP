@@ -1,6 +1,6 @@
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
-import { getViewer } from "@/lib/session";
+import { getViewer, initialsFor } from "@/lib/session";
 
 /**
  * Pricing, privacy, terms, refunds, contact, report.
@@ -29,7 +29,11 @@ export default async function MarketingLayout({
       >
         Skip to content
       </a>
-      <SiteNav signedIn={Boolean(viewer?.hasProfile)} />
+      <SiteNav
+        signedIn={Boolean(viewer?.hasProfile)}
+        initials={viewer ? initialsFor(viewer) : null}
+        displayName={viewer?.fullName ?? viewer?.email ?? null}
+      />
       <div id="content" className="flex-1">
         {children}
       </div>

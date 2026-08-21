@@ -1,10 +1,15 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { SiteNavMenu } from "@/components/site/site-nav-menu";
 import { cn } from "@/lib/utils";
 
 /**
  * The one site header. Same on every screen, so the product stops looking
  * like five products.
+ *
+ * Wordmark hard left, everything else hard right. The links used to sit next
+ * to the wordmark with the account control pushed to the far edge, which put
+ * the two things people actually click at opposite ends of a 1400px bar.
  *
  * Two variants, because the homepage's hero is dark teal and everywhere
  * else is pale:
@@ -16,11 +21,19 @@ import { cn } from "@/lib/utils";
  *
  * The wordmark always links to `/`. That is the one navigation guarantee
  * a header owes you, and it was missing on half the screens.
+ *
+ * Below sm the three links move inside the avatar menu. Four links and a
+ * wordmark in 390px gives each of them about forty pixels, which is neither
+ * readable nor tappable.
  */
 export interface SiteNavProps {
   variant?: "overlay" | "solid";
   signedIn?: boolean;
-  /** Rendered at the right of the bar, before the account link. */
+  /** Initials for the avatar. Null falls back to a generic person glyph. */
+  initials?: string | null;
+  /** Shown at the top of the account menu, so you can see whose it is. */
+  displayName?: string | null;
+  /** Rendered on the bar, between the links and the account control. */
   children?: React.ReactNode;
   className?: string;
 }
@@ -28,6 +41,8 @@ export interface SiteNavProps {
 export function SiteNav({
   variant = "solid",
   signedIn = false,
+  initials = null,
+  displayName = null,
   children,
   className,
 }: SiteNavProps) {
@@ -44,7 +59,7 @@ export function SiteNav({
   return (
     <nav
       className={cn(
-        "jnav z-50 flex h-[72px] items-center gap-6 px-5 sm:gap-7 sm:px-12",
+        "jnav z-50 flex h-[72px] items-center px-5 sm:px-12",
         overlay ? "fixed inset-x-0 top-0" : "sticky top-0 border-b border-ink-100 bg-white",
         className,
       )}
@@ -68,7 +83,9 @@ export function SiteNav({
         jintu
       </Link>
 
-      <div className="hidden flex-1 items-center gap-7 sm:flex">
+      <div className="flex-1" />
+
+      <div className="hidden items-center gap-7 sm:flex">
         <Link href="/learn" className={link}>
           Roadmaps
         </Link>
@@ -81,13 +98,17 @@ export function SiteNav({
           Free
         </Link>
       </div>
-      <div className="flex-1 sm:hidden" />
 
-      {children}
+      {children ? <div className="ml-6 flex items-center sm:ml-7">{children}</div> : null}
 
-      <Link href={(signedIn ? "/dashboard" : "/join") as Route} className={strong}>
-        {signedIn ? "Dashboard" : "Sign in"}
-      </Link>
+      <div className="ml-4 flex items-center sm:ml-7">
+        <SiteNavMenu
+          signedIn={signedIn}
+          initials={initials}
+          displayName={displayName}
+          overlay={overlay}
+        />
+      </div>
     </nav>
   );
 }
