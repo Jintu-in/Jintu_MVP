@@ -55,69 +55,68 @@
 }
 
 /* ── Marketing homepage only ──────────────────────────────────────────────
-   Ported from the design project's "Marketing homepage". Everything here is
-   scoped to .jhome so none of it can leak into the app: the reading surface
-   stays plain, which is the point of spending the effect budget in one
-   place. Motion is gated three ways — a reduced-motion query that removes
-   animations outright rather than freezing them mid-frame, an in-view class
-   so nothing animates off-screen, and hover/fine-pointer for the spotlight.
+   From the design project's "Marketing homepage v2". Every rule is scoped
+   under .jhome so none of it can reach the app: the reading surfaces stay
+   plain, which is the whole reason the effect budget is spent in one place.
+
+   Motion is gated twice — a reduced-motion query that removes animation
+   outright rather than freezing it mid-frame, and in-view classes applied
+   by a one-shot IntersectionObserver so nothing animates off-screen.
    ------------------------------------------------------------------------ */
-@keyframes jdrift { 0% { transform: translate(0, 0) } 50% { transform: translate(30px, -20px) } 100% { transform: translate(0, 0) } }
-@keyframes jmarquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
-@keyframes jreveal-anim { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes jdrift { 0%, 100% { transform: translate(0, 0) } 50% { transform: translate(30px, -20px) } }
 
-.jhome .jglow1 { animation: jdrift 24s ease-in-out infinite; animation-play-state: paused }
-.jhome .jglow2 { animation: jdrift 24s ease-in-out infinite reverse; animation-play-state: paused }
-.jhome .jmarquee-track { animation: jmarquee 40s linear infinite; animation-play-state: paused }
-.jhome .jloop.in-view .jglow1,
-.jhome .jloop.in-view .jglow2,
-.jhome .jloop.in-view .jmarquee-track { animation-play-state: running }
-.jhome .jmarquee-track:hover { animation-play-state: paused }
-
-/* Reveals fill forwards and never reset, so re-entering a section does not
-   replay it. Chromium uses the scroll timeline; Safari and Firefox get the
-   one-shot IntersectionObserver in homepage-effects.tsx. */
-.jhome .jreveal { opacity: 0; transform: translateY(24px) }
-@supports (animation-timeline: view()) {
-  .jhome .jreveal {
-    animation: jreveal-anim 1s linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 32%;
-  }
+.jhome .jglow1,
+.jhome .jglow2 { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none }
+.jhome .jglow1 {
+  width: 600px; height: 600px; top: -150px; left: -100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, .35), transparent 70%);
+  animation: jdrift 24s ease-in-out infinite;
 }
-.jhome .jreveal-done {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  transition: opacity .4s ease-out, transform .4s ease-out;
+.jhome .jglow2 {
+  width: 500px; height: 500px; bottom: -100px; right: -80px;
+  background: radial-gradient(circle, rgba(211, 240, 246, .4), transparent 70%);
+  animation: jdrift 24s ease-in-out infinite reverse;
 }
 
-/* brand-500 as a 1px gradient edge and as a radial wash: decorative fills,
-   never text. Both are the one place the brand colour is allowed to be
-   itself. */
-.jhome .jgrad-border { position: relative; border-radius: 12px }
-.jhome .jgrad-border::before {
-  content: ''; position: absolute; inset: 0; border-radius: 12px; padding: 1px;
-  background: linear-gradient(135deg, var(--color-brand-500), transparent 60%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
-}
-/* Both stops are dark teals that pass AA on the page ground — a gradient is
-   not an excuse to put 2.44:1 on text. */
-.jhome .jgrad-text {
-  background: linear-gradient(90deg, #0e6e80, var(--color-brand-700));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+.jhome .jgrain {
+  position: absolute; inset: 0; opacity: .035; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.jhome .jspot { position: relative }
-.jhome .jspot::after {
-  content: ''; position: absolute; inset: 0; border-radius: 12px; pointer-events: none;
-  opacity: 0; transition: opacity .15s ease-out;
-  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), #43b4c822, transparent 70%);
+/* Reveals are transition-driven and one-shot: the observer adds .jrevealed
+   and stops watching, so scrolling back never replays a section. */
+.jhome .jreveal { opacity: 0; transform: translateY(22px); transition: opacity 560ms ease-out, transform 560ms ease-out }
+.jhome .jreveal.jrevealed { opacity: 1; transform: translateY(0) }
+
+.jhome .jgrid91 > span { opacity: 0; transform: scale(.6); transition: opacity 420ms ease-out, transform 420ms ease-out }
+.jhome .jgrid91.jgrid-in > span { opacity: 1; transform: scale(1) }
+
+.jhome .jwordmark { filter: grayscale(1); opacity: .55; transition: opacity 160ms, filter 160ms }
+.jhome .jwordmark:hover { filter: grayscale(0); opacity: 1 }
+
+.jhome .jcard-hover { transition: transform 200ms ease-out, border-color 200ms ease-out }
+.jhome .jcard-hover:hover { transform: translateY(-4px) }
+
+.jhome .jsearch { transition: box-shadow 160ms ease-out }
+.jhome .jsearch:hover,
+.jhome .jsearch:focus-within { box-shadow: 0 0 0 3px rgba(23, 117, 138, .16) }
+
+/* The nav rides over the dark end of the hero, so it starts transparent
+   with white text. Once the hero has scrolled past, it takes a solid
+   surface and ink text — white-on-white is the failure mode here, and a
+   translucent nav over a pale page is exactly where it happens. */
+.jhome .jnav { transition: background 200ms ease-out, border-color 200ms ease-out }
+.jhome .jnav.jscrolled {
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--color-ink-100);
 }
-.jhome .jspot:hover::after { opacity: 1 }
+@supports not (backdrop-filter: blur(1px)) {
+  .jhome .jnav.jscrolled { background: #fff }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .jhome .jglow1, .jhome .jglow2, .jhome .jmarquee-track, .jhome .jreveal { animation: none !important }
-  .jhome .jreveal { opacity: 1; transform: none }
+  .jhome .jglow1, .jhome .jglow2 { animation: none }
+  .jhome .jreveal { opacity: 1; transform: none; transition: none }
+  .jhome .jgrid91 > span { opacity: 1; transform: none; transition: none }
 }
