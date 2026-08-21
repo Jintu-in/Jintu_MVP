@@ -3,6 +3,7 @@
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { requestTopic } from "@/actions/requests";
+import { FieldInput, FieldShell } from "@/components/ui/field-shell";
 import { cn } from "@/lib/utils";
 
 /**
@@ -35,6 +36,7 @@ export function TopicRequestForm({
   // The no-results box is prefilled from the URL's ?q=, which changes under
   // it as the search is edited. Untouched, it should follow.
   const [touched, setTouched] = useState(false);
+  const [focused, setFocused] = useState(false);
   useEffect(() => {
     if (!touched) setWanted(defaultValue);
   }, [defaultValue, touched]);
@@ -65,46 +67,68 @@ export function TopicRequestForm({
           {label}
         </label>
       ) : null}
-      <div
-        className={cn("flex", label && "mt-2", compact ? "flex-col gap-2" : "flex-col gap-2.5 sm:flex-row")}
-      >
-        <input
-          id={`wanted-${source}`}
-          value={wanted}
-          onChange={(e) => {
-            setTouched(true);
-            setWanted(e.target.value);
-          }}
-          // The sidebar is 240px wide with 20px of padding either side. Three
-          // examples do not fit in 200px — they truncate mid-word, which reads
-          // as a broken field rather than a hint.
-          placeholder={compact ? "A subject we're missing" : "Kubernetes, product management, tax…"}
-          aria-label={label ?? "What were you looking for?"}
-          className={cn(
-            "min-w-0 flex-1 rounded-lg border border-ink-100 bg-white text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
-            compact ? "h-9 px-2.5 text-[12.5px]" : "h-12 px-3 text-[15px]",
-          )}
-        />
-        <button
-          type="submit"
-          disabled={status === "executing" || wanted.trim().length < 2}
-          // Outlined in the sidebar, filled everywhere else. A solid brand
-          // button is the loudest thing on the page, and this is a footnote
-          // under the filters, not the reason anyone came.
-          //
-          // Disabled fades rather than swapping to a pale grey fill: white on
-          // ink-300 is 1.89:1, an unreadable label on the button people are
-          // trying to press.
-          className={cn(
-            "flex items-center justify-center rounded-lg font-medium disabled:opacity-60",
-            compact
-              ? "h-9 self-start border border-brand-700 bg-white px-3 text-[12.5px] text-brand-700 hover:border-brand-800 hover:text-brand-800"
-              : "h-12 bg-brand-700 px-5 text-[16px] text-white hover:bg-brand-800",
-          )}
-        >
-          {compact ? "Tell us →" : "Send"}
-        </button>
-      </div>
+      {/* Compact is ONE row, in the same shell as the search field directly
+          above it in the sidebar. Split across two rows with its own button
+          underneath, it read as a second search bar competing with the first
+          rather than as a footnote under the filters.
+
+          The 28px submit is under the 48px touch minimum, which is why only
+          the lg-and-up sidebar uses this variant. Every touch surface gets
+          the regular one, with a 48px button of its own. */}
+      {compact ? (
+        <FieldShell focused={focused} scale="compact" className={cn(label && "mt-2")}>
+          <FieldInput
+            id={`wanted-${source}`}
+            scale="compact"
+            value={wanted}
+            onChange={(e) => {
+              setTouched(true);
+              setWanted(e.target.value);
+            }}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            // 240px of sidebar less 20px of padding either side leaves 200px.
+            // Three example subjects truncate mid-word in that, which reads as
+            // a broken field rather than a hint.
+            placeholder="A subject we're missing"
+            aria-label={label ?? "What were you looking for?"}
+          />
+          <button
+            type="submit"
+            aria-label="Send this request"
+            disabled={status === "executing" || wanted.trim().length < 2}
+            // Fades when disabled rather than swapping to a pale grey fill:
+            // white on ink-300 is 1.89:1, an unreadable glyph on the button
+            // somebody is trying to press.
+            className="flex size-7 flex-none items-center justify-center rounded-md bg-brand-700 text-white hover:bg-brand-800 disabled:opacity-40"
+          >
+            <svg aria-hidden width={13} height={13} viewBox="0 0 14 14" fill="none">
+              <path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </FieldShell>
+      ) : (
+        <div className={cn("flex flex-col gap-2.5 sm:flex-row", label && "mt-2")}>
+          <input
+            id={`wanted-${source}`}
+            value={wanted}
+            onChange={(e) => {
+              setTouched(true);
+              setWanted(e.target.value);
+            }}
+            placeholder="Kubernetes, product management, tax…"
+            aria-label={label ?? "What were you looking for?"}
+            className="h-12 min-w-0 flex-1 rounded-lg border border-ink-100 bg-white px-3 text-[15px] text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+          />
+          <button
+            type="submit"
+            disabled={status === "executing" || wanted.trim().length < 2}
+            className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 text-[16px] font-medium text-white hover:bg-brand-800 disabled:opacity-60"
+          >
+            Send
+          </button>
+        </div>
+      )}
       {result?.serverError ? (
         <p role="alert" className="mt-2 text-[14px] text-ink-900">
           {result.serverError}

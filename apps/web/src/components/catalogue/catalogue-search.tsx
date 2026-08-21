@@ -3,6 +3,7 @@
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { FieldInput, FieldShell } from "@/components/ui/field-shell";
 import { toQueryString, type Filters } from "@/lib/catalogue-filters";
 import { cn } from "@/lib/utils";
 
@@ -58,24 +59,12 @@ export function CatalogueSearch({
   const active = value.length > 0;
 
   /**
-   * The border is always 1px and the focus ring is a `ring`, not a thicker
-   * border. The design draws 2px ink on focus, but swapping 1px for 2px
-   * reflows the input by a pixel on every focus and blur — the field appears
-   * to twitch as you tab through it. A ring paints outside the box instead,
-   * so it looks like the design and holds still.
-   *
-   * Only focus thickens it. A field that stays black because it has a value
-   * in it looks permanently focused, and the whole sidebar then reads as
-   * though the cursor is somewhere it is not.
+   * Only focus thickens the field. One that stays black because it has a
+   * value in it looks permanently focused, and the whole sidebar then reads
+   * as though the cursor is somewhere it is not.
    */
   return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-lg border border-ink-100 bg-white",
-        compact ? "h-9 pr-1 pl-2.5" : "h-12 pr-1.5 pl-3.5",
-        focused && "border-ink-900 ring-1 ring-ink-900",
-      )}
-    >
+    <FieldShell focused={focused} scale={size}>
       <svg
         aria-hidden
         width={compact ? 14 : 16}
@@ -87,17 +76,15 @@ export function CatalogueSearch({
         <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
         <path d="m11 11 3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
-      <input
+      <FieldInput
+        scale={size}
         value={value}
         onChange={(e) => commit(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         placeholder="Search roadmaps"
         aria-label="Search roadmaps"
-        className={cn(
-          "min-w-0 flex-1 bg-transparent text-ink-900 placeholder:text-ink-500 focus:outline-none",
-          compact ? "text-[13px]" : "text-[14px]",
-        )}
+        className={compact ? "text-[13px]" : undefined}
       />
       {/* Holds its slot whether or not there is anything to clear, so the
           text does not jump sideways on the first keystroke. */}
@@ -115,6 +102,6 @@ export function CatalogueSearch({
           </button>
         ) : null}
       </span>
-    </div>
+    </FieldShell>
   );
 }
