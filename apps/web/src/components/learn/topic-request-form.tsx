@@ -66,11 +66,7 @@ export function TopicRequestForm({
         </label>
       ) : null}
       <div
-        className={cn(
-          "flex gap-2.5",
-          label && (compact ? "mt-2" : "mt-2"),
-          compact ? "flex-col" : "flex-col sm:flex-row",
-        )}
+        className={cn("flex", label && "mt-2", compact ? "flex-col gap-2" : "flex-col gap-2.5 sm:flex-row")}
       >
         <input
           id={`wanted-${source}`}
@@ -79,22 +75,31 @@ export function TopicRequestForm({
             setTouched(true);
             setWanted(e.target.value);
           }}
-          placeholder="Kubernetes, product management, tax…"
+          // The sidebar is 240px wide with 20px of padding either side. Three
+          // examples do not fit in 200px — they truncate mid-word, which reads
+          // as a broken field rather than a hint.
+          placeholder={compact ? "A subject we're missing" : "Kubernetes, product management, tax…"}
           aria-label={label ?? "What were you looking for?"}
           className={cn(
             "min-w-0 flex-1 rounded-lg border border-ink-100 bg-white text-ink-900 placeholder:text-ink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
-            compact ? "h-10 px-2.5 text-[12.5px]" : "h-12 px-3 text-[15px]",
+            compact ? "h-9 px-2.5 text-[12.5px]" : "h-12 px-3 text-[15px]",
           )}
         />
         <button
           type="submit"
           disabled={status === "executing" || wanted.trim().length < 2}
-          // Disabled keeps the brand fill at reduced opacity rather than
-          // swapping to a pale grey: white on ink-300 is 1.89:1, which is
-          // an unreadable label on the button people are trying to press.
+          // Outlined in the sidebar, filled everywhere else. A solid brand
+          // button is the loudest thing on the page, and this is a footnote
+          // under the filters, not the reason anyone came.
+          //
+          // Disabled fades rather than swapping to a pale grey fill: white on
+          // ink-300 is 1.89:1, an unreadable label on the button people are
+          // trying to press.
           className={cn(
-            "flex items-center justify-center rounded-lg bg-brand-700 font-medium text-white hover:bg-brand-800 disabled:opacity-60",
-            compact ? "h-10 self-start px-3.5 text-[12.5px]" : "h-12 px-5 text-[16px]",
+            "flex items-center justify-center rounded-lg font-medium disabled:opacity-60",
+            compact
+              ? "h-9 self-start border border-brand-700 bg-white px-3 text-[12.5px] text-brand-700 hover:border-brand-800 hover:text-brand-800"
+              : "h-12 bg-brand-700 px-5 text-[16px] text-white hover:bg-brand-800",
           )}
         >
           {compact ? "Tell us →" : "Send"}

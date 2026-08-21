@@ -262,8 +262,15 @@ export default function CataloguePage({ rows, filters }: CataloguePageProps) {
             </Link>
           ) : null}
 
-          <div className="flex flex-col gap-2 border-t border-ink-100 pt-4">
-            <span className="text-[13px] leading-none text-ink-900">Not here yet?</span>
+          {/* A footnote under the filters, not a call to action. It sits
+              below the rule with its own quiet heading and an outlined
+              button, so it reads as "and if none of these" rather than
+              competing with the four roadmaps on the right. */}
+          <div className="flex flex-col gap-1.5 border-t border-ink-100 pt-4">
+            <span className="text-[13px] leading-none font-medium text-ink-900">Not here yet?</span>
+            <p className="m-0 mb-1 text-[12px] leading-[1.45] text-ink-600">
+              Tell us the subject and it goes on the list.
+            </p>
             <TopicRequestForm source="sidebar" size="compact" defaultValue={filters.q} />
           </div>
         </aside>
