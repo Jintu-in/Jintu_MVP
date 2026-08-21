@@ -40,8 +40,13 @@ export interface HomepageProps {
   counts: { roadmaps: number; days: number; hours: number; links: number };
   /** The places the material genuinely comes from, most-used first. */
   sources: string[];
-  /** Subject chips above the roadmap cards. */
-  subjects: string[];
+  /**
+   * Category chips above the roadmap cards. Four of them, ever — they used
+   * to be subject_tags[0], which put "java" and "thinking" side by side as
+   * though they were the same kind of thing, and would have grown a chip per
+   * import.
+   */
+  subjects: { key: string; label: string }[];
   signedIn: boolean;
   initials?: string | null;
   displayName?: string | null;
@@ -112,7 +117,7 @@ function StatPill({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-2 font-mono text-[12px] leading-none whitespace-nowrap text-ink-900 ${className ?? ""}`}
+      className={`inline-flex items-center gap-2 rounded-full border border-ink-100 bg-white px-4 py-2 font-mono text-[12px] leading-none whitespace-nowrap text-ink-900 ${className ?? ""}`}
     >
       <span aria-hidden>{glyph}</span>
       {children}
@@ -204,7 +209,7 @@ export default function Homepage({
             corners at xl, where there is genuinely space beside the
             headline. Absolute positioning at smaller widths is what was
             colliding with the nav and the card. */}
-        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-2 xl:hidden">
+        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-2.5 xl:hidden">
           <StatPill glyph="⚡">{counts.roadmaps} roadmaps</StatPill>
           <StatPill glyph="▦">{counts.days} days written</StatPill>
           <StatPill glyph="◷">~{counts.hours} hours</StatPill>
@@ -304,11 +309,11 @@ export default function Homepage({
             </Link>
             {subjects.map((s) => (
               <Link
-                key={s}
-                href={`/learn?subject=${encodeURIComponent(s)}` as Route}
+                key={s.key}
+                href={`/learn?c=${s.key}` as Route}
                 className="flex min-h-10 items-center rounded-full border border-ink-100 bg-white px-4 text-[13.5px] text-ink-900 hover:border-brand-700"
               >
-                {s}
+                {s.label}
               </Link>
             ))}
           </div>
@@ -327,7 +332,12 @@ export default function Homepage({
               <div className="mt-2.5 text-[18px] leading-[1.35] font-medium text-ink-900">
                 {r.title}
               </div>
-              <p className="mt-2 text-[14px] leading-[1.6] text-pretty text-ink-600">{r.summary}</p>
+              {/* Two lines. The summaries run to forty words and the cards are a
+                  grid, so one long one used to set the height of its whole
+                  row. The full text is on the roadmap page. */}
+              <p className="mt-2 line-clamp-2 text-[14px] leading-[1.6] text-pretty text-ink-600">
+                {r.summary}
+              </p>
               <div className="mt-4 border-t border-ink-100 pt-3 font-mono text-[12.5px] leading-[1.5] text-ink-500">
                 {r.sizeLine}
               </div>
@@ -357,7 +367,10 @@ export default function Homepage({
             <br className="hidden sm:block" /> then a habit.
           </h2>
 
-          <ol className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* list-none explicitly: preflight already resets ol, but the mono "01"
+              IS the marker here, and a stylesheet change that dropped preflight
+              would put a second number in front of every one of them. */}
+          <ol className="mt-8 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(([n, head, body]) => (
               <li key={n} className="border-t border-ink-200 pt-4">
                 <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
