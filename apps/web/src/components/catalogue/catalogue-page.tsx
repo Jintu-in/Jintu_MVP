@@ -121,7 +121,7 @@ function RoadmapCard({ card: c, accent }: { card: CatalogueCard; accent: number 
   return (
     <a
       href={c.href}
-      className="flex flex-col overflow-hidden rounded-[20px] bg-white no-underline outline-offset-2 hover:opacity-95 focus-visible:outline-2 focus-visible:outline-brand-700"
+      className="flex flex-col overflow-hidden rounded-[20px] border border-ink-100 bg-white no-underline outline-offset-2 transition-colors hover:border-ink-200 focus-visible:outline-2 focus-visible:outline-brand-700"
     >
       <div className={cn("relative flex h-24 items-start justify-end gap-1.5 overflow-hidden p-2.5", a.bg)}>
         <svg
