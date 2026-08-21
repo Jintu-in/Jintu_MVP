@@ -265,7 +265,6 @@ export default function LessonRoute({
       railFooter={railFooter}
       // Per-node, so ticks on day 45 do not follow you to day 46.
       tickStorageKey={`jintu:ticks:${nodeId}`}
-      onBack={() => router.push(`/learn/${slug}`)}
       onMarkDone={onMarkDone}
     />
   );

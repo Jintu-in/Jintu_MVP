@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { HomepageEffects } from "@/components/marketing/homepage-effects";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteNav } from "@/components/site/site-nav";
 
 /**
  * The marketing homepage — v2, from the design project.
@@ -41,6 +43,8 @@ export interface HomepageProps {
   /** Subject chips above the roadmap cards. */
   subjects: string[];
   signedIn: boolean;
+  initials?: string | null;
+  displayName?: string | null;
 }
 
 const SearchGlyph = ({ size = 16 }: { size?: number }) => (
@@ -136,51 +140,22 @@ const FREE_INCLUDES = [
   "No adverts, nothing sold about you",
 ];
 
-const navLink =
-  "text-[14px] leading-none text-white/85 transition-colors hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900";
-
 export default function Homepage({
   roadmaps,
   counts,
   sources,
   subjects,
   signedIn,
+  initials = null,
+  displayName = null,
 }: HomepageProps) {
   return (
     <div className="jhome bg-ink-50">
       <HomepageEffects />
 
-      {/* ── nav ─────────────────────────────────────────────────────────── */}
-      {/* Transparent over the dark head of the hero; it only takes a solid
-          surface once the sentinel below has scrolled away. */}
-      <nav className="jnav fixed inset-x-0 top-0 z-50 flex h-[72px] items-center gap-6 px-5 sm:gap-7 sm:px-12">
-        <Link
-          href="/"
-          className="text-[16px] leading-none font-medium text-white [.jscrolled_&]:text-brand-700"
-        >
-          jintu
-        </Link>
-        <div className="hidden flex-1 items-center gap-7 sm:flex">
-          <Link href="/learn" className={navLink}>
-            Roadmaps
-          </Link>
-          {/* Anchors the section that answers it. There is no such route,
-              and a nav item that 404s is worse than one that scrolls. */}
-          <Link href={"/#how-it-works" as Route} className={navLink}>
-            How it works
-          </Link>
-          <Link href="/pricing" className={navLink}>
-            Free
-          </Link>
-        </div>
-        <div className="flex-1 sm:hidden" />
-        <Link
-          href={(signedIn ? "/dashboard" : "/join") as Route}
-          className="text-[14px] leading-none font-medium text-white [.jscrolled_&]:text-brand-700"
-        >
-          {signedIn ? "Dashboard" : "Sign in"}
-        </Link>
-      </nav>
+      {/* The one site header, in its over-the-hero variant. Every other
+          screen gets the same component with variant="solid". */}
+      <SiteNav variant="overlay" signedIn={signedIn} initials={initials} displayName={displayName} />
 
       {/* The nav's transparency is driven by this, not by a scroll handler.
           It sits at the top of the document and is as tall as the hero's
@@ -590,68 +565,7 @@ export default function Homepage({
         </div>
       </section>
 
-      {/* ── footer ──────────────────────────────────────────────────────── */}
-      <footer className="border-t border-ink-100 bg-white px-5 py-12 sm:px-12">
-        <div className="mx-auto flex max-w-[1280px] flex-col gap-10 sm:flex-row sm:justify-between">
-          <div className="text-[28px] leading-none font-medium tracking-[-0.02em] text-ink-900">
-            jintu
-          </div>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-16">
-            {[
-              {
-                head: "Product",
-                links: [
-                  ["Roadmaps", "/learn"],
-                  ["How it works", "/#how-it-works"],
-                  ["Free", "/pricing"],
-                ],
-              },
-              {
-                head: "Company",
-                links: [
-                  ["Contact", "/contact"],
-                  ["hello@jintu.in", "mailto:hello@jintu.in"],
-                ],
-              },
-              {
-                head: "Legal",
-                links: [
-                  ["Privacy", "/privacy"],
-                  ["Terms", "/terms"],
-                  ["Refunds", "/refunds"],
-                ],
-              },
-            ].map((col) => (
-              <div key={col.head}>
-                <div className="font-mono text-[11px] leading-none tracking-[.08em] text-ink-500 uppercase">
-                  {col.head}
-                </div>
-                <ul className="mt-3 flex flex-col gap-2.5">
-                  {col.links.map(([label, href]) => (
-                    <li key={label}>
-                      {href!.startsWith("mailto:") ? (
-                        <a href={href} className="text-[13.5px] text-brand-700 hover:text-brand-800">
-                          {label}
-                        </a>
-                      ) : (
-                        <Link
-                          href={href as Route}
-                          className="text-[13.5px] text-brand-700 hover:text-brand-800"
-                        >
-                          {label}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mx-auto mt-10 max-w-[1280px] border-t border-ink-100 pt-6 font-mono text-[12.5px] leading-none text-ink-500">
-          Made in India
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

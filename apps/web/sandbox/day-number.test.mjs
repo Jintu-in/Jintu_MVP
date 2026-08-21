@@ -68,12 +68,15 @@ test("the migration is safe to run twice", () => {
 });
 
 test("the roadmap shows its day count once at every width", () => {
+  // The desktop-only sticky bar that carried the second copy is gone — the
+  // shared SiteNav replaced it. One count survives, and it must not be
+  // breakpoint-gated, or the width its twin used to cover loses the number.
   const uses = [...roadmapPage.matchAll(/progress\.daysCount/g)];
-  assert.equal(uses.length, 2, "expected the sticky bar and the card");
-  // The sticky one is desktop-only, so the card's copy must hide at exactly
-  // the breakpoint the sticky one appears at — never both, never neither.
-  const sticky = /hidden px-1 font-mono[^"]*lg:block/.test(roadmapPage);
-  const card = /text-\[15px\] leading-\[1\.4\] text-ink-900 lg:hidden/.test(roadmapPage);
-  assert.ok(sticky, "the sticky count should be lg-only");
-  assert.ok(card, "the card count should hide at lg");
+  assert.equal(uses.length, 1, "expected exactly one count, in the card");
+  const card = /text-\[15px\] leading-\[1\.4\] text-ink-900">/.test(roadmapPage);
+  assert.ok(card, "the card count should render at every width");
+  assert.ok(
+    !/text-\[15px\] leading-\[1\.4\] text-ink-900 lg:hidden/.test(roadmapPage),
+    "the surviving count must not be hidden at any breakpoint",
+  );
 });

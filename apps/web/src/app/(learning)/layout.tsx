@@ -1,12 +1,31 @@
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteNav } from "@/components/site/site-nav";
+import { getViewer, initialsFor } from "@/lib/session";
+
 /**
- * The learning surfaces — roadmap and lesson — own their whole viewport:
- * the design pages are h-dvh flex columns with their own 52px headers,
- * back buttons and internal scroll. Wrapping them in the marketing
- * header/footer would double the chrome and break the internal scroll
- * maths, so this group's layout is deliberately bare.
+ * The learning surfaces — the catalogue, a roadmap, a day.
+ *
+ * They carry the same header and footer as everything else. The reader and
+ * the roadmap used to own the whole viewport with their own internal
+ * scroll, which is why neither had a footer and why the wordmark was
+ * missing from both; they are ordinary documents now, and the page scrolls.
  */
-export default function LearningLayout({
+export const dynamic = "force-dynamic";
+
+export default async function LearningLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const viewer = await getViewer().catch(() => null);
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-ink-50">
+      <SiteNav
+        signedIn={Boolean(viewer?.hasProfile)}
+        initials={viewer ? initialsFor(viewer) : null}
+        displayName={viewer?.fullName ?? viewer?.email ?? null}
+      />
+      <div className="flex-1">{children}</div>
+      <SiteFooter />
+    </div>
+  );
 }

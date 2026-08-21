@@ -94,6 +94,12 @@ export type RoadmapSummary = {
   estimatedHours: number | null;
   moduleCount: number;
   nodeCount: number;
+  /** 0017's facet columns. See the fallback note in listPublishedRoadmaps. */
+  category: "data" | "software" | "marketing" | "judgement";
+  mediaMix: "reading" | "mixed" | "video";
+  hasFreeCert: boolean;
+  hasPrereqs: boolean;
+  createdAt: string;
 };
 
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
@@ -120,32 +126,105 @@ type RawResource = {
   health: "unchecked" | "ok" | "flaky" | "broken";
 };
 
-/** Every published roadmap, for the catalogue. */
+const BASE_SUMMARY_COLUMNS = `slug, title, summary, subject_tags, difficulty,
+  estimated_weeks, estimated_hours, created_at, modules ( id, nodes ( id ) )`;
+const FACET_COLUMNS = `category, media_mix, has_free_cert, has_prereqs`;
+
+/**
+ * The category a roadmap falls back to before 0017 is applied.
+ *
+ * subject_tags[0] is what /learn used to filter on, and the four published
+ * roadmaps happen to lead with a tag that maps cleanly. This is a bridge, not
+ * a design: once the column exists it is read directly, and an unmapped tag
+ * lands in the largest category rather than inventing a fifth.
+ */
+const CATEGORY_FROM_TAG: Record<string, RoadmapSummary["category"]> = {
+  data: "data",
+  analytics: "data",
+  sql: "data",
+  java: "software",
+  programming: "software",
+  backend: "software",
+  marketing: "marketing",
+  ecommerce: "marketing",
+  advertising: "marketing",
+  thinking: "judgement",
+  "decision-making": "judgement",
+  rationality: "judgement",
+};
+
+/** A missing column: PostgREST 42703, or its own PGRST204 on a bad select. */
+const isUnknownColumn = (error: { code?: string; message?: string }) =>
+  error.code === "42703" ||
+  error.code === "PGRST204" ||
+  /column .* does not exist/i.test(error.message ?? "");
+
+/**
+ * Every published roadmap, for the catalogue.
+ *
+ * Selects 0017's facet columns and falls back to deriving them when the
+ * migration has not been pasted yet. That fallback is not politeness: the
+ * migrations in this repo are applied by hand, /learn is the public surface,
+ * and a select naming a column that does not exist is a 400 for every visitor
+ * until somebody notices. The catalogue degrades to slightly worse facets
+ * instead of to a blank page.
+ */
 export async function listPublishedRoadmaps(): Promise<RoadmapSummary[]> {
   const supabase = createPublicClient();
 
-  const { data, error } = await retryRead(() =>
-    supabase
-      .from("roadmaps")
-      .select(
-        `slug, title, summary, subject_tags, difficulty, estimated_weeks,
-         estimated_hours, modules ( id, nodes ( id ) )`,
-      )
-      .order("title"),
-  );
-  if (error) throw describeSupabaseError("listing published roadmaps", error);
+  const run = (columns: string) =>
+    retryRead(() => supabase.from("roadmaps").select(columns).order("title"));
 
-  return (data ?? []).map((r) => ({
-    slug: r.slug,
-    title: r.title,
-    summary: r.summary,
-    subjectTags: r.subject_tags ?? [],
-    difficulty: r.difficulty,
-    estimatedWeeks: r.estimated_weeks,
-    estimatedHours: r.estimated_hours,
-    moduleCount: r.modules.length,
-    nodeCount: r.modules.reduce((n, m) => n + m.nodes.length, 0),
-  }));
+  let facetsPresent = true;
+  let result = await run(`${BASE_SUMMARY_COLUMNS}, ${FACET_COLUMNS}`);
+  if (result.error && isUnknownColumn(result.error)) {
+    console.warn(
+      "[roadmaps] facet columns missing — apply 0017_catalogue_facets.sql. Falling back to tag-derived categories.",
+    );
+    facetsPresent = false;
+    result = await run(BASE_SUMMARY_COLUMNS);
+  }
+  if (result.error) throw describeSupabaseError("listing published roadmaps", result.error);
+
+  type Row = {
+    slug: string;
+    title: string;
+    summary: string;
+    subject_tags: string[] | null;
+    difficulty: Roadmap["difficulty"];
+    estimated_weeks: number | null;
+    estimated_hours: number | null;
+    created_at: string;
+    modules: { id: string; nodes: { id: string }[] }[];
+    category?: RoadmapSummary["category"];
+    media_mix?: RoadmapSummary["mediaMix"];
+    has_free_cert?: boolean;
+    has_prereqs?: boolean;
+  };
+
+  return ((result.data ?? []) as unknown as Row[]).map((r) => {
+    const tags = r.subject_tags ?? [];
+    return {
+      slug: r.slug,
+      title: r.title,
+      summary: r.summary,
+      subjectTags: tags,
+      difficulty: r.difficulty,
+      estimatedWeeks: r.estimated_weeks,
+      estimatedHours: r.estimated_hours,
+      moduleCount: r.modules.length,
+      nodeCount: r.modules.reduce((n, m) => n + m.nodes.length, 0),
+      createdAt: r.created_at,
+      category: facetsPresent
+        ? (r.category ?? "data")
+        : (tags.map((t) => CATEGORY_FROM_TAG[t]).find(Boolean) ?? "data"),
+      // Without the column there is nothing to derive these from that would
+      // not be a guess, so the facets they drive simply do not appear.
+      mediaMix: facetsPresent ? (r.media_mix ?? "reading") : "reading",
+      hasFreeCert: facetsPresent ? Boolean(r.has_free_cert) : false,
+      hasPrereqs: facetsPresent ? Boolean(r.has_prereqs) : false,
+    };
+  });
 }
 
 /** One published roadmap, whole tree. Null when the slug is unknown or draft. */

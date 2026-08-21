@@ -35,6 +35,7 @@
     "progress:demo": "node scripts/demo-progress.mjs",
     "links:check": "node scripts/check-links.mjs",
     "metrics:demo": "node scripts/demo-metrics.mjs",
+    "facets:demo": "node scripts/demo-catalogue-facets.mjs",
     "bundle:budget": "node scripts/assert-bundle-budget.mjs"
   },
   "devDependencies": {
