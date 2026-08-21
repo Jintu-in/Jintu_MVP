@@ -44,9 +44,6 @@ export interface CatalogueCard {
 
 export interface CataloguePageProps {
   cards: CatalogueCard[];
-  signedIn: boolean;
-  signInHref: string;
-  dashboardHref: string;
   /** Prefill from ?q= so shared search links keep working. */
   initialQuery?: string;
   /**
@@ -179,9 +176,6 @@ function RoadmapCard({ card: c, accent }: { card: CatalogueCard; accent: number 
 
 export default function CataloguePage({
   cards,
-  signedIn,
-  signInHref,
-  dashboardHref,
   initialQuery = "",
   requestAction,
 }: CataloguePageProps) {
@@ -404,27 +398,10 @@ export default function CataloguePage({
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
-      {/* ── header: logo square, wordmark, sign in ───────────────────────── */}
-      <div className="flex-none border-b border-ink-100 bg-white">
-        <div className="flex h-[52px] items-center gap-2 px-4 lg:h-14 lg:gap-2.5 lg:px-8">
-          <svg aria-hidden width={20} height={20} viewBox="0 0 20 20" fill="none">
-            <rect x="1" y="1" width="18" height="18" rx="5" className="fill-brand-500" />
-          </svg>
-          <span className="text-[15px] leading-none font-medium text-brand-700 lg:text-[16px]">jintu</span>
-          <div className="flex-1" />
-          <a
-            href={signedIn ? dashboardHref : signInHref}
-            className="flex min-h-12 items-center text-[14px] leading-none font-medium text-brand-700 no-underline"
-          >
-            {signedIn ? "Dashboard" : "Sign in"}
-          </a>
-        </div>
-      </div>
-
-      <div className="flex min-h-0 flex-1">
+    <div className="flex flex-col bg-white lg:bg-ink-50">
+      <div className="flex">
         {/* ── desktop filter rail ──────────────────────────────────────────── */}
-        <aside className="hidden w-[220px] flex-none overflow-y-auto border-r border-ink-100 bg-ink-50 px-5 py-6 lg:block">
+        <aside className="sticky top-[72px] hidden h-fit w-[220px] flex-none border-r border-ink-100 bg-ink-50 px-5 py-6 lg:block">
           <div className="mb-4 flex items-baseline justify-between">
             <span className="font-mono text-[11px] leading-none tracking-[.06em] text-ink-500 uppercase">
               Filters
@@ -439,7 +416,7 @@ export default function CataloguePage({
         </aside>
 
         {/* ── the scrolling body ───────────────────────────────────────────── */}
-        <div className="min-w-0 flex-1 overflow-y-auto">
+        <div className="min-w-0 flex-1">
           <div className="mx-auto max-w-[820px]">
             <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
               <div className="px-5 pt-[22px] lg:px-7 lg:pt-7">

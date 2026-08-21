@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  BackIcon,
   BookmarkIcon,
   CcPersonIcon,
   CopyIcon,
@@ -140,7 +139,6 @@ export interface LessonPageProps {
    * lands, this is the seam that changes.
    */
   tickStorageKey?: string;
-  onBack?: () => void;
   onBookmark?: () => void;
   onMarkDone?: () => void;
   onSaveForLater?: () => void;
@@ -219,7 +217,6 @@ export default function LessonPage({
   next,
   railFooter,
   tickStorageKey,
-  onBack,
   onBookmark,
   onMarkDone,
   onSaveForLater,
@@ -230,17 +227,26 @@ export default function LessonPage({
   // only the last value in a frame can be painted, so the rest are work
   // thrown away on exactly the mid-range phone this is built for.
   const [progress, setProgress] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const frame = useRef<number | null>(null);
-  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const el = e.currentTarget;
-    if (frame.current !== null) return;
-    frame.current = requestAnimationFrame(() => {
-      frame.current = null;
+  useEffect(() => {
+    let frame: number | null = null;
+    const read = () => {
+      frame = null;
+      const el = document.documentElement;
       const max = el.scrollHeight - el.clientHeight;
       setProgress(max > 0 ? Math.min(100, Math.max(0, (el.scrollTop / max) * 100)) : 0);
-    });
-  };
+    };
+    const onScroll = () => {
+      if (frame === null) frame = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   // Per-section ticks. The day's own done flag ticks everything, so a
   // finished day reads as finished without needing sixteen taps.
@@ -276,20 +282,13 @@ export default function LessonPage({
   const doneCount = blocks.filter(isTicked).length;
 
   return (
-    <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
+    <div className="bg-white lg:bg-ink-50">
       {/* ── sticky header + progress ─────────────────────────────────────── */}
-      <div className="relative z-5 flex-none border-b border-ink-100 bg-white">
-        <div className="flex h-[52px] items-center px-1 lg:h-14 lg:gap-2.5 lg:px-5">
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={onBack}
-            className="flex size-12 items-center justify-center text-ink-900 lg:size-9"
-          >
-            <BackIcon />
-          </button>
-          {/* Mobile: stacked title; desktop: breadcrumb line. */}
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5 pl-0.5 lg:hidden">
+      <div className="sticky top-[72px] z-5 border-b border-ink-100 bg-white">
+        {/* Back lives in SiteNav and in the breadcrumb below; a third one
+            here would just be a third way to leave the same page. */}
+        <div className="flex h-[52px] items-center px-5 lg:h-14 lg:gap-2.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 lg:hidden">
             <div className="truncate text-[13px] leading-[1.3] text-ink-900">{title}</div>
             <div className="font-mono text-[11px] leading-[1.3] text-ink-500">{moduleLabel}</div>
           </div>
@@ -319,11 +318,11 @@ export default function LessonPage({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex">
         {/* ── desktop rail: a map, one entry per block ────────────────────── */}
         <nav
           aria-label="On this page"
-          className="hidden w-[236px] flex-none overflow-y-auto border-r border-ink-100 bg-ink-50 pt-[22px] pb-10 lg:block"
+          className="sticky top-[131px] hidden h-fit max-h-[calc(100dvh-131px)] w-[236px] flex-none overflow-y-auto border-r border-ink-100 bg-ink-50 pt-[22px] pb-10 lg:block"
         >
           <div className="px-5 pb-3 font-mono text-[11px] tracking-[.08em] text-ink-500 uppercase">
             On this page
@@ -366,7 +365,7 @@ export default function LessonPage({
         </nav>
 
         {/* ── the scrolling body ──────────────────────────────────────────── */}
-        <div ref={scrollRef} onScroll={onScroll} className="min-w-0 flex-1 overflow-y-auto">
+        <div className="min-w-0 flex-1">
           <div className="mx-auto max-w-[720px] pb-0 lg:pb-10">
             <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
               {/* body header */}

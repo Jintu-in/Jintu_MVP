@@ -175,7 +175,6 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
 
   return (
     <RoadmapRoute
-      backHref={"/learn" as Route}
       continueHref={`/learn/${slug}/${nextNode.slug}` as Route}
       breadcrumb={{ list: "Roadmaps", category: roadmap.subjectTags[0] ?? roadmap.difficulty }}
       title={roadmap.title}

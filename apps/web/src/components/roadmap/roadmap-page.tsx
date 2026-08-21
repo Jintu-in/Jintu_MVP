@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BackIcon, BookmarkIcon, TickIcon } from "@/components/ui/icons";
+import { TickIcon } from "@/components/ui/icons";
 import { Eyebrow, StatBadge } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
@@ -106,8 +106,6 @@ export interface RoadmapPageProps {
   modules: RoadmapModule[];
   /** The attribution/points footnote under the module list. */
   footnote: string;
-  onBack?: () => void;
-  onBookmark?: () => void;
   onContinue?: () => void;
   onFilterChange?: (id: string) => void;
 }
@@ -134,8 +132,6 @@ export default function RoadmapPage({
   filter,
   modules,
   footnote,
-  onBack,
-  onBookmark,
   onContinue,
   onFilterChange,
 }: RoadmapPageProps) {
@@ -151,45 +147,9 @@ export default function RoadmapPage({
   const filterNote = filter.options.find((o) => o.id === filterId)?.note ?? "";
 
   return (
-    <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
-      {/* ── sticky header ────────────────────────────────────────────────── */}
-      <div className="flex-none border-b border-ink-100 bg-white">
-        <div className="flex h-[52px] items-center px-1 lg:h-14 lg:gap-3 lg:px-5">
-          <button
-            type="button"
-            aria-label="Back"
-            onClick={onBack}
-            className="flex size-12 items-center justify-center text-ink-900 lg:size-9"
-          >
-            <BackIcon />
-          </button>
-          {/* Mobile: the roadmap title; desktop: breadcrumb + mono count. */}
-          <div className="min-w-0 flex-1 truncate pl-0.5 text-[13px] leading-[1.3] text-ink-900 lg:hidden">
-            {title}
-          </div>
-          <div className="hidden min-w-0 flex-1 text-[13px] leading-normal text-ink-600 lg:block">
-            {breadcrumb.list} <span className="text-ink-500">/</span> {breadcrumb.category}
-          </div>
-          <div className="hidden px-1 font-mono text-[13px] leading-none text-ink-600 lg:block">
-            {progress.daysCount}
-          </div>
-          {/* No handler, no button: a dead bookmark is worse than a missing
-              one. The design's affordance returns when roadmap saving ships. */}
-          {onBookmark ? (
-            <button
-              type="button"
-              aria-label="Bookmark"
-              onClick={onBookmark}
-              className="flex size-12 items-center justify-center text-brand-700 lg:size-9"
-            >
-              <BookmarkIcon />
-            </button>
-          ) : null}
-        </div>
-      </div>
-
+    <div className="bg-white lg:bg-ink-50">
       {/* ── the scrolling body ───────────────────────────────────────────── */}
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div>
         <div className="mx-auto max-w-[720px] lg:pb-10">
           <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
             {/* header: breadcrumb, title, description, stat chips */}
@@ -222,17 +182,14 @@ export default function RoadmapPage({
             <div className="px-5 pt-5">
               <div className="rounded-card border border-ink-100 p-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  {/* The count also sits in the sticky bar — but only from lg
-                      up, where that bar has room for it. So this copy hides
-                      at lg rather than disappearing outright: exactly one
-                      count at every width, and mobile (the primary device)
-                      does not lose the number entirely. */}
-                  <div className="text-[15px] leading-[1.4] text-ink-900 lg:hidden">
+                  {/* The page's only day count. It used to be duplicated
+                      into a desktop-only sticky bar, which SiteNav replaced;
+                      this copy now carries every width, so it must not be
+                      breakpoint-gated. */}
+                  <div className="text-[15px] leading-[1.4] text-ink-900">
                     <span className="font-mono">{progress.daysCount}</span> days
                   </div>
-                  {/* ml-auto at lg keeps this on the right once the count
-                      above it is hidden and justify-between has one child. */}
-                  <div className="font-mono text-[12.5px] leading-none text-ink-500 lg:ml-auto">
+                  <div className="font-mono text-[12.5px] leading-none text-ink-500">
                     {progress.statLine}
                   </div>
                 </div>

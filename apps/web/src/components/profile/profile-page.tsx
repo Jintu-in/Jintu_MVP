@@ -1,6 +1,6 @@
 "use client";
 
-import { BackIcon, TickIcon } from "@/components/ui/icons";
+import { TickIcon } from "@/components/ui/icons";
 import { Eyebrow } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,6 @@ export interface ProfilePageProps {
   gridLevels: GridLevel[];
   inProgress: ProfileRoadmapInProgress[];
   finished: ProfileRoadmapFinished[];
-  onBack?: () => void;
   onShare?: () => void;
 }
 
@@ -97,48 +96,34 @@ export default function ProfilePage({
   gridLevels,
   inProgress,
   finished,
-  onBack,
   onShare,
 }: ProfilePageProps) {
   return (
-    <div className="flex h-dvh flex-col bg-white lg:bg-ink-50">
-      {/* ── mobile header: back · handle · share ─────────────────────────── */}
-      <div className="flex h-[52px] flex-none items-center border-b border-ink-100 bg-white px-1 lg:hidden">
-        <button
-          type="button"
-          aria-label="Back"
-          onClick={onBack}
-          className="flex size-12 items-center justify-center text-ink-900"
-        >
-          <BackIcon />
-        </button>
-        <div className="min-w-0 flex-1 font-mono text-[13px] leading-[1.3] text-ink-900">{handle}</div>
+    <div className="bg-white lg:bg-ink-50">
+      {/* ── page bar: handle · share (the chrome above is SiteNav) ───────── */}
+      <div className="flex h-[52px] items-center gap-4 border-b border-ink-100 bg-white px-5 lg:h-14 lg:px-[22px]">
+        <div className="min-w-0 flex-1 truncate font-mono text-[13px] leading-[1.3] text-ink-600">
+          {handle}
+        </div>
         <button
           type="button"
           aria-label="Share profile"
           onClick={onShare}
-          className="flex size-12 items-center justify-center text-brand-700"
+          className="flex size-12 items-center justify-center text-brand-700 lg:hidden"
         >
           <ShareIcon />
         </button>
-      </div>
-
-      {/* ── desktop header: jintu.in · handle · share ────────────────────── */}
-      <div className="hidden h-14 flex-none items-center gap-4 border-b border-ink-100 bg-white px-[22px] lg:flex">
-        <span className="text-[16px] leading-none font-medium text-brand-700">jintu.in</span>
-        <div className="font-mono text-[13px] leading-[1.5] text-ink-600">{handle}</div>
-        <div className="flex-1" />
         <button
           type="button"
           onClick={onShare}
-          className="min-h-10 rounded-lg border border-ink-100 bg-white px-3.5 text-[13.5px] text-brand-700 hover:border-brand-700"
+          className="hidden min-h-10 rounded-lg border border-ink-100 bg-white px-3.5 text-[13.5px] text-brand-700 hover:border-brand-700 lg:block"
         >
           Share profile
         </button>
       </div>
 
       {/* ── the scrolling body ───────────────────────────────────────────── */}
-      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+      <div className="overflow-x-hidden">
         <div className="mx-auto max-w-[720px] lg:pb-10">
           <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
             {/* identity */}

@@ -1,5 +1,7 @@
 "use client";
 
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteNav } from "@/components/site/site-nav";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -26,7 +28,9 @@ export default function RootError({
   }, [error]);
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-5 py-16">
+    <div className="flex min-h-dvh flex-col bg-ink-50">
+      <SiteNav />
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-5 py-16">
       <h1 className="text-2xl font-medium tracking-tight text-balance text-ink-900">
         This page could not load
       </h1>
@@ -62,6 +66,8 @@ export default function RootError({
           identifies this exact failure in our logs.
         </p>
       ) : null}
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   );
 }

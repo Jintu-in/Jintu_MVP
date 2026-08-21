@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import CataloguePage, { type CatalogueCard } from "@/components/catalogue/catalogue-page";
 import { listPublishedRoadmaps } from "@/lib/roadmaps";
-import { getViewer } from "@/lib/session";
 
 /**
  * The catalogue (/learn), rendered through the design-set CataloguePage.
@@ -50,11 +49,7 @@ export default async function RoadmapsPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const [{ q }, all, viewer] = await Promise.all([
-    searchParams,
-    listPublishedRoadmaps(),
-    getViewer(),
-  ]);
+  const [{ q }, all] = await Promise.all([searchParams, listPublishedRoadmaps()]);
 
   const cards: CatalogueCard[] = all.map((r) => ({
     slug: r.slug,
@@ -77,9 +72,6 @@ export default async function RoadmapsPage({
   return (
     <CataloguePage
       cards={cards}
-      signedIn={Boolean(viewer?.hasProfile)}
-      signInHref="/join?next=/learn"
-      dashboardHref="/dashboard"
       initialQuery={q ?? ""}
     />
   );

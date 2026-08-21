@@ -1,3 +1,5 @@
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteNav } from "@/components/site/site-nav";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -17,7 +19,9 @@ export const metadata: Metadata = {
  */
 export default function NotFound() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-5 py-16">
+    <div className="flex min-h-dvh flex-col bg-ink-50">
+      <SiteNav />
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-5 py-16">
       <p className="font-mono text-sm text-ink-500">404</p>
       <h1 className="mt-2 text-3xl font-medium tracking-tight text-balance text-ink-900">
         That page is not here
@@ -41,6 +45,8 @@ export default function NotFound() {
           Go to the home page
         </Link>
       </div>
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
