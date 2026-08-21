@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Eyebrow, TagPair } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -343,12 +344,12 @@ export default function CataloguePage({
           <div className="mx-auto max-w-[820px]">
             <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
               <div className="px-5 pt-[22px] lg:px-7 lg:pt-7">
-                <h1 className="m-0 text-[26px] leading-[1.3] font-medium text-ink-900 lg:text-[30px]">
-                  Pick a subject. Follow it to the end.
+                <Eyebrow glyph="▦">Roadmaps</Eyebrow>
+                <h1 className="mt-3 mb-0 text-[26px] leading-[1.25] font-medium text-balance text-ink-900 lg:text-[30px]">
+                  Start with what you actually need.
                 </h1>
-                <p className="mt-2.5 mb-0 max-w-[60ch] text-[15px] leading-[1.65] text-pretty text-ink-600 lg:text-[16px]">
-                  Every roadmap is free, readable without an account, and built from the best free
-                  content on the internet — checked by a person before it ships.
+                <p className="mt-2.5 mb-0 max-w-[60ch] text-[15px] leading-[1.6] text-pretty text-ink-600 lg:text-[16px]">
+                  Free to read in full, no account needed.
                 </p>
               </div>
 
@@ -361,7 +362,7 @@ export default function CataloguePage({
                     type="button"
                     onClick={() => setSubjects(new Set())}
                     className={cn(
-                      "flex min-h-10 flex-none items-center gap-1.5 rounded-lg border px-3.5 text-[13.5px]",
+                      "flex min-h-10 flex-none items-center gap-1.5 rounded-full border px-3.5 text-[13.5px]",
                       subjects.size === 0
                         ? "border-brand-700 bg-brand-700 text-white"
                         : "border-ink-100 bg-white text-ink-900",
@@ -381,7 +382,7 @@ export default function CataloguePage({
                         aria-pressed={on}
                         onClick={() => toggle(subjects, setSubjects, f.key)}
                         className={cn(
-                          "flex min-h-10 flex-none items-center gap-2 rounded-lg border whitespace-nowrap",
+                          "flex min-h-10 flex-none items-center gap-2 rounded-full border whitespace-nowrap",
                           on
                             ? "border-brand-50 bg-brand-50 pr-2.5 pl-3.5 text-[13.5px] text-brand-900"
                             : "border-ink-100 bg-white px-3.5 text-[13.5px] text-ink-900",
@@ -455,6 +456,9 @@ export default function CataloguePage({
                       href={c.href}
                       className="block rounded-card border border-ink-100 bg-white p-[18px] no-underline hover:border-brand-700 lg:p-5"
                     >
+                      <div className="mb-2.5 flex items-center justify-between gap-2">
+                        <TagPair subject={c.subject} level={c.level} />
+                      </div>
                       {c.finished ? (
                         <div className="flex items-start gap-2">
                           <span className="mt-0.5 flex size-[18px] flex-none items-center justify-center rounded-full bg-check-machine">
@@ -498,6 +502,18 @@ export default function CataloguePage({
                       >
                         {c.finished ? c.finished.line : c.progress ? c.progress.line : c.footLine}
                       </div>
+                      {/* An explicit affordance. The whole card is the link,
+                          but a card with no visible control reads as a
+                          poster rather than a way in. */}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "mt-3.5 flex min-h-10 w-full items-center justify-center rounded-lg border border-brand-700 text-[14px] font-medium text-brand-700",
+                          c.finished && "ml-[26px] w-auto",
+                        )}
+                      >
+                        {c.finished ? "Read again" : c.progress ? "Resume" : "Start"}
+                      </span>
                     </a>
                   ))}
                 </div>

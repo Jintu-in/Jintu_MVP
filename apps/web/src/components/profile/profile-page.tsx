@@ -1,6 +1,7 @@
 "use client";
 
 import { BackIcon, TickIcon } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -155,7 +156,13 @@ export default function ProfilePage({
             </div>
 
             {/* the four counted numbers */}
-            <div className="grid grid-cols-2 gap-2 px-5 pt-5">
+            <div className="px-5 pt-6">
+              <Eyebrow glyph="◷">Your record</Eyebrow>
+              <h2 className="mt-3 text-[22px] leading-[1.25] font-medium text-balance text-ink-900">
+                Everything you&rsquo;ve done, kept.
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-2 px-5 pt-4">
               {(
                 [
                   [daysLearned, "days learned"],
@@ -170,6 +177,9 @@ export default function ProfilePage({
                 </div>
               ))}
             </div>
+            <p className="px-5 pt-2.5 text-[12.5px] leading-[1.6] text-ink-500">
+              Four numbers, counted not self-reported.
+            </p>
 
             {/* contribution grid — a map, not 371 tab stops */}
             <div className="px-5 pt-6">
@@ -209,9 +219,9 @@ export default function ProfilePage({
             {/* in progress */}
             {inProgress.length > 0 ? (
               <div className="px-5 pt-6">
-                <div className="mb-2.5 font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
+                <Eyebrow glyph="◐" className="mb-3">
                   In progress
-                </div>
+                </Eyebrow>
                 <div className="divide-y divide-ink-100 overflow-hidden rounded-card border border-ink-100">
                   {inProgress.map((r) => (
                     <div key={r.title} className="p-3.5">
@@ -237,9 +247,9 @@ export default function ProfilePage({
             {/* finished */}
             {finished.length > 0 ? (
               <div className="px-5 pt-6">
-                <div className="mb-2.5 font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
+                <Eyebrow glyph="✓" className="mb-3">
                   Finished
-                </div>
+                </Eyebrow>
                 <div className="divide-y divide-ink-100 overflow-hidden rounded-card border border-ink-100">
                   {finished.map((r) => (
                     <div key={r.title} className="flex items-center gap-3 p-3.5">

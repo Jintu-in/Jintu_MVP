@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BackIcon, BookmarkIcon, TickIcon } from "@/components/ui/icons";
+import { Eyebrow, StatBadge } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -193,24 +194,26 @@ export default function RoadmapPage({
           <div className="min-h-full bg-white lg:border-x lg:border-ink-100">
             {/* header: breadcrumb, title, description, stat chips */}
             <div className="px-5 pt-5">
+              {/* The pattern every screen opens with: an eyebrow naming the
+                  region, then the statement. The breadcrumb keeps its own
+                  line above — it is navigation, not a label. */}
               <div className="text-[13px] leading-normal text-ink-600">
                 {breadcrumb.list} <span className="text-ink-500">/</span> {breadcrumb.category}
               </div>
-              <h1 className="mt-2 text-[27px] leading-[1.25] font-medium text-ink-900">{title}</h1>
-              <p className="mt-2.5 mb-0 max-w-[66ch] text-[16px] leading-[1.65] text-pretty text-ink-600">
+              <Eyebrow glyph="▤" className="mt-3">
+                Roadmap
+              </Eyebrow>
+              <h1 className="mt-3 text-[26px] leading-[1.2] font-medium text-balance text-ink-900 sm:text-[30px]">
+                {title}
+              </h1>
+              <p className="mt-2.5 mb-0 max-w-[66ch] text-[16px] leading-[1.6] text-pretty text-ink-600">
                 {description}
               </p>
-              <div className="mt-3.5 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {statChips.map((c) => (
-                  <span
-                    key={c.label}
-                    className={cn(
-                      "rounded-lg border border-ink-100 px-2.5 py-2 font-mono text-[12.5px] leading-none",
-                      c.accent ? "text-brand-700" : "text-ink-600",
-                    )}
-                  >
+                  <StatBadge key={c.label} className={cn(c.accent && "text-brand-700")}>
                     {c.label}
-                  </span>
+                  </StatBadge>
                 ))}
               </div>
             </div>
@@ -283,8 +286,18 @@ export default function RoadmapPage({
               </div>
             </div>
 
+            {/* The list gets its own eyebrow and statement, like every
+                other region in the pattern language. The count is the
+                roadmap's real module count, not a written number. */}
+            <div className="px-5 pt-8">
+              <Eyebrow glyph="☰">The modules</Eyebrow>
+              <h2 className="mt-3 text-[20px] leading-[1.25] font-medium text-balance text-ink-900">
+                {modules.length} modules, one path.
+              </h2>
+            </div>
+
             {/* module list — linear and collapsible, never a graph */}
-            <div className="flex flex-col gap-2.5 px-5 pt-6">
+            <div className="flex flex-col gap-2.5 px-5 pt-4">
               {modules.map((m) => (
                 <ModuleCard
                   key={m.id}

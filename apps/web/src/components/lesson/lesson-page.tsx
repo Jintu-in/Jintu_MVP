@@ -13,6 +13,7 @@ import {
   TickIcon,
   VideoTileIcon,
 } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -375,7 +376,7 @@ export default function LessonPage({
                 </div>
                 <h1 className="mt-2 text-[26px] leading-[1.3] font-medium text-ink-900">{title}</h1>
                 <div className="mt-2 font-mono text-[13px] leading-normal text-ink-500">
-                  {dayLabel} · {metaLine}
+                  ◷ {dayLabel} · {metaLine}
                 </div>
                 {/* Unheaded and italic: the claim the six sections earn. Not
                     tickable, not counted, full contrast always. */}
@@ -544,9 +545,9 @@ function BlockBody({
       return (
         <div>
           {b.heading ? (
-            <h2 className={cn("mb-2.5 text-[16px] leading-normal font-medium", heading)}>
+            <Eyebrow glyph="◆" className="mb-3">
               {b.heading}
-            </h2>
+            </Eyebrow>
           ) : null}
           {b.paragraphs.map((p, i) => (
             <p
@@ -767,7 +768,9 @@ function BlockBody({
     case "topics":
       return (
         <div>
-          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <Eyebrow glyph="☰" className="mb-3">
+            {b.heading}
+          </Eyebrow>
           <ol className="m-0 flex list-none flex-col gap-3.5 p-0">
             {b.items.map((t, i) => (
               <li key={t.title} className="flex gap-3">
@@ -793,7 +796,9 @@ function BlockBody({
     case "resources":
       return (
         <div>
-          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <Eyebrow glyph="▤" className="mb-3">
+            {b.heading}
+          </Eyebrow>
           <div className="flex flex-col gap-4">
             {b.items.map((r) => (
               <ResourceRow key={r.id} r={r} body={body} />
@@ -805,7 +810,9 @@ function BlockBody({
     case "checks":
       return (
         <div>
-          <h2 className={cn("mb-3 text-[16px] leading-normal font-medium", heading)}>{b.heading}</h2>
+          <Eyebrow glyph="?" className="mb-3">
+            {b.heading}
+          </Eyebrow>
           <div className="flex flex-col gap-2.5">
             {b.items.map((c, i) => (
               <CheckRow key={c.question} q={c} openByDefault={i === 0} body={body} />

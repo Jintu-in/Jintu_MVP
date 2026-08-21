@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { DashboardData } from "@/lib/dashboard";
+import { Eyebrow } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -255,6 +256,16 @@ export default function TintedDashboard({ data }: { data: DashboardData }) {
           {name ? `${data.greeting}, ${name}` : data.greeting}
         </h1>
 
+        {/* "Your record" names the region the three stat cards belong to,
+            and the statement says what they are for. Without it the cards
+            are three numbers with no argument. */}
+        <div>
+          <Eyebrow glyph="◷">Your record</Eyebrow>
+          <h2 className="mt-3 text-[22px] leading-[1.25] font-medium text-balance text-ink-900">
+            Everything, at a glance.
+          </h2>
+        </div>
+
         {/* ── the three stat cards ─────────────────────────────────────── */}
         <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
           <ActivityStrip streak={streak} />
@@ -352,7 +363,7 @@ export default function TintedDashboard({ data }: { data: DashboardData }) {
             {roadmaps.length ? (
               <section className="hidden rounded-card border border-ink-100 bg-white p-5 lg:block">
                 <div className="mb-3.5 flex items-center justify-between gap-3">
-                  <h2 className="text-[14px] leading-none font-medium text-ink-900">Your roadmaps</h2>
+                  <Eyebrow glyph="▤">Your roadmaps</Eyebrow>
                   <Link href="/learn" className="text-[13px] leading-none text-brand-700">
                     Browse all
                   </Link>
@@ -368,7 +379,9 @@ export default function TintedDashboard({ data }: { data: DashboardData }) {
 
           {/* ── Today ────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-3.5">
-            <h2 className="text-[13px] leading-none font-medium text-ink-900">Today</h2>
+            <Eyebrow glyph="●" tone="brand">
+              Today
+            </Eyebrow>
 
             {resume ? (
               <TodayCard
@@ -413,7 +426,7 @@ export default function TintedDashboard({ data }: { data: DashboardData }) {
         {roadmaps.length ? (
           <section className="flex flex-col gap-3 border-t border-ink-100 pt-4 lg:hidden">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-[13px] leading-none font-medium text-ink-900">Your roadmaps</h2>
+              <Eyebrow glyph="▤">Your roadmaps</Eyebrow>
               <Link href="/learn" className="text-[13px] leading-none text-brand-700">
                 Browse all
               </Link>
