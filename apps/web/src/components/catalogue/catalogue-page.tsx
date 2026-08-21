@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Eyebrow, TagPair } from "@/components/ui/patterns";
+import { Eyebrow } from "@/components/ui/patterns";
 import { cn } from "@/lib/utils";
 
 /**
@@ -77,6 +77,105 @@ const SearchIcon = ({ active }: { active?: boolean }) => (
     <path d="m12 12 4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
   </svg>
 );
+
+
+/**
+ * The accent ramp for card headers, and the glyph that rides in each.
+ *
+ * Straight from the design: brand-700 → 600 → 400 → 300, cycled by
+ * position. All four are large flat fills, which is the one thing the
+ * pale end of the ramp is allowed to be.
+ *
+ * The icon flips to ink on the two pale accents — the design does this
+ * itself on #74CFDE, which tells you the ramp was known to be too light
+ * for white at the bottom end.
+ */
+const ACCENTS = [
+  { bg: "bg-brand-700", dark: true },
+  { bg: "bg-brand-600", dark: true },
+  { bg: "bg-brand-400", dark: false },
+  { bg: "bg-brand-300", dark: false },
+] as const;
+
+const CARD_GLYPHS = [
+  "M4 20V12M10 20V6M16 20V14M22 20V9",
+  "M8 6 3 12l5 6M16 6l5 6-5 6",
+  "M3 10v4h3l6 4V6L6 10Z",
+  "M15 9l-2 6-6 2 2-6Z",
+] as const;
+
+/**
+ * One roadmap card.
+ *
+ * A 96px colour block carrying the subject/level badges and a big quiet
+ * glyph, then the body: title, two lines of summary, the mono size line,
+ * a hairline, and the filled Start pill. 20px radius, no border — the
+ * colour block is what separates it from the page.
+ *
+ * ONE DEVIATION, deliberate: the design's badges are white text on
+ * rgba(255,255,255,.2) over the accent. That is 2.3:1 on brand-600 and
+ * 1.8:1 on brand-300 — unreadable at 9.5px on three of the four cards.
+ * They are a near-solid white chip with ink text instead, which keeps
+ * "a light chip on colour" and is legible on every accent.
+ */
+function RoadmapCard({ card: c, accent }: { card: CatalogueCard; accent: number }) {
+  const a = ACCENTS[accent]!;
+  const glyph = CARD_GLYPHS[accent]!;
+  return (
+    <a
+      href={c.href}
+      className="flex flex-col overflow-hidden rounded-[20px] bg-white no-underline outline-offset-2 hover:opacity-95 focus-visible:outline-2 focus-visible:outline-brand-700"
+    >
+      <div className={cn("relative flex h-24 items-start justify-end gap-1.5 overflow-hidden p-2.5", a.bg)}>
+        <svg
+          aria-hidden
+          width={46}
+          height={46}
+          viewBox="0 0 24 24"
+          fill="none"
+          className={cn("absolute bottom-1 left-1.5 opacity-20", a.dark ? "text-white" : "text-ink-900")}
+        >
+          <path d={glyph} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="relative rounded-md bg-white/90 px-2 py-1 text-[9.5px] leading-none text-ink-900">
+          {c.subject}
+        </span>
+        <span className="relative rounded-md bg-white/90 px-2 py-1 text-[9.5px] leading-none text-ink-900">
+          {c.level}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-1.5 p-3">
+        <div className="flex items-start gap-1.5">
+          {c.finished ? (
+            <span className="mt-px flex size-4 flex-none items-center justify-center rounded-full bg-check-machine text-white">
+              <svg aria-hidden width={9} height={9} viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          ) : null}
+          <span className="line-clamp-2 text-[14px] leading-[1.3] font-medium text-ink-900">
+            {c.title}
+          </span>
+        </div>
+        <p className="m-0 line-clamp-2 text-[11.5px] leading-[1.4] text-ink-600">{c.summary}</p>
+        <span className="font-mono text-[10px] leading-[1.3] text-ink-500">
+          {c.finished ? c.finished.line : c.progress ? c.progress.line : c.footLine}
+        </span>
+        {c.progress ? (
+          <span aria-hidden className="mt-0.5 block h-1 overflow-hidden rounded-full bg-ink-100">
+            {/* Inline on purpose: a computed percentage is genuinely dynamic. */}
+            <span className="block h-1 rounded-full bg-check-machine" style={{ width: `${c.progress.pct}%` }} />
+          </span>
+        ) : null}
+        <span aria-hidden className="my-0.5 h-px bg-ink-100" />
+        <span className="mt-auto self-start rounded-full bg-brand-700 px-3 py-1.5 text-[11.5px] leading-none text-white">
+          {c.finished ? "Read again" : c.progress ? "Resume" : "Start"}
+        </span>
+      </div>
+    </a>
+  );
+}
 
 export default function CataloguePage({
   cards,
@@ -450,71 +549,8 @@ export default function CataloguePage({
               {/* cards, or the no-results request */}
               {filtered.length > 0 ? (
                 <div className="flex flex-col gap-3.5 px-5 pt-3.5 pb-8 lg:grid lg:grid-cols-2 lg:gap-4 lg:px-7 lg:pt-4 lg:pb-10">
-                  {filtered.map((c) => (
-                    <a
-                      key={c.slug}
-                      href={c.href}
-                      className="block rounded-card border border-ink-100 bg-white p-[18px] no-underline hover:border-brand-700 lg:p-5"
-                    >
-                      <div className="mb-2.5 flex items-center justify-between gap-2">
-                        <TagPair subject={c.subject} level={c.level} />
-                      </div>
-                      {c.finished ? (
-                        <div className="flex items-start gap-2">
-                          <span className="mt-0.5 flex size-[18px] flex-none items-center justify-center rounded-full bg-check-machine">
-                            <svg aria-hidden width={10} height={10} viewBox="0 0 12 12" fill="none">
-                              <path
-                                d="M2.5 6.2 4.8 8.5 9.5 3.8"
-                                stroke="#FFFFFF"
-                                strokeWidth="1.7"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </span>
-                          <div className="line-clamp-2 text-[18px] leading-[1.35] font-medium text-ink-900">
-                            {c.title}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="line-clamp-2 text-[18px] leading-[1.35] font-medium text-ink-900">
-                          {c.title}
-                        </div>
-                      )}
-                      <div className={cn("mt-1.5 font-mono text-[12.5px] leading-[1.5] text-ink-500", c.finished && "ml-[26px]")}>
-                        {c.metaLine}
-                      </div>
-                      <p className={cn("mt-2.5 mb-0 line-clamp-2 text-[14px] leading-[1.55] text-ink-600", c.finished && "ml-[26px]")}>
-                        {c.summary}
-                      </p>
-                      {c.progress ? (
-                        <div className="mt-3 h-[3px] overflow-hidden rounded-[2px] bg-ink-100">
-                          {/* Inline on purpose: a computed percentage is genuinely dynamic. */}
-                          <div className="h-[3px] rounded-[2px] bg-check-machine" style={{ width: `${c.progress.pct}%` }} />
-                        </div>
-                      ) : null}
-                      <div
-                        className={cn(
-                          "border-t border-ink-100 pt-3 font-mono text-[12.5px] leading-[1.5] text-ink-500",
-                          c.progress ? "mt-3" : "mt-3.5",
-                          c.finished && "ml-[26px]",
-                        )}
-                      >
-                        {c.finished ? c.finished.line : c.progress ? c.progress.line : c.footLine}
-                      </div>
-                      {/* An explicit affordance. The whole card is the link,
-                          but a card with no visible control reads as a
-                          poster rather than a way in. */}
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "mt-3.5 flex min-h-10 w-full items-center justify-center rounded-lg border border-brand-700 text-[14px] font-medium text-brand-700",
-                          c.finished && "ml-[26px] w-auto",
-                        )}
-                      >
-                        {c.finished ? "Read again" : c.progress ? "Resume" : "Start"}
-                      </span>
-                    </a>
+                  {filtered.map((c, i) => (
+                    <RoadmapCard key={c.slug} card={c} accent={i % ACCENTS.length} />
                   ))}
                 </div>
               ) : (
