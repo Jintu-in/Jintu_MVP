@@ -133,7 +133,8 @@ function StatPill({
   children,
   className,
 }: {
-  glyph: string;
+  /** Omitted by the price, which is its own symbol already. */
+  glyph?: string;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -141,7 +142,7 @@ function StatPill({
     <span
       className={`inline-flex items-center gap-2 rounded-full border border-ink-100 bg-white px-4 py-2 font-mono text-[12px] leading-none whitespace-nowrap text-ink-900 ${className ?? ""}`}
     >
-      <span aria-hidden>{glyph}</span>
+      {glyph ? <span aria-hidden>{glyph}</span> : null}
       {children}
     </span>
   );
@@ -155,6 +156,19 @@ function StatPill({
  * of the way along, so the sentence has its evidence next to it rather than
  * asking to be believed.
  */
+/**
+ * Where each stat pill lands at xl, in the order the list below declares.
+ * Hand-placed: the corners of a hero are not positions a rule derives, and
+ * the fifth had to go somewhere that clears both the nav and the day card.
+ */
+const STAT_PINS = [
+  "top-[210px] left-[64px] opacity-95",
+  "top-[152px] right-[148px] opacity-95",
+  "top-[288px] right-[76px] opacity-90",
+  "bottom-[220px] left-[104px] opacity-90",
+  "right-[64px] bottom-[260px] opacity-95",
+] as const;
+
 const STEPS = [
   ["01", "Pick a roadmap", "Read the whole thing before you sign up."],
   ["02", "Do one day", "45–90 min. It remembers where you stopped."],
@@ -170,6 +184,25 @@ const STEPS = [
  * hairlines, which is a scroll-jank generator in aid of decoration — and it
  * is decoration: the notes read correctly stacked, and below lg they are.
  */
+/**
+ * The limits, stated. "We do not promise you a job" is a NEGATION of an
+ * outcome claim, which is the opposite of the thing rule 4 forbids and the
+ * only honest thing to say next to a career-shaped product.
+ *
+ * The last line carries the free claim. It used to sit under a ₹0 in a
+ * section of its own; it says more here, next to two other things we will
+ * not do, than it did as the caption of its own act.
+ */
+const NOT: { line: string; href?: Route; linkText?: string }[] = [
+  { line: "We do not promise you a job." },
+  { line: "We do not host anyone's content — every link goes to the person who wrote it." },
+  {
+    line: "Everything is free, and if that ever changes this page changes first.",
+    href: "/pricing" as Route,
+    linkText: "What that means →",
+  },
+];
+
 const ANNOTATIONS = [
   { top: 4, note: "Every day states its length before you open it" },
   { top: 26, note: "One principle, before any of the links" },
@@ -188,6 +221,20 @@ export default function Homepage({
   initials = null,
   displayName = null,
 }: HomepageProps) {
+  /**
+   * The five facts. Every number is derived — the design asked for "500+
+   * links checked" and there are 228 — and ₹0 is here rather than in a
+   * section of its own, where being the only claim on screen made it look
+   * like something that needed arguing for.
+   */
+  const stats = [
+    { glyph: "⚡", text: `${counts.roadmaps} roadmaps` },
+    { text: "₹0 forever" },
+    { glyph: "▦", text: `${counts.days} days written` },
+    { glyph: "◷", text: `~${counts.hours} hours` },
+    { glyph: "✓", text: `${counts.links} links checked` },
+  ].map((s, i) => ({ ...s, pin: STAT_PINS[i]! }));
+
   return (
     <div className="jhome bg-ink-50">
       <HomepageEffects />
@@ -239,29 +286,29 @@ export default function Homepage({
           <SearchBar id="hero-search" />
         </div>
 
-        {/* The four facts. A wrapped row everywhere; only pinned to the
-            corners at xl, where there is genuinely space beside the
-            headline. Absolute positioning at smaller widths is what was
-            colliding with the nav and the card. */}
+        {/* The five facts, from one list rendered twice: a wrapped row
+            everywhere, and the same five pinned to the corners at xl, where
+            there is genuinely space beside the headline. Absolute
+            positioning at smaller widths is what was colliding with the nav
+            and the card. One source, so the two can never disagree — and
+            the pinned copy is aria-hidden, so the facts are announced once.
+
+            ₹0 forever is the fifth. It was a whole section, which is the
+            shape of a page with tiers to compare; as a number among four
+            other true numbers it makes the same claim without staging it. */}
         <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-2.5 xl:hidden">
-          <StatPill glyph="⚡">{counts.roadmaps} roadmaps</StatPill>
-          <StatPill glyph="▦">{counts.days} days written</StatPill>
-          <StatPill glyph="◷">~{counts.hours} hours</StatPill>
-          <StatPill glyph="✓">{counts.links} links checked</StatPill>
+          {stats.map((s) => (
+            <StatPill key={s.text} glyph={s.glyph}>
+              {s.text}
+            </StatPill>
+          ))}
         </div>
         <div aria-hidden className="hidden xl:block">
-          <StatPill glyph="⚡" className="absolute top-[210px] left-[64px] opacity-95">
-            {counts.roadmaps} roadmaps
-          </StatPill>
-          <StatPill glyph="▦" className="absolute top-[280px] right-[80px] opacity-90">
-            {counts.days} days written
-          </StatPill>
-          <StatPill glyph="◷" className="absolute bottom-[220px] left-[104px] opacity-90">
-            ~{counts.hours} hours
-          </StatPill>
-          <StatPill glyph="✓" className="absolute right-[64px] bottom-[260px] opacity-95">
-            {counts.links} links checked
-          </StatPill>
+          {stats.map((s) => (
+            <StatPill key={s.text} glyph={s.glyph} className={`absolute ${s.pin}`}>
+              {s.text}
+            </StatPill>
+          ))}
         </div>
 
         {/* the day card, straddling the fold */}
@@ -404,88 +451,6 @@ export default function Homepage({
         </Link>
       </section>
 
-      {/* ── how it works ────────────────────────────────────────────────── */}
-      <section
-        id="how-it-works"
-        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-16 sm:px-12 sm:py-24"
-      >
-        <div className="mx-auto max-w-[1280px]">
-          <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-            How it works
-          </div>
-          <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
-            Four steps,
-            <br className="hidden sm:block" /> then a habit.
-          </h2>
-
-          {/* list-none explicitly: preflight already resets ol, but the mono "01"
-              IS the marker here, and a stylesheet change that dropped preflight
-              would put a second number in front of every one of them. */}
-          <ol className="mt-8 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map(([n, head, body], i) => (
-              <li key={n} className="border-t border-ink-200 pt-4">
-                <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
-                <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
-                <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
-                {/* 96px of the real thing, under the words for it. */}
-                <div className="mt-4 h-24">
-                  {i === 0 ? <ModuleSpine modules={spine} mini className="h-24" /> : null}
-                  {i === 1 ? <DayCardMini className="h-24" /> : null}
-                  {i === 2 ? <StreakStrip mini className="h-24" /> : null}
-                  {i === 3 ? <ContribGrid className="h-24" /> : null}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ── pricing ─────────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-              Pricing
-            </div>
-            <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
-              Free.
-              <br className="hidden sm:block" /> All of it.
-            </h2>
-          </div>
-
-          {/* Three ticked bullets made a free product look like a plan you
-              have to evaluate. The number is the whole argument, so it is the
-              whole card: ₹0 at display size, one line of scope, one button.
-              The bullets it replaced were "every roadmap in full", "progress,
-              streaks, points" and "nothing sold about you" — the first two
-              are shown elsewhere on this page and the third is a promise
-              about data, which belongs in the privacy policy the footer
-              links, not in a marketing tick list. */}
-          <div className="rounded-card border border-ink-100 bg-white p-6 sm:p-10">
-            <div className="flex items-end gap-3">
-              <span className="font-mono text-[92px] leading-[0.8] font-medium tracking-[-0.04em] text-ink-900 sm:text-[128px]">
-                ₹0
-              </span>
-              <span className="pb-2 text-[16px] leading-none text-ink-600">forever</span>
-            </div>
-            <p className="mt-6 mb-0 max-w-[34ch] text-[16px] leading-[1.6] text-pretty text-ink-600">
-              Everything on this page. No account needed to read any of it.
-            </p>
-            <Link
-              href="/learn"
-              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-700 px-6 text-[15px] font-medium text-white hover:bg-brand-800 sm:w-auto sm:self-start"
-            >
-              Start free
-            </Link>
-            {/* The caveat sits with the claim, which is the only thing that
-                makes "forever" honest. Do not separate them. */}
-            <p className="mt-3 text-[13px] leading-[1.6] text-ink-500">
-              If that ever changes, this page changes first.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* ── here is one day ─────────────────────────────────────────────── */}
       <section
         id="one-day"
@@ -543,6 +508,42 @@ export default function Homepage({
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* ── how it works ────────────────────────────────────────────────── */}
+      <section
+        id="how-it-works"
+        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-16 sm:px-12 sm:py-24"
+      >
+        <div className="mx-auto max-w-[1280px]">
+          <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+            How it works
+          </div>
+          <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
+            Four steps,
+            <br className="hidden sm:block" /> then a habit.
+          </h2>
+
+          {/* list-none explicitly: preflight already resets ol, but the mono "01"
+              IS the marker here, and a stylesheet change that dropped preflight
+              would put a second number in front of every one of them. */}
+          <ol className="mt-8 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map(([n, head, body], i) => (
+              <li key={n} className="border-t border-ink-200 pt-4">
+                <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
+                <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
+                <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
+                {/* 96px of the real thing, under the words for it. */}
+                <div className="mt-4 h-24">
+                  {i === 0 ? <ModuleSpine modules={spine} mini className="h-24" /> : null}
+                  {i === 1 ? <DayCardMini className="h-24" /> : null}
+                  {i === 2 ? <StreakStrip mini className="h-24" /> : null}
+                  {i === 3 ? <ContribGrid className="h-24" /> : null}
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -640,6 +641,38 @@ export default function Homepage({
             />
           ))}
         </div>
+      </section>
+
+      {/* ── what this is not ────────────────────────────────────────────── */}
+      {/* The three things worth saying plainly, in the place a sceptical
+          reader is already looking for them. The free claim used to have a
+          whole section to itself — which is the shape of a page with tiers
+          to compare, and this one has neither tiers nor anything to buy. A
+          product that keeps staging its own freeness invites the suspicion
+          it is trying to allay; stated once among two other limits, it
+          reads as a fact rather than a pitch. */}
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
+        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+          What this is not
+        </div>
+        <ul className="mt-6 flex max-w-[46ch] list-none flex-col gap-5 p-0">
+          {NOT.map((n) => (
+            <li key={n.line} className="flex gap-3.5">
+              <span aria-hidden className="mt-[13px] h-px w-5 flex-none bg-ink-200" />
+              <span className="text-[18px] leading-[1.5] text-pretty text-ink-900 sm:text-[20px]">
+                {n.line}
+                {n.href ? (
+                  <>
+                    {" "}
+                    <Link href={n.href} className="text-brand-700 underline-offset-4 hover:underline">
+                      {n.linkText}
+                    </Link>
+                  </>
+                ) : null}
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ── the close ───────────────────────────────────────────────────── */}

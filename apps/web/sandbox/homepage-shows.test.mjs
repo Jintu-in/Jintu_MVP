@@ -62,9 +62,58 @@ test("the day page's notes are anchored, not a second list beside it", () => {
   assert.ok(!home.includes("const BULLETS"), "the unanchored list is gone");
 });
 
-test("pricing is the number, not a tick list", () => {
-  assert.ok(!home.includes("FREE_INCLUDES"), "the three bullets are gone");
-  assert.match(home, /text-\[92px\][^"]*sm:text-\[128px\]/, "₹0 at display size");
+test("there is no pricing section — the claim is woven in instead", () => {
+  // A pricing section compares tiers or converts to a purchase. There is one
+  // tier and nothing to buy, so it had no job, and a free product that keeps
+  // staging its own freeness invites the suspicion it means to allay.
+  assert.ok(!home.includes("FREE_INCLUDES"), "the tick list is gone");
+  assert.ok(!/── pricing ─/.test(home), "and so is the section");
+  assert.ok(!/text-\[128px\]/.test(home), "and the display-size ₹0 with it");
+
+  // Three places carry the claim now, none of them a section.
+  assert.match(home, /text: "₹0 forever"/, "a fifth stat, among four other true numbers");
+  assert.match(home, /Free · No account needed to read/, "the hero pill");
+  assert.match(home, /Everything is free, and if that ever changes this page changes first/);
+});
+
+test("the page still points a sceptical reader at /pricing", () => {
+  const footer = readFileSync(join(SRC, "components", "site", "site-footer.tsx"), "utf8");
+  assert.match(footer, /\/pricing/, "the footer link stays — that page is where you go to check");
+  assert.match(home, /href: "\/pricing" as Route/, "and so does the one in 'what this is not'");
+});
+
+test("what this is not says the three things, and the job line is a negation", () => {
+  const block = /const NOT[\s\S]*?\n\];/.exec(home)?.[0] ?? "";
+  assert.match(block, /We do not promise you a job\./);
+  assert.match(block, /We do not host anyone's content/);
+  assert.match(block, /Everything is free/);
+  // Rule 4 forbids promising an outcome. Saying plainly that we do not is
+  // the opposite, and pnpm claims agrees — but a later edit that drops the
+  // "not" would turn the best sentence on the page into the banned one.
+  assert.ok(!/\bguarantee/i.test(block), "no guarantee language anywhere near it");
+});
+
+test("the sections run in the order that tells the story", () => {
+  const at = (name) => {
+    const i = home.indexOf(`── ${name} ─`);
+    assert.ok(i > -1, `missing section: ${name}`);
+    return i;
+  };
+  // Roadmaps, then straight inside one, then how the habit works. Pricing
+  // used to sit between the steps and the day, three sections from the cards
+  // it was interrupting.
+  const order = [
+    "hero",
+    "the sources",
+    "the roadmaps",
+    "here is one day",
+    "how it works",
+    "the bento",
+    "ninety-one squares",
+    "what this is not",
+    "the close",
+  ].map(at);
+  assert.deepEqual(order, [...order].sort((a, b) => a - b), "sections are out of order");
 });
 
 test("the close has cards cropped by the section, and only where they can crop", () => {
