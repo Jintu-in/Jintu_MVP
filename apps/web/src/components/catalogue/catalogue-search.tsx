@@ -57,19 +57,32 @@ export function CatalogueSearch({
   const compact = size === "compact";
   const active = value.length > 0;
 
+  /**
+   * The border is always 1px and the focus ring is a `ring`, not a thicker
+   * border. The design draws 2px ink on focus, but swapping 1px for 2px
+   * reflows the input by a pixel on every focus and blur — the field appears
+   * to twitch as you tab through it. A ring paints outside the box instead,
+   * so it looks like the design and holds still.
+   *
+   * Only focus thickens it. A field that stays black because it has a value
+   * in it looks permanently focused, and the whole sidebar then reads as
+   * though the cursor is somewhere it is not.
+   */
   return (
-    <div className="relative">
+    <div
+      className={cn(
+        "flex items-center gap-2 rounded-lg border border-ink-100 bg-white",
+        compact ? "h-9 pr-1 pl-2.5" : "h-12 pr-1.5 pl-3.5",
+        focused && "border-ink-900 ring-1 ring-ink-900",
+      )}
+    >
       <svg
         aria-hidden
         width={compact ? 14 : 16}
         height={compact ? 14 : 16}
         viewBox="0 0 16 16"
         fill="none"
-        className={cn(
-          "pointer-events-none absolute",
-          compact ? "top-[13px] left-2.5" : "top-4 left-3.5",
-          active ? "text-ink-900" : "text-ink-500",
-        )}
+        className={cn("flex-none", active || focused ? "text-ink-900" : "text-ink-500")}
       >
         <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
         <path d="m11 11 3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
@@ -82,29 +95,26 @@ export function CatalogueSearch({
         placeholder="Search roadmaps"
         aria-label="Search roadmaps"
         className={cn(
-          "w-full rounded-lg bg-white text-ink-900 placeholder:text-ink-500 focus:outline-none",
-          compact ? "h-10 pr-8 pl-8 text-[13px]" : "h-12 pr-10 pl-10 text-[14px]",
-          // The design thickens the border to 2px ink on focus rather than
-          // tinting it — the field is the only thing on the page that does
-          // this, which is what makes it findable.
-          focused || active ? "border-2 border-ink-900" : "border border-ink-100",
+          "min-w-0 flex-1 bg-transparent text-ink-900 placeholder:text-ink-500 focus:outline-none",
+          compact ? "text-[13px]" : "text-[14px]",
         )}
       />
-      {value ? (
-        <button
-          type="button"
-          aria-label="Clear search"
-          onClick={() => commit("")}
-          className={cn(
-            "absolute flex items-center justify-center text-ink-500 hover:text-ink-900",
-            compact ? "top-1 right-1 size-8" : "top-1.5 right-1.5 size-9",
-          )}
-        >
-          <svg aria-hidden width={13} height={13} viewBox="0 0 14 14" fill="none">
-            <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
-        </button>
-      ) : null}
+      {/* Holds its slot whether or not there is anything to clear, so the
+          text does not jump sideways on the first keystroke. */}
+      <span className={cn("flex-none", compact ? "size-7" : "size-9")}>
+        {value ? (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => commit("")}
+            className="flex size-full items-center justify-center rounded text-ink-500 hover:text-ink-900"
+          >
+            <svg aria-hidden width={12} height={12} viewBox="0 0 14 14" fill="none">
+              <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          </button>
+        ) : null}
+      </span>
     </div>
   );
 }
