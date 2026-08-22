@@ -122,5 +122,45 @@ if (!/inline-flex[^"]*gap-\d/.test(stat))
   fail("StatPill has no gap — the glyph and the number will touch");
 else console.log("  ok    StatPill separates its glyph and label with a gap");
 
+// ── 5. nothing wider than the narrowest screen ──────────────────────────────
+// 320px is the floor. Minus the standard px-5 gutter that leaves 280px of
+// content, so an unprefixed fixed width above that overflows on a small
+// phone — and once a page scrolls sideways every centred thing on it looks
+// broken, which is usually what gets reported rather than the width itself.
+//
+// Exempt: anything hidden, absolutely positioned or behind a breakpoint
+// prefix, since none of those occupy flow at 320px.
+console.log("\n── nothing wider than a 320px screen ──");
+const FLOOR = 280;
+let wide = 0;
+for (const f of files) {
+  const src = readFileSync(f, "utf8");
+  const rel = path.relative(ROOT, f);
+  for (const m of src.matchAll(/className=[{"`]([^"`]*)["`]/g)) {
+    const cls = m[1];
+    if (/\bhidden\b|\babsolute\b|\bfixed\b|max-w-/.test(cls)) continue;
+    for (const w of cls.matchAll(/(?:^|\s)w-\[(\d+)px\]/g)) {
+      if (Number(w[1]) > FLOOR) {
+        wide++;
+        fail(`${rel}: w-[${w[1]}px] with no breakpoint prefix — overflows a 320px screen`);
+      }
+    }
+  }
+}
+if (!wide) console.log(`  ok    no unprefixed fixed width exceeds ${FLOOR}px`);
+
+// ── 6. the measure is capped and can break ──────────────────────────────────
+// A heading with no max-inline-size runs as wide as the viewport allows, and
+// one with no overflow-wrap is pushed sideways by a single long word.
+console.log("\n── display type cannot leave its container ──");
+for (const c of ["t-hero", "t-page", "t-sect", "t-sub"]) {
+  const block = new RegExp(`\\.${c} \\{[^}]*\\}`).exec(scale)?.[0] ?? "";
+  if (!/max-inline-size:\s*20ch/.test(block)) fail(`.${c} has no measure cap`);
+  if (!/overflow-wrap:\s*break-word/.test(block)) fail(`.${c} cannot break a long word`);
+}
+if (!/overflow-x:\s*clip/.test(globals))
+  fail("no overflow-x net on the root — a stray wide element scrolls the whole page");
+else console.log("  ok    capped, breakable, and the root clips rather than scrolls");
+
 console.log(`\n${failures === 0 ? "Typography rules hold." : `${failures} failure(s).`}`);
 process.exit(failures === 0 ? 0 : 1);

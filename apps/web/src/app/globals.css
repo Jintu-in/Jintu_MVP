@@ -58,6 +58,28 @@
     text-wrap: pretty;
   }
 
+  /* A capped heading inside a centred column would sit hard left, because
+     max-inline-size makes the block narrower than its parent and a block
+     does not centre itself. This only affects headings that were already
+     being centred. */
+  .text-center > h1,
+  .text-center > h2,
+  .text-center > h3,
+  h1.text-center,
+  h2.text-center,
+  h3.text-center {
+    margin-inline: auto;
+  }
+
+  /* The safety net, not the fix. Nothing should overflow horizontally; if
+     something does, a phone gets a page that slides sideways and every
+     centred thing looks broken. clip rather than hidden: hidden on the root
+     silently creates a scroll container and breaks position: sticky, which
+     the catalogue rail and both site headers depend on. */
+  html {
+    overflow-x: clip;
+  }
+
   /* Mid-range Android is the target device — respect reduced motion. */
   @media (prefers-reduced-motion: reduce) {
     *,
