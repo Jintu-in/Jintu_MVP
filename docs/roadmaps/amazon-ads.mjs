@@ -23,7 +23,7 @@ export default {
   summary:
     "Thirteen weeks from retail readiness to clean-room SQL and incrementality: Buy Box health, Sponsored Products mechanics, profitability math, DSP, AMC and the Ads API — for sellers on Amazon.in and agency account managers alike.",
   subjectTags: ["marketing", "amazon-ads", "ecommerce", "retail-media", "advertising"],
-  category: "marketing",
+  category: "business",
   difficulty: "intermediate",
   estimatedWeeks: 13,
   licenseNote: null,

@@ -49,6 +49,10 @@ const fail = (msg) => {
 };
 const TYPES = ["read", "video", "doc", "case_study", "tool", "latest"];
 const DIFF_ROADMAP = ["beginner", "intermediate", "advanced"];
+// The six of migration 0022. Widening this list means widening the CHECK and
+// lib/catalogue-filters.ts in the same change, or a roadmap lands in a
+// category the catalogue cannot render.
+const CATEGORIES = ["data", "software", "business", "health", "judgement", "foundations"];
 const DIFF_NODE = ["intro", "core", "stretch"];
 // A question's hardness, not a day's place in a curriculum. Two axes, two
 // vocabularies, deliberately different words so they cannot be confused.
@@ -59,6 +63,8 @@ if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(spec.slug ?? "")) fail("slug");
 if (!spec.title || !spec.summary) fail("title/summary required");
 if (!DIFF_ROADMAP.includes(spec.difficulty)) fail(`difficulty ${spec.difficulty}`);
 if (!Array.isArray(spec.modules) || spec.modules.length === 0) fail("no modules");
+if (!CATEGORIES.includes(spec.category))
+  fail(`category "${spec.category}" — one of ${CATEGORIES.join(", ")}`);
 // estimated_hours is derived by recompute_estimated_hours() from the days
 // themselves (0020). A typed one disagreed with its own roadmap by 4x on all
 // four of the originals, so the spec is no longer allowed to carry it.

@@ -28,8 +28,10 @@ import { fileURLToPath } from "node:url";
 const CATEGORIES = [
   { key: "data", label: "Data & analytics" },
   { key: "software", label: "Software & engineering" },
-  { key: "marketing", label: "Marketing & commerce" },
+  { key: "business", label: "Business & growth" },
+  { key: "health", label: "Health & life sciences" },
   { key: "judgement", label: "Thinking & judgement" },
+  { key: "foundations", label: "Foundations" },
 ];
 const LEVELS = [
   { key: "beginner", label: "Beginner" },
@@ -176,7 +178,7 @@ const ROWS = [
   row({ slug: "amazon-ads", title: "Amazon Ads & retail media",
     summary: "Retail readiness to clean-room SQL and incrementality.",
     tags: ["marketing", "amazon-ads", "ecommerce", "retail-media", "advertising"],
-    category: "marketing", level: "intermediate", weeks: 13, hasFreeCert: true,
+    category: "business", level: "intermediate", weeks: 13, hasFreeCert: true,
     createdAt: "2026-08-13T18:21:12Z" }),
 ];
 
@@ -190,8 +192,8 @@ test("the acceptance URL returns exactly one roadmap", () => {
 });
 
 test("a filter round-trips through the URL unchanged", () => {
-  const f = parseFilters(new URLSearchParams("c=marketing&len=long&cert=1&sort=short"));
-  assert.equal(toQueryString(f), "?c=marketing&len=long&cert=1&sort=short");
+  const f = parseFilters(new URLSearchParams("c=business&len=long&cert=1&sort=short"));
+  assert.equal(toQueryString(f), "?c=business&len=long&cert=1&sort=short");
   assert.deepEqual(parseFilters(new URLSearchParams(toQueryString(f).slice(1))), f);
 });
 
@@ -213,7 +215,7 @@ test("a group is single-select: a repeated param keeps one value", () => {
   const f = parseFilters(new URLSearchParams("c=data&c=software"));
   assert.equal(f.c, "data");
   // And toggling within the group replaces rather than accumulates.
-  assert.equal(toggled(f, "c", "marketing").c, "marketing");
+  assert.equal(toggled(f, "c", "business").c, "business");
   assert.equal(toggled(f, "c", "data").c, null, "choosing the chosen one clears it");
 });
 
@@ -233,7 +235,7 @@ test("no facet is ever rendered with a count of zero", () => {
     { ...EMPTY, len: "short" },
     { ...EMPTY, cert: true },
     { ...EMPTY, q: "sql" },
-    { ...EMPTY, c: "marketing", level: "intermediate", len: "long" },
+    { ...EMPTY, c: "business", level: "intermediate", len: "long" },
   ]) {
     for (const g of buildFacets(ROWS, f)) {
       for (const x of g.facets) {
@@ -270,9 +272,9 @@ test("a facet is counted against the other groups, not against itself", () => {
 });
 
 test("the chosen facet survives even when its own count is one", () => {
-  const f = { ...EMPTY, c: "marketing" };
+  const f = { ...EMPTY, c: "business" };
   const subjects = buildFacets(ROWS, f).find((g) => g.group === "c");
-  assert.ok(subjects.facets.some((x) => x.key === "marketing" && x.selected),
+  assert.ok(subjects.facets.some((x) => x.key === "business" && x.selected),
     "removing the control you just used would make the filter impossible to undo");
 });
 
@@ -355,7 +357,10 @@ test("the real module still exports everything this file copied", () => {
 test("the buckets and the thresholds still match the copy", () => {
   assert.match(lib, /key: "short", label: "Under 12 weeks", test: \(w: number \| null\) => w !== null && w < 12/);
   assert.match(lib, /key: "long", label: "12 weeks or more", test: \(w: number \| null\) => w !== null && w >= 12/);
-  for (const c of ["data", "software", "marketing", "judgement"]) {
+  // The six of migration 0022. This list and the CHECK must agree: a key
+  // here the constraint rejects makes a facet nothing can fill, and one in
+  // the constraint but missing here hides a whole category from /learn.
+  for (const c of ["data", "software", "business", "health", "judgement", "foundations"]) {
     assert.match(lib, new RegExp(`key: "${c}"`), `${c} should still be a category`);
   }
 });

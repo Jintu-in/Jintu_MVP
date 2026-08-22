@@ -95,7 +95,7 @@ export type RoadmapSummary = {
   moduleCount: number;
   nodeCount: number;
   /** 0017's facet columns. See the fallback note in listPublishedRoadmaps. */
-  category: "data" | "software" | "marketing" | "judgement";
+  category: "data" | "software" | "business" | "health" | "judgement" | "foundations";
   mediaMix: "reading" | "mixed" | "video";
   hasFreeCert: boolean;
   hasPrereqs: boolean;
@@ -145,12 +145,18 @@ const CATEGORY_FROM_TAG: Record<string, RoadmapSummary["category"]> = {
   java: "software",
   programming: "software",
   backend: "software",
-  marketing: "marketing",
-  ecommerce: "marketing",
-  advertising: "marketing",
+  marketing: "business",
+  ecommerce: "business",
+  advertising: "business",
+  sales: "business",
   thinking: "judgement",
   "decision-making": "judgement",
   rationality: "judgement",
+  git: "foundations",
+  linux: "foundations",
+  excel: "foundations",
+  "command-line": "foundations",
+  spreadsheets: "foundations",
 };
 
 /** A missing column: PostgREST 42703, or its own PGRST204 on a bad select. */

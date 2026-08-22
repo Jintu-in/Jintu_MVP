@@ -27,7 +27,7 @@ export default {
   summary:
     "Twenty days from formulas that break to a workbook a colleague can open, trust and update — for the people whose job is the spreadsheet, not the ones passing through it.",
   subjectTags: ["excel", "spreadsheets", "power-query", "pivot-tables", "data-cleaning", "reporting"],
-  category: "data",
+  category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 4,
   licenseNote: null,
