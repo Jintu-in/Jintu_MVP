@@ -50,6 +50,10 @@ const fail = (msg) => {
 const TYPES = ["read", "video", "doc", "case_study", "tool", "latest"];
 const DIFF_ROADMAP = ["beginner", "intermediate", "advanced"];
 const DIFF_NODE = ["intro", "core", "stretch"];
+// A question's hardness, not a day's place in a curriculum. Two axes, two
+// vocabularies, deliberately different words so they cannot be confused.
+const DIFF_CHECK = ["easy", "medium", "hard"];
+const CHECK_KINDS = ["comprehension", "interview"];
 
 if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(spec.slug ?? "")) fail("slug");
 if (!spec.title || !spec.summary) fail("title/summary required");
@@ -84,9 +88,19 @@ for (const [mi, m] of spec.modules.entries()) {
       if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);
     }
     for (const [ci, c] of (n.checks ?? []).entries()) {
-      if (!c.question || !c.answer) fail(`${at} check ${ci + 1} needs question and answer`);
+      const cat = `${at} check ${ci + 1}`;
+      if (!c.question || !c.answer) fail(`${cat} needs question and answer`);
+      if (c.kind && !CHECK_KINDS.includes(c.kind)) fail(`${cat} kind ${c.kind}`);
+      if (c.difficulty && !DIFF_CHECK.includes(c.difficulty))
+        fail(`${cat} difficulty ${c.difficulty} — easy/medium/hard, not the node's intro/core/stretch`);
+      // asked_in_interviews is a claim about the world, so it may only be
+      // made about a question written to be asked cold.
+      if (c.askedInInterviews && (c.kind ?? "comprehension") !== "interview")
+        fail(`${cat}: askedInInterviews on a comprehension check — set kind: "interview" or drop the flag`);
     }
-    if ((n.checks ?? []).length > 5) fail(`${at}: ${n.checks.length} checks — three is the model, five the ceiling`);
+    const comprehension = (n.checks ?? []).filter((c) => (c.kind ?? "comprehension") === "comprehension");
+    if (comprehension.length > 5)
+      fail(`${at}: ${comprehension.length} comprehension checks — three is the model, five the ceiling`);
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -182,7 +196,10 @@ for (const [mi, m] of spec.modules.entries()) {
       push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);
     }
     for (const [ci, c] of (n.checks ?? []).entries()) {
-      push(`  insert into public.node_checks (node_id, position, question, answer) values (n, ${ci}, ${q(c.question)}, ${q(c.answer)});`);
+      push(
+        `  insert into public.node_checks (node_id, position, question, answer, kind, difficulty, asked_in_interviews)` +
+          ` values (n, ${ci}, ${q(c.question)}, ${q(c.answer)}, ${q(c.kind ?? "comprehension")}, ${q(c.difficulty ?? "medium")}, ${c.askedInInterviews ? "true" : "false"});`,
+      );
     }
     for (const [ri, r] of n.resources.entries()) {
       push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
