@@ -59,13 +59,30 @@ roadmap ── module ── node ── resource
 
 | Level | Is | Sized |
 |---|---|---|
-| roadmap | one subject, end to end | 8–20 modules |
+| roadmap | one subject, end to end | 2–20 modules |
 | module | a several-week arc with one deliverable | 8–12 nodes — *importer fails above 12* |
 | node | one day | 2–120 estimated minutes — *importer enforces* |
 | resource | one third-party URL | 1–4 per node (convention) |
 
 Nothing in the model has a deadline, a cohort, or a clock. Week ranges on a
 module are **size, not schedule**.
+
+### Pace: a roadmap has to be able to carry a streak
+The streak resets on a missed day, so there has to be a day to do. Divide
+days by weeks:
+
+| Roadmap | Days/week | |
+|---|---|---|
+| Data analyst | 7.0 | a real daily habit |
+| Git & GitHub | 6.0 | |
+| Java & Spring Boot | 2.7 | streak breaks on Thursday |
+| Thinking under uncertainty | 2.4 | |
+| Amazon Ads | 2.1 | |
+
+**Aim for 5–7 days a week.** The importer prints the figure on every run and
+warns below 4. It warns rather than fails because three published roadmaps
+would fail it, and the fix is a curriculum decision — write more days, or
+state fewer weeks — not something a script should force.
 
 ---
 
@@ -195,11 +212,28 @@ references are fabricated, so this gate is the whole defence.
   category: "data",                  // NAVIGATION — one of exactly four
   difficulty: "beginner",            // beginner | intermediate | advanced
   estimatedWeeks: 13,
-  estimatedHours: 340,
   licenseNote: null,                 // set when anything was imported wholesale
+  requires: [                        // optional; see below
+    { slug: "git-and-github", note: "Day one clones a repository." },
+  ],
   modules: [ … ],
 }
 ```
+
+### There is no `estimatedHours`
+It is derived by `recompute_estimated_hours()` (migration 0020) from the sum
+of the roadmap's own `est_minutes`, and **the importer fails on a spec that
+carries one**. The four originals had it typed in and every one was out by
+almost exactly 4× — 890 hours stored against 195 authored, with the larger
+number on the homepage. A roadmap total that disagrees with its own days
+breaks the promise the day pages make.
+
+### `requires` — prerequisites are an edge
+Each entry is a slug, or `{ slug, note }` where the note is one line shown on
+the card. The paste inserts into `roadmap_prerequisites` and skips silently if
+the other roadmap is not in the database yet, so build order is not
+load-bearing — re-paste once it is. Cycles are refused by a trigger, and
+`has_prereqs` is derived from the edges, never set by hand.
 
 ### `category` vs `subjectTags` — do not merge them
 `category` is one of `data`, `software`, `marketing`, `judgement` and is a
@@ -339,9 +373,14 @@ Lint last, after every file is written.
 ### 9.5 Paste
 `supabase/.bundle/IMPORT-<slug>.sql` into the SQL editor, by hand.
 
-### 9.6 Recompute what is derived
+### 9.6 Nothing — the paste already recomputes
+Every generated paste ends with the three derivations, so there is no manual
+step to forget:
+
 ```sql
+select public.recompute_estimated_hours();
 select public.recompute_media_mix();
+select public.recompute_has_prereqs();
 ```
 
 ---
@@ -362,7 +401,10 @@ the update path.
 
 Structure
 
-- [ ] 8–20 modules; 8–12 nodes each
+- [ ] 2–20 modules; 8–12 nodes each
+- [ ] 5–7 days a week — the importer prints it and warns below 4
+- [ ] `category` set; **no `estimatedHours`** (derived)
+- [ ] `requires` set where the roadmap genuinely assumes another
 - [ ] every node 2–120 minutes, honestly estimated
 - [ ] no `Day N` in any title
 - [ ] `category` is one of the four; `subjectTags` carries the specifics

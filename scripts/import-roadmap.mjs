@@ -59,6 +59,16 @@ if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(spec.slug ?? "")) fail("slug");
 if (!spec.title || !spec.summary) fail("title/summary required");
 if (!DIFF_ROADMAP.includes(spec.difficulty)) fail(`difficulty ${spec.difficulty}`);
 if (!Array.isArray(spec.modules) || spec.modules.length === 0) fail("no modules");
+// estimated_hours is derived by recompute_estimated_hours() from the days
+// themselves (0020). A typed one disagreed with its own roadmap by 4x on all
+// four of the originals, so the spec is no longer allowed to carry it.
+if (spec.estimatedHours !== undefined)
+  fail("drop estimatedHours — it is derived from the sum of est_minutes; the paste calls recompute_estimated_hours()");
+for (const req of spec.requires ?? []) {
+  if (typeof req === "string" ? !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(req) : !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(req.slug ?? ""))
+    fail(`requires: "${typeof req === "string" ? req : req.slug}" is not a slug`);
+  if ((typeof req === "string" ? req : req.slug) === spec.slug) fail("a roadmap cannot require itself");
+}
 
 const urls = [];
 for (const [mi, m] of spec.modules.entries()) {
@@ -114,6 +124,21 @@ for (const [mi, m] of spec.modules.entries()) {
       urls.push(r);
     }
   }
+}
+
+// ── pace: can this roadmap carry a streak? ─────────────────────────────────
+// The streak resets on a missed day, so a roadmap has to offer a day to do.
+// Data analyst is 91 days over 13 weeks — seven a week, a real daily habit.
+// The other three run 2.1–2.7, which means the streak breaks on Thursday
+// through no fault of the reader. A warning rather than a failure, because
+// those three are already published and this is a curriculum judgement.
+{
+  const days = spec.modules.reduce((a, m) => a + m.nodes.length, 0);
+  const perWeek = spec.estimatedWeeks ? days / spec.estimatedWeeks : null;
+  const mins = spec.modules.reduce((a, m) => a + m.nodes.reduce((b, n) => b + n.estMinutes, 0), 0);
+  console.error(`${days} days · ${spec.estimatedWeeks ?? "?"} weeks · ${perWeek ? perWeek.toFixed(1) : "?"}/week · ${Math.round(mins / 60)} h derived`);
+  if (perWeek !== null && perWeek < 4)
+    console.error(`  WARNING: ${perWeek.toFixed(1)} days a week cannot sustain a daily streak. Either write more days or state fewer weeks.`);
 }
 
 // ── the live check ───────────────────────────────────────────────────────────
@@ -178,8 +203,8 @@ push(`declare rm uuid; m uuid; n uuid;`);
 push(`begin`);
 push(`  delete from public.roadmaps where slug = ${q(spec.slug)};`);
 push(``);
-push(`  insert into public.roadmaps (slug, title, summary, subject_tags, difficulty, estimated_weeks, estimated_hours, license_note, status)`);
-push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${qn(spec.estimatedHours)}, ${q(spec.licenseNote ?? null)}, 'draft')`);
+push(`  insert into public.roadmaps (slug, title, summary, subject_tags, category, difficulty, estimated_weeks, license_note, status)`);
+push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.category ?? "data")}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${q(spec.licenseNote ?? null)}, 'draft')`);
 push(`  returning id into rm;`);
 
 for (const [mi, m] of spec.modules.entries()) {
@@ -208,6 +233,21 @@ for (const [mi, m] of spec.modules.entries()) {
   }
 }
 
+// Prerequisites, by slug. Skipped silently when the other roadmap is not in
+// the database yet — a missing edge is recoverable by re-pasting once it is,
+// and failing the whole import would make build order load-bearing.
+if ((spec.requires ?? []).length) {
+  push(``);
+  push(`  -- prerequisites`);
+  for (const [i, req] of spec.requires.entries()) {
+    const slug = typeof req === "string" ? req : req.slug;
+    const note = typeof req === "string" ? null : (req.note ?? null);
+    push(`  insert into public.roadmap_prerequisites (roadmap_id, requires_id, position, note)`);
+    push(`  select rm, id, ${i}, ${q(note)} from public.roadmaps where slug = ${q(slug)}`);
+    push(`  on conflict (roadmap_id, requires_id) do update set position = excluded.position, note = excluded.note;`);
+  }
+}
+
 push(``);
 if (verified) {
   push(`  update public.roadmaps set status = 'published', reviewed_at = now() where id = rm;`);
@@ -215,6 +255,11 @@ if (verified) {
   push(`  -- stays draft: links were not verified at generation time.`);
 }
 push(`end $$;`);
+push(``);
+push(`-- Everything derived, recomputed from what was just inserted.`);
+push(`select public.recompute_estimated_hours();`);
+push(`select public.recompute_media_mix();`);
+push(`select public.recompute_has_prereqs();`);
 push(``);
 
 const outDir = path.join(ROOT, "supabase", ".bundle");

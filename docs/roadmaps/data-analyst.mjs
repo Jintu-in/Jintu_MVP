@@ -42,9 +42,9 @@ export default {
   summary:
     "Ninety-one days from zero to a portfolio: spreadsheets, SQL, Python, statistics, dashboards — sequenced day by day from the best free material on the internet.",
   subjectTags: ["data", "sql", "python", "statistics", "analytics", "spreadsheets"],
+  category: "data",
   difficulty: "beginner",
   estimatedWeeks: 13,
-  estimatedHours: 340,
   licenseNote: null, // hand-curated link by link; nothing imported wholesale
   modules,
 };

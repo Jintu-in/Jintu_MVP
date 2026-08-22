@@ -25,9 +25,13 @@ export default {
   summary:
     "Fourteen weeks from zero to a deployed backend: modern Java 17+, SQL, Spring Boot 3, JPA, security and testing — the highest-volume fresher hiring stack in India, on free content only.",
   subjectTags: ["java", "spring-boot", "backend", "sql", "programming"],
+  category: "software",
   difficulty: "beginner",
   estimatedWeeks: 14,
-  estimatedHours: 280,
+  // Day one opens a terminal and clones a repository, and the roadmap never
+  // says so. 0020 makes that assumption an edge instead of a surprise: a
+  // fourteen-week commitment with a two-week first step is a different offer.
+  requires: [{ slug: "git-and-github", note: "Day one clones a repository and never explains how." }],
   licenseNote: null, // hand-curated link by link; nothing imported wholesale
   modules: [
     {
