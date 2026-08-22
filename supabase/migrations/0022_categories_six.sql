@@ -42,20 +42,36 @@
 -- Re-runnable.
 -- ─────────────────────────────────────────────────────────────────────────────
 
--- Widen the constraint BEFORE moving anything, or the updates fail the old
--- CHECK on the way through.
+-- ORDER MATTERS, and getting it wrong is how the first version of this
+-- migration failed on arrival:
+--
+--     ERROR 23514: check constraint "roadmaps_category_is_known"
+--     is violated by some row
+--
+-- ADD CONSTRAINT validates every existing row at the moment it runs. The new
+-- list has no 'marketing' in it and amazon-ads was still filed under it, so
+-- adding the constraint first rejects a row the very next statement was about
+-- to fix. There is no ordering of "add then update" that works.
+--
+-- So: drop, move, add. Between the drop and the add no constraint is in
+-- force, which is exactly the window the updates need.
+
+-- 1 ── nothing constrains the column for the next few statements.
 alter table public.roadmaps drop constraint if exists roadmaps_category_is_known;
 
+-- 2 ── move the rows while the column is unconstrained.
+update public.roadmaps set category = 'business'    where slug = 'amazon-ads';
+update public.roadmaps set category = 'foundations' where slug in ('git-and-github', 'linux-command-line', 'excel-at-work');
+
+-- Anything still under the retired name — a roadmap imported between two
+-- pastes, or an older row nobody remembered. Without this the ADD below
+-- fails again, and the error names the constraint rather than the row.
+update public.roadmaps set category = 'business' where category = 'marketing';
+
+-- 3 ── now the constraint, which validates a table that already complies.
 alter table public.roadmaps
   add constraint roadmaps_category_is_known
   check (category in ('data', 'software', 'business', 'health', 'judgement', 'foundations'));
 
 comment on column public.roadmaps.category is
   'Navigation facet: one of six. subject_tags is description and may grow freely; this may not. Widening it is a migration and a deliberate act — see 0022.';
-
-update public.roadmaps set category = 'business'    where slug = 'amazon-ads';
-update public.roadmaps set category = 'foundations' where slug in ('git-and-github', 'linux-command-line', 'excel-at-work');
-
--- Anything still filed under the retired name. There should be none after the
--- statement above; this catches a roadmap imported between the two pastes.
-update public.roadmaps set category = 'business' where category = 'marketing';
