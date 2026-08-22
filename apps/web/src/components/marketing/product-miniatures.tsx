@@ -137,9 +137,25 @@ export function StreakStrip({ mini = false, className }: { mini?: boolean; class
 
 const filled = (i: number) => (i * 7919) % 11;
 
+/**
+ * WIDTH-DRIVEN, not height-driven, and that is the whole point.
+ *
+ * This was grid-flow-col with grid-rows-4 and a height class. With
+ * aspect-square cells, a fixed height sets the cell size, the cell size sets
+ * the column width, and seventeen columns then decide how wide the grid is —
+ * so the container had no say at all. In a 290px step column it rendered
+ * about 420px wide and ran off the page.
+ *
+ * Seventeen fractional columns instead: the container's width divides into
+ * the cells, aspect-square gives the rows their height, and 68 cells fill
+ * exactly four rows. It fits whatever it is put in.
+ */
 export function ContribGrid({ className }: { className?: string }) {
   return (
-    <div aria-hidden className={cn("grid grid-flow-col grid-rows-4 gap-[3px]", className)}>
+    <div
+      aria-hidden
+      className={cn("grid w-full grid-cols-[repeat(17,minmax(0,1fr))] gap-[3px]", className)}
+    >
       {Array.from({ length: 68 }, (_, i) => {
         const v = filled(i);
         return (

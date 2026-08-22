@@ -37,7 +37,9 @@ test("each of the four steps carries the component it names", () => {
   for (const c of ["ModuleSpine", "DayCardMini", "StreakStrip", "ContribGrid"]) {
     assert.ok(block.includes(c), `${c} should ride in a step`);
   }
-  assert.match(block, /className="mt-4 h-24"/, "96px, per the brief");
+  // 96px, per the brief. [&>*]:w-full because three of the four size
+  // themselves in percentages and a flex item is content-width by default.
+  assert.match(block, /className="mt-4 flex h-24 items-center \[&>\*\]:w-full"/);
 });
 
 test("the streak card is the strip, and the strip has a gap in it", () => {

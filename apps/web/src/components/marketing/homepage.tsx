@@ -531,11 +531,15 @@ export default function Homepage({
                 <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
                 <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
                 {/* 96px of the real thing, under the words for it. */}
-                <div className="mt-4 h-24">
+                {/* [&>*]:w-full because three of the four size themselves in percentages
+                    of their container, and a flex item is content-width by
+                    default — which would resolve those percentages against
+                    nothing. */}
+                <div className="mt-4 flex h-24 items-center [&>*]:w-full">
                   {i === 0 ? <ModuleSpine modules={spine} mini className="h-24" /> : null}
                   {i === 1 ? <DayCardMini className="h-24" /> : null}
                   {i === 2 ? <StreakStrip mini className="h-24" /> : null}
-                  {i === 3 ? <ContribGrid className="h-24" /> : null}
+                  {i === 3 ? <ContribGrid /> : null}
                 </div>
               </li>
             ))}
@@ -682,7 +686,7 @@ export default function Homepage({
             <StreakStrip />
           </div>
           <div className="absolute -bottom-14 left-24 w-[260px] rotate-[3deg] rounded-card border border-ink-100 bg-white p-4 opacity-60">
-            <ContribGrid className="h-20" />
+            <ContribGrid />
           </div>
           {/* Fades them out under the copy, so the words stay the thing you
               read first. */}
