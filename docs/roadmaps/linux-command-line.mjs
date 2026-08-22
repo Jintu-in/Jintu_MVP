@@ -27,7 +27,7 @@ export default {
   summary:
     "Fifteen days from your first terminal to writing a script you would put in a cron job — the prerequisite DevOps, backend and data engineering all assume and none of them teach.",
   subjectTags: ["linux", "bash", "shell", "command-line", "scripting", "devops"],
-  category: "software",
+  category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 3,
   licenseNote:

@@ -61,6 +61,12 @@ jobs:
       - name: Typography
         run: pnpm typography
 
+      # A component nothing renders is a second answer to a question the
+      # codebase already answered — somebody greps for "the header", finds
+      # two, and edits the wrong one.
+      - name: Dead modules
+        run: pnpm dead-modules
+
       # Prints first-load JS on every PR, pass or fail. The ceiling is the
       # CURRENT measured worst case, not the target: the site ships ~342 KB
       # gzipped against a 130 KB goal, and failing every PR from day one

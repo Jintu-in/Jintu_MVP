@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAction } from "next-safe-action/hooks";
 import { updatePublicProfile } from "@/actions/account";
-import { cn } from "@/lib/utils";
+import { cn, formatCount } from "@/lib/utils";
 
 /**
  * The public-profile toggle, with a live preview of what a stranger sees.
@@ -58,7 +58,7 @@ function Preview({
           {numbers.map((n) => (
             <div key={n.label}>
               <div className="font-mono text-[15px] leading-none font-medium text-ink-900">
-                {n.value.toLocaleString("en-IN")}
+                {formatCount(n.value)}
               </div>
               <div className="mt-1 text-[11px] leading-none text-ink-500">{n.label}</div>
             </div>

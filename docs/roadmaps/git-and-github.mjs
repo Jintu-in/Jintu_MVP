@@ -25,7 +25,7 @@ export default {
   summary:
     "Twelve days from your first commit to rescuing a repository you thought you had broken — the version control every other roadmap assumes you already know.",
   subjectTags: ["git", "github", "version-control", "command-line", "collaboration"],
-  category: "software",
+  category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 2,
   licenseNote:

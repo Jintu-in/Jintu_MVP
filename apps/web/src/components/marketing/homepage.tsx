@@ -9,6 +9,7 @@ import {
   ModuleSpine,
   StreakStrip,
 } from "@/components/marketing/product-miniatures";
+import type { CategoryKey } from "@/components/ui/category-accent";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
 
@@ -34,7 +35,7 @@ import { SiteNav } from "@/components/site/site-nav";
  */
 
 export interface HomepageRoadmap {
-  category: "data" | "software" | "marketing" | "judgement";
+  category: CategoryKey;
   slug: string;
   title: string;
   /** "Data · Beginner" */

@@ -21,11 +21,22 @@
  *      nothing is worse than a missing one.
  */
 
+/**
+ * Six, matching the CHECK in migration 0022 exactly — same keys, same order.
+ * A key here that the constraint rejects makes a facet nothing can ever fill;
+ * a key in the constraint that is missing here silently hides a roadmap's
+ * whole category from the catalogue.
+ *
+ * Foundations sits last on purpose. It holds the prerequisites — Git, Linux,
+ * Excel — and somebody browsing for a subject should meet the subjects first.
+ */
 export const CATEGORIES = [
   { key: "data", label: "Data & analytics" },
   { key: "software", label: "Software & engineering" },
-  { key: "marketing", label: "Marketing & commerce" },
+  { key: "business", label: "Business & growth" },
+  { key: "health", label: "Health & life sciences" },
   { key: "judgement", label: "Thinking & judgement" },
+  { key: "foundations", label: "Foundations" },
 ] as const;
 
 export const LEVELS = [

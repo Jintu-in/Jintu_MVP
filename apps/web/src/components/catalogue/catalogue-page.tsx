@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CatalogueSearch } from "@/components/catalogue/catalogue-search";
 import { CatalogueSheet } from "@/components/catalogue/catalogue-sheet";
 import { TopicRequestForm } from "@/components/learn/topic-request-form";
+import { CATEGORY_ACCENT } from "@/components/ui/category-accent";
 import { Eyebrow } from "@/components/ui/patterns";
 import {
   activePills,
@@ -56,25 +57,17 @@ export interface CataloguePageProps {
 const href = (f: Filters) => `/learn${toQueryString(f)}` as Route;
 
 /**
- * The accent ramp, keyed by category rather than by position.
- *
- * The design's four cards run brand-700 → 600 → 400 → 300 in category order,
- * and pinning the colour to the subject rather than to the grid slot means
- * Marketing is the same colour whether it is first or third — a colour that
- * moves when you filter is decoration, one that holds is information.
+ * Short labels for the card badge. The colour and glyph come from the shared
+ * CATEGORY_ACCENT — they were duplicated here, which meant a sixth category
+ * had to be added in two places and would render untyped in one of them.
  */
-const ACCENTS: Record<CatalogueRow["category"], { bg: string; dark: boolean; glyph: string }> = {
-  data: { bg: "bg-brand-700", dark: true, glyph: "M4 20V12M10 20V6M16 20V14M22 20V9" },
-  software: { bg: "bg-brand-600", dark: true, glyph: "M8 6 3 12l5 6M16 6l5 6-5 6" },
-  marketing: { bg: "bg-brand-400", dark: false, glyph: "M3 10v4h3l6 4V6L6 10Z" },
-  judgement: { bg: "bg-brand-300", dark: false, glyph: "M15 9l-2 6-6 2 2-6Z" },
-};
-
 const SHORT_CATEGORY: Record<CatalogueRow["category"], string> = {
   data: "Data",
   software: "Software",
-  marketing: "Marketing",
+  business: "Business",
+  health: "Health",
   judgement: "Judgement",
+  foundations: "Basics",
 };
 
 const SHORT_LEVEL: Record<CatalogueRow["level"], string> = {
@@ -84,7 +77,7 @@ const SHORT_LEVEL: Record<CatalogueRow["level"], string> = {
 };
 
 function CardCap({ row }: { row: CatalogueRow }) {
-  const a = ACCENTS[row.category];
+  const a = CATEGORY_ACCENT[row.category];
   return (
     <div className={cn("relative flex h-24 items-start justify-between overflow-hidden p-2.5", a.bg)}>
       <svg

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import type { DashboardData } from "@/lib/dashboard";
 import { Eyebrow } from "@/components/ui/patterns";
-import { cn } from "@/lib/utils";
+import { cn, formatCount } from "@/lib/utils";
 
 /**
  * The tinted dashboard — the returning learner's home, converted from the
@@ -307,7 +307,7 @@ export default function TintedDashboard({ data }: { data: DashboardData }) {
               {/* Momentum, not a credential — invariant 5. A count of what
                   was done, never compared against anybody else. */}
               <span className="self-start rounded-full bg-brand-50 px-2.5 py-[3px] font-mono text-[11.5px] leading-none text-brand-900">
-                {data.points.toLocaleString("en-IN")} pts
+                {formatCount(data.points)} pts
               </span>
             </div>
           </div>
