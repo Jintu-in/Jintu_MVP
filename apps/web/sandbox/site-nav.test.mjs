@@ -29,6 +29,15 @@ test("the wordmark is hard left and everything else is hard right", () => {
   assert.ok(account > links, "and the account control is last");
 });
 
+test("there is no Free item — it reads as a claim, not a destination", () => {
+  assert.ok(!menu.includes('label: "Free"'), "not in the menu");
+  assert.ok(!/>\s*Free\s*</.test(nav), "not on the bar");
+  // The word still appears where it is a statement rather than a link: the
+  // hero pill, the pricing section, and the footer.
+  assert.ok(!nav.includes('href="/pricing"'), "and pricing is not linked from the bar");
+  assert.ok(!menu.includes('"/pricing"'), "nor from the menu");
+});
+
 test("the bar's links appear from sm up and nowhere below it", () => {
   assert.match(nav, /className="hidden items-center gap-7 sm:flex"/);
 });
@@ -36,7 +45,7 @@ test("the bar's links appear from sm up and nowhere below it", () => {
 test("the same links live in the menu, and only below sm", () => {
   // Both copies exist on purpose — one on the bar, one in the sheet — so the
   // thing that must hold is that exactly one of them renders at any width.
-  assert.match(menu, /const NAV_LINKS[\s\S]*?Roadmaps[\s\S]*?How it works[\s\S]*?Free/);
+  assert.match(menu, /const NAV_LINKS[\s\S]*?Roadmaps[\s\S]*?How it works/);
   assert.match(menu, /<div className="sm:hidden">\s*\{NAV_LINKS\.map/);
 });
 

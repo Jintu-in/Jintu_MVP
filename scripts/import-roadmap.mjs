@@ -50,11 +50,25 @@ const fail = (msg) => {
 const TYPES = ["read", "video", "doc", "case_study", "tool", "latest"];
 const DIFF_ROADMAP = ["beginner", "intermediate", "advanced"];
 const DIFF_NODE = ["intro", "core", "stretch"];
+// A question's hardness, not a day's place in a curriculum. Two axes, two
+// vocabularies, deliberately different words so they cannot be confused.
+const DIFF_CHECK = ["easy", "medium", "hard"];
+const CHECK_KINDS = ["comprehension", "interview"];
 
 if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(spec.slug ?? "")) fail("slug");
 if (!spec.title || !spec.summary) fail("title/summary required");
 if (!DIFF_ROADMAP.includes(spec.difficulty)) fail(`difficulty ${spec.difficulty}`);
 if (!Array.isArray(spec.modules) || spec.modules.length === 0) fail("no modules");
+// estimated_hours is derived by recompute_estimated_hours() from the days
+// themselves (0020). A typed one disagreed with its own roadmap by 4x on all
+// four of the originals, so the spec is no longer allowed to carry it.
+if (spec.estimatedHours !== undefined)
+  fail("drop estimatedHours — it is derived from the sum of est_minutes; the paste calls recompute_estimated_hours()");
+for (const req of spec.requires ?? []) {
+  if (typeof req === "string" ? !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(req) : !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(req.slug ?? ""))
+    fail(`requires: "${typeof req === "string" ? req : req.slug}" is not a slug`);
+  if ((typeof req === "string" ? req : req.slug) === spec.slug) fail("a roadmap cannot require itself");
+}
 
 const urls = [];
 for (const [mi, m] of spec.modules.entries()) {
@@ -84,9 +98,19 @@ for (const [mi, m] of spec.modules.entries()) {
       if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);
     }
     for (const [ci, c] of (n.checks ?? []).entries()) {
-      if (!c.question || !c.answer) fail(`${at} check ${ci + 1} needs question and answer`);
+      const cat = `${at} check ${ci + 1}`;
+      if (!c.question || !c.answer) fail(`${cat} needs question and answer`);
+      if (c.kind && !CHECK_KINDS.includes(c.kind)) fail(`${cat} kind ${c.kind}`);
+      if (c.difficulty && !DIFF_CHECK.includes(c.difficulty))
+        fail(`${cat} difficulty ${c.difficulty} — easy/medium/hard, not the node's intro/core/stretch`);
+      // asked_in_interviews is a claim about the world, so it may only be
+      // made about a question written to be asked cold.
+      if (c.askedInInterviews && (c.kind ?? "comprehension") !== "interview")
+        fail(`${cat}: askedInInterviews on a comprehension check — set kind: "interview" or drop the flag`);
     }
-    if ((n.checks ?? []).length > 5) fail(`${at}: ${n.checks.length} checks — three is the model, five the ceiling`);
+    const comprehension = (n.checks ?? []).filter((c) => (c.kind ?? "comprehension") === "comprehension");
+    if (comprehension.length > 5)
+      fail(`${at}: ${comprehension.length} comprehension checks — three is the model, five the ceiling`);
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -100,6 +124,21 @@ for (const [mi, m] of spec.modules.entries()) {
       urls.push(r);
     }
   }
+}
+
+// ── pace: can this roadmap carry a streak? ─────────────────────────────────
+// The streak resets on a missed day, so a roadmap has to offer a day to do.
+// Data analyst is 91 days over 13 weeks — seven a week, a real daily habit.
+// The other three run 2.1–2.7, which means the streak breaks on Thursday
+// through no fault of the reader. A warning rather than a failure, because
+// those three are already published and this is a curriculum judgement.
+{
+  const days = spec.modules.reduce((a, m) => a + m.nodes.length, 0);
+  const perWeek = spec.estimatedWeeks ? days / spec.estimatedWeeks : null;
+  const mins = spec.modules.reduce((a, m) => a + m.nodes.reduce((b, n) => b + n.estMinutes, 0), 0);
+  console.error(`${days} days · ${spec.estimatedWeeks ?? "?"} weeks · ${perWeek ? perWeek.toFixed(1) : "?"}/week · ${Math.round(mins / 60)} h derived`);
+  if (perWeek !== null && perWeek < 4)
+    console.error(`  WARNING: ${perWeek.toFixed(1)} days a week cannot sustain a daily streak. Either write more days or state fewer weeks.`);
 }
 
 // ── the live check ───────────────────────────────────────────────────────────
@@ -164,8 +203,8 @@ push(`declare rm uuid; m uuid; n uuid;`);
 push(`begin`);
 push(`  delete from public.roadmaps where slug = ${q(spec.slug)};`);
 push(``);
-push(`  insert into public.roadmaps (slug, title, summary, subject_tags, difficulty, estimated_weeks, estimated_hours, license_note, status)`);
-push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${qn(spec.estimatedHours)}, ${q(spec.licenseNote ?? null)}, 'draft')`);
+push(`  insert into public.roadmaps (slug, title, summary, subject_tags, category, difficulty, estimated_weeks, license_note, status)`);
+push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.category ?? "data")}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${q(spec.licenseNote ?? null)}, 'draft')`);
 push(`  returning id into rm;`);
 
 for (const [mi, m] of spec.modules.entries()) {
@@ -182,12 +221,30 @@ for (const [mi, m] of spec.modules.entries()) {
       push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);
     }
     for (const [ci, c] of (n.checks ?? []).entries()) {
-      push(`  insert into public.node_checks (node_id, position, question, answer) values (n, ${ci}, ${q(c.question)}, ${q(c.answer)});`);
+      push(
+        `  insert into public.node_checks (node_id, position, question, answer, kind, difficulty, asked_in_interviews)` +
+          ` values (n, ${ci}, ${q(c.question)}, ${q(c.answer)}, ${q(c.kind ?? "comprehension")}, ${q(c.difficulty ?? "medium")}, ${c.askedInInterviews ? "true" : "false"});`,
+      );
     }
     for (const [ri, r] of n.resources.entries()) {
       push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
       push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${verified ? "false, now(), 'ok'" : "true"});`);
     }
+  }
+}
+
+// Prerequisites, by slug. Skipped silently when the other roadmap is not in
+// the database yet — a missing edge is recoverable by re-pasting once it is,
+// and failing the whole import would make build order load-bearing.
+if ((spec.requires ?? []).length) {
+  push(``);
+  push(`  -- prerequisites`);
+  for (const [i, req] of spec.requires.entries()) {
+    const slug = typeof req === "string" ? req : req.slug;
+    const note = typeof req === "string" ? null : (req.note ?? null);
+    push(`  insert into public.roadmap_prerequisites (roadmap_id, requires_id, position, note)`);
+    push(`  select rm, id, ${i}, ${q(note)} from public.roadmaps where slug = ${q(slug)}`);
+    push(`  on conflict (roadmap_id, requires_id) do update set position = excluded.position, note = excluded.note;`);
   }
 }
 
@@ -198,6 +255,11 @@ if (verified) {
   push(`  -- stays draft: links were not verified at generation time.`);
 }
 push(`end $$;`);
+push(``);
+push(`-- Everything derived, recomputed from what was just inserted.`);
+push(`select public.recompute_estimated_hours();`);
+push(`select public.recompute_media_mix();`);
+push(`select public.recompute_has_prereqs();`);
 push(``);
 
 const outDir = path.join(ROOT, "supabase", ".bundle");

@@ -55,6 +55,12 @@ jobs:
       - name: Contrast
         run: pnpm contrast
 
+      # A hand-placed <br> in a heading is right at one width and wrong at
+      # every other, and a display size stepped per breakpoint is right at
+      # three. Both are invisible in review and obvious on a phone.
+      - name: Typography
+        run: pnpm typography
+
       # Prints first-load JS on every PR, pass or fail. The ceiling is the
       # CURRENT measured worst case, not the target: the site ships ~342 KB
       # gzipped against a 130 KB goal, and failing every PR from day one

@@ -22,9 +22,13 @@ import { cn } from "@/lib/utils";
  * The wordmark always links to `/`. That is the one navigation guarantee
  * a header owes you, and it was missing on half the screens.
  *
- * Below sm the three links move inside the avatar menu. Four links and a
- * wordmark in 390px gives each of them about forty pixels, which is neither
- * readable nor tappable.
+ * Below sm the links move inside the avatar menu, because a wordmark plus
+ * links plus an account control in 390px leaves nothing tappable.
+ *
+ * There is no "Free" item. It read as a claim rather than a destination —
+ * nobody clicks it expecting a pricing page — and the same word is already
+ * in the hero's eyebrow pill, in the pricing section on that page, and in
+ * the footer, which is where the pricing page stays linked from.
  */
 export interface SiteNavProps {
   variant?: "overlay" | "solid";
@@ -93,9 +97,6 @@ export function SiteNav({
             route, and a nav item that 404s is worse than one that scrolls. */}
         <Link href={"/#how-it-works" as Route} className={link}>
           How it works
-        </Link>
-        <Link href="/pricing" className={link}>
-          Free
         </Link>
       </div>
 

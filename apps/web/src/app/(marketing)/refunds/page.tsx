@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function RefundsPage() {
   return (
     <main className="mx-auto max-w-2xl px-5 py-12 sm:py-16">
-      <h1 className="text-[26px] leading-tight font-medium text-ink-900 sm:text-[32px]">
+      <h1 className="t-sect text-ink-900">
         Refunds and cancellation
       </h1>
 

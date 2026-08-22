@@ -279,12 +279,12 @@ export default function CataloguePage({ rows, filters }: CataloguePageProps) {
         <div className="min-w-0 flex-1">
           <div className="mx-auto max-w-[900px] px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-9">
             <Eyebrow glyph="◆">Roadmaps</Eyebrow>
-            <h1 className="mt-3.5 mb-0 text-[32px] leading-[1.05] font-medium tracking-[-0.03em] text-balance text-ink-900 sm:text-[42px] lg:text-[52px]">
-              Pick a subject.
-              <br />
-              Follow it to the end.
+            {/* No break: balance splits it at whatever width the rail
+                leaves, which changes with the sidebar. */}
+            <h1 className="t-page mt-3.5 mb-0 text-ink-900">
+              Pick a subject. Follow it to the end.
             </h1>
-            <p className="mt-3.5 mb-0 max-w-[60ch] text-[15px] leading-[1.5] text-pretty text-ink-600">
+            <p className="t-lead mt-3.5 mb-0 text-ink-600">
               Every roadmap is free, readable without an account, and checked by a person before it
               shipped.
             </p>

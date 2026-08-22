@@ -12,7 +12,8 @@
     "./eslint/runtime-pure": "./eslint/runtime-pure.js",
     "./typescript/base.json": "./typescript/base.json",
     "./typescript/nextjs.json": "./typescript/nextjs.json",
-    "./tailwind/preset.css": "./tailwind/preset.css"
+    "./tailwind/preset.css": "./tailwind/preset.css",
+    "./tailwind/type-scale.css": "./tailwind/type-scale.css"
   },
   "dependencies": {
     "@eslint/js": "^10.0.1",

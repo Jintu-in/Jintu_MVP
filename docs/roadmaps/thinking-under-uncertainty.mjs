@@ -20,9 +20,9 @@ export default {
   summary:
     "Ten weeks of mental models, bias detection, Bayesian updating, data literacy and calibrated forecasting — the meta-skill behind every high-stakes decision, from free material only.",
   subjectTags: ["thinking", "decision-making", "statistics", "forecasting", "rationality"],
+  category: "judgement",
   difficulty: "intermediate",
   estimatedWeeks: 10,
-  estimatedHours: 120,
   licenseNote: null,
   modules: [
     {

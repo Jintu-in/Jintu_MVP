@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Homepage from "@/components/marketing/homepage";
+import { CATEGORIES } from "@/lib/catalogue-filters";
 import {
   countPublishedResources,
+  listModules,
   listPublishedRoadmaps,
+  sampleResources,
   topSourceNames,
   type RoadmapSummary,
 } from "@/lib/roadmaps";
@@ -55,6 +58,13 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Whose modules the homepage's spine shows. The longest roadmap, because
+ * twenty bars makes the point that four would not — and named here rather
+ * than inlined so it is one edit when a longer one lands.
+ */
+const FLAGSHIP = "data-analyst";
+
 export default async function LandingPage() {
   const roadmaps: RoadmapSummary[] = await listPublishedRoadmaps().catch(() => []);
   const viewer = await getViewer().catch(() => null);
@@ -66,15 +76,30 @@ export default async function LandingPage() {
   // Summed across all four, not one of them. The design's pill said
   // "~340 hours", which is the data analyst alone.
   const hours = roadmaps.reduce((a, r) => a + (r.estimatedHours ?? 0), 0);
-  // Chips above the roadmap cards: the first tag of each roadmap, deduped.
-  const subjects = [...new Set(roadmaps.map((r) => r.subjectTags[0]).filter(Boolean))].slice(0, 4) as string[];
-  const [links, sources] = await Promise.all([
+  // Chips above the roadmap cards: the four categories, in the catalogue's
+  // order, and only the ones something is actually filed under. subject_tags
+  // used to feed this, which is how "java" ended up presented as a subject
+  // next to "marketing" — one is a technology, the other is a field.
+  const present = new Set(roadmaps.map((r) => r.category));
+  const subjects = CATEGORIES.filter((c) => present.has(c.key)).map((c) => ({
+    key: c.key,
+    label: c.label,
+  }));
+  // The flagship's modules and three annotated links: the homepage shows
+  // the product rather than describing it, and both of those are the real
+  // rows. Failures degrade to an empty array, and every section that uses
+  // them renders without them.
+  const [links, sources, samples, spine] = await Promise.all([
     countPublishedResources().catch(() => 0),
     topSourceNames(8).catch(() => []),
+    sampleResources(5).catch(() => []),
+    listModules(FLAGSHIP).catch(() => []),
   ]);
 
   return (
     <Homepage
+      samples={samples}
+      spine={spine}
       signedIn={Boolean(viewer?.hasProfile)}
       initials={viewer ? initialsFor(viewer) : null}
       displayName={viewer?.fullName ?? viewer?.email ?? null}
@@ -83,8 +108,11 @@ export default async function LandingPage() {
       subjects={subjects}
       roadmaps={roadmaps.map((r) => ({
         slug: r.slug,
+        category: r.category,
         title: r.title,
-        kicker: [r.subjectTags[0], r.difficulty].filter(Boolean).join(" · "),
+        kicker: [CATEGORIES.find((c) => c.key === r.category)?.label, r.difficulty]
+          .filter(Boolean)
+          .join(" · "),
         summary: r.summary,
         sizeLine: [
           `${r.moduleCount} modules`,

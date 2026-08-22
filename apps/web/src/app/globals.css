@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@jintu/config/tailwind/preset.css";
+@import "@jintu/config/tailwind/type-scale.css";
 
 /* The loaded faces (next/font in the root layout) take over from the
    preset's fallback stacks. Mono is semantic here — measured numbers are
@@ -39,6 +40,44 @@
     background-color: var(--color-ink-50);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
+  }
+
+  /* Balance every heading and let paragraphs avoid orphans, whether or not
+     the element carries a .t-* class yet. This is what makes a hand-placed
+     <br> unnecessary: balance picks the break at the actual width, and a
+     manual one is only ever right at the width it was chosen for.
+
+     h1–h3 rather than a class, because the rule should hold for headings
+     nobody has got round to yet — including any added after this. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  /* A capped heading inside a centred column would sit hard left, because
+     max-inline-size makes the block narrower than its parent and a block
+     does not centre itself. This only affects headings that were already
+     being centred. */
+  .text-center > h1,
+  .text-center > h2,
+  .text-center > h3,
+  h1.text-center,
+  h2.text-center,
+  h3.text-center {
+    margin-inline: auto;
+  }
+
+  /* The safety net, not the fix. Nothing should overflow horizontally; if
+     something does, a phone gets a page that slides sideways and every
+     centred thing looks broken. clip rather than hidden: hidden on the root
+     silently creates a scroll container and breaks position: sticky, which
+     the catalogue rail and both site headers depend on. */
+  html {
+    overflow-x: clip;
   }
 
   /* Mid-range Android is the target device — respect reduced motion. */
