@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@jintu/config/tailwind/preset.css";
+@import "@jintu/config/tailwind/type-scale.css";
 
 /* The loaded faces (next/font in the root layout) take over from the
    preset's fallback stacks. Mono is semantic here — measured numbers are
@@ -39,6 +40,22 @@
     background-color: var(--color-ink-50);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
+  }
+
+  /* Balance every heading and let paragraphs avoid orphans, whether or not
+     the element carries a .t-* class yet. This is what makes a hand-placed
+     <br> unnecessary: balance picks the break at the actual width, and a
+     manual one is only ever right at the width it was chosen for.
+
+     h1–h3 rather than a class, because the rule should hold for headings
+     nobody has got round to yet — including any added after this. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 
   /* Mid-range Android is the target device — respect reduced motion. */

@@ -117,7 +117,7 @@ test("the sections run in the order that tells the story", () => {
 });
 
 test("the close has cards cropped by the section, and only where they can crop", () => {
-  assert.match(home, /overflow-hidden px-5 py-16 text-center/, "the section does the cropping");
+  assert.match(home, /overflow-hidden px-5 py-\[var\(--space-section\)\] text-center/, "the section does the cropping");
   assert.match(home, /rotate-\[-7deg\]/);
   assert.match(home, /hidden lg:block/, "at 390px there is no margin to crop into");
 });

@@ -163,7 +163,7 @@ export default function RoadmapPage({
               <Eyebrow glyph="▤" className="mt-3">
                 Roadmap
               </Eyebrow>
-              <h1 className="mt-3 text-[26px] leading-[1.2] font-medium text-balance text-ink-900 sm:text-[30px]">
+              <h1 className="t-sect mt-3 text-ink-900">
                 {title}
               </h1>
               <p className="mt-2.5 mb-0 max-w-[66ch] text-[16px] leading-[1.6] text-pretty text-ink-600">

@@ -270,15 +270,19 @@ export default function Homepage({
             Free · No account needed to read
           </span>
 
-          <h1 className="text-[38px] leading-[1.06] font-medium tracking-[-0.03em] text-white sm:text-[64px] sm:leading-[1.02] sm:tracking-[-0.035em] lg:text-[88px]">
+          {/* The only hand-placed break on the site. "Learn anything," and
+              "properly." are two beats and the pause between them is the
+              line; balance would occasionally join them. It disappears below
+              sm, where there is no room for two long lines. */}
+          <h1 className="t-hero text-white">
             Learn anything,
-            <br />
+            <br className="hidden sm:inline" />{" "}
             <span className="bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent">
               properly.
             </span>
           </h1>
 
-          <p className="max-w-[54ch] text-[16px] leading-[1.55] text-pretty text-white/85 sm:text-[20px] sm:leading-[1.5]">
+          <p className="t-lead text-white/85">
             Deep roadmaps built from the best free material on the internet. Every link opened by a
             person before it shipped.
           </p>
@@ -383,14 +387,11 @@ export default function Homepage({
       ) : null}
 
       {/* ── the roadmaps ────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-[var(--space-section)] sm:px-12">
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Roadmaps
         </div>
-        <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
-          Start with what
-          <br className="hidden sm:block" /> you actually need.
-        </h2>
+        <h2 className="t-sect mt-3 text-ink-900">Start with what you actually need.</h2>
 
         {subjects.length ? (
           <div className="mt-6 flex flex-wrap gap-2">
@@ -454,14 +455,12 @@ export default function Homepage({
       {/* ── here is one day ─────────────────────────────────────────────── */}
       <section
         id="one-day"
-        className="jreveal mx-auto max-w-[1280px] scroll-mt-24 border-t border-ink-100 px-5 py-16 sm:px-12 sm:py-24"
+        className="jreveal mx-auto max-w-[1280px] scroll-mt-24 border-t border-ink-100 px-5 py-[var(--space-section)] sm:px-12"
       >
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Inside a day
         </div>
-        <h2 className="mt-3 text-[26px] leading-[1.25] font-medium text-ink-900 sm:text-[32px]">
-          Here is one day.
-        </h2>
+        <h2 className="t-sect mt-3 text-ink-900">Here is one day.</h2>
 
         {/* The four notes used to be a plain list beside the card, so you
             read a sentence and then went hunting for what it referred to.
@@ -514,16 +513,13 @@ export default function Homepage({
       {/* ── how it works ────────────────────────────────────────────────── */}
       <section
         id="how-it-works"
-        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-16 sm:px-12 sm:py-24"
+        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-[var(--space-section)] sm:px-12"
       >
         <div className="mx-auto max-w-[1280px]">
           <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
             How it works
           </div>
-          <h2 className="mt-3 text-[26px] leading-[1.2] font-medium text-ink-900 sm:text-[36px]">
-            Four steps,
-            <br className="hidden sm:block" /> then a habit.
-          </h2>
+          <h2 className="t-sect mt-3 text-ink-900">Four steps, then a habit.</h2>
 
           {/* list-none explicitly: preflight already resets ol, but the mono "01"
               IS the marker here, and a stylesheet change that dropped preflight
@@ -548,14 +544,11 @@ export default function Homepage({
       </section>
 
       {/* ── the bento ───────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 pb-16 sm:px-12 sm:pb-24">
+      <section className="jreveal mx-auto max-w-[1280px] px-5 pb-[var(--space-section)] sm:px-12">
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Platform
         </div>
-        <h2 className="mt-3 text-[26px] leading-[1.25] font-medium text-ink-900 sm:text-[32px]">
-          Built so
-          <br className="hidden sm:block" /> you finish.
-        </h2>
+        <h2 className="t-sect mt-3 text-ink-900">Built so you finish.</h2>
         <p className="mt-3 max-w-[52ch] text-[16px] leading-[1.65] text-pretty text-ink-600">
           The habit matters more than any single feature.
         </p>
@@ -621,8 +614,8 @@ export default function Homepage({
       </section>
 
       {/* ── ninety-one squares ──────────────────────────────────────────── */}
-      <section className="jreveal border-y border-ink-100 bg-white px-5 py-16 sm:px-12 sm:py-24">
-        <h2 className="text-center text-[22px] leading-[1.3] font-medium text-pretty text-ink-900 sm:text-[28px]">
+      <section className="jreveal border-y border-ink-100 bg-white px-5 py-[var(--space-section)] sm:px-12">
+        <h2 className="t-sub text-center text-ink-900">
           Ninety-one days. Every one of them written.
         </h2>
         <div
@@ -651,7 +644,7 @@ export default function Homepage({
           product that keeps staging its own freeness invites the suspicion
           it is trying to allay; stated once among two other limits, it
           reads as a fact rather than a pitch. */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 py-16 sm:px-12 sm:py-24">
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-[var(--space-section)] sm:px-12">
         <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           What this is not
         </div>
@@ -680,7 +673,7 @@ export default function Homepage({
           makes them read as a stack continuing past the edge rather than as
           four more things to look at. Hidden below lg: at 390px there is no
           margin to crop into, and they would sit under the search field. */}
-      <section className="jreveal relative mx-auto flex max-w-[1280px] flex-col items-center overflow-hidden px-5 py-16 text-center sm:px-12 sm:py-24">
+      <section className="jreveal relative mx-auto flex max-w-[1280px] flex-col items-center overflow-hidden px-5 py-[var(--space-section)] text-center sm:px-12">
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
           <div className="absolute top-10 -left-16 w-[300px] rotate-[-7deg] rounded-card border border-ink-100 bg-white p-4 opacity-70">
             <DayCardMini className="h-24" />
@@ -698,9 +691,7 @@ export default function Homepage({
         <div className="relative z-10 font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
           Ready when you are
         </div>
-        <h2 className="relative z-10 mt-3 text-[28px] leading-[1.2] font-medium text-ink-900 sm:text-[40px]">
-          Your first day is waiting.
-        </h2>
+        <h2 className="t-page relative z-10 mt-3 text-ink-900">Your first day is waiting.</h2>
         <p className="relative z-10 mt-3 text-[16px] leading-[1.6] text-ink-600 sm:text-[18px]">
           Ninety-one days. Start with one.
         </p>
