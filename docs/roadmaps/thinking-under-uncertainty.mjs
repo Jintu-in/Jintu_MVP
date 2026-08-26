@@ -23,6 +23,7 @@ export default {
   category: "judgement",
   difficulty: "intermediate",
   estimatedWeeks: 10,
+  reviewCadence: "annual",
   licenseNote: null,
   modules: [
     {

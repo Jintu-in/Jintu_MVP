@@ -30,6 +30,7 @@ export default {
   category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 3,
+  reviewCadence: "annual",
   licenseNote:
     "The Linux Command Line (Shotts) is linked throughout and is CC BY-NC-ND 3.0. We link to it; we host none of it.",
   requires: [

@@ -28,6 +28,7 @@ export default {
   category: "software",
   difficulty: "beginner",
   estimatedWeeks: 14,
+  reviewCadence: "annual",
   // Day one opens a terminal and clones a repository, and the roadmap never
   // says so. 0020 makes that assumption an edge instead of a surprise: a
   // fourteen-week commitment with a two-week first step is a different offer.

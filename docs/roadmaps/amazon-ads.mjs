@@ -26,6 +26,11 @@
  * Day 13 gained one — the impression-share definitions live in the Ads help
  * centre rather than the Academy.
  *
+ * NO SELF-CHECKING RESOURCE, deliberately. The four Amazon Ads certification
+ * exams are the check — they are free, they are graded, and day 26 sits them.
+ * Nothing else in this subject marks a learner's work, because the work is
+ * judgement about somebody's real account rather than an answer with a key.
+ *
  * Sourcing: Amazon's own documentation and the free Ads Academy throughout.
  * The four certifications are free; the exams cost nothing and are
  * retakeable, which day 26 says on its face.
@@ -42,6 +47,8 @@ export default {
   category: "business",
   difficulty: "intermediate",
   estimatedWeeks: 5,
+  cert: "free",
+  reviewCadence: "quarterly",
   licenseNote: null,
 
   modules: [...m01to04, ...m05to11],

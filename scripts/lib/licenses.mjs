@@ -161,6 +161,49 @@ export const BY_HOST = {
   "metaculus.com": assumed(),
 };
 
+/**
+ * Hosts that mark the learner's work themselves.
+ *
+ * Bandit will not let you reach level 11 without solving level 10. pgexercises
+ * runs your SQL against the answer. DataLemur and StrataScratch grade a query.
+ * Metaculus and Good Judgment Open score a forecast against what happened.
+ *
+ * These are the highest-value resources in the catalogue: verified practice,
+ * maintained by somebody else, free, and impossible to fake your way through.
+ * Derived from the host rather than set per resource for the same reason
+ * licences are — one registry, one place to be wrong.
+ *
+ * ShellCheck is deliberately NOT here. It finds bugs in a script you wrote; it
+ * does not tell you whether you solved the exercise, and the difference
+ * matters.
+ */
+export const SELF_CHECKING = new Set([
+  "overthewire.org",          // wargame levels gated on the previous password
+  "learngitbranching.js.org", // each level verifies the resulting commit graph
+  "skills.github.com",        // runs in a real repo and checks the result
+  "pgexercises.com",          // runs your SQL and compares the result set
+  "sqlbolt.com",              // inline exercises with checked answers
+  "sqlzoo.net",               // same
+  "datalemur.com",            // graded SQL interview questions
+  "stratascratch.com",        // graded SQL and Python questions
+  "kaggle.com",               // Learn's notebook exercises are auto-checked
+  "gjopen.com",               // forecasts scored against outcomes
+  "metaculus.com",            // same, with a public track record
+]);
+
+export const isSelfChecking = (url) => {
+  try {
+    const host = new URL(url).hostname.replace(/^www./, "");
+    if (SELF_CHECKING.has(host)) return true;
+    const parts = host.split(".");
+    for (let i = 1; i < parts.length - 1; i++)
+      if (SELF_CHECKING.has(parts.slice(i).join("."))) return true;
+    return false;
+  } catch {
+    return false;
+  }
+};
+
 /** Longest-suffix host match, so a subdomain entry beats its parent. */
 export function licenseForUrl(url) {
   let host;
