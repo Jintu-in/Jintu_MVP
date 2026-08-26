@@ -1,0 +1,77 @@
+# The link checker, on a schedule.
+#
+# scripts/check-links.mjs has existed for months and has never run
+# automatically, so 329 links across seven published roadmaps have had
+# nothing watching them. A dead link on the main surface is worse than a
+# missing one — that is rule 2 — and rot is the one failure that arrives
+# without anybody doing anything.
+#
+# Weekly, not daily. The corpus is 329 links; daily would be 2,300 requests a
+# week at other people's expense to detect something that changes on the
+# scale of months. Monday morning so a person is around to act on it.
+#
+# It REPORTS. It never unpublishes and never swaps a resource — a dead link
+# is a curation decision, and silently replacing one under a learner
+# mid-roadmap is worse than the dead link.
+name: Link check
+
+on:
+  schedule:
+    # 03:30 UTC Monday — 09:00 IST, so the worklist is waiting rather than
+    # arriving mid-afternoon.
+    - cron: "30 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: "Crawl and print without writing to the database"
+        type: boolean
+        default: false
+
+concurrency:
+  group: link-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Crawl every published resource
+        id: crawl
+        env:
+          # Table writes need the service role; the anon key cannot update
+          # resources.health. Both are repository secrets.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          pnpm links:check ${{ inputs.dry && '--dry' || '' }} 2>&1 | tee link-check.log
+          echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      # The report is the point, so it survives the run.
+      - name: Keep the worklist
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-check-${{ github.run_number }}
+          path: link-check.log
+          retention-days: 90
+
+      # A crawl that fails to run at all is indistinguishable from a clean
+      # crawl unless something says so. This is the only failure condition:
+      # broken links are a worklist, not a build break.
+      - name: Fail only if the crawl itself did not complete
+        if: steps.crawl.outputs.exit != '0'
+        run: |
+          echo "::error::The link crawl did not complete. Broken links do not fail this job; a crawl that cannot run does."
+          exit 1

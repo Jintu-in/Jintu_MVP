@@ -67,6 +67,12 @@ jobs:
       - name: Dead modules
         run: pnpm dead-modules
 
+      # "Free to read" and "free to reuse" are different questions, and the
+      # answer to the second is the difference between attribution and a
+      # licence breach. This fails on a linked host nobody has classified.
+      - name: Licences
+        run: pnpm licences
+
       # Prints first-load JS on every PR, pass or fail. The ceiling is the
       # CURRENT measured worst case, not the target: the site ships ~342 KB
       # gzipped against a 130 KB goal, and failing every PR from day one

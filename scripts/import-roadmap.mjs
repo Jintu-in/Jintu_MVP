@@ -28,6 +28,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
+import { licenseForUrl, LICENSES } from "./lib/licenses.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -127,6 +128,19 @@ for (const [mi, m] of spec.modules.entries()) {
       if (r.youtubeVideoId && r.type !== "video") fail(`${rat} has a video id but type ${r.type}`);
       if (r.type === "video" && r.durationSec && !r.estSizeMb)
         fail(`${rat}: a video with a duration must carry estSizeMb — metered data is rule 2`);
+      // Licence, from the host map unless the spec overrides it. An unlisted
+      // host fails HERE rather than landing as 'unknown' in the database:
+      // the question is cheap to answer while somebody is looking at the
+      // page and never gets answered afterwards.
+      if (r.license && !LICENSES.includes(r.license)) fail(`${rat} license ${r.license}`);
+      if (!r.license) {
+        const found = licenseForUrl(r.url);
+        if (!found)
+          fail(
+            `${rat}: no licence known for ${new URL(r.url).hostname}. Add it to scripts/lib/licenses.mjs with how you established it, or set license: "…" on this resource.`,
+          );
+        r.license = found.license;
+      }
       urls.push(r);
     }
   }
@@ -145,6 +159,19 @@ for (const [mi, m] of spec.modules.entries()) {
   console.error(`${days} days · ${spec.estimatedWeeks ?? "?"} weeks · ${perWeek ? perWeek.toFixed(1) : "?"}/week · ${Math.round(mins / 60)} h derived`);
   if (perWeek !== null && perWeek < 4)
     console.error(`  WARNING: ${perWeek.toFixed(1)} days a week cannot sustain a daily streak. Either write more days or state fewer weeks.`);
+}
+
+// ── licence mix, printed so it is never a surprise ─────────────────────────
+{
+  const mix = {};
+  for (const m of spec.modules) for (const n of m.nodes) for (const r of n.resources)
+    mix[r.license] = (mix[r.license] ?? 0) + 1;
+  const REUSABLE = new Set(["public-domain", "cc0", "cc-by", "cc-by-sa", "permissive"]);
+  const reusable = Object.entries(mix).filter(([l]) => REUSABLE.has(l)).reduce((a, [, n]) => a + n, 0);
+  const total = Object.values(mix).reduce((a, n) => a + n, 0);
+  console.error(
+    `licences: ${Object.entries(mix).sort().map(([l, n]) => `${l} ${n}`).join(" · ")}  (${reusable}/${total} reusable)`,
+  );
 }
 
 // ── the live check ───────────────────────────────────────────────────────────
@@ -233,8 +260,8 @@ for (const [mi, m] of spec.modules.entries()) {
       );
     }
     for (const [ri, r] of n.resources.entries()) {
-      push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
-      push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${verified ? "false, now(), 'ok'" : "true"});`);
+      push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, license, needs_verification${verified ? ", last_checked_at, health" : ""})`);
+      push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${q(r.license)}, ${verified ? "false, now(), 'ok'" : "true"});`);
     }
   }
 }
