@@ -60,6 +60,19 @@ export const BY_HOST = {
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),
   "ourworldindata.org": stated("cc-by", "ourworldindata.org/about — CC BY 4.0 on their own writing and data"),
 
+  // ── US federal works: public domain, the richest reusable pool there is ─
+  "cms.gov": stated(
+    "public-domain",
+    "a work of the US federal government; 17 U.S.C. 105 puts it outside copyright. Citation appreciated, permission not required",
+  ),
+  "oig.hhs.gov": stated("public-domain", "HHS Office of Inspector General — US federal work"),
+  "medlineplus.gov": stated("public-domain", "NIH National Library of Medicine — US federal work"),
+  "nlm.nih.gov": stated("public-domain", "NIH National Library of Medicine — US federal work"),
+  "ncbi.nlm.nih.gov": stated(
+    "cc-by-nc-nd",
+    "NCBI Bookshelf licences vary PER TITLE and are not uniformly federal works — StatPearls, the titles used here, is CC BY-NC-ND 4.0. Restrictive default for the whole host because the per-title check is not automatable",
+  ),
+
   // ── established, and NOT reusable: free to read, NonCommercial ─────────
   "git-scm.com": stated(
     "cc-by-nc-sa",
@@ -130,6 +143,10 @@ export const BY_HOST = {
 
   // ── independent writers and small sites ────────────────────────────────
   // All rights reserved unless they say otherwise, which is the norm.
+  "aapc.com": stated(
+    "proprietary",
+    "a commercial certifying body. Its explainer articles are free to read and all rights reserved; it also owns nothing we quote",
+  ),
   "exceljet.net": assumed(),
   "baeldung.com": assumed(),
   "mode.com": assumed(),
