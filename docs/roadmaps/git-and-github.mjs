@@ -28,6 +28,7 @@ export default {
   category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 2,
+  reviewCadence: "semiannual",
   licenseNote:
     "Pro Git (Chacon & Straub) is linked throughout and is CC BY-NC-SA 3.0. We link to it; we host none of it.",
 

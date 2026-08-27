@@ -35,6 +35,7 @@
     "progress:demo": "node scripts/demo-progress.mjs",
     "links:check": "node scripts/check-links.mjs",
     "metrics:demo": "node scripts/demo-metrics.mjs",
+    "licences": "node scripts/assert-licences.mjs",
     "dead-modules": "node scripts/assert-no-dead-modules.mjs",
     "typography": "node scripts/assert-typography.mjs",
     "facets:demo": "node scripts/demo-catalogue-facets.mjs",

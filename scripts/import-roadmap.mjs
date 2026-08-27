@@ -28,6 +28,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
+import { isSelfChecking, licenseForUrl, LICENSES } from "./lib/licenses.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -53,6 +54,8 @@ const DIFF_ROADMAP = ["beginner", "intermediate", "advanced"];
 // lib/catalogue-filters.ts in the same change, or a roadmap lands in a
 // category the catalogue cannot render.
 const CATEGORIES = ["data", "software", "business", "health", "judgement", "foundations"];
+const CERTS = ["none", "free", "paid_exam"];
+const CADENCES = ["quarterly", "semiannual", "annual"];
 const DIFF_NODE = ["intro", "core", "stretch"];
 // A question's hardness, not a day's place in a curriculum. Two axes, two
 // vocabularies, deliberately different words so they cannot be confused.
@@ -65,6 +68,13 @@ if (!DIFF_ROADMAP.includes(spec.difficulty)) fail(`difficulty ${spec.difficulty}
 if (!Array.isArray(spec.modules) || spec.modules.length === 0) fail("no modules");
 if (!CATEGORIES.includes(spec.category))
   fail(`category "${spec.category}" — one of ${CATEGORIES.join(", ")}`);
+if (spec.cert !== undefined && !CERTS.includes(spec.cert)) fail(`cert "${spec.cert}" — one of ${CERTS.join(", ")}`);
+if (spec.reviewCadence !== undefined && !CADENCES.includes(spec.reviewCadence))
+  fail(`reviewCadence "${spec.reviewCadence}" — one of ${CADENCES.join(", ")}`);
+// A paid exam has to name its price somewhere a reader will see it, and the
+// summary is the only field that travels with a shared link.
+if (spec.cert === "paid_exam" && !/(costs?|fee|₹|$|paid)/i.test(spec.summary))
+  fail('cert is "paid_exam" but the summary does not mention the cost — a reader who shares this link must still see it');
 // estimated_hours is derived by recompute_estimated_hours() from the days
 // themselves (0020). A typed one disagreed with its own roadmap by 4x on all
 // four of the originals, so the spec is no longer allowed to carry it.
@@ -127,6 +137,22 @@ for (const [mi, m] of spec.modules.entries()) {
       if (r.youtubeVideoId && r.type !== "video") fail(`${rat} has a video id but type ${r.type}`);
       if (r.type === "video" && r.durationSec && !r.estSizeMb)
         fail(`${rat}: a video with a duration must carry estSizeMb — metered data is rule 2`);
+      // Licence, from the host map unless the spec overrides it. An unlisted
+      // host fails HERE rather than landing as 'unknown' in the database:
+      // the question is cheap to answer while somebody is looking at the
+      // page and never gets answered afterwards.
+      if (r.license && !LICENSES.includes(r.license)) fail(`${rat} license ${r.license}`);
+      if (!r.license) {
+        const found = licenseForUrl(r.url);
+        if (!found)
+          fail(
+            `${rat}: no licence known for ${new URL(r.url).hostname}. Add it to scripts/lib/licenses.mjs with how you established it, or set license: "…" on this resource.`,
+          );
+        r.license = found.license;
+      }
+      // Derived from the host unless the spec says otherwise, so a new
+      // interactive source is registered once rather than per resource.
+      if (r.selfCheck === undefined) r.selfCheck = isSelfChecking(r.url);
       urls.push(r);
     }
   }
@@ -145,6 +171,31 @@ for (const [mi, m] of spec.modules.entries()) {
   console.error(`${days} days · ${spec.estimatedWeeks ?? "?"} weeks · ${perWeek ? perWeek.toFixed(1) : "?"}/week · ${Math.round(mins / 60)} h derived`);
   if (perWeek !== null && perWeek < 4)
     console.error(`  WARNING: ${perWeek.toFixed(1)} days a week cannot sustain a daily streak. Either write more days or state fewer weeks.`);
+}
+
+// ── self-checking practice ─────────────────────────────────────────────────
+// Not a failure: some subjects genuinely have no auto-graded resource, and
+// medical coding is one. But it should be a decision rather than an oversight.
+{
+  const checkers = spec.modules.flatMap((m) => m.nodes).flatMap((n) => n.resources).filter((r) => r.selfCheck);
+  if (checkers.length === 0)
+    console.error(
+      "  WARNING: no self-checking resource anywhere. A learner can be confidently wrong for the whole roadmap. Add one, or say in the spec header why none exists.",
+    );
+  else console.error(`self-checking resources: ${checkers.length}`);
+}
+
+// ── licence mix, printed so it is never a surprise ─────────────────────────
+{
+  const mix = {};
+  for (const m of spec.modules) for (const n of m.nodes) for (const r of n.resources)
+    mix[r.license] = (mix[r.license] ?? 0) + 1;
+  const REUSABLE = new Set(["public-domain", "cc0", "cc-by", "cc-by-sa", "permissive"]);
+  const reusable = Object.entries(mix).filter(([l]) => REUSABLE.has(l)).reduce((a, [, n]) => a + n, 0);
+  const total = Object.values(mix).reduce((a, n) => a + n, 0);
+  console.error(
+    `licences: ${Object.entries(mix).sort().map(([l, n]) => `${l} ${n}`).join(" · ")}  (${reusable}/${total} reusable)`,
+  );
 }
 
 // ── the live check ───────────────────────────────────────────────────────────
@@ -209,8 +260,8 @@ push(`declare rm uuid; m uuid; n uuid;`);
 push(`begin`);
 push(`  delete from public.roadmaps where slug = ${q(spec.slug)};`);
 push(``);
-push(`  insert into public.roadmaps (slug, title, summary, subject_tags, category, difficulty, estimated_weeks, license_note, status)`);
-push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.category ?? "data")}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${q(spec.licenseNote ?? null)}, 'draft')`);
+push(`  insert into public.roadmaps (slug, title, summary, subject_tags, category, difficulty, estimated_weeks, license_note, cert, review_cadence, status)`);
+push(`  values (${q(spec.slug)}, ${q(spec.title)}, ${q(spec.summary)}, ${qarr(spec.subjectTags)}, ${q(spec.category ?? "data")}, ${q(spec.difficulty)}, ${qn(spec.estimatedWeeks)}, ${q(spec.licenseNote ?? null)}, ${q(spec.cert ?? "none")}, ${q(spec.reviewCadence ?? "annual")}, 'draft')`);
 push(`  returning id into rm;`);
 
 for (const [mi, m] of spec.modules.entries()) {
@@ -233,8 +284,8 @@ for (const [mi, m] of spec.modules.entries()) {
       );
     }
     for (const [ri, r] of n.resources.entries()) {
-      push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, needs_verification${verified ? ", last_checked_at, health" : ""})`);
-      push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${verified ? "false, now(), 'ok'" : "true"});`);
+      push(`  insert into public.resources (node_id, position, type, title, url, source_name, author, youtube_video_id, duration_sec, est_size_mb, editor_note, license, self_check, needs_verification${verified ? ", last_checked_at, health" : ""})`);
+      push(`  values (n, ${ri + 1}, ${q(r.type)}, ${q(r.title)}, ${q(r.url)}, ${q(r.sourceName)}, ${q(r.author ?? null)}, ${q(r.youtubeVideoId ?? null)}, ${qn(r.durationSec)}, ${qn(r.estSizeMb)}, ${q(r.editorNote ?? null)}, ${q(r.license)}, ${r.selfCheck ? "true" : "false"}, ${verified ? "false, now(), 'ok'" : "true"});`);
     }
   }
 }
@@ -266,6 +317,7 @@ push(`-- Everything derived, recomputed from what was just inserted.`);
 push(`select public.recompute_estimated_hours();`);
 push(`select public.recompute_media_mix();`);
 push(`select public.recompute_has_prereqs();`);
+push(`select public.recompute_has_free_cert();`);
 push(``);
 
 const outDir = path.join(ROOT, "supabase", ".bundle");

@@ -17,6 +17,14 @@
  * the spine. Microsoft Learn covers Power Query and Power Pivot properly and
  * costs nothing. Nothing here is behind a signup or a paywall.
  *
+ * NO SELF-CHECKING RESOURCE, and I could not find one worth linking. Every
+ * other roadmap anchors on something that marks the learner's work — Bandit,
+ * pgexercises, Learn Git Branching. Free auto-graded Excel practice does not
+ * appear to exist: the interactive courses are paid, and the free material is
+ * all reading and video. The challenges carry the whole verification burden
+ * here, which is why every one of them produces a file you can look at rather
+ * than a thing you can nod along to.
+ *
  * Tool note: every technique here works in Excel and, except where a day
  * says otherwise, in Google Sheets and LibreOffice Calc. That matters — a
  * lot of the audience does not have a paid Microsoft licence.
@@ -30,6 +38,7 @@ export default {
   category: "foundations",
   difficulty: "beginner",
   estimatedWeeks: 4,
+  reviewCadence: "semiannual",
   licenseNote: null,
 
   modules: [

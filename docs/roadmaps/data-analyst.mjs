@@ -45,6 +45,7 @@ export default {
   category: "data",
   difficulty: "beginner",
   estimatedWeeks: 13,
+  reviewCadence: "semiannual",
   licenseNote: null, // hand-curated link by link; nothing imported wholesale
   modules,
 };
