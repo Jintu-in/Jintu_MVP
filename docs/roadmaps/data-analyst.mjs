@@ -1,7 +1,7 @@
 /**
  * Data analyst — the 91-day roadmap (owner curriculum, 2026-08-13).
  *
- * 20 modules · 91 days · ~340 hours. Six days on, one day off: day 7 of
+ * 20 modules · 91 days · ~85 hours. Six days on, one day off: day 7 of
  * each week is review only, because spaced review is what stops week 3
  * evaporating by week 9. Every day is finishable on a bad evening — a day
  * you cannot finish breaks the streak, and a broken streak is how people
