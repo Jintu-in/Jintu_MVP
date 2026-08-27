@@ -11,6 +11,36 @@
  * membership follows the owner's module table (which places each weekly
  * review day in the module whose day-range covers it).
  *
+ * BACKFILLED to COURSE_STANDARD. Every title, summary, learning objective,
+ * module objective, deliverable and link is the original curriculum's,
+ * unchanged — the backfill was applied programmatically so that no existing
+ * string was ever retyped, which is the one class of error --check cannot
+ * catch. What is new on each of the ninety-one days: a why-today, a
+ * principle, the mistake, a challenge with an artefact, three to five topics
+ * with detail lines, and three comprehension checks.
+ *
+ * NOT RE-CUT. Ninety-one days over thirteen weeks is exactly seven a week —
+ * six of work and the seventh a review day — so unlike the other backfilled
+ * roadmaps this one already carried a streak. The span is the schedule here,
+ * not a claim about size.
+ *
+ * FIFTY INTERVIEW QUESTIONS, concentrated on the days that carry
+ * interviewable material rather than spread evenly: joins and window
+ * functions, the null and fan-out traps, pandas' silent failures,
+ * p-values and experiment design, metric definition, and the two case
+ * questions on day 91. Thirty-seven are marked askedInInterviews; the
+ * remainder are good questions without evidence anybody has been asked them,
+ * and that flag is a claim about the world rather than a guess.
+ *
+ * FIVE DAYS CARRY NO EXTERNAL LINK, all of them review or build days where
+ * the work is doing rather than reading. Each renders five sections without
+ * a Read & do, which is honest.
+ *
+ * SELF-CHECKING: SQLBolt, pgexercises, SQLZoo, DataLemur and StrataScratch
+ * all mark the learner's SQL. Five of them, which is more than any other
+ * roadmap in the catalogue — the SQL half of this curriculum can be
+ * practised against something that says whether you are right.
+ *
  * Points: each node carries its day price (25–35 weekdays, 40 build days,
  * 15 Sunday reviews). Module/week/streak bonuses are award-RPC rules, not
  * spec data. Points track momentum, not mastery — they exist so a Tuesday
@@ -45,6 +75,7 @@ export default {
   category: "data",
   difficulty: "beginner",
   estimatedWeeks: 13,
+  cert: "none",
   reviewCadence: "semiannual",
   licenseNote: null, // hand-curated link by link; nothing imported wholesale
   modules,
