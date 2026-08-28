@@ -79,11 +79,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Luke Barousse — data analyst channel",
-            url: "https://www.youtube.com/@LukeBarousse",
+            title: "How I Would Learn to be a Data Analyst",
+            url: "https://www.youtube.com/watch?v=TFFzNjWkhDk",
             sourceName: "Luke Barousse (YouTube)",
+            youtubeVideoId: "TFFzNjWkhDk",
+            durationSec: 851,
+            estSizeMb: 108,
             editorNote:
-              "Search the channel for his current day-in-the-life and analyst-roadmap videos — pick the newest.",
+              "Fourteen minutes on what the job is and the order to learn it in. Watch it before deciding to commit ninety-one days.",
           },
         ],
       },
@@ -151,10 +154,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Alex The Analyst — Data Analyst Bootcamp",
-            url: "https://www.youtube.com/@AlexTheAnalyst",
+            title: "FREE Data Analyst Bootcamp!!",
+            url: "https://www.youtube.com/watch?v=rGx1QNdYzvs",
             sourceName: "Alex The Analyst (YouTube)",
-            editorNote: "The opening videos of his Data Analyst Bootcamp playlist.",
+            youtubeVideoId: "rGx1QNdYzvs",
+            durationSec: 412,
+            estSizeMb: 52,
+            editorNote:
+              "The seven-minute overview of his bootcamp, not the twenty-eight-hour compilation — this is the map, and his channel has the rest sequenced.",
           },
           {
             type: "tool",
@@ -327,10 +334,14 @@ export default [
           },
           {
             type: "video",
-            title: "Leila Gharani — Excel channel",
-            url: "https://www.youtube.com/@LeilaGharani",
+            title: "Excel Shortcuts You SHOULD Know!",
+            url: "https://www.youtube.com/watch?v=Xe4U_-o_EWw",
             sourceName: "Leila Gharani (YouTube)",
-            editorNote: "Search the channel for her shortcuts and Excel Tables videos.",
+            youtubeVideoId: "Xe4U_-o_EWw",
+            durationSec: 527,
+            estSizeMb: 67,
+            editorNote:
+              "Learn five of these today, not fifty. The ExcelJet pages above cover Tables; this covers the keyboard half of the day.",
           },
         ],
       },
@@ -835,11 +846,15 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Leila Gharani — IFS and nested-IF alternatives",
-            url: "https://www.youtube.com/@LeilaGharani",
+            title:
+              "Excel IF Formula: Simple to Advanced (multiple criteria, nested IF, AND, OR functions)",
+            url: "https://www.youtube.com/watch?v=KkTaQ5OjAGc",
             sourceName: "Leila Gharani (YouTube)",
+            youtubeVideoId: "KkTaQ5OjAGc",
+            durationSec: 923,
+            estSizeMb: 117,
             editorNote:
-              "Search the channel; build the five-tier banding both ways and pick one to hand over.",
+              "Build the five-tier banding both ways as she goes, then pick the one you would hand to somebody else.",
           },
         ],
       },
@@ -977,11 +992,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Leila Gharani — dynamic arrays and LET",
-            url: "https://www.youtube.com/@LeilaGharani",
+            title: "Excel Dynamic Arrays (How they will change EVERYTHING!)",
+            url: "https://www.youtube.com/watch?v=2USJsIyIzvo",
             sourceName: "Leila Gharani (YouTube)",
+            youtubeVideoId: "2USJsIyIzvo",
+            durationSec: 421,
+            estSizeMb: 53,
             editorNote:
-              "Search the channel. Build a one-formula summary: unique categories sorted by total value.",
+              "Spill behaviour and the # operator in seven minutes. Then build the one-formula summary: unique categories sorted by total value.",
           },
         ],
       },
@@ -1118,10 +1136,14 @@ export default [
           },
           {
             type: "video",
-            title: "Guy in a Cube — Power Query introductions",
-            url: "https://www.youtube.com/@GuyInACube",
+            title: "Power Query for Beginners: Clean, Fold & Load Fast",
+            url: "https://www.youtube.com/watch?v=Hq7KhCR4K_0",
             sourceName: "Guy in a Cube (YouTube)",
-            editorNote: "Search the channel for their Power Query intro — pick the current one.",
+            youtubeVideoId: "Hq7KhCR4K_0",
+            durationSec: 918,
+            estSizeMb: 116,
+            editorNote:
+              "Fifteen minutes covering the Applied Steps pane and refresh — the two ideas the whole module rests on.",
           },
         ],
       },
@@ -1328,11 +1350,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Guy in a Cube — unpivot",
-            url: "https://www.youtube.com/@GuyInACube",
+            title: "To Pivot or Unpivot? That is the question!",
+            url: "https://www.youtube.com/watch?v=li0c6R6UpCw",
             sourceName: "Guy in a Cube (YouTube)",
+            youtubeVideoId: "li0c6R6UpCw",
+            durationSec: 378,
+            estSizeMb: 48,
             editorNote:
-              "Search the channel for unpivot. Unpivot a wide sales-by-month table into tidy form.",
+              "Six minutes, and it covers both directions. Unpivot a wide sales-by-month table into tidy form straight afterwards.",
           },
         ],
       },

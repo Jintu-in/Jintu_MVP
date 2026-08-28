@@ -86,10 +86,14 @@ export default [
           },
           {
             type: "video",
-            title: "Alex The Analyst — window functions",
-            url: "https://www.youtube.com/@AlexTheAnalyst",
+            title: "Window Functions in MySQL | Intermediate MySQL",
+            url: "https://www.youtube.com/watch?v=7NBt0V8ebGk",
             sourceName: "Alex The Analyst (YouTube)",
-            editorNote: "Search the channel for his window functions video.",
+            youtubeVideoId: "7NBt0V8ebGk",
+            durationSec: 808,
+            estSizeMb: 102,
+            editorNote:
+              "MySQL syntax, but PARTITION BY and the ranking functions are identical in PostgreSQL. Thirteen minutes.",
           },
         ],
       },
