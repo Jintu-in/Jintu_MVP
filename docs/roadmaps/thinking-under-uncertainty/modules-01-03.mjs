@@ -93,10 +93,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Circle of competence",
-        summary: "The boundary between what you understand and what you merely have opinions about.",
+        summary:
+          "The boundary between what you understand and what you merely have opinions about.",
         learningObjectives: [
           "Defining your circle honestly, in writing",
           "The tells that you have crossed the boundary",
@@ -104,8 +104,7 @@ export default [
         ],
         whyToday:
           "Every technique in this roadmap works better inside your competence and can actively mislead outside it. Knowing the boundary is what stops a well-executed analysis of something you do not understand.",
-        principle:
-          "The size of the circle does not matter. Knowing where its edge is does.",
+        principle: "The size of the circle does not matter. Knowing where its edge is does.",
         commonMistake:
           "Treating fluency as competence. Being able to talk about something convincingly is a different skill from being able to predict it, and the first grows much faster than the second.",
         challenge:
@@ -164,7 +163,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Inversion",
         summary:
@@ -236,7 +234,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Second-order effects and the razors",
         summary: "Trace consequences past T0, and default to incompetence before conspiracy.",
@@ -295,6 +292,15 @@ export default [
             answer:
               "It keeps attention on the system, which is where a fix exists. Malice explanations produce blame and no repair.",
           },
+          {
+            question:
+              "Your company is considering paying support agents a bonus for tickets closed per hour. Talk me through it.",
+            answer:
+              "First order it raises throughput, which is the intent. Second order, agents optimise the measure: closing tickets prematurely, discouraging follow-up questions, and pushing hard problems to a colleague or a queue. Third order, reopen rates and repeat contacts rise, so the real cost per resolved issue goes up while the dashboard improves. The failure is not dishonesty, it is competent people responding to what they are measured on. If it ships, pair it with a quality measure that degrades when the first is gamed — reopen rate or resolution-confirmed-by-customer — and watch both.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -307,7 +313,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Assignment — the decision post-mortem",
         summary:
@@ -381,7 +386,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Cognitive biases & decoupling outcomes",
     weekRange: "Week 2",
@@ -393,7 +397,8 @@ export default [
     nodes: [
       {
         title: "System 1 and System 2",
-        summary: "Fast pattern-matching vs slow deliberate reasoning — and why the fast one answers first.",
+        summary:
+          "Fast pattern-matching vs slow deliberate reasoning — and why the fast one answers first.",
         learningObjectives: [
           "The two-system architecture and its energy economics",
           "Which decisions deserve System 2 and which genuinely do not",
@@ -466,10 +471,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Availability, representativeness and vividness",
-        summary: "The mind judges probability by how easily examples come to mind. Easily ≠ often.",
+        summary:
+          "The mind judges probability by how easily examples come to mind. Easily ≠ often.",
         learningObjectives: [
           "Availability: recency and vividness masquerading as frequency",
           "Representativeness: category resemblance beating base rates",
@@ -525,6 +530,15 @@ export default [
             answer:
               "The last salient case dominates whatever the topic. One recent failure outweighs twenty quiet successes.",
           },
+          {
+            question:
+              "After one large customer churns loudly, the leadership team wants to rebuild the roadmap around their complaints. What do you say?",
+            answer:
+              "That one vivid case is being weighted as though it were a frequency. I would ask what proportion of the base shares that problem before reprioritising anything — the churned customer is memorable, not necessarily representative, and availability makes recent and dramatic cases feel common. If the data shows it is widespread, the roadmap change is right for reasons better than the anecdote. If it does not, the honest answer is that we responded to salience. Either way the check is cheap and the reprioritisation is not.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -545,10 +559,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Confirmation bias and motivated reasoning",
-        summary: "The brain as defence lawyer: evidence filtered to protect identity and prior belief.",
+        summary:
+          "The brain as defence lawyer: evidence filtered to protect identity and prior belief.",
         learningObjectives: [
           "Selective search, selective memory, selective interpretation",
           "Identity-protective cognition — why smart people do it more",
@@ -604,6 +618,14 @@ export default [
             answer:
               "Afterwards you will find a reason this particular evidence does not count. Committing beforehand removes that option.",
           },
+          {
+            question: "How do you keep yourself honest when you already have a view?",
+            answer:
+              "Write down, before the evidence arrives, what specific observation would change my mind — and make it concrete enough that somebody else could check it. Afterwards there is always a reason this particular evidence does not count, so the commitment has to be made in advance. In a team the equivalent is asking somebody to argue the other side properly rather than assigning a token devil's advocate. Knowing about the bias does not reduce it measurably, which is why the answer has to be a mechanism rather than an intention.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -616,7 +638,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Resulting, sunk costs and scope insensitivity",
         summary:
@@ -711,7 +732,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Assignment — the decision journal",
         summary:
@@ -785,7 +805,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Bayesian reasoning & base rates",
     weekRange: "Week 3",
@@ -854,6 +873,15 @@ export default [
             answer:
               "In choosing the reference class. Too narrow gives no data; too broad describes something else.",
           },
+          {
+            question:
+              "Your team estimates a project at six weeks. How much confidence should you have?",
+            answer:
+              "Little, until it is checked against the base rate. Ask how long comparable projects here actually took — not what they were estimated at, what they took. Plans do not contain their own failure modes, so inside-view estimates are systematically optimistic, and the specifics of this project always feel like the reason it will be different. State the estimate as an adjustment from the historical distribution and say what justifies the adjustment. If nobody has kept the record, that absence is the more important finding.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -866,10 +894,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Bayes' theorem, mechanically",
-        summary: "Prior × likelihood ratio = posterior. The formula is small; the habit is the skill.",
+        summary:
+          "Prior × likelihood ratio = posterior. The formula is small; the habit is the skill.",
         learningObjectives: [
           "P(A|B) = P(B|A)·P(A) / P(B), each term in words",
           "The likelihood ratio as 'diagnostic strength of evidence'",
@@ -925,6 +953,15 @@ export default [
             answer:
               "Restating probabilities as counts out of a fixed population. Same arithmetic, far fewer errors, and solvable without a calculator.",
           },
+          {
+            question:
+              "A test for a condition affecting one in a thousand people is 99% sensitive with a 5% false-positive rate. Someone tests positive. What is the chance they have it?",
+            answer:
+              "About 2%. Take ten thousand people: ten have it and roughly ten of those test positive. Of the 9,990 without it, 5% — about 500 — also test positive. So around 510 positives, of which 10 are real: roughly one in fifty. The intuition to carry is that a small false-positive rate applied to a very large healthy population swamps a rare condition, and no amount of test accuracy rescues it. Working it in natural frequencies rather than percentages is what makes it doable out loud.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -945,7 +982,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Incremental updating",
         summary:
@@ -1005,6 +1041,14 @@ export default [
             answer:
               "A verbal confidence cannot be updated or checked. A number can be both, and it exposes when you did not actually move.",
           },
+          {
+            question: "What would make you change your mind about a strategy you recommended?",
+            answer:
+              "A specific, named observation — stated as a number where possible — that I committed to before the strategy shipped. The weak answer is 'if the data showed otherwise', which commits to nothing. The strong one names the metric, the threshold and the date. It should also be proportionate: one dramatic anecdote should move a considered view very little, and a consistent signal across a quarter should move it a lot, even though the anecdote feels more urgent.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1017,7 +1061,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Assignment — the Bayesian diagnostic matrix",
         summary:

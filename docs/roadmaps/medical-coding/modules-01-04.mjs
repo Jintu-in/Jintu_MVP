@@ -84,14 +84,14 @@ export default [
           {
             type: "doc",
             title: "Medicare Claims Processing — the Internet-Only Manuals",
-            url: "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
+            url:
+              "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
             sourceName: "CMS",
             editorNote:
               "The actual rulebook, free and public domain. Do not read it today — bookmark it and notice that it exists, because every argument later in this roadmap ends here.",
           },
         ],
       },
-
       {
         title: "The three code sets, and who owns each",
         summary:
@@ -183,7 +183,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Where the money comes from",
         summary:
@@ -243,6 +242,15 @@ export default [
             answer:
               "By coding to the specificity the documentation supports. Choosing a higher-paying code the record does not support is upcoding, which is fraud.",
           },
+          {
+            question:
+              "Walk me through what happens between a patient visit and the practice being paid.",
+            answer:
+              "The clinician documents the encounter. A coder abstracts diagnoses and procedures from that documentation into ICD-10-CM and CPT or HCPCS codes. Those go onto a claim with the payer, patient and provider identifiers, and are submitted electronically. The payer adjudicates — checking eligibility, medical necessity and its own edits — and returns a remittance showing what was paid, adjusted or denied. Denials go to appeal or correction, and the patient is billed for whatever remains. The coder sits at one step but every later step depends on it.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -255,7 +263,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The people and the places",
         summary:
@@ -335,7 +342,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Reading a clinical note without being a clinician",
         summary:
@@ -403,6 +409,15 @@ export default [
             difficulty: "medium",
             askedInInterviews: true,
           },
+          {
+            question:
+              "The documentation is ambiguous and you cannot tell which of two codes applies. What do you do?",
+            answer:
+              "Query the provider. You do not choose the higher-paying option, you do not infer from the rest of the chart, and you do not code the vaguer unspecified option to avoid the conversation — although unspecified is correct when the documentation genuinely does not support more detail. The query must be non-leading: it presents what is documented and asks for clarification without suggesting the answer, because a leading query is itself a compliance finding.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -417,7 +432,6 @@ export default [
       },
     ],
   },
-
   {
     title: "The language and the body",
     weekRange: "Weeks 1–2",
@@ -496,7 +510,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Body systems, one at a time",
         summary:
@@ -568,7 +581,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Abbreviations, and the ones that are banned",
         summary:
@@ -639,7 +651,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The vocabulary behind the codes",
         summary:
@@ -711,10 +722,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Practice: twenty terms, cold",
-        summary: "A rep day. No new material — twenty unfamiliar terms, decomposed and verified.",
+        summary:
+          "A rep day. No new material — twenty unfamiliar terms, decomposed and verified.",
         learningObjectives: [
           "Decompose twenty terms without reference",
           "Verify each and record the misses",
@@ -770,7 +781,6 @@ export default [
       },
     ],
   },
-
   {
     title: "How an ICD-10-CM code is built",
     weekRange: "Weeks 2–3",
@@ -838,7 +848,8 @@ export default [
               "Only when the category has no subdivisions. If subdivisions exist, the category alone cannot be submitted.",
           },
           {
-            question: "A claim rejects for an invalid diagnosis code that looks right. Where do you look?",
+            question:
+              "A claim rejects for an invalid diagnosis code that looks right. Where do you look?",
             answer:
               "Completeness first — a category submitted where subdivisions exist, or a missing X placeholder before a seventh character. Both produce codes that look correct and are not, and both are far more common than a genuinely wrong code.",
             kind: "interview",
@@ -857,7 +868,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The alphabetic index and the tabular list",
         summary:
@@ -917,6 +927,14 @@ export default [
             answer:
               "Index first to find a candidate, tabular second to verify it and pick up its instructions. Always both, always that order.",
           },
+          {
+            question: "Can you code from the alphabetic index alone?",
+            answer:
+              "No, and doing so is the single most common beginner error. The index points you to a candidate code; the tabular list carries the instructional notes, the excludes notes, the required additional characters and the sequencing rules that decide whether that candidate is right. The index is a lookup, the tabular is the authority. Coding from the index produces codes that are plausible, frequently incomplete in character count, and deniable.",
+            kind: "interview",
+            difficulty: "easy",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -929,7 +947,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Excludes1 and Excludes2",
         summary:
@@ -989,6 +1006,14 @@ export default [
             answer:
               "Getting Excludes2 wrong. An Excludes1 violation rejects loudly; an Excludes2 omission pays and silently under-reports.",
           },
+          {
+            question: "What is the difference between an Excludes1 and an Excludes2 note?",
+            answer:
+              "Excludes1 means not coded here — the two conditions are mutually exclusive and cannot both be reported for the same encounter, because the excluded code represents the same condition under a different classification. Excludes2 means not included here — the condition is separate, the patient may genuinely have both, and both may be reported together when documented. Getting these the wrong way round either bundles away a legitimate second diagnosis or reports two codes that the payer will reject as contradictory.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1001,7 +1026,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Code first, use additional code, and sequencing",
         summary:
@@ -1061,6 +1085,15 @@ export default [
             answer:
               "Medical necessity is judged against the first-listed code. Wrong order can make a justified procedure look unjustified.",
           },
+          {
+            question:
+              "What does a 'code first' note tell you, and why does order matter at all?",
+            answer:
+              "It tells you the underlying aetiology must be sequenced before the manifestation code, so the claim describes cause then effect. Order matters because the first-listed diagnosis is what the payer reads as the reason for the encounter — it drives medical-necessity checks and, in facility settings, grouping and payment. A correct pair of codes in the wrong sequence can be denied as readily as a wrong code.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1073,10 +1106,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Practice: ten codes, index to tabular",
-        summary: "A rep day. Ten conditions, coded properly through both books, with the instructions followed.",
+        summary:
+          "A rep day. Ten conditions, coded properly through both books, with the instructions followed.",
         learningObjectives: [
           "Complete the full index-to-tabular process ten times",
           "Catch every instructional note in the path",
@@ -1132,7 +1165,6 @@ export default [
       },
     ],
   },
-
   {
     title: "The official guidelines",
     weekRange: "Weeks 3–4",
@@ -1215,7 +1247,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Section I: the conventions",
         summary:
@@ -1293,7 +1324,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Outpatient rules that differ from inpatient",
         summary:
@@ -1353,6 +1383,15 @@ export default [
             answer:
               "A coded diagnosis stays on the patient's record and can affect insurability for a condition they may never have had.",
           },
+          {
+            question:
+              "A physician documents 'rule out pneumonia'. How do you code it in an outpatient setting, and would that change on the inpatient side?",
+            answer:
+              "In outpatient you do not code an unconfirmed condition. You code the signs and symptoms that brought the patient in — cough, fever — because outpatient rules prohibit coding probable, suspected or rule-out diagnoses as though established. Inpatient rules differ: a condition documented at discharge as probable or suspected may be coded as if it existed, because the workup and treatment consumed resources. Knowing that the two settings genuinely disagree is the point of the question.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1365,7 +1404,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Chapter-specific rules worth knowing early",
         summary:
@@ -1424,6 +1462,13 @@ export default [
             question: "What happens when a chapter rule conflicts with a general one?",
             answer: "The chapter-specific rule wins. Specific beats general.",
           },
+          {
+            question: "Why can chapter-specific guidelines override the general ones?",
+            answer:
+              "Because the guidelines are ordered: chapter-specific instruction takes precedence over the general conventions where they conflict, and instructional notes in the tabular list take precedence over both. A coder who has learned only the general rules will apply them confidently in a chapter that says otherwise. The practical habit is to read the chapter's opening guidance before coding in an unfamiliar body system rather than after a denial.",
+            kind: "interview",
+            difficulty: "medium",
+          },
         ],
         resources: [
           {
@@ -1436,7 +1481,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Practice: coding against the guidelines",
         summary:

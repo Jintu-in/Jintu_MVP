@@ -79,7 +79,8 @@ export default [
               "It blocks every search containing that phrase, including long-tail variants that were converting. The block is invisible afterwards, because those searches simply stop appearing.",
           },
           {
-            question: "How would you set up search term management for an account with 200 campaigns?",
+            question:
+              "How would you set up search term management for an account with 200 campaigns?",
             answer:
               "Numeric rules applied to a bulk export rather than a per-campaign review: a harvest threshold and a negation threshold in orders and clicks, filtered in a sheet or through the Ads API, producing an upload rather than manual edits. The rules stay constant; only the thresholds change per product economics.",
             kind: "interview",
@@ -97,7 +98,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The daily 5-minute rep: search term audit",
         summary:
@@ -162,7 +162,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Campaign architecture and portfolio structure",
     weekRange: "Week 3",
@@ -237,10 +236,10 @@ export default [
         ],
         resources: [],
       },
-
       {
         title: "The four campaign intents",
-        summary: "Discovery, scaling, defensive, conquesting — each with its own budget logic and success metric.",
+        summary:
+          "Discovery, scaling, defensive, conquesting — each with its own budget logic and success metric.",
         learningObjectives: [
           "Discovery (auto/broad) feeding scaling (manual exact)",
           "Defensive branded: insurance economics",
@@ -301,6 +300,15 @@ export default [
             answer:
               "When your listing beats the target's on something visible at a comparable price — better rating, more reviews, a real feature difference.",
           },
+          {
+            question:
+              "How would you structure an account so that you can tell defence spend from growth spend?",
+            answer:
+              "Separate campaigns by intent rather than by product: brand defence on your own brand terms, category capture on generic terms, competitor conquesting on rival ASINs and brand terms, and harvest campaigns holding proven converters promoted out of auto. Each intent has a different acceptable ACoS — defending your own brand should be cheap and conquesting is expected to be expensive — so mixing them into one campaign produces a blended number that justifies nothing. The structure exists so a budget conversation can be had per intent.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -315,7 +323,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Amazon DSP and programmatic",
     weekRange: "Week 4",
@@ -398,7 +405,6 @@ export default [
           },
         ],
       },
-
       {
         title: "First-party audiences and attribution",
         summary:
@@ -460,8 +466,7 @@ export default [
           },
           {
             question: "Which audience type needs existing detail-page traffic?",
-            answer:
-              "Views remarketing. Without viewers there is no audience to reach.",
+            answer: "Views remarketing. Without viewers there is no audience to reach.",
           },
         ],
         resources: [
@@ -476,7 +481,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Amazon Marketing Cloud and clean-room SQL",
     weekRange: "Week 4",
@@ -486,7 +490,8 @@ export default [
     nodes: [
       {
         title: "Clean-room architecture and privacy thresholds",
-        summary: "Event-level logs without user identity, and the 50-user floor every query must clear.",
+        summary:
+          "Event-level logs without user identity, and the 50-user floor every query must clear.",
         learningObjectives: [
           "What a clean room is and is not",
           "The 50-user aggregation floor and how it shapes query design",
@@ -542,6 +547,15 @@ export default [
             answer:
               "They answer different questions — what drove sales in a period, versus what a period's spend produced. Picking the wrong one changes every number without any error.",
           },
+          {
+            question:
+              "Your clean-room query returns no rows for a segment you know is large. What is the likely cause?",
+            answer:
+              "An aggregation threshold. Clean rooms suppress output below a minimum user count so individuals cannot be re-identified, and the result comes back empty rather than flagged as suppressed. Widen the window, broaden the segment, or reduce the number of dimensions in the group-by until the cell sizes clear the threshold. Treating an empty result as 'no audience' rather than 'below threshold' is the error, and it points the analysis at exactly the wrong conclusion.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -554,7 +568,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The path-to-purchase query",
         summary:
@@ -628,7 +641,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Bulk operations and the Ads API",
     weekRange: "Week 4",
@@ -638,7 +650,8 @@ export default [
     nodes: [
       {
         title: "Bulk sheets",
-        summary: "The 60-day bulk file: mass bid updates, status toggles and negative injections in one upload.",
+        summary:
+          "The 60-day bulk file: mass bid updates, status toggles and negative injections in one upload.",
         learningObjectives: [
           "Downloading and reading the bulk file's sheet structure",
           "Safe mass edits: bids, ENABLED/PAUSED, negatives",
@@ -686,8 +699,7 @@ export default [
           },
           {
             question: "How do you find out that half your upload failed?",
-            answer:
-              "The result file, which carries a per-row status. Nothing else reports it.",
+            answer: "The result file, which carries a per-row status. Nothing else reports it.",
           },
           {
             question: "Why upload one class of change at a time?",
@@ -706,7 +718,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The Ads API: OAuth and report automation",
         summary:
@@ -772,7 +783,8 @@ export default [
               "An empty report rather than an error — the same silent-failure shape as most of this API.",
           },
           {
-            question: "How would you build a daily reporting pipeline that does not need watching?",
+            question:
+              "How would you build a daily reporting pipeline that does not need watching?",
             answer:
               "Refresh the token per run, request per profile, poll with exponential backoff, download, load into a warehouse table keyed so a re-run is idempotent, and alert on zero rows as well as on errors — because zero rows is what a wrong profile or a throttled poll actually produces.",
             kind: "interview",
@@ -799,7 +811,8 @@ export default [
           {
             type: "doc",
             title: "Login with Amazon documentation",
-            url: "https://developer.amazon.com/docs/login-with-amazon/documentation-overview.html",
+            url:
+              "https://developer.amazon.com/docs/login-with-amazon/documentation-overview.html",
             sourceName: "Amazon Developer",
             editorNote:
               "For the OAuth half. You need the authorisation-code grant and the refresh-token exchange; skip the rest.",
@@ -809,14 +822,12 @@ export default [
             title: "Requests — HTTP for humans",
             url: "https://requests.readthedocs.io/",
             sourceName: "Requests documentation",
-            editorNote:
-              "The Python library the challenge uses. Read the Quickstart only.",
+            editorNote: "The Python library the challenge uses. Read the Quickstart only.",
           },
         ],
       },
     ],
   },
-
   {
     title: "Incrementality and true lift",
     weekRange: "Week 5",
@@ -885,7 +896,8 @@ export default [
               "Branded defensive campaigns, which are typically the ones with the best reported RoAS.",
           },
           {
-            question: "A client wants to double spend on their best-RoAS campaign. What do you say?",
+            question:
+              "A client wants to double spend on their best-RoAS campaign. What do you say?",
             answer:
               "Ask what that campaign is. If it is branded search, the high RoAS reflects capture of existing demand, and doubling it mostly buys traffic that was already arriving. Propose a holdout — pause it in one region for two weeks and compare total category sales — before moving the budget.",
             kind: "interview",
@@ -903,10 +915,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Geo tests and blackout experiments",
-        summary: "Two matched regions, one deprived of ads for three weeks — the honest way to find baseline demand.",
+        summary:
+          "Two matched regions, one deprived of ads for three weeks — the honest way to find baseline demand.",
         learningObjectives: [
           "Selecting comparable regions; contamination risks",
           "Running the 3-week blackout and sizing the effect",
@@ -967,6 +979,15 @@ export default [
             answer:
               "An interval alongside it. An estimate whose interval crosses zero means the test could not detect an effect of that size, which is a finding rather than a failure.",
           },
+          {
+            question:
+              "Your brand-term campaign shows a 12x ROAS. The CFO asks whether to keep funding it. What do you say?",
+            answer:
+              "That the reported ROAS is close to meaningless on its own, because people searching your brand name largely intend to buy from you already — the ads are taking credit for sales that would have happened organically. The question is incremental, not attributed. Run a geo holdout or a scheduled blackout: pause brand terms in matched regions, compare total brand sales rather than ad-attributed sales, and measure what actually disappears. That number, not the 12x, is what the spend should be judged on.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -989,7 +1010,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Certifications and the account audit",
     weekRange: "Week 5",
@@ -999,7 +1019,8 @@ export default [
     nodes: [
       {
         title: "The four certifications",
-        summary: "Sponsored Ads, DSP, AMC, Retail — free, official, and screened for in agency hiring.",
+        summary:
+          "Sponsored Ads, DSP, AMC, Retail — free, official, and screened for in agency hiring.",
         learningObjectives: [
           "Sponsored Ads and Retail certifications: close them out",
           "DSP and AMC certifications: the differentiators",
@@ -1079,7 +1100,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Capstone — the account audit deck",
         summary:

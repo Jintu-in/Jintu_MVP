@@ -69,7 +69,8 @@ export default [
               "Amazon re-decides the featured offer per page view, so ownership varies through the day and across regions. Business Reports reports it as a share of views over the period.",
           },
           {
-            question: "What happens to an ad click on a listing where you have lost the Buy Box?",
+            question:
+              "What happens to an ad click on a listing where you have lost the Buy Box?",
             answer:
               "You paid for the click and the Add to Cart button buys the other seller's offer. You have funded a competitor's sale on your own product page.",
           },
@@ -107,7 +108,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Glance views and Unit Session Percentage",
         summary:
@@ -179,7 +179,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Inventory health and the out-of-stock penalty",
         summary: "Stockouts collapse organic rank, and ads cannot buy it back afterwards.",
@@ -235,8 +234,16 @@ export default [
           },
           {
             question: "Should ads run while stock is nearly gone?",
+            answer: "No. They buy clicks that cannot convert and pull the outage forward.",
+          },
+          {
+            question:
+              "A campaign that performed well for months collapses in a week. Ads were not touched. Where do you look first?",
             answer:
-              "No. They buy clicks that cannot convert and pull the outage forward.",
+              "Inventory and the listing before the campaign. An out-of-stock or suppressed listing loses the Buy Box, and ads for an ASIN without the Buy Box stop serving or serve to a page that cannot convert — so spend and sales fall together with nothing wrong in the ad console. Check Buy Box percentage, stock cover, and whether a variation or a price change triggered suppression. Only after those do you look at bids, competitors and seasonality.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -250,7 +257,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The retail readiness checklist",
         summary:
@@ -330,7 +336,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Sponsored Products — execution and bidding",
     weekRange: "Weeks 1–2",
@@ -340,7 +345,8 @@ export default [
     nodes: [
       {
         title: "Auto targeting and the four match groups",
-        summary: "Close match, loose match, substitutes, complements — Amazon's own read of your listing.",
+        summary:
+          "Close match, loose match, substitutes, complements — Amazon's own read of your listing.",
         learningObjectives: [
           "What each auto group targets and what its performance tells you",
           "Auto campaigns as discovery engines, not end states",
@@ -401,6 +407,14 @@ export default [
             answer:
               "Your listing is not indexed for it. That is a title, bullet or backend-keyword fix — raising bids will not make Amazon match a term it does not associate with you.",
           },
+          {
+            question: "What are the four auto-targeting match groups, and what is each for?",
+            answer:
+              "Close match and loose match target shopper search terms at two levels of relevance. Substitutes serve on detail pages of products a shopper could buy instead of yours; complements serve on pages of products bought alongside yours. They are separately biddable, which matters because they behave nothing alike — substitutes is a competitor-conquesting placement and complements is an attach placement, and lumping them under one bid hides both.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -421,10 +435,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Manual match types and product targeting",
-        summary: "Exact, phrase, broad — and PAT: aiming at competitor ASINs and category nodes.",
+        summary:
+          "Exact, phrase, broad — and PAT: aiming at competitor ASINs and category nodes.",
         learningObjectives: [
           "Exact vs phrase vs broad matching behaviour, precisely",
           "Product targeting by ASIN and by category filtered on price/rating",
@@ -512,10 +526,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Bidding strategies and placement modifiers",
-        summary: "Down-only, up-and-down, fixed — and the 0–900% placement levers on top of them.",
+        summary:
+          "Down-only, up-and-down, fixed — and the 0–900% placement levers on top of them.",
         learningObjectives: [
           "Dynamic down-only as the safe default; when up-and-down earns its risk",
           "Placement modifiers for top-of-search and product pages",
@@ -562,7 +576,8 @@ export default [
         ],
         checks: [
           {
-            question: "What is the worst-case cost per click on a ₹20 bid with a 100% top-of-search modifier and up-and-down bidding?",
+            question:
+              "What is the worst-case cost per click on a ₹20 bid with a 100% top-of-search modifier and up-and-down bidding?",
             answer:
               "₹80. The modifier doubles it to ₹40, then dynamic up-and-down can add up to another 100%.",
           },
@@ -575,6 +590,15 @@ export default [
             question: "Why use a placement modifier rather than just raising the bid?",
             answer:
               "It raises the bid only where you want the extra reach — top of search — instead of paying more for every placement including the ones that convert badly.",
+          },
+          {
+            question:
+              "Explain the difference between dynamic bids down-only, up-and-down, and fixed. When would you use each?",
+            answer:
+              "Down-only lowers the bid when a conversion looks unlikely and never raises it — the safe default and the right choice for a new campaign with no data. Up-and-down can raise the bid up to 100% on top-of-search placements, which suits a proven converter where you want volume. Fixed ignores likelihood entirely and is mostly for testing, because it gives a clean read on what a bid actually buys. Placement modifiers then multiply on top, so an up-and-down strategy with an aggressive top-of-search modifier can compound into a far higher effective bid than people intend.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -590,7 +614,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Profitability mathematics",
     weekRange: "Week 2",
@@ -600,7 +623,8 @@ export default [
     nodes: [
       {
         title: "ACoS, TACoS and RoAS",
-        summary: "Three lenses on the same spend — and TACoS is the one that catches organic decay.",
+        summary:
+          "Three lenses on the same spend — and TACoS is the one that catches organic decay.",
         learningObjectives: [
           "ACoS = spend ÷ ad revenue; RoAS = 100 ÷ ACoS",
           "TACoS = spend ÷ total revenue, and why it is the health metric",
@@ -656,7 +680,8 @@ export default [
               "TACoS, because it includes organic revenue. ACoS can be made to look good by narrowing to the easiest traffic.",
           },
           {
-            question: "A client says their ACoS improved from 30% to 18% last quarter. What do you ask?",
+            question:
+              "A client says their ACoS improved from 30% to 18% last quarter. What do you ask?",
             answer:
               "What TACoS did, and what total revenue did. An ACoS improvement produced by cutting discovery spend and keeping only branded terms usually shows up as flat or falling total revenue — the efficiency is real and the business is smaller.",
             kind: "interview",
@@ -675,7 +700,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Break-even ACoS from first principles",
         summary:
@@ -735,6 +759,14 @@ export default [
             answer:
               "Break-even minus the profit margin you intend to keep. Break-even is where you stop losing; target is where you start earning.",
           },
+          {
+            question: "Derive break-even ACoS for a product, and say what it means.",
+            answer:
+              "Break-even ACoS is the contribution margin as a percentage of selling price — price minus COGS, Amazon referral fee, FBA fulfilment and any per-unit overhead, divided by price. At that ACoS the advertising exactly consumes the margin on the incremental unit, so the sale contributes nothing and costs nothing. It is a per-product number, it moves whenever the fee schedule or the cost price moves, and quoting one blended figure across a catalogue is how unprofitable products get funded by profitable ones.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -747,10 +779,10 @@ export default [
           },
         ],
       },
-
       {
         title: "When high ACoS is mathematically correct",
-        summary: "Launch velocity, brand defence, and LTV consumables — the three legitimate exceptions.",
+        summary:
+          "Launch velocity, brand defence, and LTV consumables — the three legitimate exceptions.",
         learningObjectives: [
           "Launch phase: 20–30% TACoS targets to buy organic indexing",
           "Defensive branded campaigns priced as insurance, not ROI",
@@ -811,7 +843,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Sponsored Brands, Sponsored Display and impression share",
     weekRange: "Weeks 2–3",
@@ -894,10 +925,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Sponsored Display: contextual and audience targeting",
-        summary: "Retargeting detail-page viewers on and off Amazon — the 30-day window that closes loops.",
+        summary:
+          "Retargeting detail-page viewers on and off Amazon — the 30-day window that closes loops.",
         learningObjectives: [
           "Contextual (similar/complementary products) vs audience targeting",
           "Views remarketing: 30-day detail-page viewers who did not buy",
@@ -970,7 +1001,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Search impression share diagnostics",
         summary:
@@ -1016,7 +1046,8 @@ export default [
         ],
         checks: [
           {
-            question: "Impression share is 40% and the loss is mostly to budget. What do you do?",
+            question:
+              "Impression share is 40% and the loss is mostly to budget. What do you do?",
             answer:
               "Raise the budget or narrow the targeting. Raising the bid spends the same cap faster and buys fewer impressions.",
           },
@@ -1029,6 +1060,15 @@ export default [
             question: "Is a campaign that exhausts its budget by 2pm necessarily wrong?",
             answer:
               "No. If the morning traffic converts better, that is dayparting arriving by accident — worth checking and then making deliberate.",
+          },
+          {
+            question:
+              "A keyword you care about has low impression share. How do you work out whether it is a bid problem or a relevance problem?",
+            answer:
+              "Split lost impression share by reason. Share lost to rank points at bid and at the ad's expected click-through — raise the bid and see whether share moves proportionally. Share lost to budget is neither; the campaign simply stopped serving, and the fix is pacing rather than price. If share stays flat as the bid rises substantially, it is relevance: the listing does not match the query well enough for Amazon to serve it, and no bid fixes a title, image set or category mismatch.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
           },
         ],
         resources: [

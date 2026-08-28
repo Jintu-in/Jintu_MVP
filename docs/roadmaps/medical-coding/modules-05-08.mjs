@@ -9,8 +9,10 @@ export default [
   {
     title: "Procedure coding",
     weekRange: "Weeks 4–5",
-    objective: "Read a procedure code set and choose within it — with CPT's rules, not its codes.",
-    deliverable: "A written comparison of how CPT, HCPCS Level II and ICD-10-PCS are each built.",
+    objective:
+      "Read a procedure code set and choose within it — with CPT's rules, not its codes.",
+    deliverable:
+      "A written comparison of how CPT, HCPCS Level II and ICD-10-PCS are each built.",
     estHours: 4,
     nodes: [
       {
@@ -89,7 +91,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Evaluation and Management",
         summary:
@@ -154,7 +155,8 @@ export default [
               "No. Documentation volume no longer drives level selection, so padding adds audit risk without adding payment.",
           },
           {
-            question: "A physician asks how to document to support a higher E/M level. What do you say?",
+            question:
+              "A physician asks how to document to support a higher E/M level. What do you say?",
             answer:
               "Document the decision making that actually happened — the problems addressed, the data reviewed and the risk — or the total time spent. The level follows the work; it cannot be produced by writing more. If the work supports a higher level and the note does not show it, that is a documentation fix. If the work does not support it, there is nothing to fix.",
             kind: "interview",
@@ -173,7 +175,6 @@ export default [
           },
         ],
       },
-
       {
         title: "HCPCS Level II",
         summary:
@@ -244,7 +245,6 @@ export default [
           },
         ],
       },
-
       {
         title: "ICD-10-PCS, and why it is nothing like CPT",
         summary:
@@ -316,7 +316,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Practice: matching the procedure to the set",
         summary:
@@ -358,8 +357,7 @@ export default [
         checks: [
           {
             question: "Which two questions select the code set?",
-            answer:
-              "Is it a service or a product, and did it happen inpatient or outpatient.",
+            answer: "Is it a service or a product, and did it happen inpatient or outpatient.",
           },
           {
             question: "Can one procedure generate both PCS and CPT codes?",
@@ -376,7 +374,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Modifiers, edits and bundling",
     weekRange: "Weeks 5–6",
@@ -443,19 +440,28 @@ export default [
             answer:
               "No. Some are informational only. Knowing which is which prevents expecting payment that was never going to come.",
           },
+          {
+            question:
+              "What is a modifier, and give me a case where leaving one off costs money.",
+            answer:
+              "A modifier is a two-character suffix that qualifies a procedure code without changing what the code means — it says the service was bilateral, repeated, performed by a different provider, or distinct from another service billed the same day. The classic loss is a genuinely separate procedure that falls inside another's edit pair: without the modifier indicating the distinct service, the payer bundles it and pays once. The reverse is worse — appending a bypass modifier where the services were not distinct is a documented fraud pattern, not a billing shortcut.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
             type: "doc",
             title: "National Correct Coding Initiative edits",
-            url: "https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci-edits",
+            url:
+              "https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci-edits",
             sourceName: "CMS",
             editorNote:
               "The edits and the modifier indicators that say whether an edit may be overridden at all. Free and authoritative.",
           },
         ],
       },
-
       {
         title: "NCCI edits and bundling",
         summary:
@@ -516,26 +522,35 @@ export default [
               "The edits are published. A denial you could have predicted costs the practice rework it never needed to do.",
           },
           {
-            question: "A surgeon insists two bundled procedures should both be paid. How do you handle it?",
+            question:
+              "A surgeon insists two bundled procedures should both be paid. How do you handle it?",
             answer:
               "Look up the pair's modifier indicator. If it is 0 there is no route and the answer is no. If it is 1, the question becomes whether the record documents genuinely distinct circumstances — and if it does, the modifier is correct and the appeal is winnable. Either way the answer comes from the published table, not from seniority.",
             kind: "interview",
             difficulty: "hard",
             askedInInterviews: true,
           },
+          {
+            question:
+              "What is an NCCI edit and what does the modifier indicator on it tell you?",
+            answer:
+              "A Correct Coding Initiative edit is a pair of codes the payer will not reimburse together, because one is considered a component of the other or the two are mutually exclusive. Each pair carries a modifier indicator: 0 means the edit can never be bypassed, so no modifier will make both payable; 1 means it may be bypassed when the services were genuinely distinct and the documentation supports it. Reading that indicator before appending anything is the difference between correct billing and a pattern an auditor will find.",
+            kind: "interview",
+            difficulty: "hard",
+          },
         ],
         resources: [
           {
             type: "doc",
             title: "NCCI policy manual",
-            url: "https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci-edits/medicare-ncci-policy-manual",
+            url:
+              "https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci-edits/medicare-ncci-policy-manual",
             sourceName: "CMS",
             editorNote:
               "The reasoning behind the edits, chapter by chapter. Read your specialty's chapter — it explains what the tables only assert.",
           },
         ],
       },
-
       {
         title: "Global periods and what is already included",
         summary:
@@ -593,6 +608,14 @@ export default [
           {
             question: "Where do you find a code's global period?",
             answer: "On the physician fee schedule, stated per code.",
+          },
+          {
+            question: "A patient returns eight days after surgery. Is that visit billable?",
+            answer:
+              "It depends on the procedure's global period and on why they came. Routine post-operative care within the global period is already paid for in the surgical fee and is not separately billable. A visit for something unrelated, or a return to theatre for a complication, can be billable with the appropriate modifier to signal it falls outside the global package. The first question is always the global period length — nought, ten or ninety days — because that determines whether the question even arises.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -665,19 +688,28 @@ export default [
             answer:
               "Yes. If the supporting diagnosis is not sequenced first, the check can fail even though every code is right.",
           },
+          {
+            question:
+              "A procedure was performed and documented correctly, and the payer denied it as not medically necessary. What went wrong?",
+            answer:
+              "The procedure code was supported but the diagnosis linked to it did not justify the service under the payer's coverage policy. Medical necessity is the link between the why and the what: the diagnosis has to be one the payer accepts as an indication for that procedure, and it has to be specific enough. An unspecified diagnosis where the documentation supported a specific one is a common cause. The fix is checking the coverage determination before the service where possible, and re-reviewing the documentation for a supportable, more specific diagnosis before appealing.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
             type: "doc",
             title: "Medicare Internet-Only Manuals",
-            url: "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
+            url:
+              "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
             sourceName: "CMS",
             editorNote:
               "The claims-processing manual is where necessity rules live. Enormous — use the chapter list, never read it through.",
           },
         ],
       },
-
       {
         title: "Practice: five pairs, checked properly",
         summary: "A rep day. Five code pairs run through NCCI, global periods and necessity.",
@@ -736,7 +768,6 @@ export default [
       },
     ],
   },
-
   {
     title: "The claim after you submit it",
     weekRange: "Weeks 6–7",
@@ -815,7 +846,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Why claims deny",
         summary:
@@ -867,8 +897,7 @@ export default [
         checks: [
           {
             question: "Which denial cause is most preventable by a coder?",
-            answer:
-              "Bundling. The NCCI tables are published and checkable before submission.",
+            answer: "Bundling. The NCCI tables are published and checkable before submission.",
           },
           {
             question: "Why classify before appealing?",
@@ -880,19 +909,27 @@ export default [
             answer:
               "They are almost never recoverable and they were entirely avoidable. The money is simply gone.",
           },
+          {
+            question: "You are handed a denial queue of two hundred claims. How do you work it?",
+            answer:
+              "Group before touching any single claim. Sort by denial reason code, payer and provider, and look for the concentration — most large queues are a handful of systematic causes, not two hundred individual mistakes. A single registration field, one provider's documentation habit, or one payer policy change usually explains the bulk. Fix the cause first, then rework the affected claims as a batch, and work the genuine one-offs last. Working the queue top to bottom in date order is the mistake, because it fixes symptoms at the slowest possible rate.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
             type: "doc",
             title: "Medicare Internet-Only Manuals",
-            url: "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
+            url:
+              "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
             sourceName: "CMS",
             editorNote:
               "The claims-processing manual defines the filing limits and the appeal levels. Look up the filing window for your payer type.",
           },
         ],
       },
-
       {
         title: "Writing an appeal",
         summary:
@@ -951,19 +988,27 @@ export default [
             question: "What ends an appeal regardless of merit?",
             answer: "Missing the deadline for that appeal level.",
           },
+          {
+            question: "What makes an appeal succeed?",
+            answer:
+              "Addressing the specific denial reason with the specific evidence that rebuts it, and nothing else. Quote the reason code, state what the documentation shows, cite the guideline or coverage policy that supports the coding, and attach the relevant pages rather than the whole chart. Appeals fail when they restate the claim rather than answering the objection, when they miss the payer's filing deadline, or when the underlying coding was in fact wrong — in which case the correct action is a corrected claim, not an appeal.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
             type: "doc",
             title: "Medicare Internet-Only Manuals",
-            url: "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
+            url:
+              "https://www.cms.gov/medicare/regulations-guidance/manuals/internet-only-manuals-ioms",
             sourceName: "CMS",
             editorNote:
               "The appeals process, with levels and deadlines. Find the chapter and note the first-level deadline — it is shorter than people expect.",
           },
         ],
       },
-
       {
         title: "Value-based payment, briefly",
         summary:
@@ -988,8 +1033,7 @@ export default [
         topics: [
           {
             title: "Fee-for-service",
-            detail:
-              "Paid per service. The diagnosis justifies the procedure and nothing more.",
+            detail: "Paid per service. The diagnosis justifies the procedure and nothing more.",
           },
           {
             title: "Risk adjustment",
@@ -1035,7 +1079,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Practice: work a denial queue",
         summary: "A rep day. Ten denials — classify, decide, and write one appeal.",
@@ -1094,7 +1137,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Compliance, audits and the certification",
     weekRange: "Weeks 7–8",
@@ -1166,6 +1208,15 @@ export default [
             answer:
               "Genuine errors scatter in both directions. Errors that consistently favour higher payment are a signal, and data analysis finds them easily.",
           },
+          {
+            question:
+              "What separates fraud from abuse, and why does the distinction matter to you?",
+            answer:
+              "Intent. Abuse is billing that is inconsistent with accepted practice and results in unnecessary cost — often error, poor process or ignorance. Fraud is knowingly submitting false claims. The distinction matters because the penalties differ enormously, and because it means a coder's protection is documentation and consistency: a defensible process, queries on file and a self-audit trail are what demonstrate that an error was an error. It also means pressure to code a particular way is a compliance issue to escalate, not a judgement call to make quietly.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1186,7 +1237,6 @@ export default [
           },
         ],
       },
-
       {
         title: "The compliance programme",
         summary:
@@ -1247,7 +1297,8 @@ export default [
               "Code what the record supports, and escalate through the defined channel what cannot be resolved.",
           },
           {
-            question: "A supervisor tells you to bill a level the note does not support. What do you do?",
+            question:
+              "A supervisor tells you to bill a level the note does not support. What do you do?",
             answer:
               "Decline to submit it, explain what the record does support, and put the exchange in writing to the compliance officer. Complying makes you a participant; the programme exists precisely for this and reporting in good faith is protected.",
             kind: "interview",
@@ -1266,7 +1317,6 @@ export default [
           },
         ],
       },
-
       {
         title: "How an audit works",
         summary:
@@ -1326,6 +1376,14 @@ export default [
             answer:
               "Involve the compliance officer and counsel, and read exactly what is requested and by when. Not responding alone.",
           },
+          {
+            question: "Your coding accuracy is audited at 88%. Is that good?",
+            answer:
+              "Below where most departments want to be — 95% is a common internal benchmark — but the rate alone says little. What matters is the pattern: twelve percent spread randomly across code families is a training problem, while twelve percent concentrated in one service line or all erring in the same financial direction is a compliance problem and reads very differently to an external reviewer. I would ask for the error breakdown by type and direction before drawing any conclusion.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1338,7 +1396,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Self-auditing your own work",
         summary:
@@ -1395,13 +1452,11 @@ export default [
           },
           {
             question: "What makes a finding useful?",
-            answer:
-              "A specific change attached to it. Without one it is a note, not a finding.",
+            answer: "A specific change attached to it. Without one it is a note, not a finding.",
           },
         ],
         resources: [],
       },
-
       {
         title: "The certification, and what it costs",
         summary:
@@ -1465,6 +1520,14 @@ export default [
             question: "When should you sit the exam?",
             answer:
               "When you can already do the work. It tests speed on familiar material, so sitting it early mostly buys a retake.",
+          },
+          {
+            question: "Which certification are you pursuing, and what does it actually require?",
+            answer:
+              "Name the credential, the examining body, the exam format and its cost, and be honest about status — passed, scheduled, or studying. Certification exams in this field are paid and often require membership plus a renewal cycle with continuing education units. Overstating a credential is the fastest way to fail a background check in a compliance-sensitive profession, so the answer should be exact.",
+            kind: "interview",
+            difficulty: "easy",
+            askedInInterviews: true,
           },
         ],
         resources: [
