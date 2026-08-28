@@ -80,11 +80,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Java Brains — Spring framework core",
-            url: "https://www.youtube.com/@Java.Brains",
+            title: "Spring Tutorial 01 - Understanding Dependency Injection",
+            url: "https://www.youtube.com/watch?v=GB8k2-Egfv0",
             sourceName: "Java Brains (YouTube)",
+            youtubeVideoId: "GB8k2-Egfv0",
+            durationSec: 892,
+            estSizeMb: 113,
             editorNote:
-              "The best free conceptual explanation of IoC/DI anywhere. Search the channel; the concepts have not moved even where the syntax has.",
+              "The best free explanation of IoC and DI anywhere, and the concepts have not moved even where the syntax has. Fifteen minutes; the numbered series continues on his channel.",
           },
           {
             type: "doc",
@@ -569,11 +572,14 @@ export default [
           },
           {
             type: "video",
-            title: "Java Brains — Spring Boot",
-            url: "https://www.youtube.com/@Java.Brains",
+            title: "Spring Boot Quick Start 1 - Introduction",
+            url: "https://www.youtube.com/watch?v=msXL2oDexqw",
             sourceName: "Java Brains (YouTube)",
+            youtubeVideoId: "msXL2oDexqw",
+            durationSec: 97,
+            estSizeMb: 12,
             editorNote:
-              "Search the channel; prefer his Boot 3-era uploads over the older series.",
+              "Ninety seconds of orientation before the series proper. Prefer his Boot 3-era uploads over the older ones wherever both exist.",
           },
         ],
       },

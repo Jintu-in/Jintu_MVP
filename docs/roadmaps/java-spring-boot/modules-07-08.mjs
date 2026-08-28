@@ -80,11 +80,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Java Brains — Spring Security concepts",
-            url: "https://www.youtube.com/@Java.Brains",
+            title: "How Spring Security Authentication works",
+            url: "https://www.youtube.com/watch?v=caCJAJC41Rk",
             sourceName: "Java Brains (YouTube)",
+            youtubeVideoId: "caCJAJC41Rk",
+            durationSec: 1175,
+            estSizeMb: 149,
             editorNote:
-              "His architecture explanations are the best free ones — but write your CONFIG from the current docs, not his older videos: WebSecurityConfigurerAdapter is gone.",
+              "Twenty minutes on the filter chain, and the clearest free account of it. Take the ARCHITECTURE from this and write your CONFIG from the current docs — WebSecurityConfigurerAdapter is gone.",
           },
           {
             type: "doc",

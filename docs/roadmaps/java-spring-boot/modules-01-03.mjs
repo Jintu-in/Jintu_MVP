@@ -193,11 +193,14 @@ export default [
           },
           {
             type: "video",
-            title: "Telusko — Core Java playlist",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Encapsulation in Java",
+            url: "https://www.youtube.com/watch?v=YbqneqDIZh8",
             sourceName: "Telusko (YouTube)",
+            youtubeVideoId: "YbqneqDIZh8",
+            durationSec: 701,
+            estSizeMb: 89,
             editorNote:
-              "Search the channel for the current Core Java playlist. Skip any video teaching Java 8-era idioms — the guardrails in this roadmap name them.",
+              "Episode 40 of his numbered Java series; inheritance is 48 and polymorphism is 55, both short. Skip anything in the series teaching Java 8-era idioms — the guardrails in this roadmap name them.",
           },
         ],
       },
@@ -857,10 +860,14 @@ export default [
           },
           {
             type: "video",
-            title: "Telusko — streams videos",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Stream API in Java",
+            url: "https://www.youtube.com/watch?v=tklkyVa7KZo",
             sourceName: "Telusko (YouTube)",
-            editorNote: "Search the channel for the current Stream API videos.",
+            youtubeVideoId: "tklkyVa7KZo",
+            durationSec: 1563,
+            estSizeMb: 198,
+            editorNote:
+              "Twenty-six minutes covering the whole pipeline. Watch for the laziness demonstration — it is the part that explains why a pipeline with no terminal operation does nothing.",
           },
         ],
       },
@@ -1262,10 +1269,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Telusko — JDBC videos",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Java Database Connectivity | JDBC",
+            url: "https://www.youtube.com/watch?v=7v2OnUti2eM",
             sourceName: "Telusko (YouTube)",
-            editorNote: "Search the channel for the current JDBC series.",
+            youtubeVideoId: "7v2OnUti2eM",
+            durationSec: 1234,
+            estSizeMb: 156,
+            editorNote:
+              "Twenty minutes on the raw layer Spring will hide from you next week. Watch him use PreparedStatement rather than concatenation.",
           },
           {
             type: "doc",
