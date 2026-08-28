@@ -290,8 +290,22 @@ on a comprehension row, and the importer fails the spec before you get there.
 | `comprehension` | **3** (5 is the ceiling, *importer-enforced*) | the day's "Check yourself" |
 | `interview` | 0–3, only where the subject warrants | `/interview`, never the day page |
 
-Target roughly **40–60 interview questions per roadmap**, concentrated on the
-days that carry the interviewable material rather than spread evenly.
+Target roughly **one interview question every other day — 0.4 to 0.6 per
+day** — concentrated on the days that carry the interviewable material
+rather than spread evenly. On a 91-day roadmap that is 40–60; on a 12-day
+one it is 5–7.
+
+**This used to read "40–60 per roadmap" flat, and that was wrong.** Applied
+to `git-and-github` it demanded three questions on every one of twelve days,
+which is the opposite of "concentrated" — and it made four roadmaps look
+delinquent when only their absolute count was small. Density is the measure
+because it is the one that scales.
+
+Two things the target does not mean. It is a ceiling as much as a floor: a
+subject nobody interviews on should carry few, and padding to hit a number
+produces questions no interviewer would ask. And where a roadmap sits below
+the band because the subject genuinely has no interview surface, say so in
+the spec header rather than inventing questions to close the gap.
 
 ### Writing a comprehension check
 Answerable from the day, in one or two sentences, testing recall of something

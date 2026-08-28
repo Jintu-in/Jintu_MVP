@@ -93,7 +93,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Selection and survivorship bias",
         summary:
@@ -153,6 +152,15 @@ export default [
             answer:
               "What never made it in, and does its absence correlate with the outcome being studied?",
           },
+          {
+            question:
+              "A study of our most successful customers finds 80% use feature X. Should we push feature X to everyone?",
+            answer:
+              "Not on that evidence. The sample is the survivors — we have no idea what proportion of unsuccessful customers also used feature X, and if it is similar the finding carries no information at all. Ask for the same figure among churned and low-value accounts. Even if it differs, causation runs both ways: engaged customers find more features, so usage may be a marker of success rather than a cause of it. The only clean answer is an experiment on customers who do not currently use it.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -165,7 +173,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Simpson's paradox",
         summary:
@@ -245,7 +252,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Chart deception and confounders",
         summary:
@@ -305,6 +311,15 @@ export default [
             answer:
               "It commits you to candidate explanations before the paper frames them, so you can check which were actually ruled out.",
           },
+          {
+            question:
+              "Someone presents a chart showing your new feature drove a 30% lift. What do you check?",
+            answer:
+              "The axes first — whether the y-axis is truncated and whether the time window was chosen or given. Then what else changed in that window: a release, a campaign, a price change, a seasonal effect, or a different measurement definition. Then the comparison: 30% against what baseline, and would the same period last year have shown a similar rise anyway? Correlation with a launch date is the weakest form of causal evidence and the most commonly presented one.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -312,8 +327,7 @@ export default [
             title: "Calling Bullshit — lecture videos",
             url: "https://callingbullshit.org/videos.html",
             sourceName: "University of Washington (Bergstrom & West)",
-            editorNote:
-              "The data-visualization and causality lectures are this node.",
+            editorNote: "The data-visualization and causality lectures are this node.",
           },
           {
             type: "video",
@@ -325,7 +339,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Assignment — the data BS audit",
         summary:
@@ -399,7 +412,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Superforecasting, calibration & the capstone",
     weekRange: "Week 5",
@@ -480,7 +492,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Fermi estimation",
         summary:
@@ -560,7 +571,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Calibration and the Brier score",
         summary:
@@ -620,6 +630,14 @@ export default [
             answer:
               "Overconfidence — your stated probabilities exceed your hit rates. It is the far more common direction.",
           },
+          {
+            question: "How would you know whether your own judgement is any good?",
+            answer:
+              "Score it. Record predictions with explicit probabilities and resolution dates, then compare stated confidence against hit rate across buckets — of everything called 70%, roughly 70% should happen. A Brier score gives one number and decomposes into calibration and resolution, which matters because hedging everything to 50% is perfectly calibrated and useless. Without a written record the comparison is impossible, because memory revises what you believed once you know the outcome.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -632,10 +650,10 @@ export default [
           },
         ],
       },
-
       {
         title: "Forecasting practice, in public",
-        summary: "Real questions, real resolution dates, real scores — the gym for everything above.",
+        summary:
+          "Real questions, real resolution dates, real scores — the gym for everything above.",
         learningObjectives: [
           "Registering forecasts on live platforms",
           "Writing the rationale at forecast time, not resolution time",
@@ -702,7 +720,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Capstone — the personal calibration engine",
         summary:
