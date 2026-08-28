@@ -82,11 +82,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "StatQuest — descriptive statistics",
-            url: "https://www.youtube.com/@statquest",
+            title: "Calculating the Mean, Variance and Standard Deviation, Clearly Explained!!!",
+            url: "https://www.youtube.com/watch?v=SzZ6GpcfoQY",
             sourceName: "StatQuest with Josh Starmer (YouTube)",
+            youtubeVideoId: "SzZ6GpcfoQY",
+            durationSec: 862,
+            estSizeMb: 109,
             editorNote:
-              "Search the channel for his descriptive statistics and standard deviation videos.",
+              "Fourteen minutes, and it derives the formulas rather than stating them — which is why the population-versus-sample distinction sticks.",
           },
           {
             type: "doc",
@@ -950,10 +953,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Guy in a Cube — Power BI",
-            url: "https://www.youtube.com/@GuyInACube",
+            title: "Power BI Tutorial for Beginners (Step-by-Step in 30 Minutes)",
+            url: "https://www.youtube.com/watch?v=OmW9YvxSl1E",
             sourceName: "Guy in a Cube (YouTube)",
-            editorNote: "Or Tableau's own free training if you chose Tableau.",
+            youtubeVideoId: "OmW9YvxSl1E",
+            durationSec: 1841,
+            estSizeMb: 233,
+            editorNote:
+              "Thirty minutes end to end. If you chose Tableau, use their own free training instead — do not split across both tools.",
           },
           {
             type: "tool",

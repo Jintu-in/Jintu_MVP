@@ -207,11 +207,11 @@ export default [
         resources: [
           {
             type: "video",
-            title: "freeCodeCamp — database design and normalisation",
-            url: "https://www.youtube.com/@freecodecamp",
+            title: "Relational Database Design – Full Course",
+            url: "https://www.youtube.com/watch?v=26ls5lNiijk",
             sourceName: "freeCodeCamp.org (YouTube)",
             editorNote:
-              "Search the channel for \"database normalization\" and pick the current course.",
+              "Deliberately not embedded: this is a five-hour, ~2.7 GB course and today is a fifty-minute day. Linked precisely rather than as a channel — open the normalisation chapters, not the whole thing.",
           },
         ],
       },
