@@ -17,15 +17,15 @@ import { SiteNav } from "@/components/site/site-nav";
  * The marketing homepage — v2, from the design project.
  *
  * Eleven sections: nav, hero, source wall, roadmaps, how it works,
- * pricing, one day in full, the bento, ninety-one squares, the close, the
+ * pricing, one day in full, the bento, the day grid, the close, the
  * footer. Every effect is scoped under `.jhome` in globals.css so none of
  * it can reach a roadmap or a day — a reading surface that shimmers is one
  * people leave.
  *
  * THE NUMBERS ARE DERIVED, NOT WRITTEN. The design's pills say "~340 hours"
- * and "500+ links checked". There are 890 hours across the four roadmaps —
- * 340 is the data analyst alone — and 228 links. Both are computed, so the
- * page cannot drift from the product.
+ * and "500+ links checked". Both are computed from the catalogue, so the page
+ * cannot drift from the product — which is the whole point, because the
+ * counts have since moved twice.
  *
  * The search fields are real GET forms pointed at /learn, which already
  * takes `?q=`. They work with JavaScript switched off, and they land
@@ -61,6 +61,30 @@ export interface HomepageProps {
     minutes: number | null;
     editorNote: string | null;
   }[];
+  /**
+   * One real day out of the catalogue, with its OWN resource. Every field of
+   * the "Here is one day" card used to be a string typed into this file, and
+   * the link beside it came from an unrelated query — so the card showed a
+   * day that had never existed. It is a row now, and null when the query
+   * fails, which hides the section rather than inventing one.
+   */
+  day: {
+    roadmapSlug: string;
+    roadmapTitle: string;
+    nodeSlug: string;
+    dayNumber: number;
+    totalDays: number;
+    moduleTitle: string;
+    title: string;
+    principle: string | null;
+    resources: {
+      title: string;
+      sourceName: string;
+      type: string;
+      minutes: number | null;
+      editorNote: string | null;
+    }[];
+  } | null;
   /** The flagship roadmap's modules, in order, for the spine. */
   spine: { position: number; title: string; weekRange: string | null }[];
   /**
@@ -216,6 +240,7 @@ export default function Homepage({
   counts,
   sources,
   samples,
+  day,
   spine,
   subjects,
   signedIn,
@@ -316,41 +341,60 @@ export default function Homepage({
           ))}
         </div>
 
-        {/* the day card, straddling the fold */}
-        <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
-          <div className="font-mono text-[12px] leading-[1.5] text-ink-500">Day 45 of 91</div>
-          <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
-            Frames
-          </div>
-          <p className="mt-2.5 text-[15px] leading-[1.65] text-pretty text-ink-600 italic sm:text-[16px]">
-            If you cannot say what one row means, you cannot analyse the table.
-          </p>
+        {/* The day card, straddling the fold.
 
-          <div className="mt-5 flex flex-col gap-3">
-            {[
-              ["RANGE vs ROWS in window frames", "read the first example twice; it's the whole trap."],
-              ["Postgres docs — window functions", "section 3.5 only, skip the rest for now."],
-            ].map(([title, why]) => (
-              <div key={title} className="rounded-lg border border-ink-100 p-3.5">
-                <div className="text-[14px] leading-[1.4] font-medium text-ink-900">{title}</div>
-                {/* Full contrast, always: this note is the proof a person
-                    chose the link, and the one thing a crawler cannot fake. */}
-                <p className="mt-1.5 text-[13px] leading-[1.6] text-pretty text-brand-700 italic">
-                  Why this one — {why}
-                </p>
+            Every line of this was a string typed into this file: a day
+            number, a title, a principle belonging to a different day, and
+            two "curated links" with hand-written why-notes for resources
+            that do not exist in the database. The card the homepage used to
+            prove the curation was real was the one thing on the page that
+            was invented. It is the same row the section below renders now,
+            so the two cannot disagree and neither can outrun the data. */}
+        {day ? (
+          <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
+            <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
+              Day {day.dayNumber} of {day.totalDays}
+            </div>
+            <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
+              {day.title}
+            </div>
+            {day.principle ? (
+              <p className="mt-2.5 text-[15px] leading-[1.65] text-pretty text-ink-600 italic sm:text-[16px]">
+                {day.principle}
+              </p>
+            ) : null}
+
+            {day.resources.length ? (
+              <div className="mt-5 flex flex-col gap-3">
+                {day.resources.slice(0, 2).map((r) => (
+                  <div key={r.title} className="rounded-lg border border-ink-100 p-3.5">
+                    <div className="text-[14px] leading-[1.4] font-medium text-ink-900">
+                      {r.title}
+                    </div>
+                    {/* Full contrast, always: this note is the proof a person
+                        chose the link, and the one thing a crawler cannot
+                        fake — which is only true while it comes out of the
+                        database rather than out of this file. */}
+                    <p className="mt-1.5 text-[13px] leading-[1.6] text-pretty text-brand-700 italic">
+                      Why this one — {r.editorNote}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : null}
 
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-4">
-            <span className="font-mono text-[12px] leading-none text-ink-500">
-              Your progress · 45 of 91 days
-            </span>
-            <Link href="/learn" className="text-[13.5px] font-medium text-brand-700">
-              Browse roadmaps →
-            </Link>
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-4">
+              {/* Was "Your progress · 45 of 91 days", to a signed-out
+                  stranger who has no progress. It describes the card. */}
+              <span className="font-mono text-[12px] leading-none text-ink-500">
+                {day.roadmapTitle} · day {day.dayNumber} of {day.totalDays}
+              </span>
+              <Link href="/learn" className="text-[13.5px] font-medium text-brand-700">
+                Browse roadmaps →
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : null}
       </header>
 
       {/* ── the sources ─────────────────────────────────────────────────── */}
@@ -454,6 +498,7 @@ export default function Homepage({
       </section>
 
       {/* ── here is one day ─────────────────────────────────────────────── */}
+      {day ? (
       <section
         id="one-day"
         className="jreveal mx-auto max-w-[1280px] scroll-mt-24 border-t border-ink-100 px-5 py-[var(--space-section)] sm:px-12"
@@ -470,15 +515,19 @@ export default function Homepage({
         <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-0">
           <div className="relative rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[560px] lg:flex-none">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
-              Day 45 of 91 · Window functions
+              Day {day.dayNumber} of {day.totalDays} · {day.moduleTitle}
             </div>
-            <div className="mt-2 text-[22px] leading-[1.3] font-medium text-ink-900">Frames</div>
-            <p className="mt-3 text-[16px] leading-[1.65] text-pretty text-ink-600 italic">
-              If you cannot say what one row means, you cannot analyse the table.
-            </p>
-            {samples[0] ? (
+            <div className="mt-2 text-[22px] leading-[1.3] font-medium text-ink-900">
+              {day.title}
+            </div>
+            {day.principle ? (
+              <p className="mt-3 text-[16px] leading-[1.65] text-pretty text-ink-600 italic">
+                {day.principle}
+              </p>
+            ) : null}
+            {day.resources[0] ? (
               <div className="mt-5">
-                <LinkCardMini resource={samples[0]} />
+                <LinkCardMini resource={day.resources[0]} />
               </div>
             ) : null}
 
@@ -510,6 +559,7 @@ export default function Homepage({
           </ul>
         </div>
       </section>
+      ) : null}
 
       {/* ── how it works ────────────────────────────────────────────────── */}
       <section
@@ -618,24 +668,30 @@ export default function Homepage({
         </div>
       </section>
 
-      {/* ── ninety-one squares ──────────────────────────────────────────── */}
+      {/* ── the day grid ──────────────────────────────────────────── */}
       <section className="jreveal border-y border-ink-100 bg-white px-5 py-[var(--space-section)] sm:px-12">
         <h2 className="t-sub text-center text-ink-900">
-          Ninety-one days. Every one of them written.
+          {counts.days} days. Every one of them written.
         </h2>
         <div
           role="img"
-          aria-label="Ninety-one days, drawn as a grid of squares"
-          className="jgrid91 mx-auto mt-8 grid max-w-[720px] grid-cols-[repeat(13,1fr)] gap-1.5"
+          aria-label={`${counts.days} days, drawn as a grid of squares`}
+          className="jgrid91 mx-auto mt-8 grid max-w-[720px] grid-cols-[repeat(21,1fr)] gap-1.5"
         >
-          {Array.from({ length: 91 }, (_, i) => (
+          {Array.from({ length: counts.days }, (_, i) => (
             <span
               key={i}
               aria-hidden
               className="aspect-square rounded-[3px] bg-brand-500"
               // Staggered so the grid fills as a sweep rather than all at
-              // once — which is what makes ninety-one read as a lot.
-              style={{ transitionDelay: `${i * 9}ms` }}
+              // once — which is what makes the total read as a lot.
+              //
+              // The delay is a share of a fixed sweep rather than a constant
+              // per square: this grid was 91 days at 9ms and is 267 now, and
+              // a constant would have quietly turned an 0.8s sweep into 2.4s
+              // of the reader watching squares appear. It stays 0.8s at any
+              // catalogue size.
+              style={{ transitionDelay: `${Math.round((i * 800) / counts.days)}ms` }}
             />
           ))}
         </div>
@@ -698,7 +754,7 @@ export default function Homepage({
         </div>
         <h2 className="t-page relative z-10 mt-3 text-ink-900">Your first day is waiting.</h2>
         <p className="relative z-10 mt-3 text-[16px] leading-[1.6] text-ink-600 sm:text-[18px]">
-          Ninety-one days. Start with one.
+          {counts.days} days. Start with one.
         </p>
         <div className="relative z-10 mt-7 flex w-full flex-col items-center gap-3">
           <SearchBar id="cta-search" />

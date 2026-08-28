@@ -419,3 +419,105 @@ export async function sampleResources(limit = 3): Promise<SampleResource[]> {
     editorNote: r.editor_note,
   }));
 }
+
+export type SampleDay = {
+  roadmapSlug: string;
+  roadmapTitle: string;
+  nodeSlug: string;
+  dayNumber: number;
+  totalDays: number;
+  moduleTitle: string;
+  title: string;
+  principle: string | null;
+  /** The day's OWN resources, those carrying an editor note, in order. */
+  resources: SampleResource[];
+};
+
+/**
+ * One real day, with its OWN resource.
+ *
+ * The homepage's "Here is one day" section used to hardcode the day number,
+ * the title and the principle, and pair them with `sampleResources()` —
+ * which returns the oldest rows in the whole table, ordered by added_at and
+ * unrelated to any particular day. The result was a composite that had never
+ * existed: a SQL window-functions day carrying the Data analyst day-3
+ * principle and a Pro Git link. The section that exists to prove the
+ * curation is coherent was the one page element assembled at random.
+ *
+ * So it is a query now. The day and the link come from the same row set and
+ * cannot disagree, and if the roadmap is re-cut the number moves with it.
+ *
+ * `dayNumber` is 1-based across the whole roadmap, which is what the reader
+ * sees — nodes.position restarts inside each module, so the offset has to be
+ * accumulated rather than read.
+ */
+export async function sampleDay(slug: string, dayNumber: number): Promise<SampleDay | null> {
+  const supabase = createPublicClient();
+  const { data, error } = await retryRead(() =>
+    supabase
+      .from("roadmaps")
+      .select(
+        `slug, title,
+         modules ( position, title,
+           nodes ( slug, position, title, principle,
+             resources ( position, type, title, source_name, duration_sec, editor_note )
+           )
+         )`,
+      )
+      .eq("slug", slug)
+      .maybeSingle(),
+  );
+  if (error) throw describeSupabaseError(`sampling a day from ${slug}`, error);
+  if (!data) return null;
+
+  // Flatten to the reader's ordering: modules in order, nodes in order.
+  const days = (data.modules ?? [])
+    .slice()
+    .sort(byPosition)
+    .flatMap((m) =>
+      (m.nodes ?? [])
+        .slice()
+        .sort(byPosition)
+        .map((n) => ({ moduleTitle: m.title, node: n })),
+    );
+  if (!days.length) return null;
+
+  // Clamp rather than fail: a re-cut that shortens the roadmap should move
+  // this section, not empty it.
+  const index = Math.min(Math.max(dayNumber, 1), days.length) - 1;
+  const day = days[index];
+  if (!day) return null;
+  const { moduleTitle, node } = day;
+
+  const picked = ((node.resources ?? []) as Array<{
+    position: number;
+    type: ResourceType;
+    title: string;
+    source_name: string;
+    duration_sec: number | null;
+    editor_note: string | null;
+  }>)
+    .slice()
+    .sort(byPosition)
+    // The editor note is the whole claim these sections make, so only rows
+    // that carry one qualify.
+    .filter((r) => r.editor_note);
+
+  return {
+    roadmapSlug: data.slug,
+    roadmapTitle: data.title,
+    nodeSlug: node.slug,
+    dayNumber: index + 1,
+    totalDays: days.length,
+    moduleTitle,
+    title: node.title,
+    principle: node.principle,
+    resources: picked.map((r) => ({
+      title: r.title,
+      sourceName: r.source_name,
+      type: r.type,
+      minutes: r.duration_sec ? Math.round(r.duration_sec / 60) : null,
+      editorNote: r.editor_note,
+    })),
+  };
+}

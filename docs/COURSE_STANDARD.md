@@ -185,6 +185,19 @@ Migration 0018 exists because 17 resources were filed under `Amazon Ads`,
 which is also half of a roadmap title, so the homepage source wall appeared
 to cite ourselves. Name the property that published the page.
 
+**And 0018 came straight back, which is the more useful lesson.** The
+migration renamed the rows and nobody changed the spec, so the next
+`IMPORT-amazon-ads.sql` — which deletes and recreates the tree — wrote
+`Amazon Ads` back over all twenty of them, and the source wall started
+citing us again with no error anywhere.
+
+> A data fix applied only to the database is temporary. The spec is the
+> source of truth; a migration that corrects data without correcting
+> `docs/roadmaps/` is scheduled to be undone by the next import.
+
+When you write a migration that touches curriculum data, fix the spec in the
+same change and say in the migration that you did.
+
 ### Videos
 Official IFrame player, `youtube-nocookie`, click-to-load, autoplay off,
 branding kept, ads never blocked, playback never gated. *Guard: `pnpm
