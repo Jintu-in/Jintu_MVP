@@ -95,7 +95,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Dependency injection, three ways — and why constructor wins",
         summary:
@@ -155,6 +154,14 @@ export default [
             answer:
               "It surfaces a design problem immediately rather than as subtle runtime behaviour later.",
           },
+          {
+            question: "Constructor or field injection, and what is the actual argument?",
+            answer:
+              "Constructor. It makes dependencies mandatory and visible in the signature, allows final fields so the compiler enforces immutability, and lets the class be instantiated in a test with plain stubs and no container. Field @Autowired hides the dependency list, prevents final, and cannot be satisfied without reflection or a running Spring context — so it is not merely a style preference, it changes what you can test. It also turns a circular dependency into a startup failure rather than a subtle runtime one, which is a feature.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -167,7 +174,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Bean ambiguity, scopes and lifecycle",
         summary: "@Qualifier, @Primary, singleton vs prototype, and the two lifecycle hooks.",
@@ -226,6 +232,15 @@ export default [
             answer:
               "After the bean is constructed and its dependencies injected — so it can use them, which a constructor body sometimes cannot.",
           },
+          {
+            question:
+              "What scope is a Spring bean by default, and what does that imply for your code?",
+            answer:
+              "Singleton — one instance per application context, shared across every injection point and every request thread. The implication is that a singleton bean must be stateless: any mutable field is shared mutable state and will corrupt under concurrency. It works perfectly on a developer machine with one request at a time, which is why this bug reaches production.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -237,7 +252,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Java-based configuration",
         summary: "@Configuration and @Bean — the shape auto-configuration is made of.",
@@ -309,7 +323,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Spring Boot 3 & REST APIs",
     weekRange: "Week 5",
@@ -365,8 +378,7 @@ export default [
         checks: [
           {
             question: "What does @SpringBootApplication expand to?",
-            answer:
-              "@Configuration, @EnableAutoConfiguration and @ComponentScan.",
+            answer: "@Configuration, @EnableAutoConfiguration and @ComponentScan.",
           },
           {
             question: "Where must the main class live, and why?",
@@ -377,6 +389,14 @@ export default [
             question: "What is in the fat jar?",
             answer:
               "Your compiled code, every dependency, and an embedded servlet container. It runs with `java -jar` and nothing else installed.",
+          },
+          {
+            question: "What does @SpringBootApplication actually do?",
+            answer:
+              "It is three annotations: @Configuration making the class a bean source, @EnableAutoConfiguration activating the starters on the classpath, and @ComponentScan scanning from that class's package downward. The practical consequence of the third is that the main class must sit at the root of your package tree — put it in a sub-package and beans in sibling packages are silently never registered.",
+            kind: "interview",
+            difficulty: "easy",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -396,7 +416,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Configuration and profiles",
         summary: "application.yml, per-environment profiles, and typed configuration.",
@@ -466,7 +485,6 @@ export default [
           },
         ],
       },
-
       {
         title: "REST principles and the first controller",
         summary:
@@ -533,8 +551,7 @@ export default [
               "It makes the database schema the public API, so column renames break clients and lazy relations trigger surprise queries during serialisation.",
           },
           {
-            question:
-              "A teammate says PUT and PATCH are interchangeable. Are they?",
+            question: "A teammate says PUT and PATCH are interchangeable. Are they?",
             answer:
               "No. PUT replaces the resource entirely — fields absent from the body should be cleared — and is idempotent. PATCH applies a partial update, so absent fields are left alone. Treating PUT as partial means a client that omits a field gets different behaviour from different servers, and it breaks the idempotency callers rely on for safe retries.",
             kind: "interview",
@@ -547,18 +564,19 @@ export default [
             title: "Building a RESTful web service",
             url: "https://spring.io/guides/gs/rest-service",
             sourceName: "spring.io guides",
-            editorNote: "The official quick start. Type it, then extend it into the deliverable.",
+            editorNote:
+              "The official quick start. Type it, then extend it into the deliverable.",
           },
           {
             type: "video",
             title: "Java Brains — Spring Boot",
             url: "https://www.youtube.com/@Java.Brains",
             sourceName: "Java Brains (YouTube)",
-            editorNote: "Search the channel; prefer his Boot 3-era uploads over the older series.",
+            editorNote:
+              "Search the channel; prefer his Boot 3-era uploads over the older series.",
           },
         ],
       },
-
       {
         title: "Request validation",
         summary:
@@ -618,6 +636,15 @@ export default [
             answer:
               "@Valid is missing on the controller parameter. The annotations on the record alone do nothing.",
           },
+          {
+            question:
+              "Your validation annotations are not firing. What are the two likely causes?",
+            answer:
+              "Either @Valid is missing on the controller parameter — the annotations on the record do nothing on their own — or the imports are javax.validation instead of jakarta.validation. Boot 3 only processes jakarta.*, and the javax annotations compile without complaint and are simply ignored, so the endpoint accepts anything with no error anywhere. That second one catches people following any tutorial written before Boot 3.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -630,7 +657,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Global exception handling",
         summary:
@@ -704,7 +730,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Spring Data JPA & Hibernate 6",
     weekRange: "Week 6",
@@ -778,6 +803,23 @@ export default [
             answer:
               "The persistence context that managed the entity has closed, so it is no longer tracked and changes to it are not written.",
           },
+          {
+            question:
+              "You loaded an entity, changed a field, never called save, and the row changed. Explain.",
+            answer:
+              "The entity is managed by the persistence context, which tracks loaded entities and dirty-checks them at flush. At transaction commit it compares current state against the snapshot taken at load and issues an UPDATE for what differs. save() is only needed for a new or detached entity. Outside a transaction the entity is detached and the same change goes nowhere — which is why the behaviour looks inconsistent until you know the rule.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
+          {
+            question: "What is wrong with @Enumerated left at its default?",
+            answer:
+              "The default is ORDINAL, which stores the enum constant's position as an integer. Reordering the constants, or inserting one in the middle, silently remaps every row already in the database — a category of data corruption with no error and no migration to point at. Always @Enumerated(EnumType.STRING).",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -785,22 +827,22 @@ export default [
             title: "Baeldung — JPA/Hibernate persistence context",
             url: "https://www.baeldung.com/jpa-hibernate-persistence-context",
             sourceName: "Baeldung",
-            editorNote: "Read this before the annotations. It is the concept everything else rests on.",
+            editorNote:
+              "Read this before the annotations. It is the concept everything else rests on.",
           },
           {
             type: "doc",
             title: "Hibernate ORM 6 documentation",
             url: "https://hibernate.org/orm/documentation/6.6/",
             sourceName: "Hibernate",
-            editorNote: "Reference, not a tutorial. Know it exists and check it when behaviour surprises you.",
+            editorNote:
+              "Reference, not a tutorial. Know it exists and check it when behaviour surprises you.",
           },
         ],
       },
-
       {
         title: "Relationships, ownership and fetch types",
-        summary:
-          "@OneToMany and friends — with LAZY as the default you defend, not a checkbox.",
+        summary: "@OneToMany and friends — with LAZY as the default you defend, not a checkbox.",
         learningObjectives: [
           "@OneToOne, @OneToMany, @ManyToOne, @ManyToMany",
           "Owning side vs mappedBy",
@@ -861,6 +903,23 @@ export default [
             answer:
               "It includes REMOVE, so deleting the child cascades to the parent — almost never what was intended.",
           },
+          {
+            question:
+              "You get a LazyInitializationException. A colleague says to change the relation to EAGER. Do you?",
+            answer:
+              "No. EAGER fixes this call site by loading that relation on every query forever, including the many that never touch it — one visible error traded for permanent invisible cost, and it can turn one query into a cascade. Fetch it deliberately where it is needed: a JOIN FETCH in an explicit query, or @EntityGraph on the repository method. The exception is telling you the code touched a lazy relation after the persistence context closed, and the right fix is at the query, not the mapping.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
+          {
+            question: "In a @OneToMany / @ManyToOne pair, which side owns the relationship?",
+            answer:
+              "The side without mappedBy — the @ManyToOne side, which holds the foreign key column. Adding a child only to the parent's collection changes nothing in the database, because the owning side was never set. It is the reason a save appears to succeed and the row's foreign key is null.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -868,11 +927,11 @@ export default [
             title: "Baeldung — eager vs lazy loading in Hibernate",
             url: "https://www.baeldung.com/hibernate-lazy-eager-loading",
             sourceName: "Baeldung",
-            editorNote: "Read the trade-offs section carefully; it is the decision you will keep making.",
+            editorNote:
+              "Read the trade-offs section carefully; it is the decision you will keep making.",
           },
         ],
       },
-
       {
         title: "Spring Data repositories and derived queries",
         summary: "JpaRepository and method names that become SQL.",
@@ -938,18 +997,19 @@ export default [
             title: "Spring Data JPA — query methods",
             url: "https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html",
             sourceName: "Spring documentation",
-            editorNote: "The keyword table is worth bookmarking — it is the full derived-query grammar.",
+            editorNote:
+              "The keyword table is worth bookmarking — it is the full derived-query grammar.",
           },
           {
             type: "doc",
             title: "Accessing data with JPA",
             url: "https://spring.io/guides/gs/accessing-data-jpa",
             sourceName: "spring.io guides",
-            editorNote: "The short official walk-through. Do it, then apply it to your products API.",
+            editorNote:
+              "The short official walk-through. Do it, then apply it to your products API.",
           },
         ],
       },
-
       {
         title: "JPQL and native queries",
         summary: "@Query and @Param for the questions derived methods cannot ask.",
@@ -1019,7 +1079,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Transactions and the N+1 problem",
         summary:
