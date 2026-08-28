@@ -80,11 +80,14 @@ export default [
         resources: [
           {
             type: "video",
-            title: "Java Brains — Spring Security concepts",
-            url: "https://www.youtube.com/@Java.Brains",
+            title: "How Spring Security Authentication works",
+            url: "https://www.youtube.com/watch?v=caCJAJC41Rk",
             sourceName: "Java Brains (YouTube)",
+            youtubeVideoId: "caCJAJC41Rk",
+            durationSec: 1175,
+            estSizeMb: 149,
             editorNote:
-              "His architecture explanations are the best free ones — but write your CONFIG from the current docs, not his older videos: WebSecurityConfigurerAdapter is gone.",
+              "Twenty minutes on the filter chain, and the clearest free account of it. Take the ARCHITECTURE from this and write your CONFIG from the current docs — WebSecurityConfigurerAdapter is gone.",
           },
           {
             type: "doc",
@@ -95,7 +98,6 @@ export default [
           },
         ],
       },
-
       {
         title: "SecurityFilterChain configuration",
         summary:
@@ -160,6 +162,23 @@ export default [
             answer:
               "Each hash embeds a fresh random salt. Verification re-derives using the stored salt rather than comparing strings.",
           },
+          {
+            question:
+              "A tutorial tells you to extend WebSecurityConfigurerAdapter and it will not compile. What happened?",
+            answer:
+              "It was removed in Spring Security 6 — not deprecated, removed. Configuration is now a SecurityFilterChain bean built from HttpSecurity and returned from a @Configuration class. The same generation of tutorial will also use antMatchers(), which is now requestMatchers(). Most free Spring Security material predates version 6, so recognising the vintage from those two symbols is a practical skill.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
+          {
+            question: "You disabled CSRF protection on your REST API. Defend that.",
+            answer:
+              "CSRF exploits credentials the browser attaches automatically — cookies. A stateless API authenticating from a bearer token in an Authorization header sends nothing automatically, so a forged cross-site request carries no credentials and there is nothing to protect. The defence fails the moment the API authenticates by cookie or session, and then disabling CSRF is a real vulnerability rather than a correct simplification. The answer is conditional, and a candidate who says 'CSRF is always off for REST' has memorised the config rather than the reason.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -167,12 +186,10 @@ export default [
             title: "Spring Security reference",
             url: "https://docs.spring.io/spring-security/reference/index.html",
             sourceName: "Spring documentation",
-            editorNote:
-              "The Java-configuration chapter — current, unlike most tutorials.",
+            editorNote: "The Java-configuration chapter — current, unlike most tutorials.",
           },
         ],
       },
-
       {
         title: "JWT: structure and verification",
         summary: "Header, payload, signature — and what a server actually checks.",
@@ -236,6 +253,14 @@ export default [
             answer:
               "A token cannot be revoked before it expires without server-side state, so the expiry window is the exposure window.",
           },
+          {
+            question: "Is a JWT encrypted? What can you safely put in one?",
+            answer:
+              "No — signed, not encrypted. The header and payload are base64url and anybody holding the token can read them; the signature only proves nothing was altered by someone without the secret. So a token may carry a subject, expiry and roles, and must not carry anything private. The related point is revocation: a stateless token cannot be withdrawn before it expires without server-side state, so the expiry window is the exposure window.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -248,11 +273,9 @@ export default [
           },
         ],
       },
-
       {
         title: "The JwtAuthenticationFilter",
-        summary:
-          "OncePerRequestFilter: extract, validate, populate the SecurityContextHolder.",
+        summary: "OncePerRequestFilter: extract, validate, populate the SecurityContextHolder.",
         learningObjectives: [
           "Reading the Authorization header; validating the signature",
           "Building the Authentication and setting SecurityContextHolder",
@@ -327,7 +350,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Testing, Docker & the capstone",
     weekRange: "Week 8",
@@ -403,7 +425,8 @@ export default [
             title: "JUnit 5 user guide",
             url: "https://junit.org/junit5/docs/current/user-guide/",
             sourceName: "JUnit",
-            editorNote: "Reference-grade. Read the writing-tests chapter and keep the rest for lookup.",
+            editorNote:
+              "Reference-grade. Read the writing-tests chapter and keep the rest for lookup.",
           },
           {
             type: "read",
@@ -414,11 +437,9 @@ export default [
           },
         ],
       },
-
       {
         title: "Mockito and MockMvc",
-        summary:
-          "Isolate the service layer with mocks; hit controllers without a server.",
+        summary: "Isolate the service layer with mocks; hit controllers without a server.",
         learningObjectives: [
           "@Mock, @InjectMocks, when(...).thenReturn(...), verify(...)",
           "MockMvc: status().isOk(), jsonPath(...)",
@@ -479,6 +500,14 @@ export default [
             answer:
               "It asserts on interactions rather than outcomes, which couples the test to implementation detail.",
           },
+          {
+            question: "What do you mock and what do you leave real?",
+            answer:
+              "Mock what crosses a boundary you own the contract to — repositories, HTTP clients, clocks, message brokers. Leave pure logic, value objects, records and mappers real. Mocking everything produces a test that passes whether or not the code is correct, because all it proves is that the mocks were called in the expected order. Over-verifying has the same effect: assert on the outcome, and use verify sparingly for interactions that genuinely matter.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -486,18 +515,19 @@ export default [
             title: "Baeldung — Mockito series",
             url: "https://www.baeldung.com/mockito-series",
             sourceName: "Baeldung",
-            editorNote: "An index. The annotations and the argument-matchers articles are today's.",
+            editorNote:
+              "An index. The annotations and the argument-matchers articles are today's.",
           },
           {
             type: "tool",
             title: "Mockito",
             url: "https://site.mockito.org/",
             sourceName: "Mockito",
-            editorNote: "The official site; the javadoc on the Mockito class is a surprisingly good tutorial.",
+            editorNote:
+              "The official site; the javadoc on the Mockito class is a surprisingly good tutorial.",
           },
         ],
       },
-
       {
         title: "Docker: multi-stage builds and compose",
         summary:
@@ -576,11 +606,11 @@ export default [
             title: "Docker Compose",
             url: "https://docs.docker.com/compose/",
             sourceName: "Docker documentation",
-            editorNote: "The getting-started and the services reference. Skip the swarm material.",
+            editorNote:
+              "The getting-started and the services reference. Skip the swarm material.",
           },
         ],
       },
-
       {
         title: "Capstone build: Order Execution & Inventory Reservation",
         summary:
@@ -646,10 +676,18 @@ export default [
             answer:
               "Fire concurrent requests against stock of one and assert exactly one succeeds. Sequential tests cannot show it.",
           },
+          {
+            question:
+              "Two customers order the last unit at the same moment and both succeed. Your code reads the stock, checks it, then writes. Fix it.",
+            answer:
+              "That is a read-then-write race and @Transactional alone does not prevent it — the default isolation level permits both transactions to read the old value before either writes. Two fixes. A conditional update pushes the check into the database: `update product set stock = stock - ? where id = ? and stock >= ?`, then check the affected row count and fail the order if it is zero — one statement, no lock held across the request. Or take a pessimistic lock on the row when reading, which serialises the two transactions at the cost of contention. Prove whichever you choose with a test firing concurrent requests, because a sequential test cannot fail.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [],
       },
-
       {
         title: "Deploy and document",
         summary:
@@ -719,9 +757,11 @@ export default [
           {
             type: "doc",
             title: "About READMEs",
-            url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+            url:
+              "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
             sourceName: "GitHub Docs",
-            editorNote: "Conventions and rendering rules. The structure above matters more than the syntax.",
+            editorNote:
+              "Conventions and rendering rules. The structure above matters more than the syntax.",
           },
         ],
       },

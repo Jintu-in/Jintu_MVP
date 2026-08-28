@@ -80,6 +80,24 @@ export default [
             answer:
               "They are LTS versions with long support windows, which is what employers run. Java 8 in particular will not compile the syntax used here.",
           },
+          {
+            question:
+              "Is Java compiled or interpreted? Walk me through what happens to your code.",
+            answer:
+              "Both. javac compiles source to platform-independent bytecode in a .class file. At runtime the class loader loads it, the JVM interprets the bytecode, and the JIT compiler compiles methods to native code once they prove hot. That third stage is the one candidates miss, and it is why a Java benchmark's first iterations are slower than its later ones.",
+            kind: "interview",
+            difficulty: "easy",
+            askedInInterviews: true,
+          },
+          {
+            question:
+              "Java is pass-by-value. Then why does mutating an object inside a method change it outside?",
+            answer:
+              "Because the value passed is the reference, and the copy points at the same object. Mutating through the copy mutates the shared object. Reassigning the parameter only repoints the local copy and is invisible to the caller. Both facts follow from the same rule, which is why 'Java is pass-by-reference for objects' is the wrong way to remember it.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -94,8 +112,7 @@ export default [
             title: "IntelliJ IDEA Community Edition",
             url: "https://www.jetbrains.com/idea/download/",
             sourceName: "JetBrains",
-            editorNote:
-              "Community edition is free and enough for everything in this roadmap.",
+            editorNote: "Community edition is free and enough for everything in this roadmap.",
           },
           {
             type: "doc",
@@ -107,7 +124,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Encapsulation, inheritance and polymorphism",
         summary: "The three pillars, done with judgement rather than ceremony.",
@@ -177,15 +193,17 @@ export default [
           },
           {
             type: "video",
-            title: "Telusko — Core Java playlist",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Encapsulation in Java",
+            url: "https://www.youtube.com/watch?v=YbqneqDIZh8",
             sourceName: "Telusko (YouTube)",
+            youtubeVideoId: "YbqneqDIZh8",
+            durationSec: 701,
+            estSizeMb: 89,
             editorNote:
-              "Search the channel for the current Core Java playlist. Skip any video teaching Java 8-era idioms — the guardrails in this roadmap name them.",
+              "Episode 40 of his numbered Java series; inheritance is 48 and polymorphism is 55, both short. Skip anything in the series teaching Java 8-era idioms — the guardrails in this roadmap name them.",
           },
         ],
       },
-
       {
         title: "Abstraction: abstract classes vs interfaces",
         summary:
@@ -256,7 +274,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Records, sealed types and pattern matching",
         summary:
@@ -342,7 +359,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Exception handling that reveals instead of hides",
         summary: "Checked vs unchecked, custom exceptions, and cleanup that cannot leak.",
@@ -402,9 +418,18 @@ export default [
               "Every AutoCloseable declared in the parentheses is closed in reverse order, on both the normal and the exception path.",
           },
           {
-            question: "Why is catching and logging an exception often worse than not catching it?",
+            question:
+              "Why is catching and logging an exception often worse than not catching it?",
             answer:
               "Execution continues in a broken state and the failure resurfaces elsewhere with no trace of its origin. Propagating keeps the stack trace attached to the cause.",
+          },
+          {
+            question: "Checked or unchecked for your own application exceptions, and why?",
+            answer:
+              "Unchecked, in most modern designs. A checked exception forces every caller in the chain to declare or catch it, which in practice produces empty catch blocks and throws clauses that propagate up through layers that cannot act on them. Reserve checked for a genuinely recoverable condition the immediate caller is expected to handle. The stronger point is that whichever you choose, the exception should carry the context — an id, a field — in fields rather than only in a formatted message.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -420,7 +445,6 @@ export default [
       },
     ],
   },
-
   {
     title: "Collections, generics & functional Java",
     weekRange: "Week 2",
@@ -488,6 +512,14 @@ export default [
             answer:
               "The compiler only knows it is some subtype of Number — possibly Integer — so no specific value is guaranteed safe to insert.",
           },
+          {
+            question: "What is type erasure, and name something it stops you doing.",
+            answer:
+              "The compiler checks generic types then removes them, so at runtime a List<String> is just a List. That is why you cannot write `new T[]`, cannot test `instanceof List<String>`, and cannot overload two methods differing only by type argument — after erasure they have identical signatures. It exists for backward compatibility with pre-generics bytecode.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -502,11 +534,11 @@ export default [
             title: "Baeldung — Java generics",
             url: "https://www.baeldung.com/java-generics",
             sourceName: "Baeldung",
-            editorNote: "Shorter and more example-driven than the official track. Read it second.",
+            editorNote:
+              "Shorter and more example-driven than the official track. Read it second.",
           },
         ],
       },
-
       {
         title: "Lists and Sets",
         summary:
@@ -563,8 +595,16 @@ export default [
           },
           {
             question: "What should drive the choice of collection?",
+            answer: "The access pattern — how you read it, not how you fill it.",
+          },
+          {
+            question:
+              "ArrayList or LinkedList for a list you insert into frequently? Most people answer this wrong.",
             answer:
-              "The access pattern — how you read it, not how you fill it.",
+              "ArrayList, almost always. LinkedList's O(1) insertion assumes you already hold the node; reaching the position is O(n), and its nodes are scattered in memory so every traversal misses cache. ArrayList's array copy is a fast contiguous block operation. The big-O comparison favours LinkedList and real measurements at realistic sizes favour ArrayList — which is the actual point of the question.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -584,7 +624,6 @@ export default [
           },
         ],
       },
-
       {
         title: "HashMap internals — the interview classic",
         summary:
@@ -612,7 +651,7 @@ export default [
             detail:
               "Compute hashCode, spread the bits, mask to a bucket index, then walk the bucket comparing with equals. Insert or replace.",
           },
-            {
+          {
             title: "Collisions",
             detail:
               "Two keys landing in one bucket form a linked list. At eight entries in a bucket, with the table at least 64 wide, it becomes a red-black tree — O(n) degrades to O(log n).",
@@ -668,7 +707,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Functional interfaces and lambdas",
         summary:
@@ -739,7 +777,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Streams and Optional",
         summary:
@@ -804,6 +841,14 @@ export default [
             answer:
               "It throws on empty, reintroducing the null-pointer failure Optional exists to prevent. orElseThrow does the same thing while naming the failure.",
           },
+          {
+            question: "Why does this stream pipeline produce no output?",
+            answer:
+              "There is no terminal operation. Intermediate operations like map and filter are lazy — they record the plan and nothing executes until something demands a result with collect, forEach, reduce or findFirst. It is the most common first surprise with streams, and the fix is one method call.",
+            kind: "interview",
+            difficulty: "easy",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -815,16 +860,19 @@ export default [
           },
           {
             type: "video",
-            title: "Telusko — streams videos",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Stream API in Java",
+            url: "https://www.youtube.com/watch?v=tklkyVa7KZo",
             sourceName: "Telusko (YouTube)",
-            editorNote: "Search the channel for the current Stream API videos.",
+            youtubeVideoId: "tklkyVa7KZo",
+            durationSec: 1563,
+            estSizeMb: 198,
+            editorNote:
+              "Twenty-six minutes covering the whole pipeline. Watch for the laziness demonstration — it is the part that explains why a pipeline with no terminal operation does nothing.",
           },
         ],
       },
     ],
   },
-
   {
     title: "Build tools, PostgreSQL & JDBC",
     weekRange: "Week 3",
@@ -904,7 +952,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Relational modelling and core SQL",
         summary:
@@ -984,7 +1031,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Joins, subqueries and CTEs",
         summary: "Answering questions no single table can, without double-counting.",
@@ -1062,7 +1108,6 @@ export default [
           },
         ],
       },
-
       {
         title: "Indexes and transactions",
         summary:
@@ -1134,7 +1179,8 @@ export default [
             title: "PostgreSQL — indexes",
             url: "https://www.postgresql.org/docs/current/indexes.html",
             sourceName: "PostgreSQL documentation",
-            editorNote: "Read the introduction and the B-tree section; skip the exotic index types for now.",
+            editorNote:
+              "Read the introduction and the B-tree section; skip the exotic index types for now.",
           },
           {
             type: "doc",
@@ -1146,7 +1192,6 @@ export default [
           },
         ],
       },
-
       {
         title: "JDBC and connection pooling",
         summary:
@@ -1211,14 +1256,27 @@ export default [
             answer:
               "No. Beyond what the database can usefully serve concurrently, a larger pool increases contention and reduces throughput.",
           },
+          {
+            question:
+              "Why does a PreparedStatement prevent SQL injection where escaping does not?",
+            answer:
+              "The query text and the parameter values travel to the database separately. The statement is parsed once with placeholders, so a value can never be interpreted as SQL no matter what it contains — there is no string for an attacker to break out of. Escaping tries to neutralise dangerous characters in a concatenated string, which depends on getting every case right against every dialect. One is structural, the other is a filter.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
             type: "video",
-            title: "Telusko — JDBC videos",
-            url: "https://www.youtube.com/@Telusko",
+            title: "Java Database Connectivity | JDBC",
+            url: "https://www.youtube.com/watch?v=7v2OnUti2eM",
             sourceName: "Telusko (YouTube)",
-            editorNote: "Search the channel for the current JDBC series.",
+            youtubeVideoId: "7v2OnUti2eM",
+            durationSec: 1234,
+            estSizeMb: 156,
+            editorNote:
+              "Twenty minutes on the raw layer Spring will hide from you next week. Watch him use PreparedStatement rather than concatenation.",
           },
           {
             type: "doc",
