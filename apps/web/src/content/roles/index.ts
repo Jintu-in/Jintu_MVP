@@ -5,7 +5,12 @@ import softwareExtended from "./software-extended";
 import product from "./product";
 import productExtended from "./product-extended";
 import gtm from "./gtm";
+import gtmExtended from "./gtm-extended";
 import other from "./other";
+import otherExtended from "./other-extended";
+import marketingExtended from "./marketing-extended";
+import design from "./design";
+import operations from "./operations";
 import comparisons from "./comparisons";
 import { ROLE_DOMAINS, type Comparison, type Role, type RoleDomain } from "./types";
 
@@ -26,7 +31,12 @@ export const ROLES: Role[] = [
   ...product,
   ...productExtended,
   ...gtm,
+  ...gtmExtended,
   ...other,
+  ...marketingExtended,
+  ...design,
+  ...operations,
+  ...otherExtended,
 ];
 
 export const COMPARISONS: Comparison[] = comparisons;
