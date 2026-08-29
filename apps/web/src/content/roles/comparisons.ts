@@ -178,9 +178,12 @@ const comparisons: Comparison[] = [
         tell: "Has one-to-ones in the calendar and a hiring loop to run.",
       },
       {
-        role: "",
+        // Deliberately links the solutions-architect page even though this
+        // row describes the internal variant: it is the nearest page we
+        // have, and its own "what it is not" separates the two.
+        role: "solutions-architect",
         label: "Architect",
-        owns: "Design across systems and teams; the standards and the significant technical decisions.",
+        owns: "Design across systems and teams; the standards and the significant technical decisions. The customer-facing variant is the solutions architect.",
         doesNotOwn: "Day-to-day delivery, and usually no reports.",
         tell: "Is consulted before a system is built rather than after it breaks.",
       },
