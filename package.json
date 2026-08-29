@@ -39,7 +39,8 @@
     "dead-modules": "node scripts/assert-no-dead-modules.mjs",
     "typography": "node scripts/assert-typography.mjs",
     "facets:demo": "node scripts/demo-catalogue-facets.mjs",
-    "bundle:budget": "node scripts/assert-bundle-budget.mjs"
+    "bundle:budget": "node scripts/assert-bundle-budget.mjs",
+    "roles": "node scripts/assert-roles.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

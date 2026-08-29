@@ -40,7 +40,15 @@ for (const f of files) {
       : spec.startsWith(".")
         ? path.resolve(path.dirname(f), spec)
         : null;
-    if (p) imported.add(norm(p).replace(/\.(tsx?|css)$/, ""));
+    if (!p) continue;
+    const base = norm(p).replace(/\.(tsx?|css)$/, "");
+    imported.add(base);
+    // A specifier naming a directory resolves to its index, and nothing in
+    // the tree will ever literally import ".../index". Without this an
+    // index.ts is reported dead while every route depends on it — which is
+    // a false positive, and a guard people learn to ignore is worse than no
+    // guard at all.
+    imported.add(`${base}/index`);
   }
 }
 
