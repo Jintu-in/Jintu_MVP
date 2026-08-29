@@ -93,7 +93,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote: "The reporting-and-optimization lessons of the Sponsored Ads track.",
           },
         ],
@@ -315,7 +315,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The campaign-structure lessons. Read them after doing today's classification, not before — the exercise is more useful cold.",
           },
@@ -399,7 +399,7 @@ export default [
             type: "doc",
             title: "Amazon DSP",
             url: "https://advertising.amazon.com/solutions/products/amazon-dsp",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "Inventory, formats and the self-service versus managed distinction. Marketing copy, but accurate on the mechanics.",
           },
@@ -474,7 +474,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy — DSP track",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote: "The Programmatic (DSP) certification course is this module's spine.",
           },
         ],
@@ -562,7 +562,7 @@ export default [
             type: "doc",
             title: "Amazon Marketing Cloud",
             url: "https://advertising.amazon.com/solutions/products/amazon-marketing-cloud",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The architecture and the privacy model. Read the aggregation-threshold section twice — it is the constraint every query is designed around.",
           },
@@ -633,7 +633,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy — AMC track",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The AMC certification course includes a query sandbox. If SQL joins feel shaky, the Data analyst roadmap's module 7 is the prerequisite.",
           },
@@ -712,7 +712,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The bulk-operations lessons. Do them with a real file open — the sheet structure does not survive being read about.",
           },
@@ -796,7 +796,7 @@ export default [
             type: "doc",
             title: "Amazon Ads API documentation",
             url: "https://advertising.amazon.com/API/docs/en-us",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "Start at Getting Started, then the reporting guides. The reference is enormous; you need two sections of it.",
           },
@@ -804,7 +804,7 @@ export default [
             type: "doc",
             title: "Reporting v3 overview",
             url: "https://advertising.amazon.com/API/docs/en-us/guides/reporting/v3/overview",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The asynchronous request-poll-download flow, precisely. This is the page today's challenge is built on.",
           },
@@ -1087,14 +1087,14 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy — certifications",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote: "Free via the learning console; each exam is retakeable.",
           },
           {
             type: "tool",
             title: "Amazon Ads learning console",
             url: "https://learningconsole.amazonadvertising.com/",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "Where the exams actually sit. Sign in with the same account as the Academy or your progress will not carry.",
           },

@@ -32,6 +32,7 @@ export interface SiteNavMenuProps {
 
 const NAV_LINKS: { href: Route; label: string }[] = [
   { href: "/learn" as Route, label: "Roadmaps" },
+  { href: "/roles" as Route, label: "Roles" },
   { href: "/#how-it-works" as Route, label: "How it works" },
 ];
 

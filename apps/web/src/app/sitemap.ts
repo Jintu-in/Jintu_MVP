@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/env";
 import { getRoadmap, listPublishedRoadmaps } from "@/lib/roadmaps";
+import { COMPARISONS, ROLES } from "@/content/roles";
 
 /**
  * The crawl surface, stated: static pages, every published roadmap, and
@@ -28,6 +29,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/report",
   ].map((p) => ({ url: `${base}${p || "/"}`, changeFrequency: "weekly" as const }));
 
+  // The roles layer ships with the deploy, so these need no database read
+  // and cannot fail. They exist FOR search — the comparison pages answer
+  // queries typed millions of times — so leaving them out of the sitemap
+  // would undercut the entire reason they were written.
+  const roleRoutes: MetadataRoute.Sitemap = [
+    { url: `${base}/roles`, changeFrequency: "weekly" as const },
+    ...ROLES.map((r) => ({
+      url: `${base}/roles/${r.slug}`,
+      changeFrequency: "monthly" as const,
+    })),
+    ...COMPARISONS.map((c) => ({
+      url: `${base}/roles/compare/${c.slug}`,
+      changeFrequency: "monthly" as const,
+    })),
+  ];
+
   try {
     const summaries = await listPublishedRoadmaps();
     const roadmaps = await Promise.all(summaries.map((s) => getRoadmap(s.slug)));
@@ -45,8 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
       }
     }
-    return [...staticRoutes, ...roadmapRoutes];
+    return [...staticRoutes, ...roleRoutes, ...roadmapRoutes];
   } catch {
-    return staticRoutes;
+    return [...staticRoutes, ...roleRoutes];
   }
 }

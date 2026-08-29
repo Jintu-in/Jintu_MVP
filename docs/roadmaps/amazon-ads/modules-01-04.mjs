@@ -328,7 +328,7 @@ export default [
             type: "doc",
             title: "Amazon Ads — ad specs and requirements",
             url: "https://advertising.amazon.com/resources/ad-specs",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The creative requirements are the floor, not the target. Read them once so a rejected ad is never a surprise.",
           },
@@ -421,7 +421,7 @@ export default [
             type: "doc",
             title: "Sponsored Products",
             url: "https://advertising.amazon.com/solutions/products/sponsored-products",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The official description of the format and its targeting types. Skim; the Academy course below is the substance.",
           },
@@ -429,7 +429,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "Register free and start the Sponsored Ads certification track now — module 11 expects all four certs done.",
           },
@@ -513,14 +513,14 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote: "The Sponsored Ads course's targeting lessons cover this node exactly.",
           },
           {
             type: "doc",
             title: "Keyword targeting",
             url: "https://advertising.amazon.com/library/guides/keyword-targeting",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The official definitions of the three match types, with examples. Two pages, and worth reading before the Academy lesson rather than after.",
           },
@@ -606,7 +606,7 @@ export default [
             type: "doc",
             title: "Amazon Ads Academy",
             url: "https://advertising.amazon.com/academy",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The bidding lessons of the Sponsored Ads track. Do the worked examples rather than reading them.",
           },
@@ -919,7 +919,7 @@ export default [
             type: "doc",
             title: "Sponsored Brands",
             url: "https://advertising.amazon.com/solutions/products/sponsored-brands",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The three formats and their placements. The new-to-brand definition is the part to note.",
           },
@@ -995,7 +995,7 @@ export default [
             type: "doc",
             title: "Sponsored Display",
             url: "https://advertising.amazon.com/solutions/products/sponsored-display",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "The targeting types and where the ads appear. Note the audience definitions — they are the part that decides whether a campaign has anybody to reach.",
           },
@@ -1076,7 +1076,7 @@ export default [
             type: "doc",
             title: "Amazon Ads help",
             url: "https://advertising.amazon.com/help",
-            sourceName: "Amazon Ads",
+            sourceName: "Amazon Ads Academy",
             editorNote:
               "Search it for 'impression share' — the metric definitions live here rather than in the Academy course, and the rank-versus-budget split is defined precisely.",
           },

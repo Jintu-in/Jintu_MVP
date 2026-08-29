@@ -111,7 +111,7 @@ test("the sections run in the order that tells the story", () => {
     "here is one day",
     "how it works",
     "the bento",
-    "ninety-one squares",
+    "the day grid",
     "what this is not",
     "the close",
   ].map(at);
@@ -142,4 +142,48 @@ test("every miniature is decorative and paired with words that carry the claim",
 test("the contribution grid is deterministic", () => {
   assert.ok(!mini.includes("Math.random("), "a random fill differs between server and client");
   assert.match(mini, /const filled = \(i: number\)/);
+});
+
+/**
+ * The "one day" cards showed a day that had never existed: a hardcoded day
+ * number, a hardcoded title, a principle belonging to a different day, and
+ * — in the hero — two "curated links" with hand-written why-notes for
+ * resources that were not in the database at all. Both cards are fed from
+ * one `sampleDay()` row now.
+ *
+ * This is the section whose entire job is to prove the curation is real, so
+ * it is the last place on the site that should be illustrated rather than
+ * queried. The test pins that.
+ */
+test("the day cards are queried, never typed", () => {
+  // No literal "Day 12 of 34" anywhere: both cards interpolate.
+  const hardcoded = home.match(/Day\s+\d+\s+of\s+\d+/g) ?? [];
+  assert.deepEqual(hardcoded, [], `hardcoded day counter: ${hardcoded.join(", ")}`);
+
+  // The editor note is the claim this page makes about curation. It must
+  // come off a row, so no literal why-note may be written in the file.
+  assert.ok(
+    !/Why this one — \{?["']/.test(home),
+    "a why-note is written into the component rather than read from a resource",
+  );
+  assert.match(home, /Why this one — \{r\.editorNote\}/, "the hero note reads editorNote");
+
+  // Both cards read the same prop, so they cannot drift apart.
+  assert.ok(
+    (home.match(/day\.dayNumber/g) ?? []).length >= 2,
+    "both the hero card and the one-day section should render day.dayNumber",
+  );
+  assert.match(home, /\{day\.principle\}/, "the principle comes from the day row");
+});
+
+/**
+ * The day grid drew exactly 91 squares and said "Ninety-one days" beside
+ * them, which was the data analyst's length rather than the catalogue's.
+ * It read as a fact about the product and stopped being one the moment a
+ * second roadmap shipped.
+ */
+test("the catalogue's size is derived, not written", () => {
+  assert.ok(!/Ninety-one|ninety-one/.test(home), "a day count is spelled out in the component");
+  assert.ok(!/length:\s*91\b/.test(home), "the day grid hardcodes 91 squares");
+  assert.match(home, /length: counts\.days/, "the grid is sized from counts.days");
 });

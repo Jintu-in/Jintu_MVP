@@ -5,6 +5,7 @@ import {
   countPublishedResources,
   listModules,
   listPublishedRoadmaps,
+  sampleDay,
   sampleResources,
   topSourceNames,
   type RoadmapSummary,
@@ -89,16 +90,18 @@ export default async function LandingPage() {
   // the product rather than describing it, and both of those are the real
   // rows. Failures degrade to an empty array, and every section that uses
   // them renders without them.
-  const [links, sources, samples, spine] = await Promise.all([
+  const [links, sources, samples, day, spine] = await Promise.all([
     countPublishedResources().catch(() => 0),
     topSourceNames(8).catch(() => []),
     sampleResources(5).catch(() => []),
+    sampleDay(FLAGSHIP, 45).catch(() => null),
     listModules(FLAGSHIP).catch(() => []),
   ]);
 
   return (
     <Homepage
       samples={samples}
+      day={day}
       spine={spine}
       signedIn={Boolean(viewer?.hasProfile)}
       initials={viewer ? initialsFor(viewer) : null}

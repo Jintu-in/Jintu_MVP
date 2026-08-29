@@ -93,6 +93,11 @@ export function SiteNav({
         <Link href="/learn" className={link}>
           Roadmaps
         </Link>
+        {/* Before the catalogue, because choosing a roadmap assumes you
+            already know what the jobs are — and most visitors do not. */}
+        <Link href={"/roles" as Route} className={link}>
+          Roles
+        </Link>
         {/* Anchors the homepage section that answers it — there is no such
             route, and a nav item that 404s is worse than one that scrolls. */}
         <Link href={"/#how-it-works" as Route} className={link}>

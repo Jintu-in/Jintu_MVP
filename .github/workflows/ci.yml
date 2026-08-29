@@ -61,6 +61,14 @@ jobs:
       - name: Typography
         run: pnpm typography
 
+      # Role pages are the surface most likely to drift into promising an
+      # outcome, because they are pages about jobs read by people who want
+      # one. The guard holds the two rules a type cannot: every page routes
+      # into a roadmap that exists or says honestly that none is built, and
+      # no salary figure appears without a dated source.
+      - name: Roles
+        run: pnpm roles
+
       # A component nothing renders is a second answer to a question the
       # codebase already answered — somebody greps for "the header", finds
       # two, and edits the wrong one.
