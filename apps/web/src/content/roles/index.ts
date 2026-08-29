@@ -1,6 +1,9 @@
 import data from "./data";
+import dataExtended from "./data-extended";
 import software from "./software";
+import softwareExtended from "./software-extended";
 import product from "./product";
+import productExtended from "./product-extended";
 import gtm from "./gtm";
 import other from "./other";
 import comparisons from "./comparisons";
@@ -12,9 +15,19 @@ export { ROLE_DOMAINS };
 /**
  * Every role, in one array. Order within a domain is the order of the files,
  * which is deliberate: the first role in each domain is the one we would
- * point somebody at first.
+ * point somebody at first — so the original file for each domain comes
+ * before its extension.
  */
-export const ROLES: Role[] = [...data, ...software, ...product, ...gtm, ...other];
+export const ROLES: Role[] = [
+  ...data,
+  ...dataExtended,
+  ...software,
+  ...softwareExtended,
+  ...product,
+  ...productExtended,
+  ...gtm,
+  ...other,
+];
 
 export const COMPARISONS: Comparison[] = comparisons;
 

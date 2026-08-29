@@ -32,21 +32,21 @@ const comparisons: Comparison[] = [
         tell: "Asks 'who is blocked, and on what?'",
       },
       {
-        role: "",
+        role: "technical-program-manager",
         label: "Technical program manager",
         owns: "The same as a PgM, for engineering work — migrations, platform changes, launches with hard technical sequencing.",
         doesNotOwn: "The product decision, and usually not the code either.",
         tell: "Can read the architecture diagram and argue with the estimate.",
       },
       {
-        role: "",
+        role: "project-manager",
         label: "Project manager",
         owns: "Scope, timeline and budget for one defined project with an end.",
         doesNotOwn: "Whether the project should exist. Ongoing product direction.",
         tell: "Has a plan with a finish date on it.",
       },
       {
-        role: "",
+        role: "product-owner",
         label: "Product owner",
         owns: "The backlog, in a Scrum team. A role in a framework.",
         doesNotOwn: "Nothing inherently — it depends entirely who is wearing it.",
@@ -97,14 +97,14 @@ const comparisons: Comparison[] = [
         tell: "Writes SQL that other people's dashboards depend on.",
       },
       {
-        role: "",
+        role: "data-engineer",
         label: "Data engineer",
         owns: "Getting data in and keeping it flowing. Pipelines, orchestration, reliability.",
         doesNotOwn: "What the numbers mean. Rarely does analysis.",
         tell: "Gets paged when a job fails at 3am.",
       },
       {
-        role: "",
+        role: "data-scientist",
         label: "Data scientist",
         owns: "Statistical modelling and inference, sometimes production models.",
         doesNotOwn: "Reporting, in a well-staffed team. In India the title often means 'analyst with Python'.",
@@ -127,21 +127,21 @@ const comparisons: Comparison[] = [
       "DevOps started as a practice and became a job title, increasingly a legacy one. SRE is Google-originated and reliability-focused, usually with a higher coding bar. Platform engineering is the current evolution: building internal tooling that other engineers use.",
     rows: [
       {
-        role: "",
+        role: "devops-engineer",
         label: "DevOps engineer",
         owns: "CI/CD, infrastructure automation, deployment. In practice, whatever the company means by it.",
         doesNotOwn: "Nothing consistently — the title's scope varies more than any other in this list.",
         tell: "Ask what they actually did last week. The answers vary enormously.",
       },
       {
-        role: "",
+        role: "site-reliability-engineer",
         label: "Site reliability engineer",
         owns: "Reliability as an engineering problem: SLOs, error budgets, incident response, and automating away toil.",
         doesNotOwn: "Shipping product features.",
         tell: "Talks in error budgets, and usually codes at the level of a backend engineer.",
       },
       {
-        role: "",
+        role: "platform-engineer",
         label: "Platform engineer",
         owns: "Internal tooling as a product, with other engineers as the users.",
         doesNotOwn: "Being the ticket queue for deployments. If it is that, it is not platform engineering.",
@@ -164,14 +164,14 @@ const comparisons: Comparison[] = [
       "A tech lead leads technically and has no reports — it is individual-contributor leadership. An engineering manager owns people and delivery, and usually stops coding. An architect owns technical design across systems, generally with no reports either.",
     rows: [
       {
-        role: "",
+        role: "tech-lead",
         label: "Tech lead",
         owns: "The technical direction of one team's work, and usually the hardest parts of it.",
         doesNotOwn: "Performance reviews, hiring decisions, compensation. No reports.",
         tell: "Still writes code, and is the one the team asks before deciding.",
       },
       {
-        role: "",
+        role: "engineering-manager",
         label: "Engineering manager",
         owns: "The people and the delivery — growth, performance, hiring, and whether the team ships.",
         doesNotOwn: "The code, mostly. Managers who keep the critical path become the bottleneck.",

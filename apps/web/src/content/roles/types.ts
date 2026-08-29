@@ -70,6 +70,12 @@ export type Role = {
   slug: string;
   /** The title as it appears in a job advert. */
   title: string;
+  /**
+   * The other names the same job is advertised under — "SDE-1", "dbt
+   * Developer", "Delivery Manager". Optional, and worth filling in: the
+   * person searching almost never types the canonical title.
+   */
+  aliases?: string[];
   domain: RoleDomain;
   /** One line under the title. No salary, ever. */
   standfirst: string;

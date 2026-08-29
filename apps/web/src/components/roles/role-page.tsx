@@ -53,6 +53,14 @@ export function RolePage({ role, comparisons }: { role: Role; comparisons: Compa
         Role
       </div>
       <h1 className="t-page mt-3 text-ink-900">{role.title}</h1>
+      {role.aliases?.length ? (
+        // The names job adverts actually use. The person searching almost
+        // never types the canonical title, so these belong on the page, not
+        // only in metadata.
+        <p className="mt-2.5 font-mono text-[12px] leading-[1.6] text-ink-500">
+          Also advertised as: {role.aliases.join(" · ")}
+        </p>
+      ) : null}
       <p className="mt-4 max-w-[62ch] text-[17px] leading-[1.65] text-pretty text-ink-600">
         {role.standfirst}
       </p>
