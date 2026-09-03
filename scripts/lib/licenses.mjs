@@ -56,6 +56,20 @@ const assumed = () => ({
  * Host → licence. Longest suffix match wins, so a subdomain can override.
  */
 export const BY_HOST = {
+  // ── the finance layer (startup-finance roadmap, 2026-09-03) ─────────────
+  // Everything here is link-only under rule 1, so proprietary is safe; the
+  // licence column exists for the day somebody wants to quote, and none of
+  // these may be quoted without checking the page itself.
+  "pages.stern.nyu.edu": assumed(), // Damodaran's NYU pages — freely served, rights reserved
+  "ycombinator.com": assumed(),
+  "startupschool.org": assumed(),
+  "carta.com": assumed(),
+  "zerodha.com": assumed(), // Varsity states free-to-read, no signup; not open-licensed
+  "sebi.gov.in": assumed(), // Indian government works are NOT public domain like US federal works
+  "bseindia.com": assumed(),
+  "bsesme.com": assumed(),
+  "stripe.com": assumed(),
+
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),
   "ourworldindata.org": stated("cc-by", "ourworldindata.org/about — CC BY 4.0 on their own writing and data"),
