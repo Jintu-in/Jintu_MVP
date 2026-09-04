@@ -33,8 +33,8 @@
  * reading would substitute for doing it. Each renders five sections
  * without a Read & do, which is honest.
  *
- * MODULES 1 AND 3 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
- * module-1-reference.md and module-3-reference.md, received 2026-09-04):
+ * MODULES 1, 2 AND 3 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
+ * module-1/2/3-reference.md, received 2026-09-04/05):
  * their challenges, checks, topics and named sources replaced the
  * first-pass authoring, every URL verified before use. Module 3's
  * remaining generic asks (a brokerage report, a published startup DCF)

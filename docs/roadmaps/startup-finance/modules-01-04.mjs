@@ -3,12 +3,15 @@
  *
  * Built from the owner's brief in assets/Finance/roadmap-startup-finance.md.
  * Every module title, day title, principle and deliverable is the brief's,
- * verbatim; the rest of the day model is authored here. Modules 1 and 3
+ * verbatim; the rest of the day model is authored here. Modules 1, 2 and 3
  * follow the owner's fully-authored references (assets/Finance/
- * module-1-reference.md and module-3-reference.md, both received
- * 2026-09-04): their challenges, checks, topics and named sources are those
- * documents', verified before use — module 3's three interview checks from
- * the first pass are kept on top of the reference's checks. Two of its source asks stay linkless
+ * module-1-reference.md, module-2-reference.md, module-3-reference.md):
+ * their challenges, checks, topics and named sources are those documents',
+ * verified before use — the first pass's interview checks (four in module
+ * 2, three in module 3) are kept on top of the references' checks. Module
+ * 2's dated asks (Indian ESOP taxation, a law-firm CCPS explainer) are
+ * deliberately linkless: the challenges teach the check-the-date habit
+ * instead of citing pages that go stale. Two of its source asks stay linkless
  * by rule 2: MCA (403s the checker — day 5's challenge sends the learner to
  * the portal instead) and "a current angel-tax article" (deliberately
  * undated-proof: day 2 teaches the check-the-date habit rather than linking
@@ -620,66 +623,71 @@ export default [
     objective: "The mechanical skill most finance graduates lack entirely.",
     deliverable:
       "A working cap table model that takes a SAFE, converts it at a priced round, creates a 10% ESOP pool, and produces an exit waterfall — all from formulas, no hardcoded percentages.",
-    estHours: 8.5,
+    estHours: 9.5,
     nodes: [
       {
         title: "What a cap table actually is",
         summary:
-          "The single document that records who owns what — and the discipline of rebuilding it from the deal documents.",
+          "What the document represents, where its authority comes from — and why the spreadsheet loses every argument with the filings.",
         learningObjectives: [
-          "Read a cap table: holders, share classes, fully-diluted versus issued",
-          "Explain why fully-diluted is the denominator that matters",
-          "Rebuild a simple table from a set of deal documents",
+          "Read a cap table: holders, share classes, issued versus fully diluted",
+          "Explain authorised versus issued capital and why it can delay an Indian round",
+          "Say where the truth lives when the spreadsheet and the documents disagree",
         ],
         whyToday:
-          "This module is the skill a PGDM does not teach and startup advisory runs on. Everything later — dilution, ESOP, conversion, waterfall — is an operation on this one table, so today establishes what the table is and what counts as knowing it.",
+          "Before any arithmetic, understand what the document represents and where its authority comes from. A cap table is a summary of legal instruments, and when the spreadsheet and the documents disagree, the documents win.",
         principle:
           "If you cannot rebuild the cap table from the documents, you do not understand the deal.",
         commonMistake:
-          "Trusting the summary percentages a founder sends over. Summary tables omit the option pool, the un-converted SAFEs, or a forgotten angel — and every valuation and dilution number computed on the wrong denominator is wrong in the founder's favour.",
+          "Treating the spreadsheet as the source of truth. Cap tables drift from reality through undocumented promises and unissued options, and the drift is discovered during diligence at the worst possible moment.",
         challenge:
-          "Take a company with three documented events — incorporation, an angel cheque, an ESOP grant — and rebuild the cap table from the documents alone. Then compare against the summary you were 'given' and find what it omitted.",
-        challengeMinutes: 40,
-        estMinutes: 60,
-        points: 30,
+          "Find one funded Indian startup on MCA. From the filings, list the share classes issued, the number of shares in each, and the dates. Then write two sentences on what you can and cannot determine about ownership from the public record alone.",
+        challengeMinutes: 20,
+        estMinutes: 50,
+        points: 25,
         difficulty: "core",
         topics: [
           {
-            title: "The rows and the classes",
+            title: "What it records",
             detail:
-              "Founders' equity, investors' preference shares, the ESOP pool, and anything convertible waiting to land. Each class carries different rights; the table records ownership and the rights ride the class.",
+              "Every share issued, to whom, of what class, at what price, on what date. Ordinary, preference, and in India CCPS — different rights, different economics, same table.",
           },
           {
             title: "Issued versus fully diluted",
             detail:
-              "Issued counts shares that exist; fully diluted adds everything that will exist — options granted and reserved, convertibles at expected conversion. Fully diluted is the denominator for every honest percentage.",
+              "The distinction that causes most cap table arguments. Options, warrants and convertibles are not issued shares but count in fully diluted — and an investor negotiating for 20% almost always means fully diluted.",
           },
           {
-            title: "The table as history",
+            title: "Authorised versus issued capital",
             detail:
-              "A cap table is the cumulative record of every deal the company ever did. Rebuilding it from documents is how an adviser verifies the history rather than inheriting its errors.",
+              "An Indian company must authorise before it issues, and running out of authorised capital delays a round — a shareholder resolution and a filing that nobody budgeted time for.",
           },
           {
-            title: "Who maintains it, and badly",
+            title: "Where the truth lives",
             detail:
-              "Early companies keep it in a spreadsheet maintained by whoever raised last. Assume errors; finding them politely is part of the job.",
+              "MCA filings, the register of members, share certificates, the SHA. The spreadsheet is a derivative, and rebuilding it from documents is how an adviser verifies the history rather than inheriting its errors.",
+          },
+          {
+            title: "Why cap tables go wrong",
+            detail:
+              "Informal promises, unissued options, a co-founder who left without documentation. Early companies keep the table in a spreadsheet maintained by whoever raised last — assume errors, and find them politely.",
           },
         ],
         checks: [
           {
-            question: "What does fully diluted include that issued does not?",
+            question: "Issued versus fully diluted — why does it matter?",
             answer:
-              "Everything that will become shares — granted and reserved options, and convertibles at their expected conversion.",
+              "Fully diluted includes options and convertibles that have not converted. An investor negotiating for 20% almost always means fully diluted, and agreeing on issued instead gives them materially less than they think.",
           },
           {
-            question: "Why rebuild a cap table from documents rather than accept the summary?",
+            question: "What is authorised capital and why does it delay rounds?",
             answer:
-              "Summaries omit pools, un-converted instruments and forgotten holders, and every percentage computed on the wrong denominator is wrong.",
+              "The maximum shares a company may issue under its constitution. Issuing beyond it requires a shareholder resolution and a filing, which takes time nobody budgeted for.",
           },
           {
-            question: "What travels with a share class besides ownership?",
+            question: "If the spreadsheet and the share register disagree, which is correct?",
             answer:
-              "Rights — preference, anti-dilution, votes, vetoes. The class defines what the shares can do, not just how many there are.",
+              "The register and the filings. The spreadsheet is a convenience; the legal record is the company.",
           },
         ],
         resources: [
@@ -689,7 +697,15 @@ export default [
             url: "https://carta.com/learn/startups/equity-management/cap-table/",
             sourceName: "Carta",
             editorNote:
-              "The cleanest plain-language explainer from the company whose product is cap tables. Read it before the challenge, then do the challenge without it open.",
+              "They explain the mechanics clearly and free, because they sell the software. Read the education pages, ignore the product pitch.",
+          },
+          {
+            type: "read",
+            title: "Stripe Atlas guides — the equity guide",
+            url: "https://stripe.com/atlas/guides",
+            sourceName: "Stripe Atlas",
+            editorNote:
+              "The clearest plain-English explanation of classes and dilution written for people who are not lawyers. The CCPS layer is Indian and comes from day 5 — the class logic here transfers.",
           },
           {
             type: "video",
@@ -709,60 +725,62 @@ export default [
       },
       {
         title: "Pre-money, post-money and the arithmetic",
-        summary: "Four quantities, one identity — and the ambiguity that moves crores.",
+        summary:
+          "Trivial arithmetic, constant confusion — get it precisely right today and the rest of the module follows.",
         learningObjectives: [
-          "Compute price per share, new shares and ownership from pre-money and cheque size",
-          "Convert fluently between pre-money and post-money statements",
-          "Spot when 'valuation' is being quoted ambiguously, and what the ambiguity is worth",
+          "Derive everything from the identity: post-money equals pre-money plus the investment",
+          "Compute price per share on pre-round fully diluted shares, and say why",
+          "Explain why a falling percentage can mean a rising value, with numbers",
         ],
         whyToday:
-          "This is the arithmetic every negotiation quotes and a surprising share of practitioners fumble. It has to be reflexive before day 9 builds it into a model — the model is only trustworthy if you can predict its outputs by hand.",
+          "The arithmetic is trivial and the confusion is constant. Get this precisely right today and every calculation for the rest of the module follows.",
         principle:
           "Pre-money and post-money differ by exactly the amount everyone argues about.",
         commonMistake:
-          "Hearing 'we raised at 50 crores' and not asking which. Pre versus post on the same headline number changes the investor's ownership — and whether the ESOP pool sits inside or outside changes it again. The ambiguity is not pedantry; it is the negotiation.",
+          "Dividing the investment by pre-money to get ownership. It overstates the investor's stake and produces a cap table that does not sum to 100%.",
         challenge:
-          "A company raises ₹10 crore at '₹50 crore valuation'. Compute investor ownership under: pre-money 50; post-money 50; pre-money 50 with a fresh 10% post-round pool. Three answers, one headline — write the sentence you would use to pin a term sheet down.",
-        challengeMinutes: 40,
-        estMinutes: 60,
+          "A company has 10,00,000 shares outstanding and raises ₹5 crore at ₹20 crore pre-money. Calculate: post-money, price per share, new shares issued, investor percentage, and the founders' percentage before and after. Do all of it by formula. Then change the raise to ₹8 crore and confirm every figure updates.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
             title: "The identity",
             detail:
-              "Post-money = pre-money + new cash. Investor ownership = cash ÷ post-money. Everything else in round arithmetic is derived from these two lines.",
+              "Post-money equals pre-money plus the investment. Investor ownership is investment divided by post-money — not by pre-money, which is the standard error. Everything else derives from these lines.",
           },
           {
             title: "Price per share",
             detail:
-              "Pre-money ÷ fully-diluted pre-round shares. New shares issued = investment ÷ price. The share count makes the percentages concrete and catches errors percentages hide.",
+              "Pre-money divided by pre-round fully diluted shares. This is the number that governs everything else, and new shares issued is simply investment divided by it.",
           },
           {
-            title: "Where the ambiguity hides",
+            title: "Dilution, honestly framed",
             detail:
-              "Headlines quote one number; term sheets specify which. The same '50 crore' is a sixth of the company or a fifth depending on the word before it.",
+              "What each existing holder's percentage becomes — and why percentage falling does not mean value falling. Your percentage falls while your value rises, and both are true; day 10 makes this the founder conversation.",
           },
           {
-            title: "The pool complication",
+            title: "Where the confusion originates",
             detail:
-              "A pool created pre-money dilutes founders before the investor buys in — same headline, different founder outcome. Day 11 makes this precise.",
+              "Founders quote pre-money, investors think post-money, and neither says which. The same headline number is a sixth of the company or a fifth depending on the word before it.",
           },
         ],
         checks: [
           {
-            question: "State the pre/post identity and the ownership formula.",
-            answer:
-              "Post-money equals pre-money plus new cash; investor ownership equals cash divided by post-money.",
+            question: "₹5 crore at ₹20 crore pre-money. What does the investor own?",
+            answer: "Post-money is ₹25 crore, so 5/25 = 20%.",
           },
           {
-            question: "₹10 crore in at ₹40 crore pre-money — what does the investor own?",
-            answer: "10 ÷ (40 + 10) = 20%.",
+            question: "Why is price per share calculated on pre-money shares?",
+            answer:
+              "The price is what the investor pays for shares that exist before their money arrives. Using post-money shares would be circular.",
           },
           {
-            question: "Why insist on share counts rather than working in percentages?",
+            question:
+              "A founder goes from 60% to 48% and the company is worth more. Better or worse off?",
             answer:
-              "Percentages hide denominator errors. Shares and price make every step checkable and force the fully-diluted question into the open.",
+              "Better, if the valuation rose enough. 60% of ₹20 crore is ₹12 crore; 48% of ₹25 crore is ₹12 crore — flat here, and positive in any round where value rises more than the dilution.",
           },
           {
             question:
@@ -776,12 +794,23 @@ export default [
         ],
         resources: [
           {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds — the arithmetic",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "She does the arithmetic on screen, slowly, with real numbers — the single most useful free video on this topic. You watched it in module 1 for the instruments; rewatch the priced-round arithmetic with a spreadsheet open.",
+          },
+          {
             type: "read",
-            title: "What is a cap table?",
-            url: "https://carta.com/learn/startups/equity-management/cap-table/",
+            title: "Share dilution — what causes it and how to prepare",
+            url: "https://carta.com/learn/startups/equity-management/share-dilution/",
             sourceName: "Carta",
             editorNote:
-              "Re-open yesterday's explainer at its dilution worked example — read it after doing today's challenge by hand, as the answer key rather than the method.",
+              "Good diagrams showing the same round from both sides. Read it after doing today's challenge by hand — as the answer key, not the method.",
           },
         ],
         concepts: [
@@ -791,61 +820,66 @@ export default [
       {
         title: "Building a cap table from scratch in Excel",
         summary:
-          "The model itself: share counts in, everything else derived, nothing hardcoded.",
+          "The build day: structure it around shares with derived percentages, because everything after this adds to the file created now.",
         learningObjectives: [
-          "Structure the model: events as columns, holders as rows, shares as the atoms",
-          "Derive every percentage from share counts — never type one",
+          "Structure the model on shares, with events as columns and every percentage derived",
+          "Keep inputs in one named block and add a check row that must sum to 100%",
           "Make the model extend to a new round without restructuring",
         ],
         whyToday:
-          "Today the arithmetic becomes an artefact. The module deliverable is this file, grown over the next four days — and the habits set now (shares as atoms, no hardcodes) decide whether day 13's waterfall is an afternoon or a rebuild.",
+          "This is the build day. Everything after this adds to the file you create now, so the structure matters more than the numbers.",
         principle:
           "A cap table with a hardcoded ownership percentage is a cap table that will be wrong next round.",
         commonMistake:
-          "Building in percentages because they are what everyone asks about. Percentages are outputs. A model whose inputs are percentages cannot absorb a new round — every cell is wrong the moment the denominator moves, which is what denominators do.",
+          "Building it as a static picture of today rather than a model. A cap table's purpose is answering 'what happens if', and a table of typed percentages cannot answer anything.",
         challenge:
-          "Build the base model: incorporation, an angel round, holder rows, event columns, fully-diluted total, and derived percentages. Test: add a fictional new investor by inserting shares only, and confirm every percentage updates with no other edit. If anything else needed touching, find the hardcode.",
-        challengeMinutes: 60,
-        estMinutes: 90,
+          "Build a cap table for a company with three founders (50/30/20) holding 10,00,000 shares. Every percentage must be a formula referencing share counts. Add a check row summing to 100%. Deliberately change one founder's shares and confirm every percentage updates and the check still holds. Before you start, open one free template — Carta's or a VC firm's — study its structure, close it, and build your own.",
+        challengeMinutes: 40,
+        estMinutes: 50,
         points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "Shares are the atoms",
+            title: "Shares, not percentages",
             detail:
-              "Every input is a share count from a document; every percentage is a formula over the fully-diluted sum. The model's discipline is that no ownership number is ever typed.",
+              "Percentages are outputs. A model built on percentages breaks at the first round — shares are the legal reality, and they are additive.",
           },
           {
-            title: "Events as columns",
+            title: "One row per holder, one column per event",
             detail:
-              "Each financing event is a column adding shares to holders. The table reads left to right as the company's history, and a new round is a new column, not a new file.",
+              "Founders, angels, each round, options. The table reads left to right as the company's history, and a new round is a new column, not a new file.",
           },
           {
-            title: "The fully-diluted row",
+            title: "The summary block and the check row",
             detail:
-              "One sum, referenced by every percentage. When the pool and the convertibles land in later days, they land here — the denominator has one home.",
+              "Issued, fully diluted, and each holder's percentage of both, all derived — plus a row where percentages must sum to exactly 100%. It should be impossible for the model to be wrong without you seeing it.",
           },
           {
-            title: "Lookups over copy-paste",
+            title: "Named inputs in one place",
             detail:
-              "Holder attributes — class, preference, dates — live in one reference range and are looked up where needed. XLOOKUP or INDEX/MATCH; the excel-at-work roadmap's lookup week is exactly this.",
+              "Every assumption in a single input block, never buried in a formula — so someone else can change one, and so you can audit them all at once.",
+          },
+          {
+            title: "Readable by someone else",
+            detail:
+              "Inputs, calculations and outputs visually distinct. The lookup layer — XLOOKUP or INDEX/MATCH over a holder reference range — is what keeps it maintainable when day 12 lands the SAFEs.",
           },
         ],
         checks: [
           {
-            question: "What is the one thing this model must never contain?",
+            question: "Why build on shares rather than percentages?",
             answer:
-              "A typed ownership percentage. Percentages are derived from share counts, or the model breaks silently next round.",
+              "Shares are the legal reality and they are additive. Percentages are derived and must be recalculated at every event — hardcoding them guarantees a wrong answer after the first round.",
           },
           {
-            question: "What is the test that the model has no hardcodes?",
+            question: "What does the check row protect against?",
             answer:
-              "Add a new investor's shares and confirm every percentage updates with no other edit.",
+              "Any error that breaks the total. If percentages sum to 99.7%, something is missing or double-counted, and you see it immediately rather than in a meeting.",
           },
           {
-            question: "Why are events columns rather than separate sheets?",
+            question: "Why keep inputs in one block?",
             answer:
-              "The table stays one readable history, and a new round extends it instead of forking it.",
+              "So someone else can change an assumption without hunting through formulas — and so you can see every assumption at once when auditing your own work.",
           },
         ],
         resources: [
@@ -855,7 +889,23 @@ export default [
             url: "https://exceljet.net/functions/xlookup-function",
             sourceName: "ExcelJet",
             editorNote:
-              "The reference for the lookup layer this model runs on. If this page reads as revision, good; if not, the excel-at-work roadmap's week 2 is the honest prerequisite.",
+              "The lookup layer that makes a cap table maintainable — you need it before day 10. If this reads as revision, good; if not, the excel-at-work roadmap's week 2 is the honest prerequisite.",
+          },
+          {
+            type: "read",
+            title: "INDEX and MATCH",
+            url: "https://exceljet.net/articles/index-and-match",
+            sourceName: "ExcelJet",
+            editorNote:
+              "The older, more flexible half of the lookup layer. Know both patterns — templates you inherit will use whichever their author learned first.",
+          },
+          {
+            type: "read",
+            title: "Overview of Excel tables",
+            url: "https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "Converting ranges to tables is what stops formulas breaking when rows are added — which they will be, on every one of the next four days.",
           },
         ],
         concepts: [
@@ -866,133 +916,154 @@ export default [
       {
         title: "Modelling a round and its dilution",
         summary:
-          "Add a priced round to the model and watch what it does to everyone — in value, not just percentage.",
+          "Yesterday's table becomes a model that answers the only question anyone actually asks: what does this round do to me?",
         learningObjectives: [
-          "Extend the model with a priced round from term-sheet inputs",
-          "Show each holder's dilution in percentage and in value",
-          "Explain why a diluted founder can still be better off — and when they are not",
+          "Add a priced round as an event column with every percentage recalculating",
+          "Model dilution in percentage and in value across multiple rounds",
+          "Build a two-way sensitivity of ownership across valuations and raise sizes",
         ],
         whyToday:
-          "Yesterday's model meets its first real event. Dilution is the number founders fixate on and the one advisers must reframe: the question is never 'how much less do I own' but 'what is my stake now worth'.",
+          "Yesterday's table shows a moment. Today it becomes a model that can answer the only question anyone actually asks: what does this round do to me?",
         principle: "Founders track their percentage. They should track their value.",
         commonMistake:
-          "Presenting dilution as loss. A founder going from 60% of a 40-crore company to 48% of a 60-crore company got richer — the model should print both columns, because the percentage column alone tells the story that scares clients out of good rounds.",
+          "Presenting dilution as a percentage loss. Framed that way every round looks like a defeat. Value alongside percentage turns it into the trade it actually is.",
         challenge:
-          "Add a ₹10 crore round at ₹40 crore pre to your model. Produce the before/after table: each holder's percentage, and each holder's value at the new price. Then re-run at ₹25 crore pre and write two sentences on what changed for whom.",
-        challengeMinutes: 50,
-        estMinutes: 75,
-        points: 30,
+          "Extend yesterday's model with a seed round: ₹3 crore at ₹12 crore pre-money. Then a Series A: ₹15 crore at ₹60 crore pre-money. Show each founder's percentage and value after each. Then build a two-way table showing founder ownership across three Series A valuations and three raise sizes.",
+        challengeMinutes: 35,
+        estMinutes: 50,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "The round as inputs",
+            title: "The round as a column",
             detail:
-              "Pre-money and cheque size in; price, new shares, and the new column out. The model from day 9 should absorb this with no restructuring — that was the point of building it right.",
+              "New shares issued, price per share, and every percentage recalculating. The day-9 model should absorb this with no restructuring — that was the point of building it right.",
           },
           {
-            title: "The two dilution columns",
+            title: "Dilution across multiple rounds",
             detail:
-              "Percentage before and after, and value before and after at the round price. Advisers who show only the first column create fear; only the second, complacency. Show both.",
+              "How a founder reaches single digits without any single round looking severe. The cumulative table is the honest one, and single-round explanations miss it entirely.",
           },
           {
-            title: "When dilution genuinely hurts",
+            title: "Value versus percentage",
             detail:
-              "Flat and down rounds, heavy pools, and stacked preferences — the cases where the value column falls with the percentage column. The model exists to catch these before signing.",
+              "Model both, so the conversation can be about the right one. A founder's value can rise sharply while their percentage falls — and in flat rounds, heavy pools and stacked preferences, both fall, which is what the model exists to catch.",
           },
           {
-            title: "Sensitivity as habit",
+            title: "Rounds that have not happened yet",
             detail:
-              "Every round modelled at two or three pre-money levels, as a habit rather than a request. The client conversation is the difference between the runs.",
+              "Scenario columns with different raise amounts and valuations. 'What do I own after Series B' requires modelling two rounds forward with assumptions stated — the terms of this round shape the next.",
+          },
+          {
+            title: "Presenting dilution to a founder",
+            detail:
+              "The framing that makes it a decision rather than a shock: both columns, two or three pre-money levels, and the sentence about what the next round must clear.",
           },
         ],
         checks: [
           {
-            question: "What two columns should a dilution table always show?",
+            question:
+              "A founder holds 30% and the round is ₹15 crore at ₹60 crore pre-money. What do they hold after?",
             answer:
-              "Ownership percentage before and after, and stake value before and after at the round price.",
+              "Post-money is ₹75 crore, the investor takes 20%, so the founder retains 30% × 80% = 24%.",
           },
           {
-            question: "When does dilution make a founder genuinely worse off?",
+            question: "Why can a founder's value rise while their percentage falls sharply?",
             answer:
-              "When the value column falls too — flat or down rounds, or terms that transfer value, not merely percentage.",
+              "Because the valuation rose by more than the dilution. 24% of ₹75 crore exceeds 30% of ₹15 crore by a wide margin.",
           },
           {
-            question: "What should adding a round require in a well-built model?",
+            question: "Why model two rounds forward rather than one?",
             answer:
-              "Entering the term-sheet inputs and nothing else — a new event column, no restructuring.",
+              "Because the terms of this round affect the next. A high valuation now can force a down round later, and the founder should see that before signing.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Carta — startup equity education",
-            url: "https://carta.com/learn/",
-            sourceName: "Carta",
+            title: "Stripe Atlas guides — dilution over multiple rounds",
+            url: "https://stripe.com/atlas/guides",
+            sourceName: "Stripe Atlas",
             editorNote:
-              "The dilution articles under 'equity management' walk the same before/after framing today's table produces. The hub is linked because Carta reshuffles deep URLs; the section is one click in.",
+              "The equity guide shows the cumulative effect across a full funding history, which single-round explanations miss entirely.",
+          },
+          {
+            type: "read",
+            title: "Calculate multiple results by using a data table",
+            url: "https://support.microsoft.com/en-us/office/calculate-multiple-results-by-using-a-data-table-e95e2487-6ca6-4413-ad12-77542a5ea50b",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "The two-way data table is today's sensitivity tool — three valuations by three raise sizes, one formula. Module 5 uses the same machinery on a full operating model.",
           },
         ],
         concepts: [
           "cap-table-dilution",
+          "excel-scenario-analysis",
         ],
       },
       {
         title: "ESOP pools — sizing, timing and who pays",
-        summary: "The pool is a negotiation wearing accounting clothes.",
+        summary:
+          "The most economically significant term founders accept without understanding — and the Indian layer the US explainers skip.",
         learningObjectives: [
-          "Model a pool created pre-money versus post-money and show who it dilutes",
-          "Explain why investors ask for the pool before their money lands",
+          "Model a pool created pre-money versus post-money and show who it dilutes, in rupees",
           "Size a pool from a hiring plan rather than a convention",
+          "Track the four option states and say which count in fully diluted",
         ],
         whyToday:
-          "The ESOP pool is the least understood line on the table and a systematic transfer of value when mishandled. It is also the module's clearest example of arithmetic as negotiation — the same 10% pool costs different people depending on one word.",
+          "The pool shuffle is the most economically significant term that founders routinely accept without understanding. It frequently moves more value than the valuation negotiation does.",
         principle:
           "Who the pool dilutes depends entirely on whether it sits pre-money or post-money.",
         commonMistake:
-          "Treating the investor's requested pre-money pool as neutral housekeeping. A pool carved out pre-money dilutes only the existing holders — the investor buys in after the carve-out at an effectively lower price. It is a price term dressed as an HR provision.",
+          "Treating the pool as a housekeeping item and negotiating only the valuation. A 10% pre-money pool on a ₹40 crore pre-money round moves roughly ₹4 crore of value, which usually exceeds anything won in the valuation discussion.",
         challenge:
-          "Add a 10% pool to your model both ways — pre-money and post-money — for the same round. Produce the founder-ownership delta between the two, in percentage and value. That delta is what the negotiation is actually about; write it as one sentence a founder would understand.",
-        challengeMinutes: 50,
-        estMinutes: 70,
-        points: 30,
+          "Add a 10% ESOP pool to your model twice: once created pre-money, once post-money, with the same round. Calculate the founders' final ownership under each, and the difference in rupees at the post-money valuation. Write one sentence stating who paid for the pool in each case. Then find one dated Indian explainer on ESOP taxation and note when it was published — the treatment has changed, and checking the date is the habit.",
+        challengeMinutes: 35,
+        estMinutes: 45,
+        points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "What the pool is",
+            title: "What a pool is, and sizing it",
             detail:
-              "Shares reserved for current and future employees, sitting in the fully-diluted count from creation even before grants are made. Reserved but ungranted still dilutes — that is the point of counting fully diluted.",
+              "Shares reserved for future employees, unallocated at creation — typically 10–15% early, but driven by the hiring plan to the next round rather than convention. Oversized pools are pre-paid dilution for hires that never happen.",
           },
           {
-            title: "Pre-money pool mechanics",
+            title: "The pre-money shuffle",
             detail:
-              "The pool is created before the price is set, so the pre-money is spread over more shares, the price per share falls, and the existing holders absorb all of it. The investor's effective valuation is lower than the headline.",
+              "A pool created pre-money dilutes existing shareholders only, and lowers the effective price the investor pays. It is a price adjustment expressed as an administrative requirement.",
           },
           {
-            title: "Post-money pool mechanics",
+            title: "Post-money creation",
             detail:
-              "Created after the round, the pool dilutes everyone including the new investor. Same 10%, different payers — which is why the term sheet always specifies and the founder rarely notices.",
+              "Dilutes everyone including the new investor. Modelling both and showing the difference in rupees is the only way founders understand it.",
           },
           {
-            title: "Sizing honestly",
+            title: "Granted, vested, exercised, unallocated",
             detail:
-              "The defensible pool comes from the hiring plan to the next round — roles, counts, and market grant sizes — not from 'ten percent is standard'. Oversized pools are pre-paid dilution for hires that never happen.",
+              "Four states, and only some count in fully diluted — granted shares are committed under vesting; unallocated are reserved but unassigned. Both dilute from creation, which is why the pool lands on the table before a single grant is made.",
+          },
+          {
+            title: "Indian specifics",
+            detail:
+              "SEBI and Companies Act requirements, trust versus direct routes, and exercise taxation that employees discover too late. The Indian regime differs meaningfully from the US template — and it changes, so date-check anything you read.",
           },
         ],
         checks: [
           {
-            question: "Who pays for a pool created pre-money?",
+            question: "A 10% pool created pre-money — who is diluted?",
             answer:
-              "The existing holders only — the carve-out happens before the investor's price is set, lowering it.",
+              "Only the existing shareholders. The new investor's percentage is protected, so they effectively buy at a lower price than the headline valuation implies.",
           },
           {
-            question: "Why do reserved-but-ungranted options still dilute?",
+            question: "Why do investors ask for the pool pre-money?",
             answer:
-              "They sit in the fully-diluted denominator from creation; every percentage is computed over them.",
+              "It increases their effective ownership without changing the valuation they can quote. It is a price adjustment expressed as an administrative requirement.",
           },
           {
-            question: "What makes a pool size defensible?",
+            question: "What is the difference between granted and unallocated pool shares?",
             answer:
-              "A hiring plan to the next round with market grant sizes — evidence, not convention.",
+              "Granted shares are committed to named employees under a vesting schedule; unallocated are reserved but unassigned. Both count in fully diluted, which is why the pool dilutes on creation rather than on grant.",
           },
           {
             question:
@@ -1006,12 +1077,23 @@ export default [
         ],
         resources: [
           {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds — the option pool section",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "The pool shuffle is the specific term YC's finance talks cover best. Watch the pool section twice — once before modelling, once after, when you will hear what you missed.",
+          },
+          {
             type: "read",
-            title: "Carta — startup equity education",
-            url: "https://carta.com/learn/",
+            title: "Stock options — vesting, cliffs and exercise",
+            url: "https://carta.com/learn/equity/stock-options/",
             sourceName: "Carta",
             editorNote:
-              "The employee-equity section covers pool mechanics and grant practice. Read after modelling, not before — the arithmetic should be yours first.",
+              "Vesting, cliffs, exercise and the four option states explained plainly. The Indian trust-route and taxation layer is dated material — today's challenge sends you to find a current explainer and check its date.",
           },
         ],
         concepts: [
@@ -1022,61 +1104,67 @@ export default [
       {
         title: "Convertible conversion at the next round",
         summary:
-          "The deferred argument arrives: SAFEs landing on the cap table, and the interaction that surprises everyone.",
+          "Day 3's instruments land on the cap table — individually, at their own prices, all at once.",
         learningObjectives: [
           "Convert a capped, discounted SAFE at a priced round inside the model",
-          "Show which term binds at different round prices",
-          "Model stacked SAFEs converting together and the combined dilution",
+          "Handle pre-money versus post-money SAFE conversion and say which the document is",
+          "Model multiple SAFEs converting together at different caps",
         ],
         whyToday:
-          "Day 3 taught the instrument; today the model executes it. Conversion is where founders discover what they sold two years ago, and the adviser's job is to have shown them before the term sheet makes it non-negotiable.",
+          "Day 3 covered what a SAFE is. Today is what it does to the cap table when it converts — which is the only moment it has any effect at all.",
         principle:
           "A SAFE's discount and cap interact, and the interaction surprises people at conversion.",
         commonMistake:
-          "Modelling conversion at the cap by default. The investor converts at the better of cap and discount for them — and with several SAFEs at different caps, each converts on its own terms, so the total new shares only emerge from doing each one properly.",
+          "Modelling SAFEs as a single blended line. They convert individually at individual prices, and blending them produces a wrong share count that then propagates through everything downstream.",
         challenge:
-          "Add two SAFEs to your model — different caps, same discount — and convert them in the day-10 round. Produce founder ownership: as the founder assumed (ignoring SAFEs), and as it actually lands. The gap between those numbers is the surprise this day exists to make unsurprising.",
-        challengeMinutes: 55,
-        estMinutes: 75,
+          "Add two SAFEs to your model: ₹1 crore at a ₹10 crore post-money cap with a 20% discount, and ₹50 lakh at a ₹15 crore post-money cap with no discount. Convert both at a Series A of ₹15 crore at ₹50 crore pre-money. Show the shares issued to each, the price applied, and every holder's final ownership. State for each SAFE whether the cap or the discount governed.",
+        challengeMinutes: 35,
+        estMinutes: 50,
         points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "The conversion price",
+            title: "The conversion event",
             detail:
-              "Min of (cap ÷ pre-round fully-diluted shares) and (round price × (1 − discount)). Whichever is lower gives the SAFE holder more shares; the model should compute both and take the binding one visibly.",
+              "A priced round triggers it, and the SAFE becomes shares at a price determined by cap or discount — calculate both, and the investor receives the more favourable.",
           },
           {
-            title: "Pre-money versus post-money SAFEs",
+            title: "Pre-money versus post-money SAFE conversion",
             detail:
-              "The post-money SAFE fixes the holder's ownership before the round, pushing all dilution onto founders; the older pre-money form shares it. Which form the document is changes the answer materially.",
+              "A materially different calculation, and the source of most conversion disputes. The post-money SAFE fixes the holder's ownership before the round, pushing all dilution onto founders; the older pre-money form shares it.",
           },
           {
-            title: "Stacking",
+            title: "Multiple SAFEs at different caps",
             detail:
-              "Multiple SAFEs at different caps each convert on their own terms in the same round. The combined dilution lands at once, and no one instrument's paperwork shows the total.",
+              "Each converts on its own terms, and modelling them together is where errors appear. The same round produces different conversion prices for different holders.",
           },
           {
-            title: "Showing the founder",
+            title: "The dilution surprise",
             detail:
-              "The adviser's artefact is the before/after with conversions included — produced at signing time, not at the round. Two years early is advice; at the round it is archaeology.",
+              "Founders often do not model SAFE conversion, then discover their ownership after a round is well below expectation. Nothing appeared on the table until it all appeared at once.",
+          },
+          {
+            title: "The interaction with the pool",
+            detail:
+              "A pool created at the same round compounds the effect. Day 11's shuffle and today's conversions land in the same denominator — which is why the model, not the documents, is where the founder sees the total.",
           },
         ],
         checks: [
           {
-            question: "At what price does a capped, discounted SAFE convert?",
+            question:
+              "A SAFE with a ₹10 crore cap converting at a ₹50 crore pre-money round — what price applies?",
             answer:
-              "The better of the two for the holder — the cap-implied price or the discounted round price, whichever is lower.",
+              "The cap, and by a wide margin. The investor converts as though the valuation were ₹10 crore, which is the entire purpose of the cap.",
           },
           {
-            question: "What does a post-money SAFE fix that a pre-money one does not?",
+            question: "Why do founders underestimate SAFE dilution?",
             answer:
-              "The holder's ownership percentage — the dilution from conversion falls on the founders rather than being shared.",
+              "Because nothing appears on the cap table until conversion. Money arrived, ownership looked unchanged, and the dilution lands all at once at the next round.",
           },
           {
-            question: "Why is stacked-SAFE dilution surprising?",
+            question: "Two SAFEs at different caps convert together. Same price?",
             answer:
-              "Each instrument converts on its own terms and no single document shows the combined effect — only the model does.",
+              "No. Each converts on its own terms, so the same round produces two different conversion prices — which is why modelling them individually matters.",
           },
           {
             question:
@@ -1091,11 +1179,19 @@ export default [
         resources: [
           {
             type: "doc",
-            title: "Y Combinator Safe financing documents",
+            title: "Y Combinator Safe financing documents — the conversion examples",
             url: "https://www.ycombinator.com/documents",
             sourceName: "Y Combinator",
             editorNote:
-              "Back to the source: the user guide's conversion examples are the test cases for your model. If your spreadsheet disagrees with their worked example, your spreadsheet is wrong.",
+              "YC publishes worked conversion examples alongside the documents. Work through them with a spreadsheet open — if your model disagrees with their example, your model is wrong.",
+          },
+          {
+            type: "read",
+            title: "Pre-money vs. post-money SAFEs",
+            url: "https://carta.com/learn/startups/fundraising/convertible-securities/pre-money-vs-post-money-safes/",
+            sourceName: "Carta",
+            editorNote:
+              "Day 3's read, now operational: before converting anything, establish which form each SAFE is. The two forms are different formulas, not different flavours.",
           },
         ],
         concepts: [
@@ -1106,61 +1202,67 @@ export default [
       {
         title: "Waterfall and exit distribution",
         summary:
-          "Who actually gets what when the company sells — the module deliverable, completed.",
+          "Where the money actually gets divided — and where day 4's abstract preference terms become the number that decides whether a founder receives anything.",
         learningObjectives: [
-          "Build the exit waterfall: preferences first, then conversion decisions, then common",
-          "Show holder outcomes across a range of exit values",
+          "Build the waterfall: preferences first, then conversion decisions, then ordinary shares",
+          "Find each preferred holder's conversion crossover and show the kink it makes",
           "Complete and test the full module deliverable end to end",
         ],
         whyToday:
-          "The waterfall is where every term from the fortnight becomes money. It is also the module deliverable's final piece — a model that runs from SAFE to conversion to pool to exit is the artefact that proves the skill exists.",
+          "The module ends where the money actually gets divided. This is also where preference terms — abstract on day 4 — become the number that determines whether a founder receives anything.",
         principle:
           "Liquidation preference decides who gets paid first, and in a modest exit that is everyone's answer.",
         commonMistake:
-          "Computing exits as ownership percentage times price. That is only true in exits large enough that every preference holder converts — in the modest exits that are most common, preferences bind, and common shares get what remains, which can be startlingly little.",
+          "Assuming an exit above the last valuation is good for everyone. With a preference stack, a founder can hold 30% of a company that sells for ₹50 crore and receive nothing at all.",
         challenge:
-          "Complete the deliverable: your model takes a SAFE, converts it at a priced round, carves a 10% pool, and produces a waterfall at five exit values from below-preference to clearly-above. Chart founder proceeds against exit value — the kink in that line is the fortnight's lesson in one picture.",
-        challengeMinutes: 70,
-        estMinutes: 90,
-        points: 40,
+          "Complete the model. Add a waterfall showing distribution across exit values from ₹10 crore to ₹200 crore in ₹10 crore steps, for: two founders, an ESOP pool, two converted SAFE holders, and a Series A investor with 1x non-participating preference. Identify the exit value at which the Series A investor is indifferent between preference and conversion. Then change to participating and record how the crossover moves.",
+        challengeMinutes: 45,
+        estMinutes: 45,
+        points: 45,
         difficulty: "stretch",
         topics: [
           {
-            title: "The order of payment",
+            title: "What a waterfall is",
             detail:
-              "Debt, then preferences by seniority, then common and converted holders share the rest. The waterfall is just this order executed at a given exit value.",
+              "The order in which exit proceeds are distributed: debt, then preferences by seniority, then ordinary and converted holders share the rest. The model executes this order at each exit value.",
+          },
+          {
+            title: "Non-participating, participating, and multiples",
+            detail:
+              "1x non-participating — the greater of money back or pro-rata — is the standard. Participating takes both and is much more aggressive; multiples above 1x appear in desperate rounds and signal exactly that.",
           },
           {
             title: "The conversion decision",
             detail:
-              "At each exit value, every preference holder takes the better of preference or converted ownership. The model computes both per holder — the crossover points are where the waterfall kinks.",
+              "A preferred holder converts to ordinary when pro-rata beats preference, and the crossover point is calculable per holder. The crossovers are where the waterfall kinks — chart founder proceeds against exit value and the kinks are the fortnight's lesson in one picture.",
           },
           {
-            title: "The modest exit",
+            title: "Why founders can receive nothing",
             detail:
-              "At exits near total preferences, common can receive almost nothing while the headline sale price sounds like success. This is the outcome advisers most need to show in advance.",
+              "A ₹50 crore exit against ₹60 crore of preference pays ordinary shareholders zero. The headline sounds like success; the waterfall says otherwise, and showing this in advance is the adviser's job.",
           },
           {
             title: "Testing the deliverable",
             detail:
-              "Extremes as sanity checks: at a huge exit everyone converts and shares pro rata; below total preference, common gets zero. If either end misbehaves, a formula is wrong.",
+              "Extremes as sanity checks: at a huge exit everyone converts and shares pro rata; below total preference, ordinary gets zero. If either end misbehaves, a formula is wrong.",
           },
         ],
         checks: [
           {
-            question: "When does 'ownership times exit value' give the right answer?",
+            question:
+              "1x non-participating on ₹15 crore invested for 25%. At a ₹40 crore exit, what do they take?",
             answer:
-              "Only when the exit is large enough that every preference holder is better off converting — above the highest crossover.",
+              "The greater of ₹15 crore (preference) or ₹10 crore (25% of ₹40 crore). They take the preference — ₹15 crore.",
           },
           {
-            question: "What choice does each preference holder make at exit?",
+            question: "At what exit value do they convert?",
             answer:
-              "Take the preference, or convert and take their ownership share — whichever pays more at that exit value.",
+              "Where 25% of the exit exceeds ₹15 crore, so above ₹60 crore. Below that, preference; above, conversion.",
           },
           {
-            question: "What sanity checks bound a waterfall model?",
+            question: "Why can founders receive nothing in a profitable-looking exit?",
             answer:
-              "Huge exits converge to pro-rata sharing; exits below total preferences pay common zero.",
+              "If total preference exceeds the exit value, preferred holders take everything before ordinary shareholders are paid. A ₹50 crore sale against ₹60 crore of preference leaves ordinary at zero.",
           },
           {
             question:
@@ -1175,11 +1277,27 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Term sheets — Carta's guide",
-            url: "https://carta.com/learn/startups/fundraising/term-sheets/",
+            title: "Term Sheet series — the liquidation preference posts",
+            url: "https://feld.com/archives/2005/08/term-sheet-series-wrap-up/",
+            sourceName: "Brad Feld",
+            editorNote:
+              "The clearest explanation of participating versus non-participating anywhere, free. Read the liquidation preference posts from the index before building.",
+          },
+          {
+            type: "read",
+            title: "Waterfall analysis — how to model exit waterfalls",
+            url: "https://carta.com/learn/startups/exit-strategies/waterfall-analysis/",
             sourceName: "Carta",
             editorNote:
-              "Re-read the liquidation preference section now that you have a waterfall to test its claims in. Participation and caps map directly onto model branches.",
+              "Diagrams showing the payout at different exit values — which is exactly what you are building. Compare their chart's shape with yours; the kinks should match.",
+          },
+          {
+            type: "read",
+            title: "First Round Review",
+            url: "https://review.firstround.com/",
+            sourceName: "First Round Review",
+            editorNote:
+              "Search the Review for a founder's account of a modest exit — the human consequence of the preference stack, discovered after the sale. Deep links rot here; the hub is one search away.",
           },
         ],
         concepts: [

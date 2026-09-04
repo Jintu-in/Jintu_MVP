@@ -213,3 +213,35 @@ review should re-click the Damodaran links first. Five licence hosts
 added. Tallies now: 48 days · 52 h · 76 resources (8 video citations) ·
 23 interview checks at 0.48/day · module 3 carries 22 resources across
 all seven days.
+
+---
+
+## Addendum 3 — module 2 re-authored to the owner's reference (2026-09-05)
+
+`module-2-reference.md` (in this folder) replaced days 7–13 the same
+way: its build-as-you-go structure (one file grown from day 9 to day
+13), its numeric challenges with exact rupee inputs, its topics
+(authorised-vs-issued capital, the four option states, the Indian ESOP
+layer — all missing from the first pass) and its checks, with the first
+pass's four interview questions kept on top.
+
+Sources, all verified: Carta's cap-table, **share-dilution**,
+**stock-options** and **waterfall-analysis** pages (the last three are
+new — Carta's older dilution/ESOP/liquidation URLs all 404, so each was
+re-found at its current path), Stripe Atlas, the Nathoo videos (her
+SAFEs talk now carries the arithmetic on day 8 and the pool-shuffle
+section on day 11, per the reference's explicit asks), YC's SAFE
+documents as day 12's test cases, Brad Feld's liquidation-preference
+posts, First Round's hub for the modest-exit account, and the Excel
+layer reused from excel-at-work's verified set (XLOOKUP, INDEX/MATCH,
+Excel Tables) plus Microsoft's data-table page for day 10's two-way
+sensitivity. No new licence hosts needed.
+
+Linkless by design: MCA (day 7's challenge sends the learner to the
+portal), the law-firm CCPS explainer, and Indian ESOP taxation (day
+11's challenge makes finding a dated explainer and checking its date
+the exercise). The reference's own authoring note agrees — "prefer a
+source with a visible date."
+
+Modules 4–7 remain first-pass. The reference names module 4 as the
+natural next one — it feeds the model built in module 5.
