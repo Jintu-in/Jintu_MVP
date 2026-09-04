@@ -3,15 +3,18 @@
  *
  * Built from the owner's brief in assets/Finance/roadmap-startup-finance.md.
  * Every module title, day title, principle and deliverable is the brief's,
- * verbatim; the rest of the day model is authored here. Modules 1, 2 and 3
- * follow the owner's fully-authored references (assets/Finance/
- * module-1-reference.md, module-2-reference.md, module-3-reference.md):
- * their challenges, checks, topics and named sources are those documents',
- * verified before use — the first pass's interview checks (four in module
- * 2, three in module 3) are kept on top of the references' checks. Module
- * 2's dated asks (Indian ESOP taxation, a law-firm CCPS explainer) are
- * deliberately linkless: the challenges teach the check-the-date habit
- * instead of citing pages that go stale. Two of its source asks stay linkless
+ * verbatim; the rest of the day model is authored here. ALL FOUR MODULES
+ * in this file follow the owner's fully-authored references
+ * (assets/Finance/module-1/2/3/4-reference.md): their challenges, checks,
+ * topics and named sources are those documents', verified before use —
+ * the first pass's interview checks (four in module 2, three in module 3,
+ * five in module 4) are kept on top of the references' checks. Dated asks
+ * (Indian ESOP taxation, law-firm explainers, listed-company investor
+ * decks) are deliberately linkless: the challenges teach the
+ * check-the-date habit instead of citing pages that go stale. Module 4's
+ * a16z metrics pieces live at their post-redesign paths — the 2015-dated
+ * URLs that 404'd in the first build resolve again as
+ * a16z.com/16-startup-metrics/ and /16-more-startup-metrics/. Two of its source asks stay linkless
  * by rule 2: MCA (403s the checker — day 5's challenge sends the learner to
  * the portal instead) and "a current angel-tax article" (deliberately
  * undated-proof: day 2 teaches the check-the-date habit rather than linking
@@ -2040,64 +2043,70 @@ export default [
     objective: "The layer between the pitch narrative and the financial model.",
     deliverable:
       "Take a real startup's public numbers, build the unit economics, and identify the two metrics you would want before investing.",
-    estHours: 7.5,
+    estHours: 9.25,
     nodes: [
       {
         title: "CAC, LTV and the ratio everyone quotes wrongly",
-        summary: "The most-quoted numbers in startup finance, and the honest versions of each.",
+        summary:
+          "The two numbers in every pitch deck, almost always calculated to flatter — and the honest versions of each.",
         learningObjectives: [
-          "Compute CAC fully loaded and LTV on contribution margin, not revenue",
-          "Explain why LTV:CAC without payback period is half a sentence",
-          "Catch the standard inflations of both numbers",
+          "Compute blended and paid CAC separately, and say why founders quote blended",
+          "Build LTV on gross margin and retention, and show how each assumption moves it",
+          "Put the payback period beside the ratio, where it belongs",
         ],
         whyToday:
-          "Unit economics are the bridge between the deck's story and the model's rows, and this pair is where every conversation starts. An adviser fluent in the honest versions can read a pitch in minutes; one who accepts the quoted versions cannot read it at all.",
+          "These two numbers appear in almost every pitch deck and are almost always calculated to flatter. Getting them right is the entry ticket to everything else in this module.",
         principle: "An LTV:CAC of 3 means nothing without the payback period beside it.",
         commonMistake:
-          "Accepting LTV built on revenue and CAC built on ad spend alone. LTV must be contribution margin over the retention curve actually observed; CAC must carry salaries, tools and content — the inflations run in opposite directions and multiply.",
+          "Accepting an LTV:CAC ratio without asking how LTV was calculated. It is the most assumption-dependent number in a pitch deck and the least often interrogated.",
         challenge:
-          "Take one startup's quoted LTV:CAC and rebuild both numbers honestly from whatever is public or assumable. Write the quoted ratio, your ratio, and the two adjustments that moved it most. Tomorrow adds payback; keep the file.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Take a startup you can find data for. Calculate blended CAC and paid CAC separately. Then calculate LTV under two retention assumptions — one optimistic, one conservative — and produce both ratios. Write two sentences on which pair you would present to an investment committee and why.",
+        challengeMinutes: 25,
+        estMinutes: 55,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Honest CAC",
+            title: "What CAC actually includes",
             detail:
-              "All acquisition spend — media, salaries, tools, agency, content — over new customers from that spend. Blended versus paid CAC differ, and which one a founder quotes is itself information.",
+              "All sales and marketing cost divided by new customers acquired — salaries, tools, agency and content included. Blended CAC includes organic customers and is therefore lower and less useful than paid CAC, which is why founders quote blended.",
           },
           {
-            title: "Honest LTV",
+            title: "LTV and its assumptions",
             detail:
-              "Contribution margin per period times observed retention, discounted if the horizon is long. Revenue-based LTV overstates by the whole cost of serving — for a thin-margin business, several-fold.",
+              "Gross margin, retention and a discount rate. Change any one and the number moves substantially — which is why the assumptions, not the output, are what an adviser reads.",
           },
           {
-            title: "Why payback is the missing half",
+            title: "The 3:1 convention",
             detail:
-              "A 3:1 ratio repaid over four years is a cash furnace; over four months, a machine. The ratio states profitability eventually; payback states survivability meanwhile — and startups die of meanwhile.",
+              "Where it came from and why it is a heuristic rather than a threshold. A ratio without its inputs is a slogan.",
           },
           {
-            title: "The denominator games",
+            title: "Why payback period matters more",
             detail:
-              "Counting signups as customers, blending organic into paid, annualising a good month. Each inflates the ratio; day 27 catalogues the full set.",
+              "A 3:1 ratio with a 30-month payback is a cash-flow problem regardless of the ratio. The ratio states profitability eventually; payback states survivability meanwhile — and startups die of meanwhile.",
+          },
+          {
+            title: "The circularity trap",
+            detail:
+              "LTV built on a retention assumption that came from too little data. Day 23's cohort table is where that assumption gets tested against evidence.",
           },
         ],
         checks: [
           {
-            question: "What must LTV be built on, and why not revenue?",
+            question: "Why is blended CAC lower than paid CAC, and why does it matter?",
             answer:
-              "Contribution margin over observed retention — revenue-based LTV ignores the cost of serving and overstates accordingly.",
+              "Blended divides total spend by all customers including organic ones you did not pay for. It flatters efficiency and hides whether paid acquisition works at all — which is the question an investor is asking.",
           },
           {
-            question: "Why does LTV:CAC need payback period beside it?",
+            question: "LTV:CAC is 4:1 with a 24-month payback. Concerned?",
             answer:
-              "The ratio says whether customers are eventually profitable; payback says how long cash is trapped — and cash, not eventual profit, is what startups run out of.",
+              "Yes. The ratio is healthy and the cash position is not: you fund two years of a customer's cost before recovering it, which limits growth to your balance sheet regardless of the ratio.",
           },
           {
-            question: "Name two standard CAC understatements.",
+            question: "What is the most common LTV manipulation?",
             answer:
-              "Excluding salaries and tools from acquisition cost, and blending organic customers into the paid denominator.",
+              "An optimistic retention assumption derived from too short a history, sometimes with revenue rather than gross margin. Both inflate the number without changing anything real.",
           },
           {
             question:
@@ -2112,11 +2121,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "16 Startup Metrics",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
             editorNote:
-              "The library's growth and metrics essays define these terms the way investors actually use them. Read one on unit economics today — and notice it agrees with the honest versions, not the quoted ones.",
+              "Written by investors about the numbers they are shown and how they are misled — it names the manipulations directly. The CAC, LTV and GMV entries are today's; the rest of the list serves the whole module.",
+          },
+          {
+            type: "read",
+            title: "SaaS Metrics 2.0",
+            url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+            sourceName: "David Skok (for Entrepreneurs)",
+            editorNote:
+              "The most widely cited free treatment of the payback question. Long — read the LTV, CAC and payback sections carefully today; the NRR and churn sections are day 24's.",
           },
           {
             type: "video",
@@ -2129,6 +2146,14 @@ export default [
             editorNote:
               "Twenty minutes on how price drives CAC, LTV and everything downstream of them. The four pricing mistakes he lists are the same four you will find inside gamed unit economics on day 27.",
           },
+          {
+            type: "read",
+            title: "User and subscriber businesses — the good, the bad and the ugly",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/UserbasedValue.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "Connects unit economics back to company value — the link module 3 needs and most metrics writing ignores. A user's value to the business is an LTV computation wearing valuation clothes.",
+          },
         ],
         concepts: [
           "unit-economics",
@@ -2136,60 +2161,67 @@ export default [
       },
       {
         title: "Contribution margin and payback",
-        summary: "The layer where a business model is either real or not.",
+        summary:
+          "Where you find out whether the transactions actually make money — and the number Indian consumer businesses most often lack.",
         learningObjectives: [
-          "Build contribution margin per unit from first principles for a real company",
-          "Compute CAC payback in months from contribution, not revenue",
-          "Read a business's viability from these two numbers before any growth story",
+          "Build contribution margin per unit through every variable cost, discounts included",
+          "Work the CM1/CM2/CM3 layering used in Indian consumer businesses",
+          "Compute payback from contribution margin, not revenue",
         ],
         whyToday:
-          "Everything yesterday leaned on contribution margin; today builds it properly. This is the single number that separates businesses that scale into profits from businesses that scale into larger losses — growth multiplies whatever the unit is.",
+          "Revenue growth is easy to manufacture. Contribution margin is where you find out whether the transactions actually make money — and it is the number Indian consumer businesses most often lack.",
         principle: "Contribution margin is where a business model is either real or not.",
         commonMistake:
-          "Computing contribution with gross margin and calling it done. Contribution must carry everything that scales with the unit — payment fees, delivery, support, returns, incentives. The gap between gross and contribution is precisely where weak models hide.",
+          "Presenting a path to profitability that depends on fixed cost leverage while contribution margin is negative. If each transaction loses money, volume makes it worse, and no amount of scale fixes it.",
         challenge:
-          "Build the per-unit P&L for one transaction of a real Indian startup — price down through every variable cost to contribution. Then compute CAC payback in months. Two numbers on one page; write one sentence on what growth does to this company.",
-        challengeMinutes: 45,
-        estMinutes: 60,
+          "Build a contribution margin model for a delivery business: order value, take rate, payment cost, delivery cost, discount, support cost. Calculate CM1, CM2 and CM3. Then find the order volume at which the business breaks even on fixed costs, and identify which single variable cost, if halved, most changes the answer.",
+        challengeMinutes: 30,
+        estMinutes: 45,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The per-unit P&L",
+            title: "Contribution margin per unit",
             detail:
-              "One order, one user-month, one ride: price, minus COGS, payment fees, fulfilment, support, incentives, returns. What remains funds fixed costs and CAC — or does not.",
+              "Revenue minus all variable cost — cost of goods, payment processing, delivery, support. What each transaction contributes toward fixed costs, or takes from them.",
           },
           {
-            title: "Gross versus contribution",
+            title: "Discounts as negative revenue",
             detail:
-              "Gross margin stops at COGS; contribution carries all variable costs. Companies quote gross because it is bigger; analysis runs on contribution because it is true.",
+              "A business 'profitable before discounts' is not profitable. Discounts are deliberate acquisition or retention spend, and treating them as a cost makes their size visible — companies that net them into revenue are usually hiding it.",
           },
           {
-            title: "Payback in months",
+            title: "CM1, CM2 and CM3",
             detail:
-              "CAC divided by contribution per month. It is the cash-cycle number: how long each customer's acquisition cost stays on the balance sheet before the customer has earned it back.",
+              "The layered convention used in Indian consumer and commerce businesses — each layer adds another band of variable cost, and which layer a company quotes is itself information.",
           },
           {
-            title: "Negative contribution",
+            title: "The path to positive",
             detail:
-              "Some models lose money on every unit by design-for-now — the question is what specifically changes the sign, at what scale, and whether that change is priced or wished.",
+              "Which costs fall with scale and which do not. Fixed costs per unit fall; delivery cost per order, payment processing and support per ticket often do not — which is why some businesses never reach positive contribution.",
+          },
+          {
+            title: "Payback calculated properly",
+            detail:
+              "CAC divided by monthly contribution margin, not by revenue. Revenue-based payback ignores the cost of serving and understates the period, often by a factor of two or more.",
           },
         ],
         checks: [
           {
-            question: "What belongs in contribution margin that gross margin excludes?",
+            question: "Why is discount a cost rather than lower revenue?",
             answer:
-              "Every cost that scales with the unit — payment fees, delivery, support, returns, incentives.",
+              "Either treatment is defensible if applied consistently, but discount is a deliberate acquisition or retention spend and treating it as a cost makes that visible. Companies that net it into revenue are usually hiding its size.",
           },
           {
-            question: "How is CAC payback computed?",
+            question: "Which costs genuinely fall with scale?",
             answer:
-              "CAC divided by monthly contribution margin per customer — months to recover.",
+              "Fixed costs per unit, and some negotiated input costs. Delivery cost per order, payment processing and support per ticket often do not — which is why some businesses never reach positive contribution.",
           },
           {
-            question: "What does growth do to a negative-contribution business?",
+            question:
+              "Payback of CAC ÷ monthly revenue versus CAC ÷ monthly contribution margin. Which is right?",
             answer:
-              "Multiplies the loss. Scale amplifies the unit; it does not repair it unless something specific changes the unit's sign.",
+              "Contribution margin. Revenue-based payback ignores the cost of serving the customer and understates the period, often by a factor of two or more.",
           },
           {
             question:
@@ -2201,6 +2233,22 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open a recent Indian consumer company's DRHP and read the financial discussion: real disclosed unit costs, in a document that had to survive a regulator. Several disclose CM1/CM2/CM3 layering — reading a real one beats a template.",
+          },
+          {
+            type: "read",
+            title: "16 More Startup Metrics",
+            url: "https://a16z.com/16-more-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "The second half of the list — gross margin, AOV, direct versus blended CAC. The distinction between gross revenue, net revenue and contribution is where commerce businesses are most often misread.",
+          },
           {
             type: "tool",
             title: "Damodaran's current data page",
@@ -2216,60 +2264,66 @@ export default [
       },
       {
         title: "Cohort retention and what a growth chart hides",
-        summary: "The difference between a company acquiring users and a company keeping them.",
+        summary:
+          "The skill that most distinguishes someone who can assess a startup from someone who can only read its deck.",
         learningObjectives: [
-          "Build a cohort retention table from raw signup and activity data",
-          "Read flattening versus decaying curves and what each implies for LTV",
-          "Explain what cumulative charts conceal and why founders prefer them",
+          "Build a retention table from a transaction list — cohorts down, months across",
+          "Answer the flattening question and say what it licenses you to compute",
+          "Compare cohort quality over time and explain why later cohorts are often worse",
         ],
         whyToday:
-          "Retention is the truth serum of unit economics — LTV is a bet on the retention curve, and the curve cannot be faked the way a growth chart can. This day also pays forward: the diligence module reads these tables as evidence.",
+          "This is the analytical skill that most distinguishes someone who can assess a startup from someone who can only read its deck. Cohort analysis is where growth is either real or an illusion created by acquisition spend. If you have done the data-analyst roadmap, its day 47 built this table in SQL — this is the finance application of it.",
         principle: "Cumulative charts always go up. That is why founders use them.",
         commonMistake:
-          "Reading blended retention across all users. A blend mixes old cohorts with new ones, so a company whose product is getting worse can show stable blended numbers while every recent cohort decays faster than the last. Only the cohort view shows direction.",
+          "Reading the cumulative growth chart in the deck and stopping. It is the one chart in a pitch that cannot go down, which is precisely why it is on slide four.",
         challenge:
-          "Take any cohort data you can get — public, a friend's product, or synthesised honestly — and build the triangle: cohorts down, months across. Then draw the same data as a cumulative user chart and put the two side by side. That pairing is the day's lesson in one image.",
-        challengeMinutes: 50,
-        estMinutes: 70,
-        points: 30,
+          "Build a cohort retention table in Excel from a transaction list — cohorts down, months across. Then answer three questions in writing: does retention flatten, are later cohorts better or worse than earlier ones, and what would you want to see before believing the growth is durable.",
+        challengeMinutes: 35,
+        estMinutes: 50,
+        points: 35,
         difficulty: "core",
         topics: [
           {
             title: "The cohort table",
             detail:
-              "Each row a signup month, each column months-since, each cell the share still active. The data-analyst roadmap builds this in SQL; here the skill is reading it.",
+              "Customers grouped by when they arrived, tracked forward separately — cohorts down, months since acquisition across, share still active in each cell.",
           },
           {
-            title: "Flattening versus decaying",
+            title: "The flattening question",
             detail:
-              "A curve that flattens at any level means a retained core exists and LTV is computable. A curve that decays to zero means every LTV is a guess about when the bleeding stops.",
+              "A curve that flattens above zero means a durable business with a calculable long-run value. One that decays to zero means you are renting customers — and every LTV is a guess about when the bleeding stops.",
           },
           {
-            title: "Cohort-over-cohort direction",
+            title: "Revenue retention versus logo retention",
             detail:
-              "Are newer cohorts retaining better or worse than older ones at the same age? That trend is the product improving or degrading — and it is invisible in every blended number.",
+              "A company can lose customers and grow revenue, and the reverse. Both views, always — their divergence is a finding, and day 24 makes it precise.",
           },
           {
-            title: "What cumulative hides",
+            title: "What cumulative charts conceal",
             detail:
-              "Total registered users rises even as active users collapse. Any chart that cannot go down is not evidence; the adviser's reflex is to ask for the same data by cohort.",
+              "Total users always rises; the cohort table shows whether anyone stays. The adviser's reflex is to ask for the same data by cohort.",
+          },
+          {
+            title: "Cohort quality over time",
+            detail:
+              "Later cohorts are often worse, because the cheapest, most motivated customers were acquired first. Declining cohort quality is normal and worth quantifying, not hiding.",
           },
         ],
         checks: [
           {
-            question: "Why is blended retention misleading?",
+            question: "A retention curve flattens at 40% after month six. What does that tell you?",
             answer:
-              "It mixes cohort ages, so worsening recent cohorts hide behind the accumulated base — direction is invisible.",
+              "Roughly 40% of each cohort is durable. That is a real business with a calculable long-run value, unlike a curve heading toward zero.",
           },
           {
-            question: "What does a flattening retention curve license you to do?",
+            question: "Total users are rising and every cohort decays to zero. What is happening?",
             answer:
-              "Compute LTV on the retained core — a stable fraction persists, so lifetime value has a floor.",
+              "The company is buying growth. Total rises only while acquisition spend rises, and it stops the moment spending does.",
           },
           {
-            question: "What is the reflex response to a cumulative chart?",
+            question: "Why are later cohorts often worse?",
             answer:
-              "Ask for the same data as a cohort table — any chart that cannot go down is not evidence.",
+              "The earliest customers are usually the most motivated and cheapest to reach. As acquisition scales, you reach less-motivated customers at higher cost — so declining cohort quality is normal and worth quantifying, not hiding.",
           },
           {
             question:
@@ -2284,11 +2338,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "16 Startup Metrics — the retention entries",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "Re-read the churn, retention and active-user entries with today's table in front of you — the clearest free statement of why cumulative charts mislead, from the people shown them daily.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — retention essays",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The library's essays on retention and growth accounting are the investor-side reading of exactly these tables — find one and note the vocabulary: it is what partner meetings speak.",
+              "The essays on retention curves treat the flattening question properly — it is the single most important thing in this day. Some listed Indian internet companies disclose cohort tables in investor materials; find one and form a view before reading anyone's commentary.",
           },
         ],
         concepts: [
@@ -2298,60 +2360,66 @@ export default [
       },
       {
         title: "SaaS metrics — MRR, ARR, NRR, churn",
-        summary: "The metric system of the most-funded business model.",
+        summary:
+          "The dominant Indian startup category selling to global markets — and the specific definitions that are widely misquoted.",
         learningObjectives: [
-          "Define MRR, ARR, gross and net revenue retention, and logo churn precisely",
-          "Decompose MRR movement: new, expansion, contraction, churn",
-          "Explain why NRR above 100% changes what a company is worth",
+          "Build the MRR bridge: new, expansion, contraction, churn",
+          "Compute gross and net revenue retention and read the gap between them",
+          "Name the standard ARR manipulations and the diligence question for each",
         ],
         whyToday:
-          "SaaS has the most standardised metrics of any model, which makes it the easiest place to be precisely wrong. Indian SaaS is also a hiring market this roadmap's audience advises into — fluency here is table stakes.",
+          "SaaS is the dominant Indian startup category selling to global markets, and its metrics have specific definitions that are widely misquoted.",
         principle: "Net revenue retention above 100% is the single strongest signal in SaaS.",
         commonMistake:
-          "Multiplying a good month by twelve and calling it ARR. Annualising a spike — or counting one-time services, or pilots not yet converted — turns ARR from a run-rate into a hope. The decomposition exists precisely to catch this.",
+          "Accepting an ARR figure without asking for the definition. In private companies ARR is not a standardised term, and two companies quoting the same number may be measuring different things.",
         challenge:
-          "Build the MRR bridge for a company (real or given): opening MRR, plus new, plus expansion, minus contraction, minus churn, closing MRR. From it compute gross and net retention. Then write which single line of the bridge you would interrogate first, and why.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Build an MRR bridge for twelve months from a subscription list: opening MRR, new, expansion, contraction, churn, closing. Then calculate gross and net revenue retention. Write two sentences on what the gap between them tells you. Finish by pulling one listed SaaS company's investor presentation and comparing its stated definitions with yours — public companies define their terms; private ones often do not.",
+        challengeMinutes: 30,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The bridge",
+            title: "MRR, ARR and the bridge",
             detail:
-              "MRR movement decomposed: new business, expansion from existing customers, contraction, and churn. Every SaaS conversation is really about the relative size of these four flows.",
+              "ARR quoted on one strong month is not ARR. The bridge — new, expansion, contraction, churn — is the four movements that explain any change, and every SaaS conversation is really about their relative size.",
           },
           {
-            title: "Gross versus net retention",
+            title: "Net revenue retention",
             detail:
-              "Gross retention caps at 100% — it measures only what was kept. Net adds expansion and can exceed 100%, meaning the base grows with zero new sales. That is the compounding investors pay up for.",
+              "The metric that matters most. Above 100% means the existing base grows without new customers — the compounding investors pay up for.",
           },
           {
-            title: "Logo versus revenue churn",
+            title: "Gross revenue retention",
             detail:
-              "Losing many small customers and few large ones look identical in revenue churn and opposite in logo churn. Both numbers, always — their divergence is a finding.",
+              "The floor, which NRR can disguise. High NRR over low GRR means strong expansion over a leaking base — and the leak is invisible if you only look at NRR.",
           },
           {
-            title: "ARR hygiene",
+            title: "Logo churn versus revenue churn",
             detail:
-              "Contracted, recurring, live revenue times twelve — not services, not pilots, not the best month annualised. What a company includes in ARR is a diligence question with a fast answer.",
+              "Losing small customers while growing large ones is a good quarter that looks like a bad one. Both numbers, always — their divergence locates the problem.",
+          },
+          {
+            title: "Efficiency and the manipulations",
+            detail:
+              "The magic number and CAC ratio measure sales efficiency. The manipulations: annualising a good month, counting non-recurring revenue as recurring, excluding certain churn — day 27 catalogues the detection questions.",
           },
         ],
         checks: [
           {
-            question: "What does NRR above 100% mean mechanically?",
+            question: "NRR is 115% and GRR is 85%. What does that say?",
             answer:
-              "Expansion from existing customers exceeds contraction plus churn — revenue compounds with no new logos at all.",
+              "Substantial churn, offset by strong expansion within the surviving base. The business grows from existing customers but leaks badly, and the leak is invisible if you only look at NRR.",
           },
           {
-            question: "Why report both logo and revenue churn?",
+            question: "Why is annualising a strong month misleading?",
             answer:
-              "They diverge when customer sizes differ — many small losses versus one large loss — and the divergence locates the problem.",
+              "ARR should reflect the recurring run rate, not the best month multiplied by twelve. Founders annualise peaks; the correction usually appears in diligence.",
           },
           {
-            question: "Name two things that do not belong in ARR.",
+            question: "What is the most common recurring-revenue manipulation?",
             answer:
-              "One-time services revenue, and annualised spikes or unconverted pilots — ARR is contracted recurring run-rate.",
+              "Counting one-off implementation, setup or services revenue as recurring. It inflates ARR and the multiple applied to it, which compounds the error in valuation.",
           },
           {
             question:
@@ -2366,11 +2434,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "SaaS Metrics 2.0 — the NRR and churn sections",
+            url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+            sourceName: "David Skok (for Entrepreneurs)",
             editorNote:
-              "The SaaS metrics essays here are the canonical definitions this day uses. Pick the key-metrics piece for SaaS and check your bridge's vocabulary against it.",
+              "The most cited free treatment of the SaaS metric set. You read the payback sections on day 21; today read NRR and churn carefully — the definitions here are the ones diligence recomputes against.",
+          },
+          {
+            type: "read",
+            title: "SaaS Capital — research and benchmarks",
+            url: "https://www.saas-capital.com/research/",
+            sourceName: "SaaS Capital",
+            editorNote:
+              "NRR expectations differ substantially between SMB and enterprise, and quoting a single benchmark is a mistake. Their retention research is segmented, dated and free.",
           },
         ],
         concepts: [
@@ -2380,70 +2456,84 @@ export default [
       },
       {
         title: "Marketplace and D2C metrics",
-        summary: "Two models where the headline number and the business are furthest apart.",
+        summary:
+          "The models that dominate Indian consumer startups — where the headline number and the business are furthest apart.",
         learningObjectives: [
-          "Work from GMV to net revenue via take rate — and know why the order matters",
-          "Read marketplace health: liquidity, repeat rate, concentration",
-          "Apply the D2C set: AOV, repeat, returns, contribution after logistics",
+          "Work the cascade from GMV through take rate to net revenue and contribution",
+          "Read marketplace liquidity — fill rate, match rate, time to transaction",
+          "Model what category mix and returns do to a growing GMV line",
         ],
         whyToday:
-          "India's largest startups are marketplaces and D2C brands, and both models are quoted in the metrics most distant from economic reality. The adviser's job is the translation — GMV to net revenue, orders to contribution.",
+          "Marketplaces and D2C dominate Indian consumer startups, and their metrics differ from SaaS in ways that matter. A GMV number without a take rate is a headline, not information.",
         principle: "GMV is a vanity metric until you know the take rate.",
         commonMistake:
-          "Comparing a marketplace's GMV multiple to a SaaS company's revenue multiple. A marketplace books only its take of GMV as revenue — comparing gross flow to net revenue across models is a category error that flatters every marketplace by the inverse of its take rate.",
+          "Comparing a marketplace's GMV to a SaaS company's ARR. They are not the same kind of number — GMV is transaction volume the company does not keep, and the comparable figure is net revenue.",
         challenge:
-          "Take one Indian marketplace or D2C company with public numbers. Build the cascade: GMV (or gross sales) → net revenue → contribution. Write the two percentages — take rate and contribution margin — and one sentence on what the headline number concealed.",
-        challengeMinutes: 45,
-        estMinutes: 60,
+          "Model a marketplace: GMV, take rate, return rate, net revenue, contribution margin. Then model a scenario where GMV grows 40% but category mix shifts toward a lower-take-rate category. Show what happens to net revenue and contribution, and write one sentence on what the headline GMV growth concealed.",
+        challengeMinutes: 30,
+        estMinutes: 45,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The GMV cascade",
+            title: "GMV, net revenue and the take rate",
             detail:
-              "Gross merchandise value is everything transacted; the platform's revenue is its take rate slice; its economics are contribution after incentives and logistics. Each step down is where a different weakness hides.",
+              "The relationship, and why GMV is quoted most. Returns and cancellations — deducted from GMV or not — change the true number, and in cash-on-delivery categories the gap is large.",
           },
           {
-            title: "Marketplace liquidity",
+            title: "Liquidity",
             detail:
-              "Fill rate, time-to-match, repeat usage on both sides. A marketplace's moat is liquidity, and these are its gauges — GMV can grow while liquidity decays, briefly.",
+              "The metric that actually determines whether a marketplace works: fill rate, match rate, time to transaction. Low liquidity means both sides have a bad experience and churn, regardless of how large GMV is — and the chicken-and-egg problem shows here before the narrative admits it.",
           },
           {
-            title: "Incentives as negative revenue",
+            title: "Repeat rate and order frequency",
             detail:
-              "Discounts and cashbacks funded by the platform are contra-revenue, not marketing, whatever the P&L classification. Reclassifying them is a standard diligence adjustment.",
+              "The D2C equivalent of retention. AOV rides alongside — and raising it via bundling differs from raising it via price.",
           },
           {
-            title: "The D2C set",
+            title: "Category mix",
             detail:
-              "AOV, repeat purchase rate, return rate, contribution after logistics. Returns are the model-breaker in Indian D2C — a 30% return rate quietly destroys a 55% gross margin.",
+              "A shift toward lower-margin categories can grow GMV while shrinking contribution. Mix is the standard explanation for a growing top line over a worsening bottom one — model it, do not guess it.",
+          },
+          {
+            title: "Incentives as contra-revenue",
+            detail:
+              "Discounts and cashbacks funded by the platform reduce the real take whatever the P&L classification. Reclassifying them is a standard diligence adjustment.",
           },
         ],
         checks: [
           {
-            question: "Why can't GMV multiples be compared with revenue multiples?",
+            question: "GMV grew 50% and net revenue grew 20%. What happened?",
             answer:
-              "GMV is gross flow; revenue is the platform's take of it. The comparison flatters marketplaces by the inverse of their take rate.",
+              "Take rate fell — from mix shift toward lower-commission categories, competitive pressure, or discounting funded by the platform. Growth was bought.",
           },
           {
-            question: "How should platform-funded discounts be treated?",
+            question: "What is marketplace liquidity and why does it matter more than GMV?",
             answer:
-              "As contra-revenue — they reduce the real take, regardless of where the P&L classifies them.",
+              "The probability that a listing transacts, and how quickly. Low liquidity means both sides have a bad experience and churn, regardless of how large GMV is.",
           },
           {
-            question: "What is the model-breaking metric in Indian D2C?",
+            question: "Why does return rate matter more in India than in some markets?",
             answer:
-              "Return rate — returns carry two-way logistics and refurbishment, and can erase an apparently healthy gross margin.",
+              "Cash on delivery and high return rates in certain categories mean reported GMV can substantially exceed delivered, retained revenue.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "16 Startup Metrics — GMV and the revenue entries",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
             editorNote:
-              "The marketplace and consumer essays define liquidity and take-rate the way investors use them — find the marketplace-metrics piece and check today's cascade against its vocabulary.",
+              "The GMV, revenue and bookings entries state the cascade plainly, from investors who have funded many marketplaces. Read them against today's model.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "An Indian e-commerce DRHP's operational metrics section discloses real GMV, take rate, repeat rate and return rate to a regulator. The category-mix effect is concrete there — find it in the numbers before reading management's words about it.",
           },
         ],
         concepts: [
@@ -2454,60 +2544,65 @@ export default [
       {
         title: "Burn, runway and the calculation that matters most",
         summary:
-          "The one number a founder must never be wrong about — and advisers get to check.",
+          "Everything else informs a valuation. This determines whether the company survives to be valued.",
         learningObjectives: [
-          "Compute gross burn, net burn and runway from actuals, not projections",
-          "Adjust runway for the receipts that will not arrive on time",
-          "State the raise-timing arithmetic: runway minus process time equals the real deadline",
+          "Compute gross burn, net burn and runway month by month, not on an average",
+          "Answer the default alive question for a real cash model",
+          "Work back from runway to the month a fundraise must start",
         ],
         whyToday:
-          "Runway is the deadline every other number lives inside. The startup-CFO's defining task and the diligence analyst's first check are the same calculation, and it is taught here — before the deck module — because decks are written against runway pressure.",
+          "Everything else in this module informs a valuation. This one determines whether the company survives to be valued — and it is the calculation an adviser is asked for most often and most urgently.",
         principle: "Runway is the only number a founder must never be wrong about.",
         commonMistake:
-          "Computing runway from projected collections and planned cost cuts. Honest runway uses trailing actual net burn and stress-tests receipts — the version built from the plan is exactly as reliable as the plan, which is what the runway was supposed to protect against.",
+          "Calculating runway on average burn and discovering the shortfall in a month with an annual payment in it. Monthly timing is not a refinement; it is the calculation.",
         challenge:
-          "From any company's last three months of actuals (real or supplied): gross burn, net burn, months of runway — then the stressed version at 70% collections. Finally the deadline: runway minus five months of fundraise process. Write the date. That date is the advice.",
-        challengeMinutes: 40,
-        estMinutes: 60,
-        points: 30,
+          "Build a monthly cash model for eighteen months: opening cash, revenue, costs with realistic timing including annual payments, closing cash. Calculate runway. Then answer the default alive question, and identify the month a fundraise would need to start given a four-month process.",
+        challengeMinutes: 30,
+        estMinutes: 45,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "Gross and net",
+            title: "Gross burn versus net burn",
             detail:
-              "Gross burn is total cash out per month; net burn subtracts cash actually collected. The gap between revenue booked and cash collected is where optimistic runways are manufactured.",
+              "Total spend versus spend minus revenue. Investors ask for net; the distinction matters when revenue is volatile — and the honest version runs on bank actuals, not the P&L.",
           },
           {
-            title: "Trailing actuals",
+            title: "Modelling runway properly",
             detail:
-              "Three-month trailing average of net burn, from bank movements rather than the P&L. Accrual accounting is for accuracy; runway is for survival, and survival runs on cash.",
+              "Month by month with actual timing, not a flat monthly average. Annual payments, advance tax and salary revisions cluster — an average can show four months when the real answer is two.",
           },
           {
-            title: "The stress case",
+            title: "The burn multiple",
             detail:
-              "Receivables late, one customer lost, the cost cut that never quite happens. Stressed runway is usually the true number; the founder's version is the ceiling.",
+              "Net burn divided by net new ARR: how much you spend to add a rupee of recurring revenue. Two companies with identical runway can differ greatly here, and the difference predicts the next round's difficulty.",
           },
           {
-            title: "The real deadline",
+            title: "Default alive versus default dead",
             detail:
-              "A fundraise takes months, and terms degrade as runway shortens — the worst time to raise is when you must. Deadline = runway − process time − buffer, and it is earlier than anyone wants.",
+              "Whether current growth reaches profitability before cash runs out. The question reframes runway from an arithmetic exercise into a strategic one — and it connects to module 3's survival probability directly.",
+          },
+          {
+            title: "When to start raising",
+            detail:
+              "Working backward from runway, because a round takes three to six months and terms degrade as the runway visibly shortens. Starting with four months of cash means accepting whatever is offered — and the order in which runway-extending levers actually get pulled is part of the advice.",
           },
         ],
         checks: [
           {
-            question: "What separates gross from net burn?",
+            question: "Why is a single average burn figure inadequate?",
             answer:
-              "Cash collected — net burn is gross cash out minus actual receipts, and it is the runway number.",
+              "Costs are lumpy. Annual insurance, advance tax, appraisal cycles and one-off payments cluster in particular months, and an average can show four months of runway when the real answer is two.",
           },
           {
-            question: "Why compute burn from bank actuals rather than the P&L?",
+            question: "What does the burn multiple tell you that runway does not?",
             answer:
-              "Accrual timing differs from cash timing, and runway is a cash-survival number — booked revenue does not pay salaries.",
+              "Efficiency. Two companies with identical runway can differ greatly in how much they spend per rupee of new ARR, and that difference predicts the next round's difficulty.",
           },
           {
-            question: "State the real fundraise deadline formula.",
+            question: "When should a founder start raising?",
             answer:
-              "Runway minus expected process time minus buffer — because terms degrade as the runway visibly shortens.",
+              "Working back from runway, allowing three to six months for the process, and leaving a buffer to negotiate rather than accept. Starting with four months of cash means accepting whatever is offered.",
           },
           {
             question:
@@ -2522,11 +2617,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "Default Alive or Default Dead?",
+            url: "https://paulgraham.com/aord.html",
+            sourceName: "Paul Graham",
+            editorNote:
+              "The clearest statement of the question a founder must be able to answer. Short, free, and it reframes the whole calculation — the strongest single reading in this roadmap.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — managing runway",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The library's pieces on burn and default-alive are the sharpest short reading on this exact arithmetic — search 'default alive' and read what comes back.",
+              "The practical framing of when to raise and how long a round takes. Read one piece on runway management after building today's model — the model gives the essay teeth.",
           },
         ],
         concepts: [
@@ -2536,28 +2639,33 @@ export default [
       {
         title: "How each of these gets gamed",
         summary:
-          "The module capstone: every metric's standard manipulation, and the module deliverable completed.",
+          "The module turns around: you can calculate these — now detect when someone else has calculated them favourably.",
         learningObjectives: [
-          "Catalogue the standard inflation for every metric in this module",
-          "Detect each from the outside — what to ask for, what to recompute",
-          "Complete the deliverable: real company, honest unit economics, the two metrics you would demand",
+          "Write the manipulation catalogue for every metric in days 21–26",
+          "Distinguish legitimate adjustments from manipulations, EBITDA included",
+          "Ask the questions that surface a definition without accusing anyone",
         ],
         whyToday:
-          "The module ends by weaponising it. Every number from the last six days has a standard manipulation, and diligence is largely knowing the catalogue — this day writes it down and applies it to a real company.",
+          "The module closes by turning around. You have learned to calculate these; today is learning to detect when someone else has calculated them favourably — which is what advisory work actually consists of. Day 20's valuation-audit drill is the same skill one layer up; metrics feed valuation, so errors here compound upward.",
         principle: "Every metric in this module has a standard manipulation. Learn all of them.",
         commonMistake:
-          "Treating manipulations as lies. Most are choices — a flattering definition, a favourable window, an undisclosed blend — each defensible alone. The skill is noticing that every choice in the deck happens to point the same direction, which is not chance.",
+          "Assuming manipulation means dishonesty. Most of it is optimism plus a definition nobody standardised. Asking for the definition is normal professional practice, and treating it as an accusation is how junior advisers lose access.",
         challenge:
-          "Complete the deliverable: one real startup's public numbers, unit economics rebuilt honestly, and the two metrics you would want before investing — with one line each on why those two. Append your manipulation catalogue: metric, standard game, detection question. Keep both; module 6 reuses them.",
-        challengeMinutes: 60,
-        estMinutes: 75,
+          "Take a real pitch deck or investor update you can find. List every metric quoted. For each, write the definition you would need before you could use it, and the manipulation most likely to be present. Then write the five questions you would ask in a meeting — phrased as requests for clarification, not accusations. Finish the module deliverable: one real startup's numbers rebuilt honestly, and the two metrics you would want before investing.",
+        challengeMinutes: 35,
+        estMinutes: 50,
         points: 40,
         difficulty: "stretch",
         topics: [
           {
             title: "The catalogue, by metric",
             detail:
-              "CAC: exclude salaries, blend organic. LTV: revenue base, assumed lifetime. Retention: blended not cohort. ARR: annualised spike, services inside. GMV: incentives uncounted. Runway: planned cuts. One line each — the list fits a page and reads like an audit programme.",
+              "CAC: blended instead of paid, excluding salaries. LTV: optimistic retention, revenue instead of gross margin, no discounting. ARR: annualised peak, services inside, known churn excluded. Retention: a flattering definition of active, reset cohorts, cumulative charts. GMV: returns and cancellations included, gross of discounts. One line each — the list fits a page and reads like an audit programme.",
+          },
+          {
+            title: "Adjusted EBITDA",
+            detail:
+              "The adjustments that are legitimate remove genuinely non-recurring items — a settlement, a restructuring. The manipulations remove recurring costs the business will keep incurring, such as ongoing marketing described as 'growth investment'.",
           },
           {
             title: "Detection is recomputation",
@@ -2567,32 +2675,58 @@ export default [
           {
             title: "Direction as evidence",
             detail:
-              "Each individual choice may be defensible; twelve choices all flattering is a posture. Diligence reports the pattern, not just the items.",
+              "Each individual choice may be defensible; twelve choices all flattering the same direction is a posture. Diligence reports the pattern, not just the items.",
           },
           {
-            title: "The two-metric discipline",
+            title: "How to ask",
             detail:
-              "For any company there are one or two numbers that, honestly computed, decide the thesis. Naming them in advance — before the data room — is what separates targeted diligence from a checklist crawl.",
+              "Questions that surface a definition without accusing anyone: 'how do you define active here?' does the same work as an allegation, and leaves the relationship intact.",
           },
         ],
         checks: [
           {
-            question: "What is the universal detection method for gamed metrics?",
+            question: "A deck says 'ARR ₹12 crore, growing 200%'. What do you ask first?",
             answer:
-              "Recomputation — obtain the raw inputs and rebuild the metric under its standard definition.",
+              "How ARR is defined — whether it includes services or one-off revenue, and whether it is annualised from a single month. Then what the base was, since 200% from a small base is a different claim.",
           },
           {
-            question: "Why does the direction of definitional choices matter?",
+            question: "A founder says retention is 90%. What is missing?",
             answer:
-              "Any single choice may be defensible; all choices flattering the same way is a pattern, and the pattern is the finding.",
+              "Retention of what, measured how, over what period, for which cohort. Ninety percent monthly logo retention and ninety percent annual revenue retention are wildly different statements.",
           },
           {
-            question: "What makes 'the two metrics you would want' a discipline?",
+            question:
+              "What is the difference between a legitimate EBITDA adjustment and a manipulation?",
             answer:
-              "Naming them before seeing the data room forces the thesis to be explicit and makes diligence targeted rather than ritual.",
+              "Legitimate adjustments remove genuinely non-recurring items — a one-time legal settlement, a restructuring. Manipulations remove recurring costs the business will keep incurring, such as ongoing marketing described as 'growth investment'.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "16 Startup Metrics — read as a manipulation catalogue",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "Investors listing the specific manipulations they see, metric by metric — the most directly useful reading in this module. Third read this module; this time, extract the games rather than the definitions.",
+          },
+          {
+            type: "read",
+            title: "Hindenburg Research — the report archive",
+            url: "https://hindenburgresearch.com/",
+            sourceName: "Hindenburg Research",
+            editorNote:
+              "Whatever you make of the conclusions, short-seller reports are a masterclass in detecting favourable definitions. Read one for method — the firm wound down in 2025; the archive stays up.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A DRHP's risk factors and accounting policies sections are where companies must disclose their definitions. Compare a company's filed definition with how its marketing describes the same number.",
+          },
+        ],
         concepts: [
           "unit-economics",
           "traction-metrics",

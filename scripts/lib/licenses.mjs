@@ -80,6 +80,9 @@ export const BY_HOST = {
   "saas-capital.com": assumed(),
   "hindenburgresearch.com": assumed(), // report archive; firm wound down 2025, site stays up
   "angelcapitalassociation.org": assumed(),
+  "paulgraham.com": assumed(), // free to read, copyrighted — link only, per the owner inventory
+  "forentrepreneurs.com": assumed(), // David Skok
+  "a16z.com": assumed(),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),

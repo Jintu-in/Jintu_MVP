@@ -245,3 +245,45 @@ source with a visible date."
 
 Modules 4–7 remain first-pass. The reference names module 4 as the
 natural next one — it feeds the model built in module 5.
+
+---
+
+## Addendum 4 — module 4 re-authored to the owner's reference (2026-09-05)
+
+`module-4-reference.md` (in this folder) replaced days 21–27 with its
+definition–use–manipulation framing: the two-retention-assumption LTV
+drill, the CM1/CM2/CM3 delivery model, the cohort table with the three
+written questions, the MRR bridge, the GMV mix-shift scenario, the
+18-month cash model, and day 27's manipulation catalogue with its
+five clarification-not-accusation questions. All five first-pass
+interview checks kept on top.
+
+Source findings worth recording:
+
+- **a16z's "16 Startup Metrics" and "16 More Startup Metrics" are back**
+  — the 2015-dated URLs that 404'd in the first build resolve at
+  `a16z.com/16-startup-metrics/` and `/16-more-startup-metrics/`. Cited
+  on days 21, 22, 23, 25 and 27 (day 27 reads the list as a
+  manipulation catalogue, which is the reference's framing).
+- **Paul Graham's "Default Alive or Default Dead"** verifies at
+  `paulgraham.com/aord.html` — day 26, link-only per the inventory's
+  own note on PG essays.
+- **David Skok's SaaS Metrics 2.0** (forentrepreneurs.com) — the
+  payback sections on day 21, the NRR/churn sections on day 24.
+- **Damodaran's user/subscriber valuation deck** verifies on his own
+  site (`pdfiles/blog/UserbasedValue.pdf`); the SSRN copy 403s and is
+  not used.
+- **SaaS Capital's research page** carries the segmented NRR benchmarks
+  day 24 asks for.
+- Rejected: David Sacks' burn-multiple Substack post (404) — the burn
+  multiple is taught in-topic with its formula instead.
+- **Day 27 is no longer a zero-link day** (a16z + Hindenburg + SEBI
+  filings). Zero-link days are now three: 30, 34, 41.
+
+Three licence hosts added (paulgraham.com, forentrepreneurs.com,
+a16z.com). The reference's cross-references — data-analyst roadmap day
+47 on day 23, the day-20 audit drill on day 27 — are woven into
+whyToday text rather than faked as resources.
+
+Modules 5–7 remain first-pass. The reference names module 5 next — the
+operating model is built from this module's drivers.
