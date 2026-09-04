@@ -689,6 +689,17 @@ export default [
             editorNote:
               "The cleanest plain-language explainer from the company whose product is cap tables. Read it before the challenge, then do the challenge without it open.",
           },
+          {
+            type: "video",
+            title: "Startup Mechanics — Kirsty Nathoo (Stanford CS183F)",
+            url: "https://www.youtube.com/watch?v=2_IpVq6vKR0",
+            sourceName: "Stanford Online (YouTube)",
+            youtubeVideoId: "2_IpVq6vKR0",
+            durationSec: 3507,
+            estSizeMb: 445,
+            editorNote:
+              "YC's CFO on the machinery under every round — shares, ownership, dilution, options — in one lecture. The middle third is this module in miniature; the US-specific filings talk maps to MCA equivalents here.",
+          },
         ],
         concepts: [
           "cap-table-dilution",
@@ -1335,6 +1346,17 @@ export default [
             editorNote:
               "Free, unprotected, and authored by the source. Take a young-company template for the challenge — then rebuild its core yourself before trusting your own version.",
           },
+          {
+            type: "video",
+            title: "Valuing and Pricing Start-ups and Young High Growth Firms",
+            url: "https://www.youtube.com/watch?v=i80avS70k8E",
+            sourceName: "Aswath Damodaran (YouTube)",
+            youtubeVideoId: "i80avS70k8E",
+            durationSec: 1731,
+            estSizeMb: 220,
+            editorNote:
+              "The paper's author teaching the same material — twenty-nine minutes, from his own channel, where his full valuation course also lives free. Watch after the reading; hearing the framework a second time is what makes it stick.",
+          },
         ],
         concepts: [
           "startup-valuation",
@@ -1817,6 +1839,17 @@ export default [
             sourceName: "Y Combinator",
             editorNote:
               "The library's growth and metrics essays define these terms the way investors actually use them. Read one on unit economics today — and notice it agrees with the honest versions, not the quoted ones.",
+          },
+          {
+            type: "video",
+            title: "Startup Pricing 101 — Kevin Hale",
+            url: "https://www.youtube.com/watch?v=jwXlo9gy_k4",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "jwXlo9gy_k4",
+            durationSec: 1172,
+            estSizeMb: 149,
+            editorNote:
+              "Twenty minutes on how price drives CAC, LTV and everything downstream of them. The four pricing mistakes he lists are the same four you will find inside gamed unit economics on day 27.",
           },
         ],
         concepts: [

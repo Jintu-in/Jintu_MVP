@@ -88,6 +88,17 @@ export default [
             editorNote:
               "Re-read the materials section specifically — what investors expect to see, in their own words. Note how short the expected deck is compared to the ones founders actually send.",
           },
+          {
+            type: "video",
+            title: "How to Pitch Your Startup — Kevin Hale",
+            url: "https://www.youtube.com/watch?v=17XZGUX_9iM",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "17XZGUX_9iM",
+            durationSec: 1666,
+            estSizeMb: 212,
+            editorNote:
+              "The clearest free talk on what each slide is for — packaging the idea so an investor can repeat it to their partners. Watch it before writing a single slide; the deck is a script, not a document.",
+          },
         ],
         concepts: [
           "pitch-deck",
@@ -1411,6 +1422,17 @@ export default [
             sourceName: "SEBI",
             editorNote:
               "Your document lives here. If the one you picked turns out unreadable — scanned badly, or a business you cannot judge — swap it now rather than push through; the skill needs a real read.",
+          },
+          {
+            type: "video",
+            title: "Hyundai Motor India IPO Review — a worked example",
+            url: "https://www.youtube.com/watch?v=gwpcgnb0EiE",
+            sourceName: "CA Rachana Ranade (YouTube)",
+            youtubeVideoId: "gwpcgnb0EiE",
+            durationSec: 877,
+            estSizeMb: 111,
+            editorNote:
+              "Fifteen minutes of someone actually reading an offer document — business, financials, risks — in the Indian context. It is a mainboard IPO, not SME, and a specific deal rather than a method; watch it for the reading habit, then apply the same moves to your DRHP.",
           },
         ],
         concepts: [

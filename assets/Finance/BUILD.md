@@ -155,11 +155,24 @@ Reference asks that stayed linkless, deliberately: MCA (403s the checker;
 day 5's challenge sends the learner to the portal by name) and "a current
 angel-tax article" (any link would rot at the next budget; day 2 teaches
 the check-the-date habit instead). Six licence hosts added. Zero-link
-days are now four (27, 30, 34, 41). Tallies moved to 48 days · 54 h ·
-58 resources, with video in the media mix for the first time.
+days are now four (27, 30, 34, 41).
 
-The reference's pattern — named sources with a "why this one" note per
-day — is how modules 2–7 should be upgraded too, if the owner authors
-references for them; its source inventory names the channels to draw on
-(Damodaran's full lecture courses, CA Rachana Ranade for the regulatory
-layer, NSE/BSE investor education videos for module 7).
+The inventory's video sources were then carried into modules 2–7 as
+well — one verified talk on the day it belongs to, all oEmbed-checked:
+
+| Video | Day |
+|---|---|
+| Kirsty Nathoo — "Startup Mechanics" (Stanford CS183F, 58 min) | 7 — what a cap table is |
+| Damodaran — "Valuing and Pricing Start-ups" (his channel, 29 min) | 15 — beside his paper |
+| Kevin Hale — "Startup Pricing 101" (YC, 20 min) | 21 — CAC/LTV |
+| Kevin Hale — "How to Pitch Your Startup" (YC, 28 min) | 28 — the deck |
+| CA Rachana Ranade — Hyundai IPO review (15 min) | 45 — a worked offer-document read |
+
+Not used: Zerodha Varsity's own IPO video (the found copy 404s) and
+Ranade's 92-minute beginners lecture (wrong level for this roadmap).
+Module 6 (diligence) stays text-only — no free video of comparable
+quality surfaced; the Big Four thought-leadership ask remains open.
+
+Tallies after both passes: 48 days · 54 h · 63 resources (8 video
+citations, 7 unique talks) — video in the media mix for the first time,
+in six of seven modules. Full check exit 0; bundle regenerated.
