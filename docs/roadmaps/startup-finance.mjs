@@ -16,22 +16,28 @@
  * needs — free, unpaywalled, and authored by the person the rest of the
  * field cites. Module 3 is built on it.
  *
- * WHAT IS ABSENT, AND WHY — rule 2 rulings, all verified 2026-09-03:
+ * WHAT IS ABSENT, AND WHY — rule 2 rulings, verified 2026-09-03/04:
  *   - NSE Emerge: nseindia.com returns 403 to the checker on every path.
  *     BSE SME and SEBI carry the same framework and can be verified.
  *     Day 43 tells the learner to compare both exchanges in practice.
- *   - MCA (Companies Act texts): mca.gov.in returns 403. Day 5 (CCPS/CCD)
- *     therefore carries no link and says so — the honest primary source
- *     cannot be cited, and no checkable evergreen substitute exists.
- *   - a16z and First Round: their essay URLs rotted (404 on the classics);
- *     the YC Library covers the same ground and its hub plus two verified
- *     deep essays are cited instead.
+ *   - MCA: mca.gov.in returns 403. Day 5's challenge sends the learner to
+ *     the portal by name instead of linking it; RBI's FEMA page (which
+ *     verifies) is day 5's citable primary source.
+ *   - a16z: its classic essay URLs rotted (404). First Round's hub
+ *     verifies and is cited hub-level on day 6; its deep links rot too
+ *     and are not used.
  *
- * FIVE DAYS CARRY NO EXTERNAL LINK, deliberately: day 5 (above), and days
- * 27, 30, 34 and 41 — the capstone, reconciliation, audit and memo days,
- * where the work is building or auditing an artefact the learner already
- * has and any reading would substitute for doing it. Each renders five
- * sections without a Read & do, which is honest.
+ * FOUR DAYS CARRY NO EXTERNAL LINK, deliberately: days 27, 30, 34 and 41
+ * — the capstone, reconciliation, audit and memo days, where the work is
+ * building or auditing an artefact the learner already has and any
+ * reading would substitute for doing it. Each renders five sections
+ * without a Read & do, which is honest.
+ *
+ * MODULE 1 IS THE OWNER-AUTHORED REFERENCE (assets/Finance/
+ * module-1-reference.md, received 2026-09-04): its challenges, checks,
+ * topics and named sources — including the two YC videos and Brad Feld's
+ * term-sheet series — replaced the first-pass authoring on 2026-09-04,
+ * every URL verified before use.
  *
  * NO SELF-CHECKING RESOURCE. Nothing free marks a cap table or an
  * investment memo. The deliverables carry the verification burden instead:

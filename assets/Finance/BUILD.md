@@ -1,6 +1,8 @@
 # Finance package — build report
 
-Built 2026-09-03 from the three files in this folder. Everything below is
+Built 2026-09-03 from the three files in this folder; module 1 re-authored
+2026-09-04 to the owner's reference (`module-1-reference.md`, also in this
+folder) — see the addendum at the end. Everything below is
 committed on `feat/startup-finance`; this file is the record of what was
 made from what, the decisions taken where the brief left choices open, and
 the exact things still requiring a human.
@@ -123,3 +125,41 @@ sebi.gov.in is *not* public domain the way US federal works are.
 - [ ] Module-footer disclaimer surface (UI follow-up, decision 4).
 - [ ] `node_concepts` migration if skip-what-you-know proceeds
       (decision 5).
+
+---
+
+## Addendum — module 1 re-authored to the owner's reference (2026-09-04)
+
+`module-1-reference.md` arrived after the first build and replaced the
+first-pass module 1 wholesale: its challenges (the SAFE conversion
+arithmetic, the option-pool shuffle, the debt-vs-equity model), its
+checks, its topics (fund economics, accelerators, angel tax, pool
+timing — all missing from the first pass) and its named sources.
+
+New verified sources it brought in:
+
+| Source | Where |
+|---|---|
+| **Aaron Harris — "How to Get Meetings with Investors and Raise Money"** (YC YouTube, 48 min) | Day 1 — the roadmap's first video |
+| **Kirsty Nathoo — "Understanding SAFEs and Priced Equity Rounds"** (YC YouTube, 45 min) | Days 3–4, one half each |
+| **Damodaran — young-company paper §1–2** | Day 1 (early pointer to day 15's spine) |
+| **Carta — pre-money vs post-money SAFEs** | Day 3 (their older SAFE URLs 404; this one verifies) |
+| **Brad Feld — term-sheet series wrap-up** | Day 4 |
+| **Damodaran — data page** | Days 4 and 6 (multiples; cost of capital by sector) |
+| **RBI — FEMA notifications** | Day 5 — which is therefore no longer a zero-link day |
+| **Indian Angel Network** (iangroup.vc — the .com redirects there) | Day 2 |
+| **Trifecta Capital + Alteria Capital** | Day 6 — "read two providers" per the reference |
+| **First Round Review hub** | Day 6 (deep links rot; hub verifies) |
+
+Reference asks that stayed linkless, deliberately: MCA (403s the checker;
+day 5's challenge sends the learner to the portal by name) and "a current
+angel-tax article" (any link would rot at the next budget; day 2 teaches
+the check-the-date habit instead). Six licence hosts added. Zero-link
+days are now four (27, 30, 34, 41). Tallies moved to 48 days · 54 h ·
+58 resources, with video in the media mix for the first time.
+
+The reference's pattern — named sources with a "why this one" note per
+day — is how modules 2–7 should be upgraded too, if the owner authors
+references for them; its source inventory names the channels to draw on
+(Damodaran's full lecture courses, CA Rachana Ranade for the regulatory
+layer, NSE/BSE investor education videos for module 7).
