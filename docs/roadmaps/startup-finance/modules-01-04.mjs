@@ -3,7 +3,14 @@
  *
  * Built from the owner's brief in assets/Finance/roadmap-startup-finance.md.
  * Every module title, day title, principle and deliverable is the brief's,
- * verbatim; the rest of the day model is authored here.
+ * verbatim; the rest of the day model is authored here. Module 1 follows the
+ * owner's fully-authored reference (assets/Finance/module-1-reference.md,
+ * received 2026-09-04): its challenges, checks, topics and named sources are
+ * that document's, verified before use. Two of its source asks stay linkless
+ * by rule 2: MCA (403s the checker — day 5's challenge sends the learner to
+ * the portal instead) and "a current angel-tax article" (deliberately
+ * undated-proof: day 2 teaches the check-the-date habit rather than linking
+ * an article that will rot).
  *
  * Each day also carries a `concepts` array tagging it against
  * assets/Finance/finance-concepts.json. The importer ignores the field —
@@ -18,76 +25,95 @@ export default [
     objective: "Where money comes from at each stage, and what the instruments actually do.",
     deliverable:
       "A one-page comparison of five instruments — dilution, control, downside, and when each is the right answer.",
-    estHours: 6.25,
+    estHours: 7.5,
     nodes: [
       {
         title: "Who invests, and at what stage",
         summary:
-          "Bootstrapped to Series C: who writes the cheque at each stage, what they buy, and what they need to believe.",
+          "Bootstrapped to Series A and beyond: who writes the cheque at each stage, what they are underwriting, and why fund economics explain the behaviour.",
         learningObjectives: [
-          "Map the ladder: bootstrapped, angel, pre-seed, seed, Series A and onward",
-          "Name what each investor type needs to believe before writing the cheque",
-          "Place a real company on the ladder from its public information",
+          "Map the ladder: bootstrapped, friends and family, angel, pre-seed, seed, Series A onward",
+          "Name what each investor type is underwriting — founder, wedge, or repeatable motion",
+          "Explain how fund economics and portfolio construction shape investor behaviour",
         ],
         whyToday:
-          "Everything in this roadmap — instruments, cap tables, valuation, diligence — behaves differently at each rung of the ladder. Learning the ladder first means every later topic has a place to attach.",
+          "You can value a company with a history. Startups have none, and the first thing to understand is not a technique — it is who is putting money in, what they are afraid of, and what return they need. Everything in modules 2 and 3 is downstream of that.",
         principle: "Every stage of capital is priced for a different kind of ignorance.",
         commonMistake:
-          "Treating the stages as sizes of the same thing. A seed investor and a Series B investor are not buying different amounts of the same asset — they are pricing entirely different unknowns, which is why their processes share almost nothing.",
+          "Treating 'raising a round' as one thing. A pre-seed and a Series A are different transactions with different documents, different diligence and different buyers — and advice about one is often actively wrong for the other.",
         challenge:
-          "Pick three Indian startups you know at visibly different stages. For each, write two lines: what its most recent investors could not know, and what they must have believed instead. That sentence pair is the whole day.",
-        challengeMinutes: 30,
-        estMinutes: 60,
-        points: 25,
+          "Pick one Indian startup that has raised publicly. Reconstruct its funding history from press coverage and filings: stage, amount, lead investor, and approximate date. Then write two sentences on what changed about the company between two consecutive rounds that justified the second one.",
+        challengeMinutes: 25,
+        estMinutes: 50,
+        points: 30,
         difficulty: "intro",
         topics: [
           {
-            title: "The rungs",
+            title: "The ladder",
             detail:
-              "Bootstrapped, friends and family, angels, pre-seed and seed funds, Series A growth investors, and late-stage capital. Each has a typical cheque size, holding period and appetite for ignorance.",
+              "Bootstrapped, friends and family, angel, pre-seed, seed, Series A onward. Each has a different cheque size, a different diligence depth and a different question being asked.",
           },
           {
-            title: "What is actually being priced",
+            title: "What each investor is underwriting",
             detail:
-              "Early capital prices the unknowns — team, market, whether the thing works at all. Later capital prices the knowns — unit economics, growth rate, the path to profit. The price of ignorance falls as evidence accumulates.",
+              "An angel backs a founder, a seed fund backs a wedge, a Series A fund backs a repeatable motion. The same company is a different risk at each point.",
           },
           {
-            title: "Why stage discipline matters to an adviser",
+            title: "Fund economics and why they shape behaviour",
             detail:
-              "A company raising a seed round with Series B expectations, or the reverse, wastes months talking to the wrong investors. Diagnosing the stage correctly is the first billable judgement.",
+              "A fund returning capital in ten years cannot be patient in year eight. Portfolio construction explains most investor behaviour that looks irrational.",
           },
           {
-            title: "The Indian shape of the ladder",
+            title: "The Indian landscape",
             detail:
-              "The rungs are the same; the sizes and the players differ. Micro-VCs and syndicates fill the pre-seed gap, and family offices appear earlier than the Silicon Valley template suggests.",
+              "Domestic funds, global funds with India teams, angel networks, accelerators — and how the stages map differently here. Micro-VCs and family offices appear earlier than the Silicon Valley template suggests.",
           },
         ],
         checks: [
           {
             question:
-              "What does an early-stage investor price that a late-stage investor does not?",
+              "Why do an angel and a Series A fund value the same company differently?",
             answer:
-              "Ignorance — team, market and product risk before evidence exists. Late capital prices measurable performance instead.",
+              "They are underwriting different risks. An angel is buying conviction in a founder with almost no evidence; a Series A investor is buying a repeatable motion with evidence. Different risk, different required return, different price.",
           },
           {
-            question: "Why does misdiagnosing a company's stage waste months?",
+            question: "Why does a fund's age affect its behaviour toward your company?",
             answer:
-              "Every investor type has a stage they underwrite. Pitching the wrong type means running a process with people who were never going to say yes.",
+              "A fund near the end of its life needs realisations and cannot support a long build. The same fund is a different investor in year two and year eight.",
           },
           {
-            question: "Name the rungs of the ladder in order.",
+            question: "What is a lead investor actually providing beyond money?",
             answer:
-              "Bootstrapped, friends and family, angel, pre-seed, seed, Series A, then growth rounds onward.",
+              "Price discovery, terms, diligence others rely on, and usually a board seat. Rounds frequently stall because nobody will lead, not because nobody will participate.",
           },
         ],
         resources: [
           {
+            type: "video",
+            title: "How to Get Meetings with Investors and Raise Money",
+            url: "https://www.youtube.com/watch?v=Jzz4AEIddzY",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Jzz4AEIddzY",
+            durationSec: 2864,
+            estSizeMb: 364,
+            editorNote:
+              "A practitioner talk, not a lecture — Aaron Harris states plainly what investors are deciding at each stage. Skip the Q&A at the end.",
+          },
+          {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "Y Combinator Startup Library — fundraising essays",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The fundraising section is the anchor for this module. Read one essay on how rounds actually happen before tomorrow — the library is organised by stage, which mirrors this day.",
+              "Read two, not ten. The essays on what to do before raising are more useful than the ones on the raise itself.",
+          },
+          {
+            type: "read",
+            title: "Valuing Young, Start-up and Growth Companies — sections 1–2 only",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "The opening sections frame why conventional valuation breaks down for companies without a history. The rest of the paper is for day 15; do not read it yet.",
           },
         ],
         concepts: [
@@ -97,60 +123,65 @@ export default [
       {
         title: "Angels, syndicates and pre-seed in India",
         summary:
-          "The earliest outside money: who Indian angels are, how syndicates pool them, and what pre-seed actually buys.",
+          "The bottom rung: what an angel is actually deciding, how syndicates pool cheques, what accelerators cost, and the angel-tax history that shaped Indian practice.",
         learningObjectives: [
-          "Distinguish an angel, a syndicate and a micro-VC by incentive, not size",
-          "Describe what a pre-seed round can honestly be raised on",
-          "List what an angel's cheque buys beyond the money",
+          "State what an angel assesses when there is nothing to analyse",
+          "Explain what syndicates and accelerators do to a cap table and why",
+          "Summarise the Indian angel-tax history and how to check the current position",
         ],
         whyToday:
-          "The earliest money is the least documented and the most personal, which is exactly why an adviser needs a clear model of it — this is the stage where clients have the least idea what normal looks like.",
+          "Day 1 mapped the ladder. Today is the bottom rung — the stage where most Indian startups actually raise, and the one where a finance graduate's instincts are least useful, because there is nothing to analyse.",
         principle: "An angel is buying the founder. A Series A investor is buying the numbers.",
         commonMistake:
-          "Advising a pre-seed company to build the evidence pack a Series A needs. At this stage there are no numbers worth modelling; the materials that matter are the founder's clarity about the problem and the fastest honest route to first proof.",
+          "Applying valuation technique to a pre-seed company. A finance graduate's instinct is to build a model; the correct instinct is to assess the founder and the market and treat the price as a negotiation anchor.",
         challenge:
-          "Write the two-paragraph note you would send an angel about a company you know well: what the founder has seen that others have not, and what the next cheque proves or disproves. No metrics unless they genuinely exist.",
-        challengeMinutes: 35,
-        estMinutes: 60,
+          "Write the one-paragraph case for a startup you know, addressed to an angel. Then rewrite the same paragraph addressed to a Series A investor. The difference between them is the entire lesson. Before you finish, search for a current article on angel-tax treatment in India and note its publication date — this rule has changed repeatedly, and checking the date is the habit.",
+        challengeMinutes: 20,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Angels and their incentives",
+            title: "What an angel is deciding",
             detail:
-              "Individuals writing small cheques from their own money, often for access, learning or the founder relationship as much as return. Their diligence is judgement of the person, and it is faster and shallower by design.",
+              "With no revenue and no product, the assessment is founder, market and wedge. Financial analysis contributes almost nothing at this stage, and pretending otherwise wastes everyone's time.",
           },
           {
-            title: "Syndicates",
+            title: "Syndicates and angel networks",
             detail:
-              "A lead angel pools smaller cheques under one entity, so the cap table gets one line instead of thirty. Understand who carries the decision and who merely follows — the lead is the real investor.",
+              "How a lead angel aggregates cheques, and what that means for the cap table later. Many small holders complicate later rounds unless they are pooled into a single vehicle.",
           },
           {
-            title: "Pre-seed funds and micro-VCs",
+            title: "Accelerators",
             detail:
-              "Institutional money at angel-stage sizes. They bring process and follow-on capacity that individual angels lack, at the cost of institutional expectations arriving earlier.",
+              "What they take, what they give, and the honest calculation on whether the equity is worth it — priced for extremely high failure rates and for the value of the programme and network.",
           },
           {
-            title: "What the round is actually for",
+            title: "The Indian angel tax history",
             detail:
-              "Pre-seed buys the distance to first evidence — a build, a pilot, an early cohort. A pre-seed pitched on projections is answering a question nobody at this stage is asking.",
+              "Why the regulatory treatment of premium valuations mattered so much here, and what the current position is. Do not rely on anything older than the last budget; check the date on whatever you read.",
+          },
+          {
+            title: "What a pre-seed round looks like on paper",
+            detail:
+              "Often a SAFE-style instrument or a small priced round with light documentation. The mechanics come on day 3; today is the shape.",
           },
         ],
         checks: [
           {
-            question: "What is an angel primarily underwriting?",
+            question: "Why is financial modelling almost irrelevant at pre-seed?",
             answer:
-              "The founder — judgement of the person and their view of the problem, because there is little else to underwrite yet.",
+              "There is nothing to model. A five-year projection for a pre-revenue company is a statement of ambition, and both sides know it. The assessment is founder and market.",
           },
           {
-            question: "What does a syndicate change on the cap table?",
+            question: "What does a syndicate do to a cap table?",
             answer:
-              "Many small investors appear as one entity with one line and one decision-maker, which keeps the table clean for later rounds.",
+              "It can add many small holders, which complicates later rounds unless they are pooled into a single vehicle. Structure matters more than it appears at the time.",
           },
           {
-            question: "What should a pre-seed raise be spent proving?",
+            question: "Why do accelerators take equity at a low valuation?",
             answer:
-              "The fastest honest route to first evidence — a working product, a pilot, an early cohort — not projections.",
+              "They are pricing for extremely high failure rates across a portfolio and for the value of the programme and network. Whether that trade is good depends entirely on what the founder lacks.",
           },
         ],
         resources: [
@@ -160,7 +191,23 @@ export default [
             url: "https://www.ycombinator.com/library/4A-a-guide-to-seed-fundraising",
             sourceName: "Y Combinator",
             editorNote:
-              "The standard reference for how early rounds actually work. Read it for process and expectations; the Indian instrument specifics come on day 5.",
+              "The clearest plain-English explanation of what actually happens in an early round. Read it for investor psychology today; the instrument mechanics come on day 3.",
+          },
+          {
+            type: "read",
+            title: "Stripe Atlas guides",
+            url: "https://stripe.com/atlas/guides",
+            sourceName: "Stripe Atlas",
+            editorNote:
+              "Written for founders rather than lawyers, and unusually practical. Skim the equity and fundraising guides — they are the calm counterweight to fundraising folklore.",
+          },
+          {
+            type: "read",
+            title: "Indian Angel Network",
+            url: "https://iangroup.vc/",
+            sourceName: "IAN Group",
+            editorNote:
+              "An Indian angel network's public face. Find the screening and funding process pages — seeing the actual process is more instructive than a description of it.",
           },
         ],
         concepts: [
@@ -170,61 +217,67 @@ export default [
       {
         title: "SAFEs and convertible notes",
         summary:
-          "The instruments that let a round happen without agreeing a valuation — and what that deferral costs later.",
+          "The instruments that defer the valuation argument: caps, discounts, pre- versus post-money SAFEs, and why India usually implements the economics differently.",
         learningObjectives: [
-          "Explain a SAFE's cap and discount, and how they interact",
+          "Explain a SAFE's cap and discount, and compute which one applies at conversion",
           "Distinguish a SAFE from a convertible note — interest, maturity, and what each implies",
-          "State what conversion at the next round will actually do to ownership",
+          "Tell a pre-money SAFE from a post-money SAFE and state who each dilutes",
         ],
         whyToday:
-          "SAFEs are now the default early instrument, and they are systematically misunderstood by people trained on priced equity. An adviser who cannot walk a founder through conversion arithmetic is decoration in the room.",
+          "This is the most common early-stage instrument and the one most misunderstood by people with a finance background — because it is neither debt nor equity while it is outstanding, and its effect only appears at conversion.",
         principle:
           "A convertible instrument defers the valuation argument. It does not remove it.",
         commonMistake:
-          "Reading the cap as the valuation. A cap is a ceiling on the conversion price, not a price — a company that raises on a ₹40 crore cap has not been valued at ₹40 crore, and founders who believe otherwise get two surprises at the priced round: the real number, and the dilution.",
+          "Modelling a SAFE as debt because it looks like an instrument. It is not repaid and carries no interest — it is a future equity claim, and its only real effect appears on the cap table at conversion, which is exactly what module 2 is about.",
         challenge:
-          "Take a SAFE with both a cap and a discount. Write down, in words before arithmetic, which one binds when the next round prices high, and which when it prices low. Then check yourself with numbers. Day 12 will make you do this in a live cap table.",
-        challengeMinutes: 40,
-        estMinutes: 75,
-        points: 30,
+          "A founder raises ₹2 crore on a SAFE with a ₹20 crore post-money cap and a 20% discount. The next round prices at ₹40 crore pre-money. Calculate the SAFE holder's ownership at conversion under both the cap and the discount, and state which applies. Then redo it with a pre-money cap and note what changed.",
+        challengeMinutes: 30,
+        estMinutes: 55,
+        points: 35,
         difficulty: "core",
         topics: [
           {
             title: "What a SAFE is",
             detail:
-              "A simple agreement for future equity: money now, shares later, priced by the next round subject to a cap and/or discount. No interest, no maturity date, no debt on the balance sheet.",
-          },
-          {
-            title: "Cap and discount",
-            detail:
-              "The discount rewards early risk with a better price than the next round; the cap protects the investor if the company takes off. The investor converts at whichever gives them more shares.",
+              "A right to future equity, not a loan. No interest, no maturity, no repayment — money now, shares later, priced by the next round subject to a cap and/or discount.",
           },
           {
             title: "Convertible notes",
             detail:
-              "Debt that intends to convert: carries interest and a maturity date, which means a company that fails to raise faces a repayable loan. The note's mechanics matter most when things go badly.",
+              "Debt that converts. Interest, a maturity date, and a legal obligation if it matures without a round — the note's mechanics matter most when things go badly.",
           },
           {
-            title: "Why the deferral is not free",
+            title: "The cap and the discount",
             detail:
-              "Stacked SAFEs at different caps convert together at the priced round, and the combined dilution lands at once. The argument that was deferred happens anyway — with compound interest in complexity.",
+              "The cap rewards early risk and is the single most negotiated term; the discount guarantees a better price than the next round. The investor takes whichever of the two is better.",
+          },
+          {
+            title: "Pre-money versus post-money SAFEs",
+            detail:
+              "A change that shifted dilution meaningfully toward the founders' cost, and which many people still get wrong. A post-money SAFE fixes the investor's percentage; under pre-money SAFEs the holders diluted each other.",
+          },
+          {
+            title: "Why India often uses CCPS or CCD instead",
+            detail:
+              "The economics translate; the instrument does not. Day 5 is entirely about what changes when the same deal is papered under Indian law.",
           },
         ],
         checks: [
           {
-            question: "Is a SAFE's cap the company's valuation?",
+            question:
+              "A SAFE has a ₹20 crore cap and a 20% discount, and the round prices at ₹22 crore. Which applies?",
             answer:
-              "No. It is a ceiling on the conversion price. The valuation argument is deferred to the priced round, not settled.",
+              "Compare both and take the more favourable to the investor. At ₹22 crore, the 20% discount gives an effective ₹17.6 crore, which beats the ₹20 crore cap. The discount applies.",
           },
           {
-            question: "When does the discount bind rather than the cap?",
+            question: "What happens to a convertible note that reaches maturity with no round?",
             answer:
-              "When the next round prices low enough that the discounted price is below the cap-implied price. High next-round prices make the cap bind.",
+              "It becomes due. In practice it is usually extended or converted by negotiation, but the legal position is that the company owes money — which is why notes carry risk a SAFE does not.",
           },
           {
-            question: "What does a convertible note have that a SAFE does not?",
+            question: "Why did post-money SAFEs change the dilution picture?",
             answer:
-              "Interest and a maturity date — it is debt until it converts, which matters exactly when the company cannot raise.",
+              "A post-money SAFE fixes the investor's percentage regardless of how many other SAFEs are issued, so subsequent SAFEs dilute the founder rather than the earlier investor. Under pre-money SAFEs, the SAFE holders diluted each other.",
           },
           {
             question:
@@ -243,7 +296,26 @@ export default [
             url: "https://www.ycombinator.com/documents",
             sourceName: "Y Combinator",
             editorNote:
-              "The original instrument, from its author, with the current templates and the user guide. Read the postmoney SAFE user guide — it is short and it is the actual contract, not a summary of one.",
+              "Read the actual document. It is short, and reading the instrument rather than a description of it is the point of today. The post-money Safe user guide is the piece to start with.",
+          },
+          {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "Kirsty Nathoo works through the arithmetic on screen — the single most useful free video on this subject. Watch the SAFE half today; the priced-round half is day 4's.",
+          },
+          {
+            type: "read",
+            title: "Pre-money vs. post-money SAFEs",
+            url: "https://carta.com/learn/startups/fundraising/convertible-securities/pre-money-vs-post-money-safes/",
+            sourceName: "Carta",
+            editorNote:
+              "Understand which one you are looking at before you calculate anything. The difference is not cosmetic — it decides who dilutes whom.",
           },
         ],
         concepts: [
@@ -253,70 +325,101 @@ export default [
       {
         title: "Priced equity rounds",
         summary:
-          "The first time everyone must agree on a number — shares, price, and the terms that ride along.",
+          "The first time somebody has to be specific: a valuation, a share price, a new share class, the full document set — and the option pool timing that quietly moves the price.",
         learningObjectives: [
-          "Walk the mechanics: pre-money, price per share, new shares issued",
-          "Read the headline terms that accompany the price — preference, anti-dilution, pro rata",
-          "Explain why the term sheet's non-price terms move value as much as the price does",
+          "Walk the arithmetic: pre-money, post-money, price per share, investor percentage",
+          "Quantify what the option pool's timing does to the effective price",
+          "Name the document set — term sheet, subscription agreement, shareholders' agreement — and what each governs",
         ],
         whyToday:
-          "The priced round is where every deferred argument lands and every term gets specific. It is also where the vocabulary of the next four weeks — pre-money, preference, pool — is fixed, so it has to arrive before the cap table work.",
+          "Convertibles defer the valuation. A priced round forces it, along with a full set of terms, real diligence and legal documentation. This is where your existing valuation training starts to matter again.",
         principle: "A priced round is the first time somebody has to be specific.",
         commonMistake:
-          "Negotiating the valuation and waving the terms through. A higher price with a participating preference and full-ratchet anti-dilution can be worth less to founders than a lower clean price — the price is one term among several that move value.",
+          "Negotiating hard on valuation and accepting the option pool and preference terms as standard. The pool shift and the preference structure frequently move more economics than the headline number does.",
         challenge:
-          "Take one public term sheet template and list every term that transfers value or control at a given price. For each, write one line on who it protects and against what. Keep the list — module 2 turns it into arithmetic.",
-        challengeMinutes: 40,
-        estMinutes: 65,
+          "A company raises ₹10 crore at ₹40 crore pre-money. Calculate post-money, the investor's percentage, and the founder's dilution. Then redo it requiring a 10% post-money option pool created before the round, and quantify who paid for the pool.",
+        challengeMinutes: 25,
+        estMinutes: 55,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The mechanics",
+            title: "What a priced round involves",
             detail:
-              "Agree a pre-money, divide by fully-diluted shares to get a price, issue new shares for the investment. Post-money is pre-money plus the cash in. The arithmetic is trivial; the inputs are the negotiation.",
+              "A valuation, a share price, a new class of shares, and a substantial document set. Post-money equals pre-money plus the raise; the investor's percentage is the raise divided by post-money.",
           },
           {
-            title: "Liquidation preference",
+            title: "The share price mechanic and the pool",
             detail:
-              "The investor's money comes back first in an exit. 1x non-participating is standard; anything more shifts real value away from common shares in every modest outcome.",
+              "Price per share is pre-money divided by fully-diluted shares — and the option pool's timing changes the denominator. A pool created pre-money comes out of existing shareholders and lowers the effective price the investor pays.",
           },
           {
-            title: "Anti-dilution",
+            title: "Preferred versus ordinary shares",
             detail:
-              "Protection if a later round prices lower. Broad-based weighted average is the reasonable form; a full ratchet reprices the whole round to the down-round price and is a red flag.",
+              "What preference actually buys: the money back first in a modest exit, plus the protective terms that ride along. With a 1x preference and an exit near the last valuation, preferred can take most of the proceeds.",
           },
           {
-            title: "Control terms",
+            title: "The document set",
             detail:
-              "Board seats, veto rights, pro rata, drag and tag. These decide who must agree to what later, and they outlast the money.",
+              "Term sheet, share subscription agreement, shareholders' agreement — and what each governs. The term sheet is short and mostly non-binding; the agreements are where the terms acquire teeth.",
+          },
+          {
+            title: "Diligence at this stage",
+            detail:
+              "Corporate records, financials, contracts, IP, compliance — and why it takes longer than founders expect. Module 6 teaches you to run this from the investor's side.",
           },
         ],
         checks: [
           {
-            question: "How is the price per share in a round derived?",
-            answer:
-              "Pre-money valuation divided by fully-diluted shares outstanding before the round.",
+            question: "₹10 crore raised at ₹40 crore pre-money. What percentage does the investor own?",
+            answer: "Post-money is ₹50 crore, so the investor owns 20%.",
           },
           {
-            question: "What does a 1x non-participating preference mean at exit?",
+            question: "Why does the timing of the option pool matter?",
             answer:
-              "The investor takes back their money first, or converts and takes their ownership share — whichever is worth more, not both.",
+              "A pool created pre-money comes out of the existing shareholders' stake and lowers the effective price the investor pays. Created post-money, everyone including the new investor is diluted. It is a real economic term disguised as an administrative one.",
           },
           {
-            question: "Why can a higher valuation be a worse deal?",
+            question: "What does a liquidation preference actually do in a modest exit?",
             answer:
-              "Because non-price terms — participation, ratchets, vetoes — can transfer more value than the price difference adds.",
+              "It determines who gets paid first. With a 1x preference and an exit near the last valuation, preferred holders can take most or all of the proceeds before ordinary shareholders see anything.",
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "Term Sheet series — wrap-up and index",
+            url: "https://feld.com/archives/2005/08/term-sheet-series-wrap-up/",
+            sourceName: "Brad Feld",
+            editorNote:
+              "He wrote a post per term, free, and it remains the clearest walkthrough available. The book Venture Deals covers the same ground and is paid; the blog series is not.",
+          },
+          {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds — the priced-round half",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "Continues from day 3 — Kirsty Nathoo shows the arithmetic for a priced round on screen, including the pool shuffle you just calculated by hand.",
+          },
           {
             type: "read",
             title: "Term sheets — Carta's guide",
             url: "https://carta.com/learn/startups/fundraising/term-sheets/",
             sourceName: "Carta",
             editorNote:
-              "Plain-language walkthrough of the terms that ride with the price. Read it against today's challenge list — every term you missed is one a founder will miss too.",
+              "Plain-language walkthrough of the terms that ride with the price. Read actual clause language wherever it quotes any — the clause teaches more than the summary.",
+          },
+          {
+            type: "read",
+            title: "Damodaran's data page — industry multiples",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "You will need a reference for what sectors trade at. His data is free, annual and used across the industry. Bookmark it now; you will use it properly in module 3.",
           },
         ],
         concepts: [
@@ -327,64 +430,78 @@ export default [
       {
         title: "Indian instruments — CCPS and CCD",
         summary:
-          "What Indian venture rounds actually use, and why the Silicon Valley template reads differently here.",
+          "What Indian venture rounds actually use, the FEMA layer that explains why, and the valuation certificate nobody mentions until it blocks a closing.",
         learningObjectives: [
-          "Explain what CCPS and CCD are and why Indian rounds use them",
-          "Map SAFE-style economics onto the Indian instruments that implement them",
-          "Name the regulatory constraints that shape Indian structures — pricing guidelines, conversion, FDI",
+          "Explain why CCPS dominates Indian rounds and when a CCD is used instead",
+          "Name the FEMA constraints a foreign investor brings — pricing, sectoral caps, reporting",
+          "State what a valuation certificate is for and who can give one",
         ],
         whyToday:
-          "Every template, essay and course in this field assumes Delaware. Indian deals run on compulsorily convertible instruments under Indian company and exchange-control law, and an adviser who only knows the template mistranslates real documents.",
+          "Almost every free resource on startup fundraising is American. If you are advising Indian companies, the instruments, the regulator and the constraints are different — and this is the day that gap gets closed.",
         principle:
           "The Indian structure differs from the Silicon Valley template, and the template is what everyone reads.",
         commonMistake:
-          "Calling an Indian pre-seed instrument a SAFE because the term sheet borrowed the word. The Indian implementation is typically a CCPS or CCD with SAFE-like economics bolted on, and the differences — compulsory conversion, pricing rules, what happens on failure — are precisely where deals go wrong.",
+          "Reading American fundraising material and assuming it applies. The economics translate; the instruments, the regulator and the timeline do not.",
         challenge:
-          "Write a half-page brief for a founder titled 'you are not signing a SAFE': what the CCPS in front of them shares with the template they read about, and the three places it differs. Precision here is the deliverable — this is an adviser's actual artefact.",
-        challengeMinutes: 45,
-        estMinutes: 70,
+          "Find one funded Indian startup's MCA filings. Identify the instrument used, the number of shares, and the price. Then write three sentences on why that instrument was chosen over ordinary equity.",
+        challengeMinutes: 25,
+        estMinutes: 45,
         points: 30,
         difficulty: "stretch",
         topics: [
           {
-            title: "CCPS",
+            title: "Why CCPS is the standard Indian instrument",
             detail:
-              "Compulsorily convertible preference shares: preference economics now, mandatory conversion to equity later on agreed terms. The workhorse of Indian priced rounds.",
+              "Compulsorily convertible preference shares: preference economics now, mandatory conversion later — and the regulatory reasons they dominate here. Optionally convertible instruments are treated as debt under FEMA.",
           },
           {
-            title: "CCD",
+            title: "CCDs",
             detail:
-              "Compulsorily convertible debentures: debt-shaped on paper, but conversion is mandatory, which is what keeps foreign investment rules satisfied. Used where note-like staging is wanted.",
+              "Compulsorily convertible debentures — debt-shaped on paper, mandatory conversion in law, used where note-like staging is wanted while keeping foreign-investment rules satisfied.",
           },
           {
-            title: "Why 'compulsorily' matters",
+            title: "FEMA and foreign investment",
             detail:
-              "Foreign investment in optionally convertible instruments is treated as debt under Indian exchange-control rules. Compulsory conversion is what makes the instrument equity for FDI purposes — the word is doing regulatory work.",
+              "Pricing guidelines, sectoral caps, and the reporting obligations that follow a foreign round. A round that would be simple domestically acquires a compliance layer and a calendar.",
           },
           {
-            title: "Where the template misleads",
+            title: "Why plain SAFEs are less common in India",
             detail:
-              "US essays assume the instrument can simply sit until conversion. Indian instruments carry statutory pricing, timing and filing requirements, and the adviser is the person expected to know that.",
+              "The template instrument does not fit the regulatory frame, so SAFE-like economics get papered as CCPS or CCD — with compulsory conversion, statutory pricing and filing requirements the template never mentions.",
+          },
+          {
+            title: "Valuation certificates",
+            detail:
+              "In certain transactions a merchant banker or registered valuer must support the price at which shares are issued. The valuation must be defensible to someone other than the parties.",
           },
         ],
         checks: [
           {
-            question: "Why do Indian rounds use compulsorily convertible instruments?",
+            question: "Why 'compulsorily' convertible?",
             answer:
-              "Optionally convertible instruments count as debt under exchange-control rules; compulsory conversion makes them equity for foreign-investment purposes.",
+              "Optionally convertible instruments are treated as debt under FEMA and attract external commercial borrowing rules. Compulsory conversion makes it equity for regulatory purposes.",
           },
           {
-            question: "What is a CCPS, in one sentence?",
+            question: "What does a valuation certificate do?",
             answer:
-              "A preference share that must convert to equity on agreed terms — preference economics now, common equity later.",
+              "It supports the price at which shares are issued, which regulators require in certain transactions. The valuation must be defensible to someone other than the parties.",
           },
           {
-            question: "Name one way an Indian 'SAFE' differs from the YC template.",
+            question: "Why does a foreign investor's presence change the process?",
             answer:
-              "It is implemented as a CCPS or CCD, so it carries compulsory conversion and statutory pricing and filing requirements the template does not mention.",
+              "FEMA pricing guidelines, sectoral caps and reporting obligations apply. A round that would be simple domestically acquires a compliance layer.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "FEMA — notifications and provisions",
+            url: "https://www.rbi.org.in/Scripts/Fema.aspx",
+            sourceName: "Reserve Bank of India",
+            editorNote:
+              "The primary source. Dense, but the pricing guidelines for foreign investment are the part that binds a real transaction — find them, and note the notification date. Today's challenge sends you to the MCA portal yourself; its site blocks automated checks, so no direct link here.",
+          },
+        ],
         concepts: [
           "funding-instruments",
         ],
@@ -392,74 +509,105 @@ export default [
       {
         title: "Debt, venture debt and revenue-based finance",
         summary:
-          "The non-dilutive layer: when borrowing beats selling equity, and the month that logic inverts.",
+          "The non-dilutive layer: what venture debt costs including the warrants, what RBF really charges, and the covenant that matters more than the rate.",
         learningObjectives: [
-          "Place bank debt, venture debt and RBF against equity on dilution and downside",
-          "Explain what venture debt lenders actually underwrite",
-          "State when each instrument is the right answer — and complete the module's comparison page",
+          "Explain what venture debt lenders underwrite and why warrants ride along",
+          "Compute the effective annualised cost of a revenue-based financing offer",
+          "State when debt is the right answer, when it is not, and complete the module's comparison page",
         ],
         whyToday:
-          "The module closes by completing the picture: not everything is equity. The deliverable — five instruments on one page — only works once debt is on it, because debt is the column that makes dilution visible by contrast.",
+          "Equity is not the only option, and knowing when debt is appropriate is part of advising well. It also closes the ladder: you now know every instrument a startup might use.",
         principle: "Debt is cheaper until the month it is not available.",
         commonMistake:
-          "Comparing debt to equity on cost alone. Debt is almost always cheaper on paper; the comparison that matters is behaviour in the bad months — equity absorbs a bad quarter, debt arrives with covenants and repayment exactly when cash is short.",
+          "Comparing debt and equity on cost alone. Debt is cheaper on every spreadsheet and carries a repayment obligation that equity does not — and the relevant question is what happens in the bad case, not the base case.",
         challenge:
-          "Finish the module deliverable: one page, five instruments — angel equity, SAFE/convertible, priced round, venture debt, RBF — scored on dilution, control, downside behaviour, and when each is the right answer. This page is a real adviser artefact; keep it.",
-        challengeMinutes: 50,
-        estMinutes: 60,
-        points: 25,
+          "A startup with ₹4 crore ARR is offered ₹3 crore of venture debt at 14% over 24 months with 1% warrants, or an equity round of ₹3 crore at ₹30 crore pre-money. Model both. Calculate the founder's ownership under each and state the conditions under which each is the better choice. Then finish the module deliverable: all five instruments on one page — dilution, control, downside, and when each is the right answer.",
+        challengeMinutes: 30,
+        estMinutes: 45,
+        points: 35,
         difficulty: "core",
         topics: [
           {
             title: "Venture debt",
             detail:
-              "Loans to venture-backed companies, underwriting the equity investors' likelihood of funding again more than the company's cash flows. Typically follows a round rather than replacing one.",
+              "What it is, who provides it in India, and what it costs including warrants. Lenders underwrite the equity investors' willingness to fund again more than the company's cash flows.",
           },
           {
-            title: "Revenue-based finance",
+            title: "When debt makes sense — and when it does not",
             detail:
-              "Repayment as a share of revenue until a cap is reached. Non-dilutive and self-adjusting to good and bad months — priced accordingly.",
+              "Extending runway between rounds, financing working capital, avoiding dilution at a low valuation. Not pre-revenue, not on unpredictable cash flows, and never as a substitute for a round that will not happen.",
           },
           {
-            title: "The downside column",
+            title: "Revenue-based financing",
             detail:
-              "Equity's worst case is dilution; debt's worst case is default at the worst possible moment. The comparison page must include the bad month, or it flatters debt.",
+              "Repayment as a share of revenue until a cap is reached — self-adjusting to good and bad months, and frequently more expensive in effective terms than it looks. Calculate it; do not read it off the brochure.",
           },
           {
-            title: "The adviser's question",
+            title: "Working capital facilities and invoice discounting",
             detail:
-              "Not 'which is cheapest' but 'which failure can this company survive'. That framing is what the one-pager should teach its reader.",
+              "The unglamorous instruments that solve real problems — often the right answer for a company whose problem is timing, not capital.",
+          },
+          {
+            title: "The covenant risk",
+            detail:
+              "Breaching a covenant can trigger acceleration at exactly the moment the company cannot repay. The covenant matters more than the rate, and it belongs on the comparison page's downside column.",
           },
         ],
         checks: [
           {
-            question: "What does a venture debt lender primarily underwrite?",
+            question: "Why do venture debt providers take warrants?",
             answer:
-              "The likelihood that the company's equity investors fund it again — the next round is the repayment source, more than operations.",
+              "The interest rate alone does not compensate for the risk of lending to an unprofitable company. Warrants give upside exposure if the company succeeds.",
           },
           {
-            question: "How does revenue-based finance behave in a bad month?",
+            question:
+              "Why is venture debt usually raised alongside or just after equity, rather than instead of it?",
             answer:
-              "Repayment falls with revenue, because it is a percentage of it — which is the feature being paid for.",
+              "Lenders underwrite the equity investors' willingness to fund again. A company with no recent round and no clear next one is a much harder credit.",
           },
           {
-            question: "Why is 'debt is cheaper' an incomplete comparison?",
+            question: "What is the real risk of a covenant in a startup facility?",
             answer:
-              "It compares the good months only. Debt's cost includes its behaviour when cash is short — covenants, repayment, and unavailability exactly when needed.",
+              "Breaching one can trigger acceleration at exactly the moment the company cannot repay. The covenant matters more than the rate.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "Trifecta Capital",
+            url: "https://www.trifectacapital.in/",
+            sourceName: "Trifecta Capital",
             editorNote:
-              "Search the library's fundraising section for its venture debt and alternative financing pieces — the library reorganises too often to deep-link reliably, and the hub is one click from each.",
+              "An Indian venture debt provider explaining its own product. Read what they say they underwrite, then compare it with Alteria below — where the two differ is where the terms actually vary.",
+          },
+          {
+            type: "read",
+            title: "Alteria Capital",
+            url: "https://alteriacapital.com/",
+            sourceName: "Alteria Capital",
+            editorNote:
+              "The second provider — reading two of them shows you where the terms actually vary. Between the two sites you can reconstruct a realistic term sheet for today's challenge.",
+          },
+          {
+            type: "read",
+            title: "First Round Review",
+            url: "https://review.firstround.com/",
+            sourceName: "First Round Review",
+            editorNote:
+              "Search the Review for its financing and venture debt pieces — the investor's perspective on when debt helps and when it accelerates a failure. Deep links rot here; the hub is one search away from each.",
+          },
+          {
+            type: "read",
+            title: "Damodaran's data page — cost of capital by sector",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "You know cost of capital from your degree. Revisit it specifically for a company with no stable cash flows, where the standard framework strains — his sector data shows what the market charges for that risk.",
           },
         ],
         concepts: [
           "funding-instruments",
+          "cost-of-capital",
         ],
       },
     ],

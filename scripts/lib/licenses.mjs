@@ -69,6 +69,12 @@ export const BY_HOST = {
   "bseindia.com": assumed(),
   "bsesme.com": assumed(),
   "stripe.com": assumed(),
+  "feld.com": assumed(), // Brad Feld's term-sheet series — free to read, rights reserved
+  "rbi.org.in": assumed(), // Indian government works are NOT public domain like US federal works
+  "iangroup.vc": assumed(), // Indian Angel Network (indianangelnetwork.com redirects here)
+  "firstround.com": assumed(),
+  "trifectacapital.in": assumed(),
+  "alteriacapital.com": assumed(),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),
