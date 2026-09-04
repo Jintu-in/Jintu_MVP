@@ -11,6 +11,7 @@ import otherExtended from "./other-extended";
 import marketingExtended from "./marketing-extended";
 import design from "./design";
 import operations from "./operations";
+import finance from "./finance";
 import comparisons from "./comparisons";
 import { ROLE_DOMAINS, type Comparison, type Role, type RoleDomain } from "./types";
 
@@ -36,6 +37,7 @@ export const ROLES: Role[] = [
   ...marketingExtended,
   ...design,
   ...operations,
+  ...finance,
   ...otherExtended,
 ];
 

@@ -1,0 +1,116 @@
+{
+  "_note": "Finance concepts for the concept graph, plus one real user profile mapped onto them. This is the first genuine test of skip-what-you-know: a PGDM Finance graduate who has declared exactly what they know and exactly what they need.",
+
+  "concepts": [
+    { "slug": "time-value-of-money", "title": "Time value of money", "summary": "Discounting and compounding — the arithmetic underneath every valuation.", "prereqs": [] },
+    { "slug": "financial-statements", "title": "Reading the three statements", "summary": "P&L, balance sheet and cash flow, and how they connect.", "prereqs": [] },
+    { "slug": "ratio-analysis", "title": "Ratio analysis", "summary": "Profitability, liquidity, leverage and efficiency ratios and what they hide.", "prereqs": ["financial-statements"] },
+    { "slug": "cost-of-capital", "title": "Cost of capital and WACC", "summary": "What a business must earn to justify its funding.", "prereqs": ["time-value-of-money"] },
+    { "slug": "capital-structure", "title": "Capital structure", "summary": "Debt versus equity and the trade-offs.", "prereqs": ["cost-of-capital"] },
+    { "slug": "working-capital", "title": "Working capital management", "summary": "Cash tied up in operations and how it moves.", "prereqs": ["financial-statements"] },
+    { "slug": "capital-budgeting", "title": "Capital budgeting", "summary": "NPV, IRR, payback and profitability index, and where each misleads.", "prereqs": ["time-value-of-money"] },
+    { "slug": "three-statement-model", "title": "Three-statement modelling", "summary": "A linked model that balances and reconciles to cash.", "prereqs": ["financial-statements", "capital-budgeting"] },
+    { "slug": "dcf-valuation", "title": "DCF valuation", "summary": "Forecast free cash flow, discount it, add a terminal value.", "prereqs": ["cost-of-capital", "three-statement-model"] },
+    { "slug": "comparable-company-analysis", "title": "Comparable company analysis", "summary": "Trading and transaction multiples, and choosing a defensible peer set.", "prereqs": ["ratio-analysis"] },
+    { "slug": "enterprise-vs-equity-value", "title": "Enterprise versus equity value", "summary": "The bridge, and the mistakes people make crossing it.", "prereqs": ["dcf-valuation"] },
+    { "slug": "risk-return-capm", "title": "Risk, return and CAPM", "summary": "Beta, the risk-free rate and the equity risk premium.", "prereqs": ["time-value-of-money"] },
+    { "slug": "portfolio-diversification", "title": "Portfolio construction", "summary": "Correlation, diversification and the efficient frontier.", "prereqs": ["risk-return-capm"] },
+    { "slug": "mergers-acquisitions", "title": "M&A basics", "summary": "Deal structures, synergies and accretion-dilution.", "prereqs": ["dcf-valuation", "comparable-company-analysis"] },
+
+    { "slug": "funding-ladder", "title": "The funding ladder", "summary": "Bootstrapped, angel, pre-seed, seed, Series A onward — who invests at each stage and why.", "prereqs": [] },
+    { "slug": "funding-instruments", "title": "Funding instruments", "summary": "SAFEs, convertible notes, priced equity rounds, CCPS and CCD in the Indian context.", "prereqs": ["funding-ladder"] },
+    { "slug": "cap-table-dilution", "title": "Cap tables and dilution", "summary": "Who owns what, and what a round does to that. Pre-money versus post-money.", "prereqs": ["funding-instruments"] },
+    { "slug": "esop-pools", "title": "ESOP pools", "summary": "How option pools are sized, when they are created, and who is diluted by them.", "prereqs": ["cap-table-dilution"] },
+    { "slug": "term-sheets", "title": "Term sheets", "summary": "Liquidation preference, anti-dilution, pro rata, board composition, drag and tag.", "prereqs": ["funding-instruments"] },
+    { "slug": "startup-valuation", "title": "Valuing a company with no cash flows", "summary": "Why textbook DCF fails on startups and what replaces it — scorecard, Berkus, VC method, revenue multiples.", "prereqs": ["dcf-valuation", "comparable-company-analysis"] },
+    { "slug": "unit-economics", "title": "Unit economics", "summary": "CAC, LTV, contribution margin, payback period — and how each is gamed.", "prereqs": ["financial-statements"] },
+    { "slug": "saas-metrics", "title": "SaaS and subscription metrics", "summary": "MRR, ARR, gross and net revenue retention, logo churn, magic number.", "prereqs": ["unit-economics"] },
+    { "slug": "traction-metrics", "title": "Traction and cohort analysis", "summary": "What an investor actually looks at, and what a growth chart conceals.", "prereqs": ["unit-economics"] },
+    { "slug": "pitch-deck", "title": "The pitch deck", "summary": "The ten or eleven slides, what each must prove, and the order investors read them in.", "prereqs": ["funding-ladder", "unit-economics"] },
+    { "slug": "startup-financial-model", "title": "The model behind the deck", "summary": "A driver-based operating model an investor can interrogate without breaking.", "prereqs": ["three-statement-model", "unit-economics"] },
+    { "slug": "due-diligence-financial", "title": "Financial due diligence", "summary": "Quality of revenue, quality of earnings, working capital normalisation, the data room.", "prereqs": ["financial-statements", "ratio-analysis"] },
+    { "slug": "due-diligence-commercial", "title": "Commercial and founder diligence", "summary": "Market sizing, competition, founder assessment, reference calls.", "prereqs": ["traction-metrics"] },
+    { "slug": "market-sizing", "title": "Market sizing", "summary": "TAM, SAM, SOM built bottom-up rather than borrowed from a report.", "prereqs": [] },
+
+    { "slug": "sme-ipo-framework", "title": "The SME IPO route in India", "summary": "NSE Emerge and BSE SME — eligibility, migration to the main board, and why an SME lists at all.", "prereqs": ["financial-statements"] },
+    { "slug": "drhp-structure", "title": "Reading a DRHP", "summary": "What each section contains, where the risk factors actually matter, and how to read one critically.", "prereqs": ["sme-ipo-framework"] },
+    { "slug": "ipo-process", "title": "The IPO process end to end", "summary": "Merchant banker, due diligence, filing, book building, listing, and the timeline.", "prereqs": ["drhp-structure"] },
+    { "slug": "regulatory-sebi", "title": "The SEBI regulatory layer", "summary": "ICDR regulations, disclosure obligations, and where the rules bind an adviser.", "prereqs": ["sme-ipo-framework"] },
+
+    { "slug": "excel-lookup", "title": "Lookup and reference functions", "summary": "XLOOKUP, INDEX/MATCH, dynamic arrays.", "prereqs": [] },
+    { "slug": "excel-conditional-aggregation", "title": "Conditional aggregation", "summary": "SUMIFS, COUNTIFS, AVERAGEIFS with multiple criteria.", "prereqs": [] },
+    { "slug": "excel-pivot", "title": "Pivot tables", "summary": "Calculated fields, slicers, date hierarchies.", "prereqs": [] },
+    { "slug": "excel-error-handling", "title": "Error handling in models", "summary": "IFERROR, IFNA, and error handling that reveals rather than hides.", "prereqs": [] },
+    { "slug": "excel-scenario-analysis", "title": "Scenario and sensitivity analysis", "summary": "Data tables, Goal Seek, Scenario Manager.", "prereqs": ["excel-conditional-aggregation"] },
+    { "slug": "excel-power-query", "title": "Power Query", "summary": "Repeatable imports and transformations instead of manual cleanup.", "prereqs": ["excel-pivot"] },
+    { "slug": "excel-dashboards", "title": "Dashboards and model presentation", "summary": "A model someone else can read and interrogate.", "prereqs": ["excel-pivot", "excel-scenario-analysis"] },
+    { "slug": "model-audit", "title": "Auditing someone else's model", "summary": "Finding hardcodes, circular references, broken sum ranges and sign errors.", "prereqs": ["three-statement-model", "excel-error-handling"] }
+  ],
+
+  "user_profile_example": {
+    "_note": "A real potential customer. PGDM Finance graduate joining startup and SME advisory work. Declared knowledge and gaps taken verbatim from what they told us.",
+
+    "background": "PGDM, Finance specialisation. Excel-based financial models and valuation projects during the course. Heading into startup fundraising and SME IPO advisory.",
+
+    "declared_known": [
+      "time-value-of-money",
+      "financial-statements",
+      "ratio-analysis",
+      "cost-of-capital",
+      "capital-structure",
+      "working-capital",
+      "capital-budgeting",
+      "three-statement-model",
+      "dcf-valuation",
+      "comparable-company-analysis",
+      "enterprise-vs-equity-value",
+      "risk-return-capm",
+      "portfolio-diversification",
+      "mergers-acquisitions"
+    ],
+
+    "declared_gaps": [
+      "funding-ladder",
+      "funding-instruments",
+      "cap-table-dilution",
+      "term-sheets",
+      "startup-valuation",
+      "pitch-deck",
+      "due-diligence-financial",
+      "due-diligence-commercial",
+      "sme-ipo-framework",
+      "drhp-structure",
+      "excel-lookup",
+      "excel-conditional-aggregation",
+      "excel-pivot",
+      "excel-scenario-analysis",
+      "excel-dashboards"
+    ],
+
+    "gaps_they_did_not_name_but_need": [
+      "esop-pools",
+      "unit-economics",
+      "saas-metrics",
+      "traction-metrics",
+      "startup-financial-model",
+      "market-sizing",
+      "ipo-process",
+      "regulatory-sebi",
+      "model-audit",
+      "excel-power-query",
+      "excel-error-handling"
+    ],
+
+    "_gap_commentary": "They asked for 'valuation revision' and 'advanced Excel'. What they actually lack is the startup-specific layer: unit economics, cap table mechanics, ESOP dilution, and the ability to audit a model rather than build one. A finance graduate advising startups will spend more time finding errors in a founder's model than building their own — and that skill is not taught in a PGDM.",
+
+    "target_roles": ["venture-capital-analyst", "investment-banking-analyst", "startup-cfo", "transaction-advisory-analyst"],
+
+    "what_jintu_offers_today": {
+      "excel-at-work": "Covers most of their Excel gaps directly — 20 days.",
+      "thinking-under-uncertainty": "Relevant to diligence judgement and base rates — 24 days.",
+      "writing-clearly": "Not built yet. Directly relevant: investment memos and pitch narrative."
+    },
+
+    "the_honest_answer": "Jintu has no finance roadmap. Excel at work covers roughly a third of what they need. The startup finance and SME IPO material — which is the majority of their stated gap and the whole of their job — does not exist yet."
+  }
+}

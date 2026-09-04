@@ -289,6 +289,64 @@ const comparisons: Comparison[] = [
       "We have no design roadmap yet, and we would rather say so than pad this page. If you want one, the request box on the catalogue is the signal we build from.",
     ],
   },
+
+  {
+    slug: "investing-roles",
+    title: "Investment banking vs VC vs private equity vs equity research vs transaction advisory",
+    domain: "finance",
+    standfirst: "Five desks that all sound like 'working with investments', and share almost nothing day to day.",
+    shortAnswer:
+      "Bankers advise on transactions and earn fees. VCs buy minority stakes in young companies and underwrite growth. PE buys control of profitable companies and underwrites cash flows. Equity research publishes a public view with a target price. Transaction advisory does the diligence a buyer prices from. Only the fund seats take the risk; everyone else advises.",
+    rows: [
+      {
+        role: "investment-banking-analyst",
+        label: "Investment banking",
+        owns: "The transaction — models, books, process. Paid in fees at completion.",
+        doesNotOwn: "The investment outcome. The deal closing is the finish line.",
+        tell: "The hours are the reputation, and the comment sheet arrives at 1am.",
+      },
+      {
+        role: "venture-capital-analyst",
+        label: "Venture capital",
+        owns: "Minority bets on young companies — judgement over modelling.",
+        doesNotOwn: "Control of the companies, or feedback on any reasonable timescale.",
+        tell: "Wrong most of the time by design; the winners pay for everything.",
+      },
+      {
+        role: "private-equity-analyst",
+        label: "Private equity",
+        owns: "Control of profitable businesses, bought with leverage and improved.",
+        doesNotOwn: "An entry-level door. The route runs through banking or TAS first.",
+        tell: "Talks in LBO models and quality of earnings.",
+      },
+      {
+        role: "equity-research-analyst",
+        label: "Equity research",
+        owns: "A public, dated view with a target price on covered companies.",
+        doesNotOwn: "The capital. Research recommends; the fund manager takes the risk.",
+        tell: "Being wrong is visible — the note is timestamped.",
+      },
+      {
+        role: "transaction-advisory-analyst",
+        label: "Transaction advisory",
+        owns: "The financial diligence a buyer prices from — quality of earnings.",
+        doesNotOwn: "The deal decision, or the price. The findings move both.",
+        tell: "Asks what the earnings are actually worth, not whether they are fairly stated.",
+      },
+      {
+        role: "investment-manager",
+        label: "Portfolio management",
+        owns: "The risk. Positions, sizing and the outcome against a benchmark.",
+        doesNotOwn: "An excuse — performance is public and continuous.",
+        tell: "The only seat here that decides rather than advises.",
+      },
+    ],
+    nuance: [
+      "The cleanest cut through all six: who takes the risk, and when do they find out they were wrong? Bankers and advisers are paid for the transaction and never own the outcome. Research owns a view but not the capital. The fund seats — VC, PE, portfolio management — own outcomes, on timescales from quarters (public markets) to a decade (venture). Choosing among these desks is substantially choosing a feedback loop, and people who need fast, clear feedback are reliably unhappy in the slow seats.",
+      "For a PGDM Finance graduate the honest routing matters more than the ranking: IB and TAS hire at entry and teach transferable craft; equity research hires at entry through the KPO route; VC hires on evidence of judgement more than credentials; PE almost never hires at entry at all. The common mistake is spending application seasons on the glamorous closed doors while the open ones — TAS especially — teach the exact skills the closed doors later hire for.",
+      "The desks also read the same company differently, which is why the vocabulary diverges. A banker sees a fee and a process; a VC sees a retention curve and a founder; PE sees debt capacity and adjustable EBITDA; research sees a variance from consensus; diligence sees the add-back nobody can defend. Learning startup finance end to end is partly learning to switch between these readings on demand — the adviser who can do all five is the one every side wants in the room.",
+    ],
+  },
 ];
 
 export default comparisons;
