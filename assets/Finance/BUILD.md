@@ -176,3 +176,40 @@ quality surfaced; the Big Four thought-leadership ask remains open.
 Tallies after both passes: 48 days · 54 h · 63 resources (8 video
 citations, 7 unique talks) — video in the media mix for the first time,
 in six of seven modules. Full check exit 0; bundle regenerated.
+
+---
+
+## Addendum 2 — module 3 re-authored to the owner's reference (2026-09-04)
+
+`module-3-reference.md` (also in this folder) replaced the first-pass
+days 14–20 the same way module 1 was replaced: its challenges (the
+terminal-value drill, the two-peer-sets exercise, the three-method
+pre-revenue valuation, the one-page critique), its topics and its
+checks — with the three interview questions from the first pass kept on
+top. The Damodaran video moved from day 15 to day 14, where the
+reference puts it.
+
+New verified sources:
+
+| Source | Where |
+|---|---|
+| **Musings on Markets** (Damodaran's blog) | Days 14, 19, 20 — worked valuations, value-vs-price, reverse DCFs |
+| **His valuation course webcast index** (spring 2025 — the current one) | Days 16–17, the relative-valuation sessions |
+| **The SaaS Capital Index** | Day 16 — a public multiples tracker with history |
+| **ACA — "Valuing Pre-revenue Companies"** (the Bill Payne guidance) | Day 18 — one PDF that is simultaneously the angel-network guidance, the scorecard/Berkus comparison, and worked VC-method arithmetic |
+| **Hindenburg Research archive** | Day 20 — short-seller reports read for method; the note says plainly the firm wound down in 2025 and the archive stays up |
+| **The FAST Standard** | Day 20 — what a well-built model looks like |
+
+Rejected while probing, per rule 2: Meritech's comps table (redirects to
+a login — the checker would pass it but the learner hits a wall), Muddy
+Waters (TLS failure), Seraf's compass (cross-host redirect into an app
+shell), and Damodaran's pricevalue.pdf (404). The reference's generic
+asks — a free brokerage report, a published startup DCF — became
+challenge instructions rather than links.
+
+The reference's closing notes are captured in the spec header: his data
+sets update each January and his site reorganises, so the quarterly
+review should re-click the Damodaran links first. Five licence hosts
+added. Tallies now: 48 days · 52 h · 76 resources (8 video citations) ·
+23 interview checks at 0.48/day · module 3 carries 22 resources across
+all seven days.

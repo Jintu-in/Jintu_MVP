@@ -33,11 +33,17 @@
  * reading would substitute for doing it. Each renders five sections
  * without a Read & do, which is honest.
  *
- * MODULE 1 IS THE OWNER-AUTHORED REFERENCE (assets/Finance/
- * module-1-reference.md, received 2026-09-04): its challenges, checks,
- * topics and named sources — including the two YC videos and Brad Feld's
- * term-sheet series — replaced the first-pass authoring on 2026-09-04,
- * every URL verified before use.
+ * MODULES 1 AND 3 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
+ * module-1-reference.md and module-3-reference.md, received 2026-09-04):
+ * their challenges, checks, topics and named sources replaced the
+ * first-pass authoring, every URL verified before use. Module 3's
+ * remaining generic asks (a brokerage report, a published startup DCF)
+ * are challenge instructions, not links, by design.
+ *
+ * ANNUAL DATA REFRESH: Damodaran's data sets update early each year and
+ * his site occasionally reorganises. The quarterly review should re-click
+ * datacurrent.html, spreadsh.htm and the webcast index each January
+ * especially — those are the links learners follow into their own work.
  *
  * NO SELF-CHECKING RESOURCE. Nothing free marks a cap table or an
  * investment memo. The deliverables carry the verification burden instead:

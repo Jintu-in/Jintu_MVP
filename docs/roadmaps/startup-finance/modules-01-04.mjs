@@ -3,10 +3,12 @@
  *
  * Built from the owner's brief in assets/Finance/roadmap-startup-finance.md.
  * Every module title, day title, principle and deliverable is the brief's,
- * verbatim; the rest of the day model is authored here. Module 1 follows the
- * owner's fully-authored reference (assets/Finance/module-1-reference.md,
- * received 2026-09-04): its challenges, checks, topics and named sources are
- * that document's, verified before use. Two of its source asks stay linkless
+ * verbatim; the rest of the day model is authored here. Modules 1 and 3
+ * follow the owner's fully-authored references (assets/Finance/
+ * module-1-reference.md and module-3-reference.md, both received
+ * 2026-09-04): their challenges, checks, topics and named sources are those
+ * documents', verified before use — module 3's three interview checks from
+ * the first pass are kept on top of the reference's checks. Two of its source asks stay linkless
  * by rule 2: MCA (403s the checker — day 5's challenge sends the learner to
  * the portal instead) and "a current angel-tax article" (deliberately
  * undated-proof: day 2 teaches the check-the-date habit rather than linking
@@ -1194,157 +1196,80 @@ export default [
     objective: "Where their existing DCF knowledge gets extended rather than replaced.",
     deliverable:
       "Value one real Indian startup three ways — a scenario DCF, a revenue multiple, and the VC method — and write one page on why the numbers differ and which you would defend.",
-    estHours: 7.75,
+    estHours: 9,
     nodes: [
       {
         title: "Why textbook DCF fails on a startup",
         summary:
           "Your best-trained tool, applied where its inputs do not exist — and what remains of it that is still useful.",
         learningObjectives: [
-          "Name where each DCF input breaks on a young company",
-          "Distinguish 'DCF fails' from 'discipline fails' — what survives the wreck",
-          "Recognise a spreadsheet-shaped opinion when a founder sends one",
+          "Name where each DCF input breaks on a young company — history, beta, terminal value",
+          "State what survival probability does to early-stage value and why standard DCF has no place for it",
+          "Say what a DCF is still good for at seed stage, and say it to a founder who built one",
         ],
         whyToday:
-          "This module extends what a PGDM taught rather than replacing it — but the extension only lands after an honest accounting of why the trained method breaks. Respect for the tool includes knowing its domain.",
+          "You can build a DCF. Today is about knowing when it produces a number that means nothing — and being able to say so to a founder who has built one and believes it.",
         principle: "A DCF on a pre-revenue company is a spreadsheet-shaped opinion.",
         commonMistake:
-          "Fixing startup DCFs by raising the discount rate. Cranking WACC to 25% to 'reflect risk' launders massive input uncertainty through one parameter and produces precision theatre — the problem is the cash flow forecast, not the rate applied to it.",
+          "Producing a DCF because it is expected, and defending the output rather than the assumptions. The value of the exercise is the list of things that must be true — that is what you should present.",
         challenge:
-          "Take a young company's five-year projection — a founder's or your own. For each DCF input, write one line: where this number came from, and what evidence would change it. Count the lines that end in 'assumed'. That count is today's finding.",
-        challengeMinutes: 40,
-        estMinutes: 60,
+          "Take any DCF you built during your PGDM. Recalculate what percentage of the total value sits in the terminal value. Then change the terminal growth rate by half a percentage point and record the change in enterprise value. Write two sentences on what that tells you about the reliability of the original number.",
+        challengeMinutes: 25,
+        estMinutes: 55,
         points: 30,
         difficulty: "core",
         topics: [
           {
+            title: "What a DCF requires",
+            detail:
+              "A forecastable cash flow, a discount rate that reflects the risk, and a terminal value that is not most of the answer. A startup usually fails all three.",
+          },
+          {
             title: "Where each input breaks",
             detail:
-              "Revenue has no base to grow from; margins have no history; reinvestment is a guess; beta has no comparable; and the terminal value — most of the answer — compounds all of it.",
+              "No history to forecast from, no beta to derive a discount rate from, and a terminal value that can be 90% or more of the total — computed from the least certain year of an uncertain forecast.",
           },
           {
-            title: "The terminal value problem",
+            title: "Survival probability",
             detail:
-              "In a mature DCF the terminal value is a check on the forecast; in a startup DCF it IS the valuation, computed from the least certain year of an uncertain forecast.",
+              "The input a standard DCF has no place for, and the one that dominates early-stage value. Tomorrow makes it an explicit line; today, notice that your trained method buries it.",
           },
           {
-            title: "What survives",
+            title: "What a DCF is still good for",
             detail:
-              "The discipline: value comes from future cash, growth costs reinvestment, risk demands return. Tomorrow's scenario methods keep the framework and make the ignorance explicit instead of burying it.",
+              "Forcing explicit assumptions, testing whether a business could ever be worth the price, and structuring an argument. As a reverse-engineering tool it survives; as a price-setting tool it does not.",
           },
           {
-            title: "The adviser's read",
+            title: "The false precision problem",
             detail:
-              "A founder's DCF is a narrative wearing formulas. Read it as a statement of what they believe, locate the belief doing the work, and price that belief — day 20 makes this a method.",
+              "A number to two decimal places built on a growth assumption someone invented. Precision and reliability are different properties, and the spreadsheet only displays one of them.",
           },
         ],
         checks: [
           {
-            question: "Why is raising the discount rate the wrong fix?",
+            question: "Why is a beta unavailable for a startup?",
             answer:
-              "It launders input uncertainty through one parameter and keeps the false precision — the forecast is the problem, not the rate.",
+              "Beta is derived from a share price history against a market. A private company with no traded shares has none, so you must borrow one from comparables and adjust — which imports assumptions rather than removing them.",
           },
           {
-            question: "Why is terminal value especially dangerous on startups?",
+            question: "If terminal value is 85% of your DCF, what have you actually valued?",
             answer:
-              "It is most of the answer and it compounds the least certain assumptions of the forecast's furthest year.",
+              "Your assumption about a state ten years away, not the forecast you spent a week building. This is the standard failure mode of startup DCFs.",
           },
           {
-            question: "What part of DCF thinking survives for young companies?",
+            question: "What does a DCF still contribute at seed stage?",
             answer:
-              "The discipline — future cash, reinvestment cost, risk-return — applied through explicit scenarios rather than a single forecast.",
+              "It forces you to state what must be true for the price to make sense. As a reverse-engineering tool it is genuinely useful; as a price-setting tool it is not.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Valuing young, start-up and growth companies",
+            title: "Valuing Young, Start-up and Growth Companies — sections 1–3",
             url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "The anchor paper for this whole module. Today read only the problem statement — the first section on why standard approaches fail. The solutions are tomorrow.",
-          },
-        ],
-        concepts: [
-          "startup-valuation",
-          "dcf-valuation",
-        ],
-      },
-      {
-        title: "Damodaran on young companies",
-        summary:
-          "The serious version: scenario-based value, explicit survival probability, and uncertainty on the page instead of under it.",
-        learningObjectives: [
-          "Build a small scenario DCF: two or three futures, probability-weighted",
-          "Apply a survival probability rather than a padded discount rate",
-          "Use Damodaran's templates as scaffolding, not as answers",
-        ],
-        whyToday:
-          "Yesterday diagnosed; today treats. This is the single most valuable free material in the field, from the person the rest of the field cites — and it converts 'startup valuation is guessing' into 'startup valuation is structured, honest guessing'.",
-        principle: "You cannot avoid the uncertainty. You can only make it explicit.",
-        commonMistake:
-          "Building three scenarios that are one scenario at three volumes — base, base±20%. Honest scenarios differ in kind: the company that wins the market, the one that survives as a niche, the one that dies. If the downside scenario still shows growth, it is not a downside scenario.",
-        challenge:
-          "Value a young company you can get numbers for with a three-scenario DCF: win, survive, fail — cash flows per branch, honest probabilities, weighted value. Then write one line: which probability moves the answer most? That line is the diligence agenda for module 6.",
-        challengeMinutes: 55,
-        estMinutes: 80,
-        points: 35,
-        difficulty: "stretch",
-        topics: [
-          {
-            title: "Scenarios over point estimates",
-            detail:
-              "Two or three genuinely different futures, each with its own cash flows, weighted by probability. The structure forces the argument to happen about the probabilities — which is where it belongs.",
-          },
-          {
-            title: "Survival as its own number",
-            detail:
-              "Most young companies fail. Damodaran's move is to price failure as an explicit probability applied to value, not as an invisible bump in the discount rate — visible, arguable, and adjustable as evidence arrives.",
-          },
-          {
-            title: "The templates",
-            detail:
-              "His spreadsheets implement the machinery so your effort goes into inputs. Use them to check structure, then rebuild the core yourself once — scaffolding teaches; crutches do not.",
-          },
-          {
-            title: "What this buys an adviser",
-            detail:
-              "A valuation whose disagreements are locatable. 'You believe survival is 60%, the investor prices 30%' is a negotiable sentence; two different DCF outputs are just a standoff.",
-          },
-        ],
-        checks: [
-          {
-            question: "How does the scenario approach handle failure risk?",
-            answer:
-              "As an explicit survival probability applied to value — visible and arguable, instead of hidden in the discount rate.",
-          },
-          {
-            question: "What makes scenarios honest rather than cosmetic?",
-            answer:
-              "They differ in kind — win, survive, fail — not in volume. A downside that still grows is a base case in costume.",
-          },
-          {
-            question: "Where should the argument about a young company's value happen?",
-            answer:
-              "At the probabilities and the branch assumptions — the structure exists to move the fight there.",
-          },
-        ],
-        resources: [
-          {
-            type: "read",
-            title: "Valuing young, start-up and growth companies",
-            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
-            sourceName: "Aswath Damodaran (NYU Stern)",
-            editorNote:
-              "Today, the solution sections — the estimation framework and the worked examples. Slow reading; it repays it more than anything else in this roadmap.",
-          },
-          {
-            type: "tool",
-            title: "Damodaran's valuation spreadsheets",
-            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
-            sourceName: "Aswath Damodaran (NYU Stern)",
-            editorNote:
-              "Free, unprotected, and authored by the source. Take a young-company template for the challenge — then rebuild its core yourself before trusting your own version.",
+              "The definitive treatment of exactly this problem, by the person everyone else cites. You skimmed sections 1–2 on day 1 for framing; read them again properly now, and continue to 3. The rest is tomorrow's.",
           },
           {
             type: "video",
@@ -1355,69 +1280,184 @@ export default [
             durationSec: 1731,
             estSizeMb: 220,
             editorNote:
-              "The paper's author teaching the same material — twenty-nine minutes, from his own channel, where his full valuation course also lives free. Watch after the reading; hearing the framework a second time is what makes it stick.",
+              "He works through the estimation problems on screen rather than asserting them — twenty-nine minutes, from his own channel, where the full course also lives free.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — Damodaran's blog",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "Find a recent post where he values a specific company. Watching him do it on a real one, publicly, with his assumptions stated, is worth more than the theory — and locate the single assumption carrying his answer. There always is one.",
           },
         ],
         concepts: [
+          "dcf-valuation",
           "startup-valuation",
         ],
       },
       {
-        title: "Revenue and EBITDA multiples",
-        summary: "The market's shorthand — and the DCF hiding inside every multiple.",
+        title: "Damodaran on young companies",
+        summary:
+          "The most rigorous available answer to what replaces the broken DCF — and it is not 'give up and use a multiple'.",
         learningObjectives: [
-          "Apply revenue and EBITDA multiples correctly, including which revenue and whose EBITDA",
-          "Unpack a multiple into the growth, margin and risk assumptions it encodes",
-          "Choose the numerator honestly — EV versus equity value on the right base",
+          "Forecast revenue from market size down, not growth rates up",
+          "Set target margins and sales-to-capital from mature comparables and his sector data",
+          "Make survival probability an explicit, arguable line in the valuation",
         ],
         whyToday:
-          "Multiples are how the market talks and how most Indian deals are actually struck. The extension of PGDM comps knowledge is not mechanics — it is learning to read a multiple as compressed assumptions rather than as a fact.",
-        principle: "A multiple is a DCF with the assumptions hidden inside it.",
+          "Yesterday established that the standard approach breaks. Today is the most rigorous available answer to what replaces it — the whole paper, the working spreadsheet, and the data that feeds both.",
+        principle: "You cannot avoid the uncertainty. You can only make it explicit.",
         commonMistake:
-          "Applying a sector-average multiple to a company that differs from the sector on exactly the drivers the multiple encodes. A 6x revenue average from companies growing 40% at 80% gross margin says nothing about a 15%-growth, 45%-margin business — the average is not a price list.",
+          "Burying failure risk inside an inflated discount rate. A 40% discount rate is a survival assumption in disguise, and disguised assumptions cannot be argued with — which is precisely why people prefer them.",
         challenge:
-          "Take one listed Indian company's multiple and reverse-engineer it: what growth, margin and risk roughly justify it? Then apply the same multiple to a startup and write down which of those encoded assumptions the startup fails. That sentence is the whole discipline.",
-        challengeMinutes: 45,
-        estMinutes: 65,
-        points: 30,
-        difficulty: "core",
+          "Value one Indian startup using Damodaran's structure: market size, target share, target margin from a mature comparable, sales-to-capital, and a survival probability you can justify. State each assumption on a separate line. Then find his valuation of a recently-listed company on the blog you bookmarked yesterday and compare your assumption list with his. The number matters less than whether someone could argue with each input individually.",
+        challengeMinutes: 35,
+        estMinutes: 55,
+        points: 35,
+        difficulty: "stretch",
         topics: [
           {
-            title: "Which multiple for which company",
+            title: "Revenue from market size down",
             detail:
-              "Revenue multiples for pre-profit growth; EBITDA once operations mature enough to have one worth trusting. Using an EBITDA multiple on adjusted-to-death EBITDA is a category error module 6 returns to.",
+              "Start with the addressable market and a defensible share, rather than growing last year's revenue by a rate you chose. A share is a claim someone can contest — that is the point.",
           },
           {
-            title: "The consistency rule",
+            title: "Target margins from a mature comparable",
             detail:
-              "Enterprise value over revenue or EBITDA; equity value over earnings. Mixing the numerators — an EV multiple on an equity base — is the most common silent error in amateur comps.",
+              "What does this business look like when it works, and who already looks like that? The target margin comes from his sector data, not from a dated report or a hope.",
           },
           {
-            title: "What a multiple encodes",
+            title: "Reinvestment and sales-to-capital",
             detail:
-              "Growth, margins, reinvestment and risk, compressed to one number. Two companies at the same multiple with different growth are not priced the same — one is cheap or the other is dear.",
+              "How much capital is required to produce the revenue you forecast. Growth is not free, and the sales-to-capital ratio is where that honesty enters the model.",
           },
           {
-            title: "Forward versus trailing",
+            title: "A discount rate that changes over time",
             detail:
-              "A multiple on next year's revenue is a different (and always lower-looking) number than on last year's. Founders quote forward; check which you are being shown.",
+              "High early, converging toward a sector cost of capital as the company matures. Holding it constant either overvalues the early years or undervalues the later ones.",
+          },
+          {
+            title: "Survival probability, explicit",
+            detail:
+              "Value the going concern, then weight it by the chance it survives to get there, adding liquidation value in the failure case. Separate and visible — the opposite of a cranked WACC.",
+          },
+          {
+            title: "Scenario valuation",
+            detail:
+              "Three futures with probabilities, rather than one with false confidence. The scenarios force the question a point estimate hides: what has to happen for each number to be real?",
           },
         ],
         checks: [
           {
-            question: "What assumptions does a revenue multiple compress?",
+            question: "Why forecast revenue from market size down rather than growth up?",
             answer:
-              "Growth, eventual margins, reinvestment needs and risk — it is a DCF with the reasoning hidden.",
+              "Growth rates compound into absurdity. Working down from a market forces you to state a share, which is a claim someone can contest — and that is the point.",
           },
           {
-            question: "State the numerator consistency rule.",
+            question: "Why should the discount rate change over the forecast period?",
             answer:
-              "Enterprise value over pre-debt metrics like revenue and EBITDA; equity value over post-debt metrics like earnings.",
+              "A five-year-old company with revenue is less risky than a pre-revenue one. Holding the rate constant either overvalues the early years or undervalues the later ones.",
           },
           {
-            question: "Why is a sector-average multiple not a price list?",
+            question: "How does survival probability enter the calculation?",
             answer:
-              "The average encodes the average company's drivers; applying it to a company with different growth or margins imports assumptions that are false for it.",
+              "Value the company assuming it succeeds, then multiply by the probability it survives to that point, adding any liquidation value in the failure case. Keeping it separate makes the assumption visible instead of burying it in the discount rate.",
+          },
+        ],
+        resources: [
+          {
+            type: "read",
+            title: "Valuing Young, Start-up and Growth Companies — complete",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "The whole paper today. It is the single most useful free document in this roadmap — slow reading, and it repays it more than anything else here.",
+          },
+          {
+            type: "tool",
+            title: "Damodaran's valuation spreadsheets — the young-company model",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "Open it and take it apart before using it. Understanding how he structures the estimation is the lesson; the formulas are secondary.",
+          },
+          {
+            type: "tool",
+            title: "Damodaran's data page — margins and sales-to-capital by sector",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "This is where your target margin comes from. Borrowing a number from a dated report is what you are learning to stop doing. The sets update annually, early in the year — check the date stamp.",
+          },
+        ],
+        concepts: [
+          "startup-valuation",
+          "market-sizing",
+        ],
+      },
+      {
+        title: "Revenue and EBITDA multiples",
+        summary:
+          "How startup valuations are actually discussed in a room — and what the one number is concealing.",
+        learningObjectives: [
+          "Unpack what a multiple embeds — growth, margin, risk and reinvestment, compressed",
+          "Read ARR multiples correctly across different growth and retention profiles",
+          "Rank the sources of a multiple by reliability, with reported rounds last",
+        ],
+        whyToday:
+          "Multiples are how startup valuations are actually discussed in a room. You know how to calculate them; today is about knowing what they are concealing and when they mislead.",
+        principle: "A multiple is a DCF with the assumptions hidden inside it.",
+        commonMistake:
+          "Treating a multiple as an objective market fact rather than an assumption set. Someone chose the peer group, the period and the metric — and each choice moved the answer.",
+        challenge:
+          "Take three publicly reported Indian startup rounds in one sector. Calculate the implied revenue multiple for each. Then write two sentences per company explaining why they differ — and one sentence on which of the three numbers you trust least, and why.",
+        challengeMinutes: 25,
+        estMinutes: 45,
+        points: 30,
+        difficulty: "core",
+        topics: [
+          {
+            title: "What a multiple embeds",
+            detail:
+              "Growth, margin, risk and reinvestment, compressed into one number. It is not a shortcut past the analysis; it is the analysis, assumed.",
+          },
+          {
+            title: "Revenue and ARR multiples",
+            detail:
+              "Why they dominate early-stage discussion for unprofitable companies, and why the same ARR multiple means different things at different growth rates and retention levels.",
+          },
+          {
+            title: "EBITDA multiples",
+            detail:
+              "Where they apply and why they are largely irrelevant pre-profitability. A multiple of a number near zero is arithmetic, not valuation.",
+          },
+          {
+            title: "Where the number comes from",
+            detail:
+              "Public comparables, transaction comparables, and reported rounds — each with its own bias, and each demanding you say which one you used.",
+          },
+          {
+            title: "Why reported round multiples are the least reliable",
+            detail:
+              "Headline valuations often reflect structure and preference rather than economics. Module 2's preference stack is exactly why the announced number and the economic number diverge.",
+          },
+        ],
+        checks: [
+          {
+            question: "Two SaaS companies both at 10x ARR. What might justify it?",
+            answer:
+              "Growth rate, net revenue retention, gross margin, market size and capital efficiency. Identical multiples on different fundamentals mean at least one is mispriced.",
+          },
+          {
+            question: "Why is a headline round valuation unreliable as a comparable?",
+            answer:
+              "It may reflect liquidation preferences, ratchets or structure that make the economic valuation materially lower than the number announced.",
+          },
+          {
+            question: "When is an EBITDA multiple meaningless?",
+            answer:
+              "When EBITDA is negative or trivially small. A multiple of a number near zero is arithmetic, not valuation.",
           },
           {
             question: "Why can you not put an EV multiple on an equity base?",
@@ -1431,75 +1471,96 @@ export default [
         resources: [
           {
             type: "tool",
-            title: "Damodaran's current data page",
+            title: "Damodaran's data page — revenue and EBITDA multiples by industry",
             url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Sector multiples, margins and growth, updated annually and free. This is where a defensible multiple argument starts — with data, not with the last deal someone remembers.",
+              "Free, annual, and defensible. When someone asks where your multiple came from, this is a better answer than a news article.",
+          },
+          {
+            type: "read",
+            title: "Valuation course webcasts — the relative valuation sessions",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/webcasteqspr25.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "His full semester, session by session, free. Jump to the relative valuation and pricing sessions — he covers what a multiple implies about growth and risk, which is the part most people skip.",
+          },
+          {
+            type: "read",
+            title: "The SaaS Capital Index",
+            url: "https://www.saas-capital.com/the-saas-capital-index/",
+            sourceName: "SaaS Capital",
+            editorNote:
+              "A public multiples tracker with history. See how much the same companies' multiples move with market conditions — a multiple from eighteen months ago is not a comparable.",
           },
         ],
         concepts: [
-          "startup-valuation",
           "comparable-company-analysis",
+          "enterprise-vs-equity-value",
         ],
       },
       {
         title: "Choosing a defensible comparable set",
         summary:
-          "The quiet step where the valuation is actually decided — before any arithmetic runs.",
+          "The most consequential and least examined step in comparable analysis — and what to do when no clean comparable exists.",
         learningObjectives: [
-          "Select comparables on drivers — growth, margin, model — rather than sector labels",
-          "Defend inclusions and exclusions in writing",
-          "Adjust honestly when the true peers are foreign, listed or ten times the size",
+          "Establish comparability on drivers — model, growth, margin, capital intensity — not sector labels",
+          "Adjust explicitly for stage when comparing a startup to mature businesses",
+          "Detect a manipulated peer set, including your own",
         ],
         whyToday:
-          "Everyone checks the arithmetic; almost nobody interrogates the peer list. For Indian startups — where true peers are often unlisted or abroad — the peer-set judgement is most of the multiple's meaning, and it is where a motivated banker does their steering.",
+          "You learned comparable company analysis. What a PGDM does not usually teach is that the selection of comparables is the most consequential and least examined step — and in startup work there frequently is no clean comparable at all.",
         principle: "The peer set is where the valuation is really decided.",
         commonMistake:
-          "Building the set by sector code. A food-delivery startup's honest peers are chosen by unit economics and growth stage, which may make a foreign listed company more comparable than the Indian giant in the same 'sector' — the label is a filing convention, not an argument.",
+          "Selecting comparables, computing a median, and presenting it as market-derived. Every choice in that process was yours, and an experienced reader will test the ones you did not disclose.",
         challenge:
-          "Build a peer set for one real Indian startup: five candidates, each with a one-line reason in terms of drivers, and at least one deliberate exclusion of an obvious-looking name with the reason why. The exclusion line is the skill being practised.",
-        challengeMinutes: 50,
-        estMinutes: 70,
+          "Pick one Indian listed company. Build two defensible peer sets of five companies each — one that makes it look expensive, one that makes it look cheap. Calculate the median multiple for each. Then write one paragraph on which set you would actually defend and why. If you can, pull one free brokerage report on the same company and compare its peer set with both of yours.",
+        challengeMinutes: 25,
+        estMinutes: 45,
         points: 30,
-        difficulty: "stretch",
+        difficulty: "core",
         topics: [
           {
-            title: "Drivers, not labels",
+            title: "What makes a company comparable",
             detail:
-              "Comparability lives in growth rate, margin structure, capital intensity and business model. Sector codes correlate with these loosely; the argument must run on the drivers themselves.",
+              "Business model, growth, margin, capital intensity and risk. Not sector label — two 'fintech' companies can have nothing economically in common.",
           },
           {
-            title: "The written reasons",
+            title: "The startup problem",
             detail:
-              "One line per inclusion and exclusion, written before the multiples are computed — because the temptation to trim the set toward the desired answer only bites after you have seen the numbers.",
+              "No listed company exists at the same stage, so you compare to mature businesses and adjust, or to reported private rounds and accept bad data. Either is workable; hiding which you did is not.",
           },
           {
-            title: "The Indian problem",
+            title: "Adjusting for stage and growth",
             detail:
-              "True peers are frequently unlisted, foreign or vastly larger. The honest response is explicit adjustments — size, liquidity, geography — stated as adjustments, not silently absorbed.",
+              "The adjustment is a stated assumption, not a silent haircut. Being explicit that you adjusted, and by how much, is what separates analysis from advocacy.",
           },
           {
-            title: "Reading someone else's set",
+            title: "Transaction comparables",
             detail:
-              "A banker's comp set is an argument for a price. The fastest audit: which obvious candidates are missing, and what does their absence do to the median?",
+              "What an acquirer paid includes a control premium and expected synergies. Using transaction comparables to value a minority stake overstates it.",
+          },
+          {
+            title: "How the peer set gets manipulated",
+            detail:
+              "Including or excluding two companies can move the median substantially, and nobody checks. A DRHP's peer comparison section is an education in motivated selection — companies choose their own comparables there.",
           },
         ],
         checks: [
           {
-            question: "On what basis is comparability actually established?",
+            question: "Why is sector a poor basis for comparability?",
             answer:
-              "Shared drivers — growth, margins, capital intensity, model — not shared sector labels.",
+              "Economics differ within a sector. A payments processor and a lending business are both fintech and have entirely different margin structures, capital needs and risks.",
           },
           {
-            question: "Why write inclusion reasons before computing multiples?",
+            question: "What does a transaction multiple include that a trading multiple does not?",
             answer:
-              "To lock the set before the answer is known — the trimming temptation arrives with the numbers.",
+              "A control premium and expected synergies. Using transaction comparables to value a minority stake overstates it.",
           },
           {
-            question: "What is the fastest audit of someone else's peer set?",
+            question: "How do you defend a peer set?",
             answer:
-              "Look for the obvious candidates that are missing and ask what their absence does to the median.",
+              "State the selection criteria before showing the result, and show what happens if the two most contestable names are removed. A peer set defended after the fact is not defended.",
           },
           {
             question:
@@ -1513,12 +1574,28 @@ export default [
         ],
         resources: [
           {
+            type: "read",
+            title: "Valuation course webcasts — comparable selection",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/webcasteqspr25.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "The relative valuation sessions again, this time for the selection and adjustment problem — he is specific about it, which most treatments skip entirely.",
+          },
+          {
             type: "tool",
-            title: "Damodaran's current data page",
+            title: "Damodaran's data page — sector groupings",
             url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Yesterday it supplied multiples; today use its sector driver data as the sanity check on your set — a peer group whose drivers straddle the target's is doing its job.",
+              "See how a rigorous source groups companies — and how often the grouping is contestable. Your peer set's drivers should straddle the target's; his sector data is the sanity check.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open any recent DRHP and find its 'comparison with listed industry peers' section. Companies choose their own comparables there — reading one critically is an education in motivated peer selection.",
           },
         ],
         concepts: [
@@ -1529,60 +1606,65 @@ export default [
       {
         title: "Scorecard, Berkus and the VC method",
         summary:
-          "The pre-revenue toolkit — useful, crude, and honest only when labelled as what it is.",
+          "The pre-revenue toolkit used constantly in real rounds and taught in no finance curriculum — negotiation anchors, honestly labelled.",
         learningObjectives: [
-          "Apply the scorecard, Berkus and VC methods to a pre-revenue company",
-          "State what each method actually anchors on",
-          "Say plainly when you are valuing and when you are negotiating",
+          "Run the VC method with explicit exit, return and dilution assumptions",
+          "Apply the scorecard and Berkus methods and state what each actually anchors on",
+          "Present any of them without overstating its rigour",
         ],
         whyToday:
-          "Below the reach of even scenario DCFs sits the pre-revenue deal, and this is the vocabulary those deals are done in. The extension a finance graduate needs is not the methods — they are trivial — but the honesty about their epistemic status.",
-        principle: "These are negotiation anchors, not valuations. Know which you are doing.",
+          "These methods are used constantly in early-stage rounds and appear nowhere in a finance curriculum. They are not rigorous, and understanding why is more useful than the methods themselves.",
+        principle: "These are negotiation anchors, not valuations. Know which one you are doing.",
         commonMistake:
-          "Presenting a VC-method output with DCF gravitas. Backing out today's price from an assumed exit and an assumed return is coherent arithmetic on two assumptions — presenting three decimal places of it as analysis is how advisers lose the trust of anyone numerate in the room.",
+          "Presenting a scorecard output with the confidence of a DCF. These methods produce a starting point for a negotiation, and describing them accurately is part of advising well.",
         challenge:
-          "Value one pre-revenue idea by all three methods. Then write the paragraph you would actually say in a negotiation, using them honestly — as anchors and cross-checks, with their assumptions stated. The paragraph, not the numbers, is the deliverable.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Value one pre-revenue startup three ways: the VC method with a stated exit assumption and required return, the scorecard method, and the Berkus method. Then write a paragraph on which you would present to a founder, which to an investment committee, and why they differ.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The scorecard",
-            detail:
-              "Start from the typical local pre-seed valuation and adjust by weighted factors — team, market, product, competition. It anchors on the local market rate, which is its honesty: it prices the round, not the company.",
-          },
-          {
-            title: "Berkus",
-            detail:
-              "Assign value chunks to risk-reduction milestones — idea, prototype, team, traction, relationships. Crude by design; its use is forcing a conversation about which risks have actually been retired.",
-          },
-          {
             title: "The VC method",
             detail:
-              "Assume an exit value and a target return, discount back, subtract for dilution. Every input is an assumption; its honest use is revealing what the investor must believe to pay a given price.",
+              "Work back from an expected exit value and a required return, subtracting for dilution. The most defensible of the group because the logic is explicit — four assumptions, all visible.",
           },
           {
-            title: "Using them together",
+            title: "Scorecard method",
             detail:
-              "Three crude methods agreeing loosely beats one crude method quoted precisely. Their convergence zone is a negotiating range — call it that and credibility survives.",
+              "Adjust a regional average pre-money by weighted factors — team, market, product, competition. It anchors on what other people in the region paid, which is its honesty: it prices the round, not the company.",
+          },
+          {
+            title: "Berkus method",
+            detail:
+              "Assign value to qualitative milestones for pre-revenue companies. A structured conversation about which risks have been retired, and presenting it as more than that is dishonest.",
+          },
+          {
+            title: "Risk factor summation",
+            detail:
+              "Adjust a baseline up or down across a list of risk categories. The list forces breadth; the baseline still comes from the market.",
+          },
+          {
+            title: "What they share, and when each applies",
+            detail:
+              "They anchor a negotiation and structure a conversation; none derives value from cash flows. Three crude methods agreeing loosely beats one crude method quoted precisely — the convergence zone is a negotiating range.",
           },
         ],
         checks: [
           {
-            question: "What does the scorecard method actually anchor on?",
+            question: "What does the VC method actually require you to assume?",
             answer:
-              "The going rate for local rounds at that stage — it prices the round in its market, not the company's cash flows.",
+              "An exit value, an exit timing, a required return, and expected dilution before exit. Four assumptions, all explicit — which is its main virtue.",
           },
           {
-            question: "What is the honest use of the VC method?",
+            question: "Why is the scorecard method not really a valuation?",
             answer:
-              "Revealing the assumptions — exit value and required return — an investor must hold to justify a price.",
+              "It adjusts a regional average, so the answer is anchored to what other people in that region paid. It transmits market conditions rather than deriving value.",
           },
           {
-            question: "How should the three methods be presented together?",
+            question: "When would you use Berkus?",
             answer:
-              "As a convergence range with assumptions stated — anchors for negotiation, never precision.",
+              "Pre-revenue, where nothing else has inputs. It is a structured conversation about milestones, and presenting it as more than that is dishonest.",
           },
           {
             question:
@@ -1594,6 +1676,22 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "doc",
+            title: "Valuing pre-revenue companies — the scorecard, Berkus and VC methods",
+            url: "https://angelcapitalassociation.org/data/Documents/Resources/AngelCapitalEducation/ACEF_-_Valuing_Pre-revenue_Companies.pdf",
+            sourceName: "Angel Capital Association",
+            editorNote:
+              "An angel federation's own published guidance, with worked arithmetic for every method on today's list. This is what a real investor group actually uses — one careful read covers the mechanics of all of them.",
+          },
+          {
+            type: "read",
+            title: "Valuing Young, Start-up and Growth Companies — the venture capital section",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "Return to the paper's treatment of venture capital valuation approaches — he treats these methods critically rather than as received wisdom, which is the framing you need.",
+          },
           {
             type: "read",
             title: "How to raise money",
@@ -1609,70 +1707,97 @@ export default [
       },
       {
         title: "Valuation in a negotiation",
-        summary: "Where the number meets leverage — and what analysis can and cannot do there.",
+        summary:
+          "Where the analysis meets the room — leverage, fund construction, signalling, and the price that none of the models set.",
         learningObjectives: [
-          "Separate the defensible range from the negotiated point",
           "Name the leverage factors that move a price off its analysis",
-          "Prepare a founder for the conversation rather than just the spreadsheet",
+          "Explain how fund construction and ownership targets drive investor pricing",
+          "Present a valuation as a range with drivers, and survive being challenged on it",
         ],
         whyToday:
-          "The week built a range; deals close at a point. The distance between them is leverage — competition, runway, momentum — and an adviser who pretends the point is analytic serves the client worse than one who names the leverage honestly.",
+          "Every method so far assumes valuation is analytical. In practice a startup's price is negotiated, and the analysis is one input among several. This is the day the finance training meets the room.",
         principle: "The number is an output of leverage as much as of analysis.",
         commonMistake:
-          "Defending the model in the room. The model's job was to set the range and the walk-away before the meeting; in the room, the variables are alternatives and time. Advisers who argue spreadsheet cells against a term sheet are fighting on the wrong field.",
+          "Bringing a model to a negotiation and expecting it to settle the question. The model earns you credibility and frames the discussion. It does not decide the price.",
         challenge:
-          "For a company you have valued this week, write the negotiation brief: the defensible range, the walk-away, the three leverage factors on each side, and the one move that most improves the client's position before talks start. One page.",
-        challengeMinutes: 40,
-        estMinutes: 55,
-        points: 25,
+          "Write a one-page valuation recommendation for a founder raising a seed round. Include a range rather than a point, the three assumptions that drive it, what would change your view, and one paragraph on what a valuation 40% above your range would cost them at the next round.",
+        challengeMinutes: 25,
+        estMinutes: 45,
+        points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Range versus point",
+            title: "What actually moves the number",
             detail:
-              "Analysis produces a range and a walk-away. The point within it is produced by alternatives, urgency and momentum. Confusing the two makes advisers either rigid or decorative.",
+              "Competing term sheets, runway remaining, sector heat, the investor's fund cycle, and how badly each side needs the deal. These are checkable facts; list them before the meeting the way you would list comps.",
           },
           {
-            title: "The leverage inventory",
+            title: "The investor's position",
             detail:
-              "Competing term sheets, months of runway, growth trajectory, and who needs the deal sooner. These are checkable facts; list them before the meeting the way you would list comps.",
+              "Ownership targets, fund construction, and reserve strategy. Many funds need a minimum percentage, which drives the price more than the model does — price is not always adversarial.",
           },
           {
-            title: "What moves leverage",
+            title: "The founder's position",
             detail:
-              "A second interested investor moves price more than any model refinement. Sometimes the best valuation work is process work — sequencing conversations so alternatives exist simultaneously.",
+              "Dilution, control, and the signalling cost of a valuation too high for the next round to clear. The best deal is the one the next round can build on.",
           },
           {
-            title: "Price versus terms, again",
+            title: "Structure versus price",
             detail:
-              "Day 4's lesson returns with force: conceding price and winning clean terms often beats the reverse. The brief should say which terms are worth more than the last crore of headline.",
+              "Preferences, ratchets and pool timing move economics without changing the headline. Day 4's lesson returns with force: conceding price and winning clean terms often beats the reverse.",
+          },
+          {
+            title: "Why an inflated valuation damages a company",
+            detail:
+              "The down round that follows reprices employee options, triggers anti-dilution, and damages confidence. The adviser's paragraph on this is the most valuable one in the recommendation.",
+          },
+          {
+            title: "Presenting a valuation you will be challenged on",
+            detail:
+              "Lead with assumptions, show the sensitivity, name the weakest input yourself. Damodaran's value-versus-price distinction is the frame: the model estimates value; the room sets a price.",
           },
         ],
         checks: [
           {
-            question: "What does analysis contribute to a negotiation, and what does it not?",
+            question: "Why might an investor push a valuation up rather than down?",
             answer:
-              "It sets the defensible range and the walk-away; the point within the range is set by leverage — alternatives and time.",
+              "To win a competitive round, or because their fund needs to deploy a certain cheque size at a certain ownership. Price is not always adversarial.",
           },
           {
-            question: "What single fact most moves an early-stage price?",
+            question: "What is the cost of a valuation set too high?",
             answer:
-              "A credible competing offer — alternatives move price more than model refinements.",
+              "The next round must clear it. If it cannot, a down round follows — repricing employee options, triggering anti-dilution, and damaging confidence in the company.",
           },
           {
-            question: "Why not defend the model in the room?",
+            question: "Why present a range rather than a number?",
             answer:
-              "The room runs on leverage, not cells. The model's work was finished when it set the range and walk-away.",
+              "A point estimate invites a debate about precision you do not have. A range with stated drivers moves the conversation to the assumptions, which is where it belongs.",
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "Term Sheet series — the economics posts",
+            url: "https://feld.com/archives/2005/08/term-sheet-series-wrap-up/",
+            sourceName: "Brad Feld",
+            editorNote:
+              "From day 4's index, read the valuation and economics posts specifically — written from the investor side about what is actually negotiated.",
+          },
           {
             type: "read",
             title: "How to raise money",
             url: "https://www.ycombinator.com/library/6m-how-to-raise-money",
             sourceName: "Y Combinator",
             editorNote:
-              "Re-read with yesterday's methods in mind, watching for one thing: how much of the essay is about process and leverage rather than valuation. That proportion is the honest answer to how prices get set.",
+              "Re-read with this module's methods in mind, watching for one thing: how much of the essay is about process and leverage rather than valuation. That proportion is the honest answer to how prices get set.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — value versus price",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "Search the blog for his price-and-value posts — the distinction between what a model estimates and what a market pays is the intellectual frame for this entire day.",
           },
         ],
         concepts: [
@@ -1683,70 +1808,105 @@ export default [
       {
         title: "Sanity-checking someone else's valuation",
         summary:
-          "The module deliverable: three methods on one real company, and the assumption that carries everything.",
+          "The module ends where the job actually is: taking a valuation apart in twenty minutes and finding the assumption carrying it.",
         learningObjectives: [
-          "Run the full toolkit on one company: scenario DCF, multiple, VC method",
-          "Locate the single assumption doing the most work in each",
-          "Write the one-page reconciliation the module deliverable requires",
+          "Run the checking order: terminal value share, growth, margins, rate, share count",
+          "Reverse-engineer a price into its implied assumptions and test their plausibility",
+          "Complete the module deliverable — three methods on one company, reconciled on one page",
         ],
         whyToday:
-          "Advisers audit more valuations than they originate. The capstone therefore practises the auditing move — finding the load-bearing assumption — across your own three methods, which is both the deliverable and the habit.",
+          "The module ends where the job actually is. In advisory work you will assess far more valuations than you build, and the skill of taking one apart quickly is what makes you useful in a meeting.",
         principle: "Find the one assumption carrying the whole answer. There always is one.",
         commonMistake:
-          "Reconciling by averaging. Three methods giving three numbers are three arguments, not three samples — averaging them launders their disagreements instead of explaining them, and the explanation is the entire value of doing three.",
+          "Rebuilding the model instead of interrogating it. Your value in a meeting is finding the assumption everything rests on in twenty minutes — not producing your own version by Friday.",
         challenge:
-          "Complete the deliverable: one real Indian startup valued by scenario DCF, revenue multiple, and VC method. One page: why the numbers differ, which assumption carries each, and which valuation you would defend. Then the audit drill — for each method, change its load-bearing assumption 20% and report what happens.",
-        challengeMinutes: 70,
-        estMinutes: 90,
+          "Take a startup valuation you can find — a reported round, a pitch deck, or one you built earlier in this module. Produce a one-page critique: the implied assumptions, the load-bearing input, two things you would want to verify, and the single question you would ask in a meeting. Then complete the module deliverable: your three-method valuation of one real Indian startup, with one page on why the numbers differ and which you would defend.",
+        challengeMinutes: 45,
+        estMinutes: 45,
         points: 40,
         difficulty: "stretch",
         topics: [
           {
-            title: "The load-bearing assumption",
+            title: "The order to check things in",
             detail:
-              "In a scenario DCF it is usually the success probability; in a multiple, the peer set or the revenue base; in the VC method, the exit value. Sensitivity is how you find it: shake each input and watch which one moves the house.",
+              "Terminal value share, revenue growth, margin trajectory, discount rate, share count. Most errors are in the first two, so start there and often stop there.",
           },
           {
-            title: "Why the methods disagree",
+            title: "Reverse-engineering a price",
             detail:
-              "They anchor on different things — beliefs about the future, the market's current mood, an investor's required return. Their spread is information about which anchor dominates this company's story.",
+              "What growth and margin does this valuation require, and is that plausible for anyone in this sector? Working backward from a price to its implied assumptions is the single most useful technique in this module.",
           },
           {
-            title: "Defending one",
+            title: "Finding the load-bearing assumption",
             detail:
-              "The deliverable asks which you would defend — meaning: for this company, at this stage, before this audience. The answer is contextual, and stating the context is what makes it defensible.",
+              "Change each input by 10% and see which one moves the answer most. That is the assumption to interrogate — and in a scenario DCF it is usually the survival probability; in a multiple, the peer set; in the VC method, the exit value.",
           },
           {
-            title: "The auditor's move, generalised",
+            title: "Common manipulations",
             detail:
-              "Applied to a founder's or banker's model, the same drill: find the assumption whose small change breaks the conclusion, and put the diligence effort there. Module 6 does this at full scale.",
+              "A peer set with the two cheapest names removed, a terminal growth rate above the discount rate, revenue recognised aggressively, adjusted EBITDA with too many adjustments. Each is visible if you look for it specifically.",
+          },
+          {
+            title: "Arithmetic before logic",
+            detail:
+              "Hardcodes, broken sum ranges, sign errors and circular references. Errors are more often mechanical than conceptual — and one hardcode means the model has not been audited, so there are probably more.",
+          },
+          {
+            title: "How to raise a problem",
+            detail:
+              "Ask what the assumption is based on, rather than announcing that it is wrong. The question does the same work and leaves the room intact.",
           },
         ],
         checks: [
           {
-            question: "Why is averaging the three methods wrong?",
+            question: "A model shows 60% revenue growth for five straight years. What do you ask?",
             answer:
-              "They are arguments from different anchors, not noisy samples of one truth — the spread is the information, and averaging destroys it.",
+              "What in the market or the business supports that, and who else has ever done it in this sector? Sustained growth at that rate is rare and the burden of proof sits with the model.",
           },
           {
-            question: "How do you find the load-bearing assumption?",
+            question: "Terminal growth is 6% and the discount rate is 9%. Is that acceptable?",
             answer:
-              "Sensitivity: perturb each input and watch which single change moves the conclusion disproportionately.",
+              "Terminal growth cannot exceed long-run economic growth — the company would eventually exceed the economy. 6% is almost certainly too high, and it inflates terminal value substantially.",
           },
           {
-            question: "What makes 'which would you defend' answerable?",
+            question:
+              "You find a hardcoded number in a formula range. Why does it matter beyond the error itself?",
             answer:
-              "Context — the company's stage, the audience, and which method's anchor is most trustworthy for this case. Stating that context is the defence.",
+              "It tells you the model has not been audited, so there are probably more. One hardcode is a reason to check everything.",
           },
         ],
         resources: [
           {
-            type: "tool",
-            title: "Damodaran's valuation spreadsheets",
-            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
-            sourceName: "Aswath Damodaran (NYU Stern)",
+            type: "read",
+            title: "Musings on Markets — reverse DCFs",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
             editorNote:
-              "Cross-check your scenario DCF's structure against his young-company template one last time before writing the page. Structural agreement plus different inputs is fine; structural disagreement means a bug.",
+              "His company posts routinely work backward from a market price to the growth and margin it implies. Find one and study the move — it is today's method, demonstrated on a real ticker.",
+          },
+          {
+            type: "read",
+            title: "Hindenburg Research — the report archive",
+            url: "https://hindenburgresearch.com/",
+            sourceName: "Hindenburg Research",
+            editorNote:
+              "The firm wound down in 2025 but its reports remain published. Whatever you think of the conclusions, read one for method — they are a masterclass in taking apart someone else's numbers, section by section.",
+          },
+          {
+            type: "read",
+            title: "The FAST Standard",
+            url: "https://fast-standard.org/",
+            sourceName: "FAST Standard Organisation",
+            editorNote:
+              "Free modelling standard. Knowing what a well-built model looks like tells you where to look in a badly built one — read the structure rules, not the whole document.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A filed DRHP's financial section is real numbers, real disclosures, and real adjustments to interrogate — free practice material for exactly this drill, and module 7 returns here.",
           },
         ],
         concepts: [

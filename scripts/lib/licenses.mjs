@@ -75,6 +75,11 @@ export const BY_HOST = {
   "firstround.com": assumed(),
   "trifectacapital.in": assumed(),
   "alteriacapital.com": assumed(),
+  "aswathdamodaran.blogspot.com": assumed(), // Musings on Markets
+  "fast-standard.org": assumed(), // the FAST modelling standard — free to read
+  "saas-capital.com": assumed(),
+  "hindenburgresearch.com": assumed(), // report archive; firm wound down 2025, site stays up
+  "angelcapitalassociation.org": assumed(),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),
