@@ -40,7 +40,6 @@ export default [
         estMinutes: 60,
         points: 25,
         difficulty: "intro",
-        concepts: ["funding-ladder"],
         topics: [
           {
             title: "The rungs",
@@ -65,7 +64,8 @@ export default [
         ],
         checks: [
           {
-            question: "What does an early-stage investor price that a late-stage investor does not?",
+            question:
+              "What does an early-stage investor price that a late-stage investor does not?",
             answer:
               "Ignorance — team, market and product risk before evidence exists. Late capital prices measurable performance instead.",
           },
@@ -90,8 +90,10 @@ export default [
               "The fundraising section is the anchor for this module. Read one essay on how rounds actually happen before tomorrow — the library is organised by stage, which mirrors this day.",
           },
         ],
+        concepts: [
+          "funding-ladder",
+        ],
       },
-
       {
         title: "Angels, syndicates and pre-seed in India",
         summary:
@@ -112,7 +114,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["funding-ladder"],
         topics: [
           {
             title: "Angels and their incentives",
@@ -162,8 +163,10 @@ export default [
               "The standard reference for how early rounds actually work. Read it for process and expectations; the Indian instrument specifics come on day 5.",
           },
         ],
+        concepts: [
+          "funding-ladder",
+        ],
       },
-
       {
         title: "SAFEs and convertible notes",
         summary:
@@ -175,7 +178,8 @@ export default [
         ],
         whyToday:
           "SAFEs are now the default early instrument, and they are systematically misunderstood by people trained on priced equity. An adviser who cannot walk a founder through conversion arithmetic is decoration in the room.",
-        principle: "A convertible instrument defers the valuation argument. It does not remove it.",
+        principle:
+          "A convertible instrument defers the valuation argument. It does not remove it.",
         commonMistake:
           "Reading the cap as the valuation. A cap is a ceiling on the conversion price, not a price — a company that raises on a ₹40 crore cap has not been valued at ₹40 crore, and founders who believe otherwise get two surprises at the priced round: the real number, and the dilution.",
         challenge:
@@ -184,7 +188,6 @@ export default [
         estMinutes: 75,
         points: 30,
         difficulty: "core",
-        concepts: ["funding-instruments"],
         topics: [
           {
             title: "What a SAFE is",
@@ -243,8 +246,10 @@ export default [
               "The original instrument, from its author, with the current templates and the user guide. Read the postmoney SAFE user guide — it is short and it is the actual contract, not a summary of one.",
           },
         ],
+        concepts: [
+          "funding-instruments",
+        ],
       },
-
       {
         title: "Priced equity rounds",
         summary:
@@ -265,7 +270,6 @@ export default [
         estMinutes: 65,
         points: 30,
         difficulty: "core",
-        concepts: ["funding-instruments", "term-sheets"],
         topics: [
           {
             title: "The mechanics",
@@ -315,8 +319,11 @@ export default [
               "Plain-language walkthrough of the terms that ride with the price. Read it against today's challenge list — every term you missed is one a founder will miss too.",
           },
         ],
+        concepts: [
+          "funding-instruments",
+          "term-sheets",
+        ],
       },
-
       {
         title: "Indian instruments — CCPS and CCD",
         summary:
@@ -338,7 +345,6 @@ export default [
         estMinutes: 70,
         points: 30,
         difficulty: "stretch",
-        concepts: ["funding-instruments"],
         topics: [
           {
             title: "CCPS",
@@ -378,15 +384,11 @@ export default [
               "It is implemented as a CCPS or CCD, so it carries compulsory conversion and statutory pricing and filing requirements the template does not mention.",
           },
         ],
-        // No external link, deliberately: the honest free primary sources for
-        // CCPS/CCD are the Companies Act provisions and RBI/FDI circulars on
-        // mca.gov.in — which returns 403 to our checker, so rule 2 forbids
-        // citing it. The day teaches structure and the challenge produces the
-        // artefact; a lawyer's current text is what a practitioner verifies
-        // against, and no evergreen free link exists that we can check.
         resources: [],
+        concepts: [
+          "funding-instruments",
+        ],
       },
-
       {
         title: "Debt, venture debt and revenue-based finance",
         summary:
@@ -407,7 +409,6 @@ export default [
         estMinutes: 60,
         points: 25,
         difficulty: "core",
-        concepts: ["funding-instruments"],
         topics: [
           {
             title: "Venture debt",
@@ -457,10 +458,12 @@ export default [
               "Search the library's fundraising section for its venture debt and alternative financing pieces — the library reorganises too often to deep-link reliably, and the hub is one click from each.",
           },
         ],
+        concepts: [
+          "funding-instruments",
+        ],
       },
     ],
   },
-
   {
     title: "Cap tables and dilution",
     weekRange: "Week 2",
@@ -490,7 +493,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["cap-table-dilution"],
         topics: [
           {
             title: "The rows and the classes",
@@ -540,8 +542,10 @@ export default [
               "The cleanest plain-language explainer from the company whose product is cap tables. Read it before the challenge, then do the challenge without it open.",
           },
         ],
+        concepts: [
+          "cap-table-dilution",
+        ],
       },
-
       {
         title: "Pre-money, post-money and the arithmetic",
         summary: "Four quantities, one identity — and the ambiguity that moves crores.",
@@ -552,7 +556,8 @@ export default [
         ],
         whyToday:
           "This is the arithmetic every negotiation quotes and a surprising share of practitioners fumble. It has to be reflexive before day 9 builds it into a model — the model is only trustworthy if you can predict its outputs by hand.",
-        principle: "Pre-money and post-money differ by exactly the amount everyone argues about.",
+        principle:
+          "Pre-money and post-money differ by exactly the amount everyone argues about.",
         commonMistake:
           "Hearing 'we raised at 50 crores' and not asking which. Pre versus post on the same headline number changes the investor's ownership — and whether the ESOP pool sits inside or outside changes it again. The ambiguity is not pedantry; it is the negotiation.",
         challenge:
@@ -561,7 +566,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["cap-table-dilution"],
         topics: [
           {
             title: "The identity",
@@ -591,8 +595,7 @@ export default [
               "Post-money equals pre-money plus new cash; investor ownership equals cash divided by post-money.",
           },
           {
-            question:
-              "₹10 crore in at ₹40 crore pre-money — what does the investor own?",
+            question: "₹10 crore in at ₹40 crore pre-money — what does the investor own?",
             answer: "10 ÷ (40 + 10) = 20%.",
           },
           {
@@ -620,8 +623,10 @@ export default [
               "Re-open yesterday's explainer at its dilution worked example — read it after doing today's challenge by hand, as the answer key rather than the method.",
           },
         ],
+        concepts: [
+          "cap-table-dilution",
+        ],
       },
-
       {
         title: "Building a cap table from scratch in Excel",
         summary:
@@ -643,7 +648,6 @@ export default [
         estMinutes: 90,
         points: 35,
         difficulty: "core",
-        concepts: ["cap-table-dilution", "excel-lookup"],
         topics: [
           {
             title: "Shares are the atoms",
@@ -693,8 +697,11 @@ export default [
               "The reference for the lookup layer this model runs on. If this page reads as revision, good; if not, the excel-at-work roadmap's week 2 is the honest prerequisite.",
           },
         ],
+        concepts: [
+          "cap-table-dilution",
+          "excel-lookup",
+        ],
       },
-
       {
         title: "Modelling a round and its dilution",
         summary:
@@ -715,7 +722,6 @@ export default [
         estMinutes: 75,
         points: 30,
         difficulty: "core",
-        concepts: ["cap-table-dilution"],
         topics: [
           {
             title: "The round as inputs",
@@ -765,8 +771,10 @@ export default [
               "The dilution articles under 'equity management' walk the same before/after framing today's table produces. The hub is linked because Carta reshuffles deep URLs; the section is one click in.",
           },
         ],
+        concepts: [
+          "cap-table-dilution",
+        ],
       },
-
       {
         title: "ESOP pools — sizing, timing and who pays",
         summary: "The pool is a negotiation wearing accounting clothes.",
@@ -787,7 +795,6 @@ export default [
         estMinutes: 70,
         points: 30,
         difficulty: "stretch",
-        concepts: ["esop-pools", "cap-table-dilution"],
         topics: [
           {
             title: "What the pool is",
@@ -846,8 +853,11 @@ export default [
               "The employee-equity section covers pool mechanics and grant practice. Read after modelling, not before — the arithmetic should be yours first.",
           },
         ],
+        concepts: [
+          "esop-pools",
+          "cap-table-dilution",
+        ],
       },
-
       {
         title: "Convertible conversion at the next round",
         summary:
@@ -869,7 +879,6 @@ export default [
         estMinutes: 75,
         points: 35,
         difficulty: "stretch",
-        concepts: ["funding-instruments", "cap-table-dilution"],
         topics: [
           {
             title: "The conversion price",
@@ -908,6 +917,15 @@ export default [
             answer:
               "Each instrument converts on its own terms and no single document shows the combined effect — only the model does.",
           },
+          {
+            question:
+              "A company raised three SAFEs at caps of 20, 35 and 60 crore, and is now pricing a round at 50 crore pre. Walk me through what happens.",
+            answer:
+              "Each SAFE converts on its own terms in the same round. The 20 and 35 crore caps are below the round's implied price, so those holders convert at their cap prices and get materially more shares per rupee than the new investor; the 60 crore cap is above, so that holder converts at the discount if there is one, or the round price if not. The founders' dilution is the sum of all three conversions plus the new money — a total no single document states, which is why the model has to exist before the term sheet is signed.",
+            kind: "interview",
+            difficulty: "hard",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -919,8 +937,11 @@ export default [
               "Back to the source: the user guide's conversion examples are the test cases for your model. If your spreadsheet disagrees with their worked example, your spreadsheet is wrong.",
           },
         ],
+        concepts: [
+          "funding-instruments",
+          "cap-table-dilution",
+        ],
       },
-
       {
         title: "Waterfall and exit distribution",
         summary:
@@ -942,7 +963,6 @@ export default [
         estMinutes: 90,
         points: 40,
         difficulty: "stretch",
-        concepts: ["cap-table-dilution", "term-sheets", "excel-scenario-analysis"],
         topics: [
           {
             title: "The order of payment",
@@ -1001,10 +1021,14 @@ export default [
               "Re-read the liquidation preference section now that you have a waterfall to test its claims in. Participation and caps map directly onto model branches.",
           },
         ],
+        concepts: [
+          "cap-table-dilution",
+          "term-sheets",
+          "excel-scenario-analysis",
+        ],
       },
     ],
   },
-
   {
     title: "Valuing a company with no cash flows",
     weekRange: "Weeks 3–4",
@@ -1033,7 +1057,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["startup-valuation", "dcf-valuation"],
         topics: [
           {
             title: "Where each input breaks",
@@ -1083,8 +1106,11 @@ export default [
               "The anchor paper for this whole module. Today read only the problem statement — the first section on why standard approaches fail. The solutions are tomorrow.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+          "dcf-valuation",
+        ],
       },
-
       {
         title: "Damodaran on young companies",
         summary:
@@ -1105,7 +1131,6 @@ export default [
         estMinutes: 80,
         points: 35,
         difficulty: "stretch",
-        concepts: ["startup-valuation"],
         topics: [
           {
             title: "Scenarios over point estimates",
@@ -1163,8 +1188,10 @@ export default [
               "Free, unprotected, and authored by the source. Take a young-company template for the challenge — then rebuild its core yourself before trusting your own version.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+        ],
       },
-
       {
         title: "Revenue and EBITDA multiples",
         summary: "The market's shorthand — and the DCF hiding inside every multiple.",
@@ -1184,7 +1211,6 @@ export default [
         estMinutes: 65,
         points: 30,
         difficulty: "core",
-        concepts: ["startup-valuation", "comparable-company-analysis"],
         topics: [
           {
             title: "Which multiple for which company",
@@ -1223,6 +1249,14 @@ export default [
             answer:
               "The average encodes the average company's drivers; applying it to a company with different growth or margins imports assumptions that are false for it.",
           },
+          {
+            question: "Why can you not put an EV multiple on an equity base?",
+            answer:
+              "Enterprise value belongs to all capital providers, so it pairs with pre-debt metrics — revenue, EBITDA. Equity value belongs to shareholders alone, so it pairs with post-debt metrics like earnings. Crossing them double-counts or ignores debt: EV/earnings flatters leveraged companies, and equity-value/EBITDA punishes them. It is the most common silent error in amateur comps, and checking the numerator-denominator pairing is the thirty-second audit of any multiples page.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
+          },
         ],
         resources: [
           {
@@ -1234,8 +1268,11 @@ export default [
               "Sector multiples, margins and growth, updated annually and free. This is where a defensible multiple argument starts — with data, not with the last deal someone remembers.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+          "comparable-company-analysis",
+        ],
       },
-
       {
         title: "Choosing a defensible comparable set",
         summary:
@@ -1256,7 +1293,6 @@ export default [
         estMinutes: 70,
         points: 30,
         difficulty: "stretch",
-        concepts: ["comparable-company-analysis", "startup-valuation"],
         topics: [
           {
             title: "Drivers, not labels",
@@ -1315,8 +1351,11 @@ export default [
               "Yesterday it supplied multiples; today use its sector driver data as the sanity check on your set — a peer group whose drivers straddle the target's is doing its job.",
           },
         ],
+        concepts: [
+          "comparable-company-analysis",
+          "startup-valuation",
+        ],
       },
-
       {
         title: "Scorecard, Berkus and the VC method",
         summary:
@@ -1337,7 +1376,6 @@ export default [
         estMinutes: 65,
         points: 30,
         difficulty: "core",
-        concepts: ["startup-valuation"],
         topics: [
           {
             title: "The scorecard",
@@ -1376,6 +1414,14 @@ export default [
             answer:
               "As a convergence range with assumptions stated — anchors for negotiation, never precision.",
           },
+          {
+            question:
+              "Use the VC method to tell me what an investor paying 40 crore post for 20% of a pre-revenue company must believe.",
+            answer:
+              "Work backwards: 20% of post at 40 crore, and suppose the fund needs roughly 10x on early bets with heavy dilution expected before exit — their stake might halve, so 10% at exit must return 10x of 8 crore, implying an exit around 800 crore. The method's honest output is that sentence: 'you must believe this company can exit near 800 crore and survive to do it.' Whether that belief is reasonable is the actual conversation — the method just forces it into the open.",
+            kind: "interview",
+            difficulty: "hard",
+          },
         ],
         resources: [
           {
@@ -1387,8 +1433,10 @@ export default [
               "The investor-side view of early pricing — read it to see how little formal valuation happens at this stage, which is the context these methods live in.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+        ],
       },
-
       {
         title: "Valuation in a negotiation",
         summary: "Where the number meets leverage — and what analysis can and cannot do there.",
@@ -1408,7 +1456,6 @@ export default [
         estMinutes: 55,
         points: 25,
         difficulty: "core",
-        concepts: ["startup-valuation", "term-sheets"],
         topics: [
           {
             title: "Range versus point",
@@ -1458,8 +1505,11 @@ export default [
               "Re-read with yesterday's methods in mind, watching for one thing: how much of the essay is about process and leverage rather than valuation. That proportion is the honest answer to how prices get set.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+          "term-sheets",
+        ],
       },
-
       {
         title: "Sanity-checking someone else's valuation",
         summary:
@@ -1480,7 +1530,6 @@ export default [
         estMinutes: 90,
         points: 40,
         difficulty: "stretch",
-        concepts: ["startup-valuation", "model-audit"],
         topics: [
           {
             title: "The load-bearing assumption",
@@ -1530,10 +1579,13 @@ export default [
               "Cross-check your scenario DCF's structure against his young-company template one last time before writing the page. Structural agreement plus different inputs is fine; structural disagreement means a bug.",
           },
         ],
+        concepts: [
+          "startup-valuation",
+          "model-audit",
+        ],
       },
     ],
   },
-
   {
     title: "Unit economics and traction",
     weekRange: "Weeks 4–5",
@@ -1561,7 +1613,6 @@ export default [
         estMinutes: 65,
         points: 30,
         difficulty: "core",
-        concepts: ["unit-economics"],
         topics: [
           {
             title: "Honest CAC",
@@ -1620,8 +1671,10 @@ export default [
               "The library's growth and metrics essays define these terms the way investors actually use them. Read one on unit economics today — and notice it agrees with the honest versions, not the quoted ones.",
           },
         ],
+        concepts: [
+          "unit-economics",
+        ],
       },
-
       {
         title: "Contribution margin and payback",
         summary: "The layer where a business model is either real or not.",
@@ -1641,7 +1694,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["unit-economics"],
         topics: [
           {
             title: "The per-unit P&L",
@@ -1672,7 +1724,8 @@ export default [
           },
           {
             question: "How is CAC payback computed?",
-            answer: "CAC divided by monthly contribution margin per customer — months to recover.",
+            answer:
+              "CAC divided by monthly contribution margin per customer — months to recover.",
           },
           {
             question: "What does growth do to a negative-contribution business?",
@@ -1688,9 +1741,20 @@ export default [
             difficulty: "medium",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "tool",
+            title: "Damodaran's current data page",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "The sector margin tables are today's reality check — a modelled contribution margin should be arguable against what whole industries actually achieve.",
+          },
+        ],
+        concepts: [
+          "unit-economics",
+        ],
       },
-
       {
         title: "Cohort retention and what a growth chart hides",
         summary: "The difference between a company acquiring users and a company keeping them.",
@@ -1710,7 +1774,6 @@ export default [
         estMinutes: 70,
         points: 30,
         difficulty: "core",
-        concepts: ["traction-metrics", "unit-economics"],
         topics: [
           {
             title: "The cohort table",
@@ -1746,7 +1809,17 @@ export default [
           },
           {
             question: "What is the reflex response to a cumulative chart?",
-            answer: "Ask for the same data as a cohort table — any chart that cannot go down is not evidence.",
+            answer:
+              "Ask for the same data as a cohort table — any chart that cannot go down is not evidence.",
+          },
+          {
+            question:
+              "A deck shows monthly active users doubling over a year. What single view of the same data do you ask for, and what are you looking for?",
+            answer:
+              "The cohort retention table — signups by month down the side, months-since-signup across, share still active in each cell. Two reads: do curves flatten at some level, meaning a retained core exists and LTV is computable; and are newer cohorts retaining better or worse than older ones at the same age, which is the product genuinely improving or degrading. MAU doubling is consistent with both a compounding business and a leaky bucket refilled by ad spend — only the cohort view says which.",
+            kind: "interview",
+            difficulty: "medium",
+            askedInInterviews: true,
           },
         ],
         resources: [
@@ -1759,8 +1832,11 @@ export default [
               "The library's essays on retention and growth accounting are the investor-side reading of exactly these tables — find one and note the vocabulary: it is what partner meetings speak.",
           },
         ],
+        concepts: [
+          "traction-metrics",
+          "unit-economics",
+        ],
       },
-
       {
         title: "SaaS metrics — MRR, ARR, NRR, churn",
         summary: "The metric system of the most-funded business model.",
@@ -1780,7 +1856,6 @@ export default [
         estMinutes: 65,
         points: 30,
         difficulty: "core",
-        concepts: ["saas-metrics", "unit-economics"],
         topics: [
           {
             title: "The bridge",
@@ -1839,8 +1914,11 @@ export default [
               "The SaaS metrics essays here are the canonical definitions this day uses. Pick the key-metrics piece for SaaS and check your bridge's vocabulary against it.",
           },
         ],
+        concepts: [
+          "saas-metrics",
+          "unit-economics",
+        ],
       },
-
       {
         title: "Marketplace and D2C metrics",
         summary: "Two models where the headline number and the business are furthest apart.",
@@ -1860,7 +1938,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["unit-economics", "traction-metrics"],
         topics: [
           {
             title: "The GMV cascade",
@@ -1900,12 +1977,25 @@ export default [
               "Return rate — returns carry two-way logistics and refurbishment, and can erase an apparently healthy gross margin.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "Y Combinator Startup Library",
+            url: "https://www.ycombinator.com/library",
+            sourceName: "Y Combinator",
+            editorNote:
+              "The marketplace and consumer essays define liquidity and take-rate the way investors use them — find the marketplace-metrics piece and check today's cascade against its vocabulary.",
+          },
+        ],
+        concepts: [
+          "unit-economics",
+          "traction-metrics",
+        ],
       },
-
       {
         title: "Burn, runway and the calculation that matters most",
-        summary: "The one number a founder must never be wrong about — and advisers get to check.",
+        summary:
+          "The one number a founder must never be wrong about — and advisers get to check.",
         learningObjectives: [
           "Compute gross burn, net burn and runway from actuals, not projections",
           "Adjust runway for the receipts that will not arrive on time",
@@ -1922,7 +2012,6 @@ export default [
         estMinutes: 60,
         points: 30,
         difficulty: "core",
-        concepts: ["unit-economics"],
         topics: [
           {
             title: "Gross and net",
@@ -1948,7 +2037,8 @@ export default [
         checks: [
           {
             question: "What separates gross from net burn?",
-            answer: "Cash collected — net burn is gross cash out minus actual receipts, and it is the runway number.",
+            answer:
+              "Cash collected — net burn is gross cash out minus actual receipts, and it is the runway number.",
           },
           {
             question: "Why compute burn from bank actuals rather than the P&L?",
@@ -1980,8 +2070,10 @@ export default [
               "The library's pieces on burn and default-alive are the sharpest short reading on this exact arithmetic — search 'default alive' and read what comes back.",
           },
         ],
+        concepts: [
+          "unit-economics",
+        ],
       },
-
       {
         title: "How each of these gets gamed",
         summary:
@@ -2002,7 +2094,6 @@ export default [
         estMinutes: 75,
         points: 40,
         difficulty: "stretch",
-        concepts: ["unit-economics", "traction-metrics", "saas-metrics"],
         topics: [
           {
             title: "The catalogue, by metric",
@@ -2043,6 +2134,11 @@ export default [
           },
         ],
         resources: [],
+        concepts: [
+          "unit-economics",
+          "traction-metrics",
+          "saas-metrics",
+        ],
       },
     ],
   },

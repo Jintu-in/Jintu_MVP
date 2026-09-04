@@ -2,8 +2,9 @@ import type { Role } from "./types";
 
 /**
  * The operations cluster, from the tail of the owner's expanded taxonomy.
- * Notably the best-served domain in the catalogue: two of the four route
- * into roadmaps that cover most of the actual day job.
+ * finance-analyst lived here briefly and moved: the finance domain now
+ * splits it properly into financial-analyst and fpa-analyst, which the
+ * owner's taxonomy defines as different jobs — and it was right.
  */
 const roles: Role[] = [
   {
@@ -143,76 +144,6 @@ const roles: Role[] = [
       kind: "roadmaps",
       picks: [
         { slug: "excel-at-work", note: "Twenty days. The attrition analysis, the comp model and the hiring funnel all live in a spreadsheet — this is the data half of the modern role. The employment-law half is learned in post and jurisdiction-specific." },
-      ],
-    },
-  },
-
-  {
-    slug: "finance-analyst",
-    title: "Finance analyst",
-    aliases: ["FP&A Analyst", "Financial Analyst"],
-    domain: "operations",
-    standfirst: "Builds the model the business plans against.",
-    entry: "Graduate entry — large, stable hiring volume, and the spreadsheet skill is the actual gate.",
-    whatTheyDo: [
-      "Owns budgets, forecasts and the variance between them: builds and maintains models, explains why the number differs from the plan, and supports decisions with the financial consequence attached.",
-      "Projects what will happen and explains the gap — which is the entire difference from accounting, which records what did.",
-    ],
-    typicalWeek: [
-      "Update the forecast and explain what moved.",
-      "Investigate a variance until you can name the cause, not just the size.",
-      "Build a model for a decision under consideration.",
-      "Close the month with accounting.",
-      "Present numbers to people who will challenge them, and hold.",
-    ],
-    whatItIsNot: [
-      {
-        line: "Not accounting. Accounting records what happened; FP&A projects what will and explains the difference. Adjacent desks, different crafts, and moving between them is common but not automatic.",
-      },
-      {
-        line: "Not a mathematics role. The arithmetic is ordinary; the craft is model structure, precision and translation to people who do not read spreadsheets.",
-      },
-    ],
-    worksWith: [
-      { who: "Accounting", on: "the close, and the actuals the forecast is judged against" },
-      { who: "Department heads", on: "their budgets, and the variances they would rather not discuss" },
-      { who: "Leadership", on: "the plan, and what the model says about the options" },
-    ],
-    skills: {
-      must: [
-        "Spreadsheet modelling at professional depth — structure, auditability, no hardcoded mysteries",
-        "Financial statement literacy",
-        "Precision, because a broken formula misinforms a real decision",
-        "Explaining numbers to non-financial people without condescension",
-      ],
-      helps: [
-        "SQL",
-        "BI tooling",
-        "Scenario modelling",
-        "Industry knowledge",
-      ],
-      overrated: [
-        "A CA or CFA to start. Valuable later; not the entry gate for FP&A.",
-        "Advanced mathematics.",
-      ],
-    },
-    howPeopleGetIn: [
-      "From a commerce or finance degree, directly.",
-      "From accounting, moving from recording to projecting.",
-      "From analytics, bringing the data skill to the finance domain.",
-    ],
-    levels: [
-      { name: "Analyst", whatChanges: "You maintain models and explain variances." },
-      { name: "Senior analyst", whatChanges: "The model design is yours, and the harder questions come to you." },
-      { name: "Finance manager", whatChanges: "A function's numbers, and the partnership with its leader." },
-      { name: "Head of FP&A", whatChanges: "The planning process itself, company-wide." },
-    ],
-    whatIsHard:
-      "Month-end and quarter-end are immovable, the cycles repeat regardless of how last one went, and a single broken formula can misinform a real decision — precision under recurring deadline pressure is the permanent condition. If repeated cycles with hard deadlines wear you down, that wear compounds here rather than easing.",
-    startHere: {
-      kind: "roadmaps",
-      picks: [
-        { slug: "excel-at-work", note: "Twenty days, and it is the actual gate for this job — lookups, dynamic arrays, validation and the modelling discipline the role runs on." },
       ],
     },
   },

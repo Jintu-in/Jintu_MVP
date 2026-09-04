@@ -42,6 +42,7 @@ export type RoleDomain =
   | "design"
   | "operations"
   | "health"
+  | "finance"
   | "other";
 
 export const ROLE_DOMAINS: { key: RoleDomain; label: string; blurb: string }[] = [
@@ -53,6 +54,7 @@ export const ROLE_DOMAINS: { key: RoleDomain; label: string; blurb: string }[] =
   { key: "design", label: "Design", blurb: "How it works and how it looks." },
   { key: "operations", label: "Operations", blurb: "The machinery behind the org." },
   { key: "health", label: "Healthcare", blurb: "The work around clinical care." },
+  { key: "finance", label: "Work in finance", blurb: "The numbers behind every decision." },
   { key: "other", label: "Starting something", blurb: "Not a career ladder — one honest page." },
 ];
 
