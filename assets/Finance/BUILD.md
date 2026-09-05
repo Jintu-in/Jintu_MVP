@@ -287,3 +287,44 @@ whyToday text rather than faked as resources.
 
 Modules 5–7 remain first-pass. The reference names module 5 next — the
 operating model is built from this module's drivers.
+
+---
+
+## Addendum 5 — module 5 re-authored to the owner's reference (2026-09-05)
+
+`module-5-reference.md` (in this folder) replaced days 28–34: the
+two-connected-deliverables structure (deck reconciling to a driver-based
+model, built across the week), the slide-by-objection drill, the
+bottom-up market build with cited Indian sources, the one-source rule,
+the 18-month driver model with the CAC-shock test, the switch-cell
+scenarios, the Indian Series A data room, and day 34's audit — at 45
+points, the highest in the roadmap, as the reference insists. The three
+first-pass interview checks (the $50bn/1% TAM, the downside that still
+works, the model-an-hour-before-a-call) stay on top.
+
+New verified sources:
+
+| Source | Where |
+|---|---|
+| **Sequoia — "Writing a Business Plan"** (the original ten-slide template) | Day 28 |
+| **YC Library — "How to design a better pitch deck"** (talk page, video embedded) | Day 28 |
+| **MoSPI** (mospi.gov.in — real Indian denominators) | Day 29 |
+| **Microsoft — Scenario Manager** and **formula auditing** pages | Days 31, 34 |
+| **ExcelJet — named ranges** (the one-source rule's mechanics) | Day 30 |
+| **EuSpRIG spreadsheet horror stories** (documented modelling errors with consequences) | Day 34 |
+
+Reused where the reference asks for what is already verified: FAST
+(days 30, 34), Damodaran's spreadsheets and probabilistic paper, Skok
+read a third time as a model specification, First Round's hub, SEBI
+filings for the DRHP industry section, the data-table page. ExcelJet's
+Goal Seek page 404s — the data-table page carries the mechanics.
+Generic asks (published decks, model templates, an Indian diligence
+checklist with a date on it) are challenge instructions.
+
+**Days 30 and 34 are no longer zero-link.** Day 41 (the memo) is now
+the roadmap's only zero-link day, and the index header says why. Three
+licence hosts added (sequoiacap.com, mospi.gov.in, eusprig.org).
+
+Modules 6–7 remain first-pass. The reference: module 6 follows
+naturally from day 34 — same skill, applied to a company rather than a
+spreadsheet; module 7 needs the most verification and rots fastest.

@@ -83,6 +83,9 @@ export const BY_HOST = {
   "paulgraham.com": assumed(), // free to read, copyrighted — link only, per the owner inventory
   "forentrepreneurs.com": assumed(), // David Skok
   "a16z.com": assumed(),
+  "sequoiacap.com": assumed(),
+  "mospi.gov.in": assumed(), // Indian government works are NOT public domain like US federal works
+  "eusprig.org": assumed(),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),

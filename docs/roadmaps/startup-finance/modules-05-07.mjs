@@ -4,6 +4,12 @@
  * The deck and the model behind it, diligence from the investor's side, and
  * the SME IPO layer. Module and day titles, principles and deliverables are
  * the owner's brief verbatim (assets/Finance/roadmap-startup-finance.md).
+ * Module 5 follows the owner's fully-authored reference
+ * (assets/Finance/module-5-reference.md, received 2026-09-05): its
+ * challenges, checks, topics and named sources are that document's,
+ * verified before use, with the first pass's three interview checks kept.
+ * Its generic asks (published decks, model templates, an Indian diligence
+ * checklist) are challenge instructions, not links, by design.
  *
  * Module 7 anchors on BSE SME, SEBI and Zerodha Varsity. NSE Emerge belongs
  * here and is ABSENT: nseindia.com returns 403 to our link checker on every
@@ -19,64 +25,70 @@ export default [
       "The deck investors actually read, and the model that has to survive their questions.",
     deliverable:
       "A complete driver-based operating model plus a ten-slide deck whose numbers reconcile to it exactly.",
-    estHours: 8,
+    estHours: 9.5,
     nodes: [
       {
         title: "What a deck must prove, slide by slide",
-        summary: "Ten slides, read in four minutes, each one answering an objection.",
+        summary:
+          "A deck is not a document about a company — it is a sequence of answers to the questions an investor asks in order.",
         learningObjectives: [
-          "Name the ten slides and the objection each one exists to answer",
-          "Read a deck the way an investor does — fast, sceptical, out of order",
-          "Diagnose a real deck: which objections it answers and which it dodges",
+          "Name the standard sequence and the objection behind each slide",
+          "Say when traction moves early, and what to lead with when there is none",
+          "Write an ask with an amount, a use of funds and the milestone it buys",
         ],
         whyToday:
-          "The deck is the adviser's most-requested artefact and the most misunderstood: founders write it as a story about themselves, investors read it as a list of reasons to say no. Starting the module here fixes the frame for everything that follows.",
+          "A pitch deck is not a document about a company. It is a sequence of answers to the questions an investor asks in order, and understanding that order is the whole craft.",
         principle: "Ten slides, and each one answers an objection rather than making a claim.",
         commonMistake:
-          "Writing slides that assert instead of answer. 'Huge market' is a claim; the objection is 'why is this reachable by you, now?' A deck built claim-by-claim reads as marketing; built objection-by-objection it reads as evidence — and investors have seen ten thousand of the first kind.",
+          "Building the deck as a description of the company rather than a sequence of answers. The result reads as complete and persuades nobody, because it never engages the question the reader is actually holding.",
         challenge:
-          "Take one real deck — yours, a client's, or a published one — and write next to each slide the objection it is trying to retire. Mark the slides where no objection is being answered. Those are the slides to cut or rewrite, and that margin note is the adviser's actual edit.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Take a published deck from a company that raised successfully — Airbnb's and Buffer's are widely available. For each slide, write the one objection it exists to answer. Then identify the two slides doing the most work, and the one you would cut.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The canonical ten",
+            title: "The standard sequence",
             detail:
-              "Problem, solution, market, product, traction, model, competition, team, financials, ask. The order varies; the objections do not — each slide exists because investors reliably doubt that specific thing.",
+              "Problem, solution, market, product, traction, business model, competition, team, financials, ask. Deviations should be deliberate — the order varies; the objections do not.",
           },
           {
-            title: "How it is actually read",
+            title: "The objection behind each slide",
             detail:
-              "Minutes, not meetings; traction and team first; the rest skimmed for red flags. The deck's job is to earn the meeting, not to close the round — overloading it confuses those two jobs.",
+              "'Is this a real problem', 'why you', 'is it big enough', 'does anyone want it', 'can you keep them'. A deck built objection-by-objection reads as evidence; built claim-by-claim it reads as marketing.",
           },
           {
-            title: "The ask slide",
+            title: "Where traction sits",
             detail:
-              "Amount, what it buys, and what will be true when it runs out. 'Raising ₹8 crore for 18 months to reach X' is an answer; 'raising to accelerate growth' is a dodge investors read as not knowing.",
+              "It moves early in a deck that has it, because it answers several objections at once. A company without traction must earn attention through problem and team instead.",
           },
           {
-            title: "Claims versus evidence",
+            title: "The team slide, by stage",
             detail:
-              "Every claim on a slide should be one question away from a number in the model or a fact in the data room. Module rule: if the deck says it, day 30 makes the model prove it.",
+              "At seed it is the investment case; at Series A it is a checkbox. Knowing which deck you are writing decides how much weight it carries.",
+          },
+          {
+            title: "The ask, and what does not belong",
+            detail:
+              "Amount, use of funds, and the milestone it buys — an ask without a milestone is a number without a reason. Not welcome anywhere: NDAs, exit-strategy slides, five-year revenue projections at seed.",
           },
         ],
         checks: [
           {
-            question: "What is each slide of a deck actually for?",
+            question: "Why does traction move earlier when a company has it?",
             answer:
-              "Retiring a specific, predictable objection — not making a claim. Investors read decks as lists of reasons to say no.",
+              "Because it answers several objections at once — real problem, real demand, some execution ability. A company with traction leads with it; one without must earn attention through problem and team.",
           },
           {
-            question: "What must the ask slide contain?",
+            question: "What is wrong with a five-year revenue projection at seed?",
             answer:
-              "The amount, what it buys, and what will be true when the money runs out — a milestone, not a mood.",
+              "It cannot be credible and both sides know it. It signals either naivety or that you think the reader is naive. Show the model on request; do not lead with it.",
           },
           {
-            question: "What is the deck's actual job in a fundraise?",
+            question: "What makes an ask credible?",
             answer:
-              "Earning the meeting. The round is closed by the process and the evidence, not the PDF.",
+              "Amount, use of funds, and the specific milestone it reaches — 'eighteen months to ₹5 crore ARR and a Series A'. An amount alone invites the question you should have answered.",
           },
         ],
         resources: [
@@ -86,7 +98,15 @@ export default [
             url: "https://www.ycombinator.com/library/4A-a-guide-to-seed-fundraising",
             sourceName: "Y Combinator",
             editorNote:
-              "Re-read the materials section specifically — what investors expect to see, in their own words. Note how short the expected deck is compared to the ones founders actually send.",
+              "Re-read the materials section specifically — what investors expect to see, in their own words, from having seen an enormous volume of decks. Note how short the expected deck is compared to the ones founders actually send.",
+          },
+          {
+            type: "read",
+            title: "Writing a business plan — Sequoia's pitch template",
+            url: "https://www.sequoiacap.com/article/writing-a-business-plan/",
+            sourceName: "Sequoia Capital",
+            editorNote:
+              "The original ten-slide structure most decks still follow. Short and free — read it once, then notice how many published decks are this outline with a logo.",
           },
           {
             type: "video",
@@ -99,6 +119,14 @@ export default [
             editorNote:
               "The clearest free talk on what each slide is for — packaging the idea so an investor can repeat it to their partners. Watch it before writing a single slide; the deck is a script, not a document.",
           },
+          {
+            type: "read",
+            title: "How to design a better pitch deck",
+            url: "https://www.ycombinator.com/library/4T-how-to-design-a-better-pitch-deck",
+            sourceName: "Y Combinator",
+            editorNote:
+              "Specific, practitioner-delivered advice on the sequence and the slides — legible, simple, obvious — not general design tips. The talk video is embedded on the page.",
+          },
         ],
         concepts: [
           "pitch-deck",
@@ -106,61 +134,67 @@ export default [
       },
       {
         title: "Market sizing bottom-up",
-        summary: "TAM built from units and prices you can defend, not borrowed from a report.",
+        summary:
+          "The slide most often outsourced to a headline number — and the one where doing the work properly is most visible.",
         learningObjectives: [
-          "Build TAM, SAM and SOM bottom-up from countable units",
-          "State every assumption in the chain and its source",
-          "Spot a top-down TAM in someone else's deck in under a minute",
+          "Build TAM, SAM and SOM bottom-up from a countable unit",
+          "Source Indian denominators from government statistics rather than reports",
+          "Sanity-check a SOM against the largest revenue anyone in the sector has achieved",
         ],
         whyToday:
-          "The market slide is where credibility is most often lost in silence. A consulting-report TAM signals that the founder has not done the work — and the bottom-up alternative is a Fermi estimate, which this catalogue already teaches; today applies it with money attached.",
+          "Market size is the slide most often outsourced to a headline number, and the one where doing it properly is most visible. It is also a genuinely transferable analytical skill.",
         principle:
           "A TAM copied from a consulting report tells an investor you did not do the work.",
         commonMistake:
-          "Starting from the biggest available number and applying percentages — 'the Indian food market is X, we take 1%'. The 1% is not an estimate, it is an admission that no estimate exists. Bottom-up starts from customers who exist and prices someone pays.",
+          "Presenting the conclusion without the build. A large number with no visible construction is treated as decoration, whereas a smaller number with a defensible build is treated as analysis.",
         challenge:
-          "Size one real market bottom-up: countable buyers × honest reachable fraction × realistic price, with every input written next to its source. Then find the same market's top-down number in any report and write one line on why they differ. Keep the chain — it goes in the deck on day 34.",
-        challengeMinutes: 50,
-        estMinutes: 70,
-        points: 30,
+          "Size the Indian market for one specific B2B product, bottom-up. Start from a countable unit and build to TAM, SAM and SOM, showing every step and citing each number's source. Then write two sentences on which assumption in your build is weakest.",
+        challengeMinutes: 35,
+        estMinutes: 50,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "The chain",
+            title: "TAM, SAM, SOM",
             detail:
-              "Units that exist (businesses, households, transactions) × the fraction genuinely addressable × price actually paid. Three numbers, each defensible alone — which is the entire advantage over one big borrowed one.",
+              "Total addressable, serviceable addressable, serviceable obtainable. Nested, and each requires a different argument — SAM is what your product could serve given capability and geography; SOM is what you could realistically win in a defined period.",
           },
           {
-            title: "TAM, SAM, SOM honestly",
+            title: "Bottom-up construction",
             detail:
-              "TAM is everyone who could ever buy; SAM is who your model can serve; SOM is who you can reach in the plan's horizon. The deck's operative number is SOM — the other two are context.",
+              "Units × price × frequency, starting from a countable thing: businesses, households, transactions, professionals. The choice of unit determines everything downstream.",
           },
           {
-            title: "Fermi discipline, priced",
+            title: "Top-down and why it fails",
             detail:
-              "Bound each input above and below, take the defensible middle, and state which input moves the answer most. The thinking-under-uncertainty roadmap's estimation days are exactly this skill.",
+              "'The Indian retail market is X and we need 1%' is not an argument, it is a wish. Every large market contains a 1% nobody has reached.",
           },
           {
-            title: "Reading someone else's TAM",
+            title: "Indian data sources",
             detail:
-              "The tells of a borrowed number: round billions, a named consultancy, a percentage-of-market capture claim. The response is one question — 'walk me through the units'.",
+              "Census, MCA, MoSPI and RBI publications, industry bodies, exchange filings. Most decks use none — which is exactly why a visible build stands out.",
+          },
+          {
+            title: "Sanity-checking and presenting",
+            detail:
+              "If your SOM implies a revenue no company in the sector has achieved, revisit it. And show the build, not the conclusion — the build is the argument.",
           },
         ],
         checks: [
           {
-            question: "What makes a bottom-up TAM more credible than a bigger top-down one?",
+            question: "Why do investors discount top-down market sizing?",
             answer:
-              "Every link in the chain is individually checkable — units, fraction, price — so the argument can be had about specifics.",
+              "Because it proves nothing. Every large market contains a 1% that nobody has reached, and the number tells you nothing about whether this company can reach it.",
           },
           {
-            question: "Which of TAM, SAM and SOM does the plan actually run on?",
+            question: "What is the difference between SAM and SOM?",
             answer:
-              "SOM — the share reachable within the plan's horizon. TAM and SAM are context for it.",
+              "SAM is the portion of the total market your product could serve given its capabilities and geography. SOM is what you could realistically win in a defined period given competition and your capacity.",
           },
           {
-            question: "What is the one-question audit of a market slide?",
+            question: "Your SOM implies ₹500 crore revenue in year five. How do you check it?",
             answer:
-              "'Walk me through the units.' A borrowed number has no units to walk through.",
+              "Against the largest revenue any company in that sector has achieved, and in what timeframe. If your SOM exceeds the sector leader's actual revenue, the build has an error in it.",
           },
           {
             question:
@@ -175,11 +209,35 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "Y Combinator Startup Library — market sizing",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The library's market-sizing pieces show how investors want the chain presented. Read one, then notice your challenge output already matches the format — that is the point.",
+              "The investor's view on why bottom-up is expected and top-down is discounted. Read one market-sizing piece and notice your challenge output already matches the format — that is the point.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — TAM and its abuse",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "He has written specifically on how big-market stories and TAM inflation drive valuation errors — search the blog for his total-addressable-market posts. Connects today's slide directly back to module 3.",
+          },
+          {
+            type: "read",
+            title: "Ministry of Statistics and Programme Implementation",
+            url: "https://www.mospi.gov.in/",
+            sourceName: "MoSPI",
+            editorNote:
+              "Where real Indian denominators come from — enterprise counts, household surveys, sector statistics. Most decks use none of it; a market build cited to MoSPI reads differently.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open a DRHP's industry section: companies must support market claims in a filing a regulator reads. That is what a defensible market argument looks like under scrutiny.",
           },
         ],
         concepts: [
@@ -189,63 +247,93 @@ export default [
       {
         title: "The narrative and the numbers agreeing",
         summary:
-          "One story told twice — in prose and in a spreadsheet — with no daylight between.",
+          "The failure mode that kills otherwise good raises: the deck says one thing, the model says another, and the second meeting finds it.",
         learningObjectives: [
-          "Cross-check every deck claim against the model that must generate it",
-          "Find narrative-model contradictions fast, in your own work and others'",
-          "Fix the disagreement in the right place — sometimes the deck, sometimes the model",
+          "List the numbers that must reconcile exactly between deck and model",
+          "Implement the one-source rule so nothing is typed twice",
+          "Explain what a discrepancy does to an investor's read of everything else",
         ],
         whyToday:
-          "This is the day the module's two halves are welded. Investors triangulate: the deck says efficient growth, the model shows CAC doubling — and the moment they find one contradiction, every other claim is re-read as suspect.",
+          "This is the failure mode that kills otherwise good raises. The deck says one thing, the model says another, and the inconsistency is discovered in the second meeting.",
         principle: "If the deck and the model disagree, the investor believes neither.",
         commonMistake:
-          "Treating deck and model as separate documents owned by separate moods — the deck by optimism, the model by whoever built it last. They are one argument in two formats, and every number that appears in both must be the same number, from the same cell.",
+          "Updating the model after investor feedback and not carrying the change back through the deck. It is the single most common source of second-meeting discrepancies.",
         challenge:
-          "Take a deck-and-model pair — yours from this module, or a client's. List every quantitative claim in the deck, and next to each, the model cell that produces it. Every claim with no cell, and every cell that contradicts a claim, goes on the fix list. Do the fixes.",
-        challengeMinutes: 40,
-        estMinutes: 55,
-        points: 25,
+          "Take any deck you can find with financial claims. Build a one-page reconciliation listing every number in it, where it should come from, and whether the deck's numbers are internally consistent. Note every place two slides imply different things.",
+        challengeMinutes: 25,
+        estMinutes: 45,
+        points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The reconciliation table",
+            title: "Where deck and model diverge",
             detail:
-              "Claim → source cell → match or mismatch. Mechanical, half an hour, and it catches the contradictions that kill credibility. This becomes a standing artefact: rerun it every time either document changes.",
+              "The deck is updated after the model, or by a different person, or after feedback that was never carried back. The divergence is process, not talent — and the fix is process too.",
           },
           {
-            title: "Where disagreements come from",
+            title: "The numbers that must reconcile exactly",
             detail:
-              "Versions drift: the deck gets updated for a meeting, the model for a question, and nobody reconciles. The fix is process, not talent — one source of truth, and the deck quotes it.",
+              "Current revenue, growth rate, headcount, burn, runway, the ask. Consistent units, consistent periods, consistent definitions across both documents.",
           },
           {
-            title: "Which one is wrong",
+            title: "The one-source rule",
             detail:
-              "When they disagree, sometimes the model is stale, sometimes the deck is inflated. Deciding which requires going back to the underlying data — the disagreement is a symptom, not the disease.",
+              "Every number in the deck traces to a cell in the model. Nothing is typed twice — when the model updates, you know exactly which slides change.",
           },
           {
-            title: "The investor's triangulation",
+            title: "Version control",
             detail:
-              "Deck versus model versus data room versus what the founder says in the room. Advisers who pre-run the triangulation control it; those who do not, discover it live.",
+              "Decks circulate; models get updated. A deck sent three weeks ago is still being read, and someone will quote it back to you in a meeting.",
+          },
+          {
+            title: "What a discrepancy costs",
+            detail:
+              "The investor stops evaluating the business and starts evaluating your care. A weak number is a business problem you can discuss; a discrepancy makes every other number suspect.",
           },
         ],
         checks: [
           {
-            question: "What happens when an investor finds one deck-model contradiction?",
+            question: "Why is a discrepancy worse than a weak number?",
             answer:
-              "Every other claim gets re-read as suspect — the contradiction costs more than the specific number it involves.",
+              "A weak number is a business problem you can discuss. A discrepancy is a competence signal, and it makes every other number suspect.",
           },
           {
-            question: "What is the reconciliation table?",
+            question: "What does the one-source rule mean in practice?",
             answer:
-              "Every quantitative deck claim mapped to the model cell that produces it, checked for match — rerun whenever either changes.",
+              "Every figure in the deck is linked to or copied from a single identified cell in the model. When the model updates, you know exactly which slides change.",
           },
           {
-            question: "Why do deck and model drift apart?",
+            question: "Why does version control matter in a raise?",
             answer:
-              "They get updated on different occasions for different audiences. The cure is one source of truth the deck quotes.",
+              "Decks circulate for weeks. If you update the model and the deck separately, someone is reading a version that no longer matches what you will say in the meeting.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "The FAST Standard",
+            url: "https://fast-standard.org/",
+            sourceName: "FAST Standard Organisation",
+            editorNote:
+              "The discipline of a single source for every number is a modelling convention, not a fundraising one. Learn it as a standard — the structure rules are the part to read.",
+          },
+          {
+            type: "read",
+            title: "Named ranges",
+            url: "https://exceljet.net/glossary/named-range",
+            sourceName: "ExcelJet",
+            editorNote:
+              "The mechanical means of implementing the one-source rule — a named cell the deck quotes is a number that cannot silently fork.",
+          },
+          {
+            type: "read",
+            title: "First Round Review",
+            url: "https://review.firstround.com/",
+            sourceName: "First Round Review",
+            editorNote:
+              "Search the Review for fundraising-mistakes pieces — practitioner accounts of losing a round on process rather than substance. Deep links rot here; the hub is one search away.",
+          },
+        ],
         concepts: [
           "pitch-deck",
           "startup-financial-model",
@@ -253,63 +341,85 @@ export default [
       },
       {
         title: "Building a driver-based startup model",
-        summary: "An operating model an investor can interrogate — drivers in, financials out.",
+        summary:
+          "Module 4's drivers become a model — the structure your degree taught, run on inputs it never mentioned.",
         learningObjectives: [
-          "Structure the model: drivers → revenue build → costs → cash",
-          "Choose drivers a founder actually controls and an investor can test",
-          "Keep the whole model interrogable — change one driver, watch everything honest move",
+          "Build revenue as customers × price × frequency, never as last year plus a percentage",
+          "Wire the driver tree: spend → CAC → customers → retention → revenue → cash",
+          "Model monthly for eighteen months, annually thereafter, and say why",
         ],
         whyToday:
-          "This is the module's engineering day. A blended-growth-rate model answers no questions; a driver-based one converts every investor question into a cell change — and building one is the difference between presenting a forecast and defending one.",
+          "The build day, and the point where module 4's drivers become a model. This is also where their existing three-statement modelling connects to startup work — the structure is familiar, the drivers are not. Day 31 runs on days 21–26's numbers; if module 4 was skipped, this day has no inputs.",
         principle: "A model with a blended growth rate is a model nobody can interrogate.",
         commonMistake:
-          "Making revenue a row that grows by a typed percentage. Revenue must be built — leads × conversion × price, or accounts × seats × expansion — so that 'what if conversion falls' is a question the model can answer rather than an argument nobody can settle.",
+          "Building the model in the P&L format their degree taught, then bolting drivers on afterwards. The driver tree is the model; the P&L is a presentation of it.",
         challenge:
-          "Build the operating model for one business: five to eight named drivers, a revenue build from them, costs split fixed and variable, and monthly cash. Test: an investor asks 'what if CAC rises 30%?' — the answer should be one cell change and thirty seconds. If it is not, restructure until it is.",
-        challengeMinutes: 70,
-        estMinutes: 90,
-        points: 35,
+          "Build an eighteen-month driver-based model using your module 4 numbers: marketing spend, CAC, new customers, retention, active customers, revenue, contribution margin, fixed costs, net burn, closing cash. Every output must be a formula. Then change CAC by 20% and confirm every downstream figure updates, including runway. Before building, open two published startup model templates — several VCs and accelerators publish free ones — compare their driver structures, and close them.",
+        challengeMinutes: 45,
+        estMinutes: 50,
+        points: 40,
         difficulty: "stretch",
         topics: [
           {
-            title: "What a driver is",
+            title: "Drivers versus growth rates",
             detail:
-              "A quantity someone controls or can evidence: sales hires, leads per rep, conversion, price, churn. Growth rate is not a driver — it is the output the drivers produce.",
+              "Revenue as customers × price × frequency, never as last year plus a percentage. A 15% growth rate cannot be challenged specifically; a CAC assumption or a retention rate can.",
           },
           {
-            title: "The revenue build",
+            title: "The driver tree",
             detail:
-              "Model the machine, not the result: acquisition funnel to customers, customers to revenue via price and retention. Each stage a row, each rate a named assumption with a source.",
+              "Marketing spend → CAC → new customers → retention → active customers → revenue. Each link is an assumption someone can argue with — which is what makes the model useful in a conversation.",
           },
           {
-            title: "Cost structure",
+            title: "Inputs, calculations, outputs",
             detail:
-              "Variable costs ride the drivers (support per customer, fees per transaction); fixed costs step with thresholds (a manager per eight reps). Headcount is the driver most models forget to link.",
+              "One input block, no assumptions buried in formulas — the day-9 discipline, applied to a bigger machine. Headcount and costs are driven by the plan, not by a percentage of revenue.",
           },
           {
-            title: "Cash, monthly",
+            title: "Linking to cash",
             detail:
-              "The model's bottom line is the bank balance by month, with collection timing — because module 4's lesson stands: companies die of cash, and the model exists to show the date.",
+              "The P&L is not the point; the cash line is. The model's bottom line is the bank balance by month, with collection timing — and the date it crosses zero.",
+          },
+          {
+            title: "Monthly, then annually",
+            detail:
+              "Monthly for eighteen months, annually thereafter — precision where cash timing matters, direction where it does not. Modelling year five monthly implies a confidence nobody has.",
           },
         ],
         checks: [
           {
-            question: "Why is a growth rate not a driver?",
+            question: "Why model revenue as customers × price rather than as a growth rate?",
             answer:
-              "Nobody controls 'growth' directly — it is the output of controllable inputs like hiring, conversion and churn. Modelling it as an input makes the model unquestionable.",
+              "Because each component is separately arguable. A 15% growth rate cannot be challenged specifically; a CAC assumption or a retention rate can, and that is what makes a model useful in a conversation.",
           },
           {
-            question: "What is the test of an interrogable model?",
+            question: "Why monthly for eighteen months and annual after?",
             answer:
-              "Any plausible investor question — 'what if X falls 30%?' — is answerable by one cell change, immediately.",
+              "Cash timing matters in the near term and precision beyond eighteen months is false. Modelling year five monthly implies a confidence nobody has.",
           },
           {
-            question: "What does the model's bottom line have to be?",
+            question: "What breaks when marketing spend rises 50% in a driver-based model?",
             answer:
-              "Monthly cash with collection timing — the bank balance and the date it crosses zero.",
+              "New customers rise, but so does burn, and runway shortens. If CAC also rises with scale — which it usually does — the model should reflect that rather than holding CAC constant.",
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "SaaS Metrics 2.0 — the drivers behind a forecast",
+            url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+            sourceName: "David Skok (for Entrepreneurs)",
+            editorNote:
+              "The connection between unit economics and a forecast — exactly the module 4 to module 5 bridge. Third pass at this piece; this time read it as a model specification.",
+          },
+          {
+            type: "tool",
+            title: "Damodaran's valuation spreadsheets",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "His models are unusually well structured and free. Look at how he separates inputs from calculations — that discipline is today's whole build.",
+          },
           {
             type: "read",
             title: "SUMIFS function",
@@ -317,6 +427,14 @@ export default [
             sourceName: "ExcelJet",
             editorNote:
               "The aggregation layer of every driver model — cohorts by month, costs by category. If this is not fluent, the excel-at-work roadmap's aggregation week is the prerequisite being felt.",
+          },
+          {
+            type: "read",
+            title: "Switch between sets of values by using scenarios",
+            url: "https://support.microsoft.com/en-us/office/switch-between-various-sets-of-values-by-using-scenarios-2068afb1-ecdf-4956-9822-19ec479f55a2",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "Needed for tomorrow, and worth setting up today — the scenario machinery bolts straight onto a model whose inputs live in one block.",
           },
         ],
         concepts: [
@@ -326,60 +444,66 @@ export default [
       },
       {
         title: "Scenario and sensitivity in a fundraising model",
-        summary: "Showing the downside on purpose — the credibility move almost nobody makes.",
+        summary:
+          "A single-scenario model implies a confidence that undermines it — scenarios convert a forecast into an argument about what matters.",
         learningObjectives: [
-          "Add base, upside and downside scenarios driven by named switches",
-          "Build one-variable sensitivity on the drivers that matter",
-          "Present the downside as evidence of seriousness rather than weakness",
+          "Build base, downside and upside off one switch, changing only the drivers that matter",
+          "Rank every driver by its effect on eighteen-month closing cash",
+          "Construct a downside with a mechanism, not a haircut",
         ],
         whyToday:
-          "Yesterday's model gets its honesty layer. Every investor privately stress-tests the plan; a founder who arrives with the stress test already done changes the meeting — and Damodaran's scenario discipline from module 3 lands here in operating form.",
+          "A single-scenario model implies a confidence that undermines it. Scenarios convert a forecast from a prediction into an argument about what matters — the same technique as module 3 day 14's terminal-value drill, applied to a different question.",
         principle: "Show the downside yourself. The investor will find it anyway.",
         commonMistake:
-          "A downside scenario that still hits the raise. If the downside case shows the round working and the plan holding, it is not a downside — it is the base case wearing a disclaimer. The honest downside shows what breaks, when, and what management would do about it.",
+          "Building scenarios by changing every input at once. The result shows a range and hides the mechanism, when the mechanism is the entire value of the exercise.",
         challenge:
-          "Add three scenarios to yesterday's model via a switch cell — no duplicated sheets. Downside must include: slower conversion, later collections, one lost quarter. Produce the runway date under each scenario, and the one-page sensitivity: which two drivers move cash-out date most.",
-        challengeMinutes: 60,
-        estMinutes: 75,
-        points: 30,
+          "Extend yesterday's model with three scenarios and a two-way sensitivity table on runway across CAC and retention. Rank all your drivers by their effect on eighteen-month closing cash. Then write one paragraph identifying the single assumption the whole model rests on, and what you would want to see to believe it.",
+        challengeMinutes: 35,
+        estMinutes: 45,
+        points: 35,
         difficulty: "stretch",
         topics: [
+          {
+            title: "Three scenarios, not five",
+            detail:
+              "Base, downside, upside — a reader compares three and skims five. What changes between them is the two or three drivers that actually matter, not every input.",
+          },
           {
             title: "The switch architecture",
             detail:
               "One scenario cell; every scenario-varying assumption looks it up. Duplicated sheets drift within a week — the switch keeps one model telling three stories consistently.",
           },
           {
-            title: "Honest downside construction",
+            title: "Sensitivity tables and the load-bearing driver",
             detail:
-              "Take the three assumptions the thesis leans on hardest and impair them together — bad quarters correlate. A downside built from one impaired variable understates how failure actually arrives.",
+              "One-way and two-way tables show where the output is most exposed. Change each input by 10% and rank the effect — usually one or two dominate, and that is where diligence and attention belong.",
           },
           {
-            title: "Sensitivity as triage",
+            title: "The downside that matters",
             detail:
-              "One-variable data tables on each driver against the cash-out date. The two or three that dominate are where diligence, negotiation and management attention all belong.",
+              "Not 'growth is slower' but 'CAC rises 40% as we move beyond the initial channel, and retention falls 10 points' — a mechanism someone can assess, with the impaired assumptions moving together, because bad quarters correlate.",
           },
           {
             title: "Presenting it",
             detail:
-              "The downside slide says: here is what breaks, here is when, here is the plan. It converts the investor's private stress test into a shared conversation — which is the whole credibility move.",
+              "Lead with the driver ranking, not three columns of numbers. Founders resist showing the downside; showing it first converts the investor's private stress test into a shared conversation.",
           },
         ],
         checks: [
           {
-            question: "What disqualifies a downside scenario?",
+            question: "Why three scenarios rather than five?",
             answer:
-              "Still working — if the round closes and the plan holds, it is a base case with a disclaimer, not a downside.",
+              "Because a reader compares three and skims five. The purpose is to show the range and the drivers, not to enumerate possibilities.",
           },
           {
-            question: "Why one switch cell rather than three sheets?",
+            question: "What makes a downside case useful?",
             answer:
-              "Duplicated sheets drift immediately; a switch keeps one structure telling all scenarios consistently.",
+              "Specificity. 'Revenue 30% lower' is not a scenario; 'CAC rises 40% as we move beyond the initial channel, and retention falls 10 points' is a mechanism someone can assess.",
           },
           {
-            question: "What does sensitivity analysis triage?",
+            question: "Why does showing the downside build credibility?",
             answer:
-              "Which drivers dominate the cash-out date — and therefore where diligence and management attention belong.",
+              "It demonstrates you have thought about failure and know where the model is fragile. An investor will find the fragility regardless; finding it first is the difference between preparation and being caught out.",
           },
           {
             question:
@@ -398,7 +522,15 @@ export default [
             url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/probabilistic.pdf",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Damodaran on probabilistic approaches — scenarios, simulations, and when each earns its complexity. Read the scenario sections; the simulation half is optional depth.",
+              "The rigorous treatment of scenarios, simulations, and when each earns its complexity — it connects directly to module 3 day 15's scenario valuation. Read the scenario sections; the simulation half is optional depth.",
+          },
+          {
+            type: "read",
+            title: "Calculate multiple results by using a data table",
+            url: "https://support.microsoft.com/en-us/office/calculate-multiple-results-by-using-a-data-table-e95e2487-6ca6-4413-ad12-77542a5ea50b",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "The mechanics of today's two-way runway table — CAC across, retention down, one formula. One careful read is enough.",
           },
         ],
         concepts: [
@@ -408,70 +540,85 @@ export default [
       },
       {
         title: "The data room",
-        summary: "The folder that gets diligence done in days instead of months.",
+        summary:
+          "The unglamorous day that determines how long a round takes — and directly billable adviser work.",
         learningObjectives: [
-          "Structure a data room an investor's associate can navigate unaided",
-          "Know the standard index: corporate, financial, commercial, legal, team",
-          "Read data-room hygiene as the signal investors take it to be",
+          "Assemble the Indian document set: MCA filings, statutory registers, GST, ESOP paper",
+          "Structure folders to match the diligence checklist an investor will use",
+          "Name the gaps that delay Indian rounds, and what each one's absence signals",
         ],
         whyToday:
-          "Between the pitch and the cheque sits diligence, and the data room is its venue. Advisers usually assemble it — and its speed and order are read, fairly, as a proxy for the company's. This day also sets up module 6, which sits on the other side of the same folder.",
+          "The unglamorous day that determines how long a round takes. It is also directly billable advisory work, and the thing a founder is least likely to have done.",
         principle:
           "Diligence speed is a signal. A disorganised data room reads as a disorganised company.",
         commonMistake:
-          "Assembling the room reactively, uploading whatever each investor asks for as they ask. The room should be built once, complete, before the process starts — because the second investor's associate finding gaps the first one filled reads exactly as bad as it is.",
+          "Assembling the data room after receiving a term sheet. Diligence then runs at the speed of document retrieval, and weeks of exclusivity are spent finding papers instead of answering questions.",
         challenge:
-          "Write the full data-room index for a Series A — every folder, every document, and for each document one line: what a diligence associate is checking with it. The index is an adviser deliverable in its own right; a founder given this list knows exactly what to gather.",
-        challengeMinutes: 40,
-        estMinutes: 55,
-        points: 25,
+          "Build a complete data room folder structure for an Indian startup at Series A, populated with the document names that should exist in each. Then mark which five are most commonly missing, and what each one's absence delays. Find one published diligence checklist from an Indian VC or law firm and check yours against it — noting the checklist's date.",
+        challengeMinutes: 25,
+        estMinutes: 45,
+        points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The standard index",
+            title: "What a data room contains",
             detail:
-              "Corporate (incorporation, cap table, board minutes), financial (statements, MIS, bank), commercial (contracts, pipeline, metrics), legal (IP, litigation, licences), team (ESOP, key contracts). Predictable structure is the courtesy.",
+              "Corporate, financial, commercial, legal, HR, IP, and the current cap table — structured to match the diligence checklist an investor will use, with dates in filenames.",
           },
           {
-            title: "The cap table's home",
+            title: "The Indian document set",
             detail:
-              "The module-2 model — documents-reconciled, formula-driven — lives here, beside the documents that prove it. A cap table that matches its documents on first check buys credibility for everything else.",
+              "Incorporation documents, MCA filings, statutory registers, GST and tax filings, ESOP documentation, key contracts. This set has no US equivalent, and the free US material will mislead.",
           },
           {
-            title: "Versioning and access",
+            title: "Staging access",
             detail:
-              "Dated files, one current version each, access logged. Stale duplicates and 'final_v3_new' filenames read as the company's actual state of mind.",
+              "Enough before a term sheet to support the decision — corporate structure, financials, key metrics, cap table — with customer contracts and sensitive commercial detail held until terms are agreed.",
           },
           {
-            title: "What absence signals",
+            title: "The gaps that delay rounds",
             detail:
-              "A missing document is a finding: no board minutes means no governance rhythm; no signed contracts means the revenue is handshakes. Module 6 reads gaps exactly this way.",
+              "Undocumented option grants, missing board resolutions, unsigned agreements, a cap table that disagrees with the register. Each gap is a finding: no board minutes means no governance rhythm.",
+          },
+          {
+            title: "The Q&A log, and preparing early",
+            detail:
+              "Track what was asked, answered and by whom. A founder who assembles the room during diligence adds weeks; one who built it before the process compresses them.",
           },
         ],
         checks: [
           {
-            question: "When should the data room be complete?",
+            question: "Why does a disorganised data room affect the deal and not just the timeline?",
             answer:
-              "Before the process starts — built once, not assembled reactively per investor request.",
+              "It signals how the company operates. An investor extrapolates from what they can see to what they cannot, and record-keeping is the most visible proxy for internal discipline.",
           },
           {
-            question: "What are the five standard sections?",
-            answer: "Corporate, financial, commercial, legal, and team/ESOP.",
+            question: "What are the most common gaps in an Indian startup's data room?",
+            answer:
+              "Undocumented ESOP grants, missing board resolutions for past issuances, statutory registers not maintained, and a cap table that does not reconcile to MCA filings.",
           },
           {
-            question: "Why is data-room hygiene read as a signal?",
+            question: "What should go in before a term sheet?",
             answer:
-              "Fairly or not, investors take the room's order and speed as a proxy for the company's — it is the one operational artefact they experience directly.",
+              "Enough to support the investment decision — corporate structure, financials, key metrics, cap table — while holding customer contracts and sensitive commercial detail until terms are agreed.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Stripe Atlas guides",
+            title: "Stripe Atlas guides — record-keeping",
             url: "https://stripe.com/atlas/guides",
-            sourceName: "Stripe",
+            sourceName: "Stripe Atlas",
             editorNote:
-              "Practical, founder-facing writing on the mechanics around a raise. The guides on equity and fundraising paperwork map to the corporate section of today's index.",
+              "The practical discipline, explained without legal jargon. The Indian statutory layer differs — today's challenge sends you to find a dated Indian checklist for exactly that reason.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — the fundraising process",
+            url: "https://www.ycombinator.com/library",
+            sourceName: "Y Combinator",
+            editorNote:
+              "Read one piece on the process timeline: where diligence sits, and how preparation compresses it. The data room is the difference between a two-week close and a two-month one.",
           },
         ],
         concepts: [
@@ -482,60 +629,66 @@ export default [
       {
         title: "Auditing a founder's model",
         summary:
-          "The module capstone — and the skill the brief names as the job: finding the errors in someone else's spreadsheet.",
+          "The module — arguably the roadmap — culminates here: the daily work of anyone advising startups, taught by no finance degree.",
         learningObjectives: [
-          "Run a structured model audit: structure, hardcodes, links, signs, sanity",
-          "Find the assumption doing the most work and test it first",
-          "Complete the module deliverable: model and deck, reconciled exactly",
+          "Run the audit order: structure, arithmetic, logic, assumptions",
+          "Use Excel's formula-auditing tools to make the work practical rather than tedious",
+          "Report findings with errors separated from disagreements, ranked by effect",
         ],
         whyToday:
-          "The brief's sharpest line: an adviser spends more time finding errors in models than building them. Today converts the week's construction knowledge into audit instinct — you know where bodies get buried because you have just built the graveyard.",
+          "The module — and arguably the roadmap — culminates here. For anyone advising startups, this is the daily work, and no finance degree teaches it. Re-read your day 20 notes before starting: same skill, applied to a valuation rather than an operating model.",
         principle: "You will spend more time finding errors in models than building them.",
         commonMistake:
-          "Auditing by re-deriving the answer. The efficient audit is structural: trace the drivers, hunt hardcodes among formulas, check signs and sum ranges, then sanity-check outputs against module-4 benchmarks. Rebuilding finds your errors; auditing finds theirs.",
+          "Rebuilding the model instead of auditing it. Your value is finding what is wrong and what it rests on within an hour — not producing a competing version by the end of the week.",
         challenge:
-          "Swap models with someone — or take any founder model you can get — and run the full audit: hardcode hunt, link trace, sign check, benchmark sanity, load-bearing assumption. Write the findings memo. Then complete the module deliverable: your own model and ten-slide deck, reconciled line by line.",
-        challengeMinutes: 80,
-        estMinutes: 95,
-        points: 40,
+          "Take a startup model — one you can find, or deliberately break your own from day 31 in six ways. Produce a one-page audit: errors found with their cell references, the effect of each on the output, the two assumptions carrying the model, and the three questions you would ask the founder. Separate errors from disagreements explicitly. Then complete the module deliverable: your model and ten-slide deck, reconciled line by line.",
+        challengeMinutes: 40,
+        estMinutes: 50,
+        points: 45,
         difficulty: "stretch",
         topics: [
           {
-            title: "The audit sequence",
+            title: "The order to check in",
             detail:
-              "Structure first (where do inputs live?), then hardcodes (constants hiding mid-formula), then links (broken ranges, off-by-one sums), then signs (costs entered positive), then sanity (outputs versus unit-economics benchmarks). Order matters — structure findings change everything after.",
+              "Structure, then arithmetic, then logic, then assumptions. Most errors are mechanical and found in the first two passes — and there is no point interrogating an assumption in a model that does not add up.",
           },
           {
-            title: "The hardcode hunt",
+            title: "Structural and mechanical checks",
             detail:
-              "The classic startup-model bug: a formula row with one typed number where a growth assumption was 'temporarily' overridden and never restored. Excel's trace and go-to-special tools find them in minutes.",
+              "Does it balance, does cash reconcile, are there circular references, is there a check row at all. Then hardcodes inside formulas, broken SUM ranges, sign errors, inconsistent row logic across columns.",
           },
           {
-            title: "Benchmark sanity",
+            title: "Formula auditing in Excel",
             detail:
-              "Module 4 is the reference table: does modelled CAC payback, NRR, contribution match any real company that has ever existed? A model can be internally consistent and externally impossible.",
+              "Trace precedents and dependents, error checking, evaluate formula. These two or three features make the work practical rather than tedious — an hour with them beats a day without.",
           },
           {
-            title: "The findings memo",
+            title: "Logic errors and assumption interrogation",
             detail:
-              "Errors ranked by effect on the conclusion, not by count. Three material findings with cell references beat forty trivia — the memo is advice, not proofreading.",
+              "A growth rate applied to the wrong base, retention compounding incorrectly, a cost that should scale and does not. Then rank drivers by effect and question the top two rather than all twelve.",
+          },
+          {
+            title: "How to report findings",
+            detail:
+              "Separate errors from disagreements, and lead with the ones that change the answer. Three material findings with cell references beat forty trivia — the memo is advice, not proofreading.",
           },
         ],
         checks: [
           {
-            question: "Why is structural auditing better than re-deriving?",
+            question: "In what order do you check a model?",
             answer:
-              "Re-deriving finds your own errors and takes days; tracing structure, hardcodes, signs and sanity finds theirs in hours.",
+              "Structure, arithmetic, logic, assumptions. Most errors are mechanical, they are fastest to find, and there is no point interrogating an assumption in a model that does not add up.",
           },
           {
-            question: "What is the classic hardcode bug?",
+            question:
+              "You find one hardcoded number inside a formula. Why does it matter beyond that cell?",
             answer:
-              "A typed constant sitting inside a formula row — a 'temporary' override that never got restored and silently anchors the forecast.",
+              "It indicates the model has not been audited, so there are likely others. One hardcode converts a spot check into a full review.",
           },
           {
-            question: "How should audit findings be ranked?",
+            question: "How do you distinguish an error from a disagreement?",
             answer:
-              "By effect on the conclusion — material findings with cell references, not a count of trivia.",
+              "An error is objectively wrong — a broken range, a sign error, a figure that does not reconcile. A disagreement is an assumption you would set differently. Reporting them together makes both easier to dismiss.",
           },
           {
             question:
@@ -547,7 +700,32 @@ export default [
             askedInInterviews: true,
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "The FAST Standard",
+            url: "https://fast-standard.org/",
+            sourceName: "FAST Standard Organisation",
+            editorNote:
+              "Knowing what a well-built model looks like tells you exactly where to look in a badly built one. Day 20 used it on valuations; today it is the audit baseline for an operating model.",
+          },
+          {
+            type: "read",
+            title: "Display the relationships between formulas and cells",
+            url: "https://support.microsoft.com/en-us/office/display-the-relationships-between-formulas-and-cells-a59bef2b-3701-46bf-8ff1-d3518771d507",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "Trace precedents and evaluate formula are the two features that make model auditing practical rather than tedious. Ten minutes here pays back on every audit you ever run.",
+          },
+          {
+            type: "read",
+            title: "EuSpRIG — spreadsheet horror stories",
+            url: "https://eusprig.org/research-info/horror-stories/",
+            sourceName: "European Spreadsheet Risks Interest Group",
+            editorNote:
+              "Documented cases of spreadsheet errors with real institutional consequences — billions lost to broken ranges and hardcodes. Read two cases and the discipline sticks permanently.",
+          },
+        ],
         concepts: [
           "model-audit",
           "startup-financial-model",

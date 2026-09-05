@@ -27,16 +27,15 @@
  *     verifies and is cited hub-level on day 6; its deep links rot too
  *     and are not used.
  *
- * THREE DAYS CARRY NO EXTERNAL LINK, deliberately: days 30, 34 and 41 —
- * the reconciliation, audit and memo days, where the work is building or
- * auditing an artefact the learner already has and any reading would
- * substitute for doing it. Each renders five sections without a Read &
- * do, which is honest. (Day 27 gained links when the owner's module-4
- * reference named its sources: a16z's metrics list read as a
- * manipulation catalogue, the short-seller archive, DRHP definitions.)
+ * ONE DAY CARRIES NO EXTERNAL LINK, deliberately: day 41, the
+ * investment-memo day, where the work is writing the artefact the module
+ * built toward and any reading would substitute for doing it. (Days 27,
+ * 30 and 34 gained links as the owner's module references named their
+ * sources — the metrics manipulation catalogue, the FAST one-source
+ * discipline, and the formula-auditing/EuSpRIG pairing respectively.)
  *
- * MODULES 1, 2, 3 AND 4 ARE THE OWNER-AUTHORED REFERENCES (assets/
- * Finance/module-1/2/3/4-reference.md, received 2026-09-04/05):
+ * MODULES 1–5 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
+ * module-1/2/3/4/5-reference.md, received 2026-09-04/05):
  * their challenges, checks, topics and named sources replaced the
  * first-pass authoring, every URL verified before use. Module 3's
  * remaining generic asks (a brokerage report, a published startup DCF)
