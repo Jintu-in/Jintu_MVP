@@ -45,6 +45,24 @@ export interface HomepageRoadmap {
   sizeLine: string;
 }
 
+export interface HomepageDay {
+  roadmapSlug: string;
+  roadmapTitle: string;
+  nodeSlug: string;
+  dayNumber: number;
+  totalDays: number;
+  moduleTitle: string;
+  title: string;
+  principle: string | null;
+  resources: {
+    title: string;
+    sourceName: string;
+    type: string;
+    minutes: number | null;
+    editorNote: string | null;
+  }[];
+}
+
 export interface HomepageProps {
   roadmaps: HomepageRoadmap[];
   counts: { roadmaps: number; days: number; hours: number; links: number };
@@ -68,23 +86,14 @@ export interface HomepageProps {
    * day that had never existed. It is a row now, and null when the query
    * fails, which hides the section rather than inventing one.
    */
-  day: {
-    roadmapSlug: string;
-    roadmapTitle: string;
-    nodeSlug: string;
-    dayNumber: number;
-    totalDays: number;
-    moduleTitle: string;
-    title: string;
-    principle: string | null;
-    resources: {
-      title: string;
-      sourceName: string;
-      type: string;
-      minutes: number | null;
-      editorNote: string | null;
-    }[];
-  } | null;
+  day: HomepageDay | null;
+  /**
+   * A second, different real day for the hero card. The hero and "Here is
+   * one day" used to render the same row — honest, but it put Day 45 twice
+   * on one page, which reads as a bug. Null falls back to `day`: one day
+   * shown twice degrades better than an invented one shown once.
+   */
+  heroDay: HomepageDay | null;
   /** The flagship roadmap's modules, in order, for the spine. */
   spine: { position: number; title: string; weekRange: string | null }[];
   /**
@@ -241,12 +250,17 @@ export default function Homepage({
   sources,
   samples,
   day,
+  heroDay,
   spine,
   subjects,
   signedIn,
   initials = null,
   displayName = null,
 }: HomepageProps) {
+  // The hero's day, distinct from the section's wherever the catalogue
+  // offers two. Falling back to `day` keeps the card honest when the
+  // second query fails — a real day twice beats a missing hero.
+  const hero = heroDay ?? day;
   /**
    * The five facts. Every number is derived — the design asked for "500+
    * links checked" and there are 228 — and ₹0 is here rather than in a
@@ -348,23 +362,23 @@ export default function Homepage({
             prove the curation was real was the one thing on the page that
             was invented. It is the same row the section below renders now,
             so the two cannot disagree and neither can outrun the data. */}
-        {day ? (
+        {hero ? (
           <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
-              Day {day.dayNumber} of {day.totalDays}
+              Day {hero.dayNumber} of {hero.totalDays}
             </div>
             <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
-              {day.title}
+              {hero.title}
             </div>
-            {day.principle ? (
+            {hero.principle ? (
               <p className="mt-2.5 text-[15px] leading-[1.65] text-pretty text-ink-600 italic sm:text-[16px]">
-                {day.principle}
+                {hero.principle}
               </p>
             ) : null}
 
-            {day.resources.length ? (
+            {hero.resources.length ? (
               <div className="mt-5 flex flex-col gap-3">
-                {day.resources.slice(0, 2).map((r) => (
+                {hero.resources.slice(0, 2).map((r) => (
                   <div key={r.title} className="rounded-lg border border-ink-100 p-3.5">
                     <div className="text-[14px] leading-[1.4] font-medium text-ink-900">
                       {r.title}
@@ -385,7 +399,7 @@ export default function Homepage({
               {/* Was "Your progress · 45 of 91 days", to a signed-out
                   stranger who has no progress. It describes the card. */}
               <span className="font-mono text-[12px] leading-none text-ink-500">
-                {day.roadmapTitle} · day {day.dayNumber} of {day.totalDays}
+                {hero.roadmapTitle} · day {hero.dayNumber} of {hero.totalDays}
               </span>
               <Link href="/learn" className="text-[13.5px] font-medium text-brand-700">
                 Browse roadmaps →

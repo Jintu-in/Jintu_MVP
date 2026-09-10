@@ -176,11 +176,13 @@ test("the day cards are queried, never typed", () => {
   );
   assert.match(home, /Why this one — \{r\.editorNote\}/, "the hero note reads editorNote");
 
-  // Both cards read the same prop, so they cannot drift apart.
-  assert.ok(
-    (home.match(/day\.dayNumber/g) ?? []).length >= 2,
-    "both the hero card and the one-day section should render day.dayNumber",
-  );
+  // Two cards, two QUERIED rows. They used to share one prop — honest, but
+  // it put the same day on the page twice, which read as a bug. The hero
+  // renders its own row now (falling back to the section's when the second
+  // query fails), and both still interpolate everything.
+  assert.match(home, /hero\.dayNumber/, "the hero card renders its own day row");
+  assert.match(home, /day\.dayNumber/, "the one-day section renders the day row");
+  assert.match(home, /const hero = heroDay \?\? day;/, "a missing hero day falls back, never invents");
   assert.match(home, /\{day\.principle\}/, "the principle comes from the day row");
 });
 

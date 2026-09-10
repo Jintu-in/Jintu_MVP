@@ -770,11 +770,16 @@ function BlockBody({
           <Eyebrow glyph="☰" className="mb-3">
             {b.heading}
           </Eyebrow>
-          <ol className="m-0 flex list-none flex-col gap-3.5 p-0">
+          {/* Not an ol: the mono "01" is the numbering, and an ordered list
+              numbers itself in every surface CSS cannot reach — reader
+              modes, text extraction — coming out as "1. 01 The rungs". The
+              trailing space inside the fixed-width span keeps extraction
+              from reading "01The rungs"; flex gap is visual only. */}
+          <div className="m-0 flex flex-col gap-3.5 p-0">
             {b.items.map((t, i) => (
-              <li key={t.title} className="flex gap-3">
+              <div key={t.title} className="flex gap-3">
                 <span className="w-6 shrink-0 font-mono text-[12px] leading-[1.7] text-ink-500">
-                  {String(i + 1).padStart(2, "0")}
+                  {`${String(i + 1).padStart(2, "0")} `}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className={cn("block text-[16px] leading-[1.7] text-pretty", body)}>
@@ -786,9 +791,9 @@ function BlockBody({
                     </span>
                   ) : null}
                 </span>
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
         </div>
       );
 
