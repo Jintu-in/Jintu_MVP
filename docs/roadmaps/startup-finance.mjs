@@ -27,15 +27,14 @@
  *     verifies and is cited hub-level on day 6; its deep links rot too
  *     and are not used.
  *
- * ONE DAY CARRIES NO EXTERNAL LINK, deliberately: day 41, the
- * investment-memo day, where the work is writing the artefact the module
- * built toward and any reading would substitute for doing it. (Days 27,
- * 30 and 34 gained links as the owner's module references named their
- * sources — the metrics manipulation catalogue, the FAST one-source
- * discipline, and the formula-auditing/EuSpRIG pairing respectively.)
+ * EVERY DAY NOW CARRIES AT LEAST ONE EXTERNAL LINK. The first-pass
+ * zero-link days (5, 22, 25, 27, 30, 34, 36-38, 41) all gained verified
+ * sources as the owner's module references named them; the last to fall
+ * was day 41, whose 'read two real memos' ask is served by Bessemer's
+ * public memo archive.
  *
- * MODULES 1–5 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
- * module-1/2/3/4/5-reference.md, received 2026-09-04/05):
+ * ALL OF MODULES 1–6 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
+ * module-1/2/3/4/5/6-reference.md, received 2026-09-04/05):
  * their challenges, checks, topics and named sources replaced the
  * first-pass authoring, every URL verified before use. Module 3's
  * remaining generic asks (a brokerage report, a published startup DCF)

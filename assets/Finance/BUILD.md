@@ -328,3 +328,45 @@ licence hosts added (sequoiacap.com, mospi.gov.in, eusprig.org).
 Modules 6–7 remain first-pass. The reference: module 6 follows
 naturally from day 34 — same skill, applied to a company rather than a
 spreadsheet; module 7 needs the most verification and rots fastest.
+
+---
+
+## Addendum 6 — module 6 re-authored to the owner's reference (2026-09-05)
+
+`module-6-reference.md` (in this folder) replaced days 35–41 with the
+investigative posture the reference asks for — *what would have to be
+true for this number to be wrong, and how would I find out*: the
+five-questions-with-evidence-standards drill, the revenue-quality
+assessment from a real DRHP, the six-adjustment EBITDA bridge priced at
+8x, the twelve-month cash-conversion series with the 50%-growth funding
+test, the founder framework with explicit bias controls, the
+seven-category red-flag checklist run on a real company, and the
+three-page memo with its falsifier section. All four first-pass
+interview checks (seed-vs-growth scoping, the 40/90 receivables
+divergence, the ₹2 crore add-back audit, the distributor tripling into
+insolvency) stay on top.
+
+New verified sources:
+
+| Source | Where |
+|---|---|
+| **KPMG India — deal advisory** and **PwC India — deals** (the Big Four asks, cited at the two India hubs because their deep publication links rot) | Days 35, 37 / 36, 38 |
+| **ICAI** (the Ind AS 115 five-step ask — the standards' home) | Day 36 |
+| **Bessemer Venture Partners — the public memo archive** (Shopify, LinkedIn, Twilio) | Day 41 |
+| **GOV.UK style guide** (the reference's fallback for the unbuilt Writing Clearly roadmap; OGL-licensed, the registry's first non-proprietary finance entry) | Day 41 |
+
+Reused: SEBI filings for the DRHP asks on days 36, 37, 38 and 40,
+Varsity's fundamental-analysis module, YC Library, First Round's hub,
+Damodaran's blog for the earnings-quality ask. Linkless by standing
+ruling: MCA (day 40's challenge names the portal), Indian law-firm
+checklists and IP-assignment guides (dated; the challenges teach
+check-the-date), VC diligence checklists and partner essays (generic).
+
+**Day 41 gained the Bessemer link, so the roadmap now has no zero-link
+days at all** — every one of the 48 carries at least one verified
+source. Five licence hosts added (bvp.com, kpmg.com, pwc.in, icai.org,
+gov.uk — the last as stated OGL).
+
+Module 7 remains first-pass — the reference's own closing note: it is
+the most India-specific, needs the most verification against current
+SEBI circulars and exchange criteria, and rots fastest.

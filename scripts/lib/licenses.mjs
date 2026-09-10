@@ -86,6 +86,11 @@ export const BY_HOST = {
   "sequoiacap.com": assumed(),
   "mospi.gov.in": assumed(), // Indian government works are NOT public domain like US federal works
   "eusprig.org": assumed(),
+  "bvp.com": assumed(), // Bessemer's published memo archive
+  "kpmg.com": assumed(),
+  "pwc.in": assumed(),
+  "icai.org": assumed(),
+  "gov.uk": stated("permissive", "Crown copyright under the Open Government Licence v3.0 — gov.uk content is OGL unless a page states otherwise"),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),

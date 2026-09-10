@@ -4,6 +4,13 @@
  * The deck and the model behind it, diligence from the investor's side, and
  * the SME IPO layer. Module and day titles, principles and deliverables are
  * the owner's brief verbatim (assets/Finance/roadmap-startup-finance.md).
+ * Modules 5 and 6 follow the owner's fully-authored references
+ * (assets/Finance/module-5/6-reference.md): their challenges, checks,
+ * topics and named sources are those documents', verified before use, with
+ * the first pass's interview checks (three in module 5, four in module 6)
+ * kept on top. Big Four asks are cited at the two India deal-advisory hubs
+ * (KPMG, PwC) because their deep publication links rot; MCA and law-firm
+ * asks stay linkless per the standing rule-2 rulings.
  * Module 5 follows the owner's fully-authored reference
  * (assets/Finance/module-5-reference.md, received 2026-09-05): its
  * challenges, checks, topics and named sources are that document's,
@@ -740,64 +747,70 @@ export default [
     objective: "Reading a company the way the people writing the cheque do.",
     deliverable:
       "A full investment memo on a real startup — thesis, unit economics, valuation, risks, and an explicit statement of what would falsify your view.",
-    estHours: 7.75,
+    estHours: 9,
     nodes: [
       {
         title: "What diligence is actually looking for",
-        summary: "Not verification — the search for the reason to say no.",
+        summary:
+          "Diligence hunts for the thing that would change the decision — understanding that inverts how you read everything.",
         learningObjectives: [
-          "State diligence's real objective and how it shapes the process",
-          "Map the workstreams: financial, commercial, legal, team — and who runs each",
-          "Scope diligence to the stage: what seed, Series A and growth each check",
+          "State diligence's real objective and the three outcomes it can produce",
+          "Map the workstreams — financial, commercial, legal, technical, HR — and how they intersect",
+          "Scope diligence proportionately to the stage and the cheque",
         ],
         whyToday:
-          "The module's frame has to come first: diligence is adversarial by design, and everything in it — the sequence, the sampling, the interviews — follows from looking for the kill rather than confirming the pitch. Advisers who understand this serve both sides better.",
+          "Most people entering this work assume diligence confirms what the deck said. It does the opposite — it hunts for the thing that would change the decision, and understanding that inverts how you read everything. Day 34's model audit was this discipline on a spreadsheet; this module runs it on a company.",
         principle: "Diligence is not verification. It is looking for the reason not to invest.",
         commonMistake:
-          "Running diligence as a checklist to complete rather than a thesis to attack. The checklist mind confirms what the data room offers; the diligence mind asks what would have to be false for this deal to be a mistake, and goes looking for exactly that.",
+          "Treating diligence as a checklist to complete rather than a question to answer. The checklist is a floor. The judgement is deciding which two items deserve three days.",
         challenge:
-          "Pick a startup you find genuinely attractive. Write the bear case first — the three most plausible reasons this fails — and then design the specific checks that would confirm or retire each. That inversion, attraction into attack, is the module's method statement.",
-        challengeMinutes: 40,
-        estMinutes: 60,
+          "Take a startup you know something about. Write the five questions whose answers would most change an investment decision. For each, state how you would find the answer and what evidence would satisfy you. Rank them by how likely they are to be a problem. Then find two published VC diligence checklists and note the overlap — the common core is what diligence actually is.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The adversarial frame",
+            title: "The purpose",
             detail:
-              "The pitch is the best case; diligence exists to find what the best case omits. This is not cynicism — it is the division of labour that lets enthusiasm and scrutiny coexist in one firm.",
+              "Find the deal-breaker before the money moves, and price what you find that is not fatal. The pitch is the best case; diligence exists to find what the best case omits.",
           },
           {
             title: "The workstreams",
             detail:
-              "Financial (the numbers are real), commercial (the market and customers are real), legal (the company owns what it claims), team (the people are who they seem). Different specialists, one synthesis.",
+              "Financial, commercial, legal, technical, HR — who runs each and how they intersect. Different specialists, one synthesis.",
           },
           {
-            title: "Stage calibration",
+            title: "Confirmatory versus exploratory",
             detail:
-              "Seed diligence is mostly team and market — there is little else. Series A adds unit economics and cohorts. Growth adds quality of earnings and full financial diligence. Applying growth diligence to a seed deal is theatre.",
+              "Later-stage diligence confirms a thesis; early-stage diligence forms one. Which mode you are in changes what a finding means.",
           },
           {
-            title: "The kill list",
+            title: "What is proportionate",
             detail:
-              "Good diligence starts by naming what would kill the deal, then checks those first. Everything else is documentation; the kill list is the work.",
+              "A ₹2 crore seed round does not get the diligence of a ₹200 crore Series C. Seed checks founder references, cap table, basic financials and legal cleanliness; growth adds quality of earnings and full financial work. Knowing the depth is professional judgement.",
+          },
+          {
+            title: "The three outcomes, and the junior's job",
+            detail:
+              "Proceed, proceed at a different price or structure, or walk — the second is the most common and the most valuable. A junior adds value through thoroughness on the workstream they own, and by flagging what they cannot resolve rather than glossing it.",
           },
         ],
         checks: [
           {
-            question: "What is diligence actually optimised to find?",
+            question: "Why is 'confirming the deck' the wrong frame?",
             answer:
-              "The reason not to invest — it attacks the thesis rather than confirming the pitch.",
+              "Because it leads to checking what you were told rather than looking for what you were not told. The material risks are usually in what was omitted.",
           },
           {
-            question: "How does diligence differ by stage?",
+            question: "What is proportionate diligence at seed?",
             answer:
-              "Seed checks team and market; Series A adds unit economics and cohorts; growth adds quality of earnings and full financial work.",
+              "Founder references, cap table, basic financials, a small number of customer conversations, and legal cleanliness. Full quality-of-earnings work on a company with eighteen months of revenue is disproportionate and slows a round for no information gain.",
           },
           {
-            question: "What is the kill list?",
+            question: "What is the most valuable diligence outcome?",
             answer:
-              "The named things that would kill the deal, checked first — the thesis's weakest points, not the checklist's first page.",
+              "Proceeding at a different price or structure. Finding something that changes the terms rather than killing the deal is where diligence pays for itself.",
           },
           {
             question: "How would you scope diligence for a seed deal versus a growth deal?",
@@ -811,11 +824,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "KPMG India — deal advisory",
+            url: "https://kpmg.com/in/en/services/advisory/deal-advisory.html",
+            sourceName: "KPMG India",
+            editorNote:
+              "The professional framing of workstreams and scope, from a firm that does it at volume — the free thought-leadership pieces linked here show what each workstream produces.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — how investors decide",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "Read one essay on how investors decide — the library's investor-perspective pieces show the thesis-first thinking today's kill-list method mirrors.",
+              "The investor's own account of what changes their mind, which checklists do not capture. Read one investor-perspective essay against today's five questions.",
           },
         ],
         concepts: [
@@ -825,61 +846,67 @@ export default [
       },
       {
         title: "Quality of revenue",
-        summary: "Recognised, collected, retained — three different claims wearing one word.",
+        summary:
+          "The most frequently overstated figure in a startup's financials — usually through timing and definition rather than fabrication.",
         learningObjectives: [
-          "Decompose reported revenue: recognition policy, collection reality, retention durability",
-          "Test revenue quality: concentration, related parties, channel stuffing, refunds",
-          "Read receivables against revenue as the first honesty check",
+          "Test revenue quality: recognition timing, concentration, related parties, gross versus net",
+          "Read receivables ageing against revenue as the first honesty check",
+          "Assess a real revenue disclosure and write the three questions for management",
         ],
         whyToday:
-          "Revenue is the number the valuation multiplies, so it is where diligence bites first. The quality question — is this revenue real, collectible and repeatable? — reuses module 4's metrics with an auditor's suspicion attached.",
+          "Revenue is the number everything else is built on, and it is the most frequently overstated figure in a startup's financials — usually through timing and definition rather than fabrication.",
         principle:
           "Revenue recognised is not revenue collected, and neither is revenue retained.",
         commonMistake:
-          "Accepting the revenue line and moving to costs. The line is a policy output: annual contracts recognised upfront, pilots booked as sales, GMV dressed as revenue, incentives netted or not — the policy choices are worth more diligence than the arithmetic below them.",
+          "Accepting the revenue line and analysing everything below it. Almost every material financial issue in a startup originates in how revenue was defined and when it was recognised.",
         challenge:
-          "For one company — real filings or a case — build the revenue quality table: reported revenue, less doubtful recognition, less uncollected (receivables trend), less non-recurring. The gap between the top and bottom lines is the finding; write it as two sentences a partner would read.",
-        challengeMinutes: 55,
-        estMinutes: 70,
+          "Take a company's revenue disclosure from a DRHP or annual report. Analyse: recognition policy, customer concentration, related-party proportion, receivables ageing. Write a one-page assessment of revenue quality and the three questions you would ask management.",
+        challengeMinutes: 35,
+        estMinutes: 45,
         points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "Recognition policy",
+            title: "Recognition timing",
             detail:
-              "When is a sale a sale — on signing, delivery, or cash? Aggressive recognition pulls the future into today. The policy note is the first read; the change in policy year-over-year is the second.",
+              "When revenue is booked versus when cash arrives versus when the service is delivered — all three can differ legitimately. Ind AS 115's five-step model is the governing frame in India; the policy note is the first read.",
           },
           {
-            title: "Collection reality",
+            title: "Concentration and related parties",
             detail:
-              "Receivables growing faster than revenue is the classic tell: booking is outrunning collecting. Days sales outstanding, trended, converts the suspicion into a number.",
+              "One customer at 40% of revenue is a different business from ten at 4%. Related-party revenue — sales to entities connected to founders or investors — is common in Indian group structures, may not be arm's length, and may not persist after the transaction.",
           },
           {
-            title: "Concentration and relationships",
+            title: "Contracted versus one-off",
             detail:
-              "Top-five customer share, related-party sales, and revenue that arrived just before the raise. Each is a discount factor on the multiple, and together they can be the whole finding.",
+              "The proportion that recurs, and whether 'recurring' means a contract or a habit. Module 4's cohort work returns here as evidence — revenue that repeats is worth a multiple of revenue that must be resold.",
           },
           {
-            title: "Retention as quality",
+            title: "Gross versus net",
             detail:
-              "Module 4's cohort work returns as evidence: revenue that repeats is worth a multiple of revenue that must be resold. The retention curve is the quality-of-revenue exhibit.",
+              "Whether the company is a principal or an agent determines which it may report, and the difference can be enormous — this specific issue has driven large restatements in Indian internet companies.",
+          },
+          {
+            title: "Collections and ageing",
+            detail:
+              "Revenue with a 180-day receivable is not revenue yet. Receivables growing faster than revenue is the classic tell, and trended DSO converts the suspicion into a number.",
           },
         ],
         checks: [
           {
-            question: "What is the classic receivables tell?",
+            question: "Why does gross versus net matter so much?",
             answer:
-              "Receivables growing faster than revenue — booking outrunning collection, visible in trended DSO.",
+              "A marketplace reporting gross transaction value as revenue can show ten times the figure of one reporting only its commission. Same economics, wildly different revenue line and therefore different multiple.",
           },
           {
-            question: "Why does recognition policy matter more than arithmetic?",
+            question: "What does customer concentration change?",
             answer:
-              "The policy decides what counts as revenue at all — aggressive recognition pulls future periods into today before any addition happens.",
+              "The risk profile and the valuation. Losing a customer worth 40% of revenue is an existential event, and an acquirer or investor will price that.",
           },
           {
-            question: "What converts revenue quality into valuation impact?",
+            question: "Why is related-party revenue material?",
             answer:
-              "Durability — retained, diversified, arm's-length revenue carries a higher multiple than concentrated or resold revenue.",
+              "It may not be arm's length and may not persist after the transaction. It is revenue that could vanish precisely when the new investor arrives.",
           },
           {
             question:
@@ -892,6 +919,30 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "PwC India — deals",
+            url: "https://www.pwc.in/services/deals.html",
+            sourceName: "PwC India",
+            editorNote:
+              "The professional framework for revenue and earnings quality, and specifically the tests the firms apply — their free published deal material is linked from here.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open a DRHP's revenue recognition policy and related-party disclosures — real disclosures a company had to make to a regulator. The related-party section is often the most interesting page in a DRHP.",
+          },
+          {
+            type: "read",
+            title: "ICAI — the Ind AS framework",
+            url: "https://www.icai.org/",
+            sourceName: "Institute of Chartered Accountants of India",
+            editorNote:
+              "The home of the standards. Find the Ind AS 115 material — revenue from contracts with customers. You do not need it in full; the five-step model is what matters.",
+          },
           {
             type: "read",
             title: "Zerodha Varsity — fundamental analysis",
@@ -907,60 +958,66 @@ export default [
       },
       {
         title: "Quality of earnings and normalisation",
-        summary: "The EBITDA under the EBITDA — finding what the adjustments hope you miss.",
+        summary:
+          "The core of financial diligence and the most directly transferable skill in the module — what transaction services teams do all day.",
         learningObjectives: [
-          "Normalise EBITDA: one-offs, related-party pricing, owner costs, timing games",
-          "Challenge add-backs — which are honest and which are recurring costs in costume",
-          "Produce the bridge from reported to sustainable earnings",
+          "Build the bridge from reported to adjusted EBITDA, every adjustment listed and defended",
+          "Separate legitimate normalisations from recurring costs in costume",
+          "Compute what each adjustment does to price at the deal multiple",
         ],
         whyToday:
-          "Where revenue quality asks if the top line is real, earnings quality asks what the business sustainably makes — the number a buyer actually prices. This is transaction advisory's core craft, and the brief's audience will do it professionally within months.",
+          "This is the core of financial diligence and the most directly transferable skill in the module — it is what Big Four transaction services teams do all day.",
         principle: "Every founder's EBITDA contains at least one adjustment they hope you miss.",
         commonMistake:
-          "Accepting 'adjusted EBITDA' with its adjustments unlisted. The adjustments are the analysis: a one-time legal cost may be genuinely one-time, or it may be the third 'one-time' legal cost in three years. The word 'adjusted' is where diligence starts, not where it stops.",
+          "Accepting adjusted EBITDA as presented. The adjustments are the negotiation, and each one should be listed, justified and separately contested.",
         challenge:
-          "Take a reported-to-adjusted EBITDA bridge — from any filing or case — and audit each adjustment: genuinely non-recurring, or recurring-in-costume? Rebuild the bridge with only the adjustments you would defend, and state the sustainable number. The delta is the negotiation.",
-        challengeMinutes: 55,
-        estMinutes: 70,
+          "Build an EBITDA bridge for a company from reported to adjusted. Include at least six adjustments — some legitimate, some contestable. For each, state the amount, the justification, and whether you would accept it as a buyer. Then calculate the valuation impact at an 8x multiple.",
+        challengeMinutes: 35,
+        estMinutes: 50,
         points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "The standard add-backs",
+            title: "What quality of earnings means",
             detail:
-              "One-time legal, restructuring, founder excess salary, launch costs. Each is sometimes honest; the test is recurrence — three consecutive one-times are a run rate.",
+              "The sustainable, recurring earnings a buyer is actually acquiring. Normalisation removes genuinely non-recurring items to arrive at a run-rate — a one-off settlement, a restructuring, a genuine one-time event.",
           },
           {
-            title: "Related-party normalisation",
+            title: "Aggressive adjustments",
             detail:
-              "Rent from a founder's family firm, supplies from a cousin's company — priced kindly in either direction. Normalising to market prices can move EBITDA materially in small companies.",
+              "Recurring marketing described as investment, understated future costs, three consecutive 'one-time' legal costs. The test is recurrence — a cost that appears repeatedly is a run-rate expense whatever it is labelled.",
           },
           {
-            title: "Timing games",
+            title: "The founder salary question",
             detail:
-              "Expenses deferred past the measurement window, maintenance skipped in the sale year, hiring frozen for the metrics. The trailing-twelve-months picture versus the three-year average exposes most of them.",
+              "A founder paying themselves nothing inflates EBITDA by the cost of their replacement. Market-rate compensation is a real recurring cost the reported number omits — the adjustment runs downward.",
           },
           {
-            title: "The bridge as artefact",
+            title: "Related-party costs",
             detail:
-              "Reported → each adjustment with a verdict → sustainable. One exhibit, every disagreement locatable — this is the page the price negotiation actually happens on.",
+              "Rent from a founder-owned entity, services from a connected company — priced kindly in either direction. Normalising to market prices can move EBITDA materially in small companies.",
+          },
+          {
+            title: "The bridge, and why it changes the price",
+            detail:
+              "Reported EBITDA to adjusted, every adjustment separately listed and defended. The multiple applies to the adjusted number, so a ₹1 crore adjustment at 8x moves ₹8 crore of value — which is why adjustments are negotiated harder than almost anything else.",
           },
         ],
         checks: [
           {
-            question: "What is the test for an honest add-back?",
+            question: "A founder takes no salary. Is that an adjustment?",
             answer:
-              "Non-recurrence — a cost that appears repeatedly is a run-rate expense whatever it is labelled.",
+              "Yes, downward. A buyer must pay someone to do that job, so market-rate compensation is a real recurring cost that the reported EBITDA omits.",
           },
           {
-            question: "Why do related-party transactions need normalisation?",
+            question: "'Growth marketing' excluded as a one-off investment. Accept?",
             answer:
-              "Their pricing is discretionary, so reported costs can flatter earnings in either direction; market pricing restores the real number.",
+              "Almost never. If the business needs marketing to sustain revenue, it is recurring by definition. Adjusting it out is the most common aggressive adjustment there is.",
           },
           {
-            question: "What does the QoE bridge enable?",
+            question: "Why does a ₹1 crore adjustment matter more than ₹1 crore?",
             answer:
-              "A price negotiation with locatable disagreements — each adjustment argued on its own evidence.",
+              "Because the multiple applies to it. At 8x, a ₹1 crore adjustment moves ₹8 crore of enterprise value, which is why adjustments are negotiated harder than almost anything else.",
           },
           {
             question:
@@ -975,11 +1032,27 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Zerodha Varsity — fundamental analysis",
-            url: "https://zerodha.com/varsity/module/fundamental-analysis/",
-            sourceName: "Zerodha Varsity",
+            title: "KPMG India — deal advisory, the quality-of-earnings material",
+            url: "https://kpmg.com/in/en/services/advisory/deal-advisory.html",
+            sourceName: "KPMG India",
             editorNote:
-              "The P&L quality discussion here is the gentle version of today's adversarial one — read it as the baseline the adjustments distort.",
+              "The professional method with worked adjustment categories — the firms publish detailed transaction material free, and the QoE framing here is the one your bridge should survive.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A DRHP's restated financials section shows exactly this exercise performed and disclosed — Indian IPO rules require restatement, so the bridge is public.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — earnings quality",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "Search his earnings-quality and accounting posts — they connect the adjustment work back to valuation, which is where its consequence lands.",
           },
         ],
         concepts: [
@@ -988,60 +1061,66 @@ export default [
       },
       {
         title: "Working capital and the cash conversion cycle",
-        summary: "Profit is an opinion; the cycle is where the cash actually lives.",
+        summary:
+          "Your degree covered this as a management topic. Diligence treats it as a valuation adjustment and a survival question.",
         learningObjectives: [
-          "Compute DSO, DIO, DPO and the cash conversion cycle, trended",
-          "Model what growth does to working capital needs",
-          "Spot window-dressing: the balance-sheet date as the company's best day",
+          "Compute the cash conversion cycle from twelve months of data, trended",
+          "Model the working capital that growth consumes and check the funding covers it",
+          "Explain the peg mechanism and spot pre-sale manipulation in a monthly series",
         ],
         whyToday:
-          "The silent killer in SME deals: profitable companies that die of working capital. For the brief's SME-IPO audience this is doubly load-bearing — listing-year accounts are precisely where cycles get dressed.",
+          "Their degree covered working capital as a management topic. Diligence treats it as a valuation adjustment and a survival question, which is a different use of the same knowledge. Day 26's runway work connects here: working capital consumption is a burn driver.",
         principle: "A profitable company with a 90-day cycle can still die.",
         commonMistake:
-          "Reading working capital from the balance-sheet date alone. The date is chosen; the monthly picture is the truth. A company that collects hard every March 28th has a March 31st balance sheet and an April problem — ask for twelve month-ends, not one.",
+          "Analysing working capital only at year-end. The annual figure is the most manageable number in the accounts, and the monthly series is where the behaviour shows.",
         challenge:
-          "For one company: DSO, DIO, DPO and the cycle, trended over three years. Then the growth test — model the incremental working capital its own growth plan requires, and check the funding plan covers it. Companies that grow into insolvency do it exactly here.",
-        challengeMinutes: 50,
-        estMinutes: 65,
-        points: 30,
+          "Calculate the cash conversion cycle for a company across twelve months of data. Identify seasonality and any month-end manipulation. Then calculate how much additional working capital 50% revenue growth would require, and state whether the company's cash position supports it.",
+        challengeMinutes: 35,
+        estMinutes: 45,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "The cycle",
+            title: "The cash conversion cycle",
             detail:
-              "DSO + DIO − DPO: days from paying suppliers to collecting from customers. Every day of the cycle is cash the company must fund; the cycle times daily revenue is the standing investment.",
+              "Days inventory plus days receivable minus days payable — how long cash is tied up. Every day of the cycle is cash the company must fund.",
           },
           {
-            title: "Growth eats cash",
+            title: "Why growth consumes cash",
             detail:
-              "A positive cycle means every rupee of new revenue requires working capital upfront — growth accelerates the need exactly when ambition peaks. The model must fund the growth's cycle, not just its costs.",
+              "A growing business with a positive cycle needs more working capital every month — the need scales with the ambition, and profit on paper does not pay salaries.",
           },
           {
-            title: "The trend over the level",
+            title: "Normalised working capital and the peg",
             detail:
-              "A stable 60-day cycle is a characteristic; a cycle stretching 45→60→75 is a story — customers paying slower, or sales pushed with terms. The trend is the finding.",
+              "The level a business needs to operate is a diligence output and a deal term. The peg adjusts price for the level delivered at closing — and a peg set at the wrong point in a seasonal cycle transfers value between buyer and seller.",
           },
           {
-            title: "Window-dressing",
+            title: "Manipulation before a sale",
             detail:
-              "Collections sprinted and payments stalled around the reporting date. Twelve month-end balances expose it; the gap between the average month and the reported month is the dressing, measured.",
+              "Stretching payables, accelerating collections, running down inventory — all visible in a monthly series, invisible in a year-end figure. The gap between the average month and the reported month is the dressing, measured.",
+          },
+          {
+            title: "The Indian context",
+            detail:
+              "Long receivable cycles in B2B and government contracts, and what that does to a growing company. The India-specific reality that makes this day different from the US material.",
           },
         ],
         checks: [
           {
-            question: "State the cash conversion cycle formula and its meaning.",
+            question: "Why does a growing profitable company run out of cash?",
             answer:
-              "DSO + DIO − DPO: the days between paying for inputs and collecting from customers — each day is cash the company must fund.",
+              "Growth increases receivables and inventory before the cash arrives. With a positive conversion cycle, every rupee of growth consumes cash — and profit on paper does not pay salaries.",
           },
           {
-            question: "Why does growth worsen a positive cycle?",
+            question: "What is a working capital peg?",
             answer:
-              "Each rupee of new revenue demands its cycle's working capital upfront — the need scales with the ambition.",
+              "An agreed normal level of working capital at closing. Delivering below it reduces the price; above it increases it. Without a peg, a seller can extract cash before closing by starving working capital.",
           },
           {
-            question: "How is balance-sheet window-dressing caught?",
+            question: "How do you detect pre-sale manipulation?",
             answer:
-              "Twelve month-end balances instead of one — the reported date versus the average month measures the dressing.",
+              "Look at the monthly series rather than the year-end figure. Payables stretching, receivables collections accelerating and inventory running down in the final quarter is a recognisable pattern.",
           },
           {
             question:
@@ -1054,6 +1133,22 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "PwC India — deals, the working capital material",
+            url: "https://www.pwc.in/services/deals.html",
+            sourceName: "PwC India",
+            editorNote:
+              "The peg mechanism explained by the people who negotiate it — their transaction publications cover working capital in deals specifically.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Indian filings discuss working capital requirements explicitly, often with the funding need stated — find the discussion in any recent DRHP and read it against today's arithmetic.",
+          },
           {
             type: "read",
             title: "Zerodha Varsity — fundamental analysis",
@@ -1070,71 +1165,85 @@ export default [
       },
       {
         title: "Founder and team assessment",
-        summary: "The seed-stage truth said out loud: you are underwriting people.",
+        summary:
+          "The least quantitative day in the roadmap, and at early stage the most determinative.",
         learningObjectives: [
-          "Assess founders on evidence: history, references, behaviour under questions",
-          "Run reference calls that produce information rather than praise",
-          "Separate assessable signals from the halo effects that pass for judgement",
+          "Assess founder-market fit as a specific claim, not a slogan",
+          "Run reference calls that produce information — including off-list references",
+          "Write a qualitative assessment down with explicit bias controls",
         ],
         whyToday:
-          "The earlier the stage, the more the deal is the people — and the field runs on unexamined pattern-matching. This day imports the judgement discipline the catalogue already teaches into the highest-stakes read an early investor makes.",
+          "The least quantitative day in the roadmap, and at early stage the most determinative. Finance people are frequently uncomfortable here and default to the numbers — which at seed is where the information is not. The thinking-under-uncertainty roadmap's base-rate and bias material applies directly: founder assessment is where analytical people most reliably fool themselves.",
         principle:
           "At seed stage you are underwriting the founder. Say so, and assess accordingly.",
         commonMistake:
-          "Confusing polish with evidence. A rehearsed narrative and confident answers correlate with fundraising skill, not with company-building — the assessable evidence is history, behaviour when challenged in the room, and what references say when asked properly.",
+          "Substituting likeability for assessment. Founders who raise money are usually persuasive, and being persuaded is not the same as being convinced by evidence.",
         challenge:
-          "Design the founder-assessment protocol you would actually run: five interview questions probing history and thinking rather than narrative, three reference questions that permit unflattering answers, and the specific behaviours you would treat as signal. Protocols beat vibes; write yours down.",
-        challengeMinutes: 45,
-        estMinutes: 60,
-        points: 25,
+          "Write a founder assessment framework: six questions you would ask the founder, four you would ask a reference, and the three signals you would treat as serious concerns. Then write two paragraphs on how you would guard against your own bias — particularly liking someone.",
+        challengeMinutes: 25,
+        estMinutes: 50,
+        points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "History over narrative",
+            title: "What you are actually assessing",
             detail:
-              "What they have actually built, shipped, sold or survived — verified, not recounted. The best predictor available, and the one a rehearsed pitch cannot manufacture.",
+              "Judgement, resilience, honesty about problems, ability to recruit, and founder-market fit — a specific reason this person is unusually well placed for this problem. 'Passionate about the space' is not a reason.",
           },
           {
-            title: "Reference calls that work",
+            title: "Reference calls",
             detail:
-              "Off-list references, specific questions — 'what would they be worst at?', 'would you work for them again, honestly?' — and attention to hesitations. On-list references answering general questions produce recommendation letters, verbally.",
+              "How to run them, who to speak to beyond the list provided, and what off-list references reveal. Provided references are selected; a former colleague found independently gives you information the founder did not curate.",
           },
           {
-            title: "The room as evidence",
+            title: "The questions that surface judgement",
             detail:
-              "How they handle the question they did not prepare, disagreement with their thesis, and 'I do not know'. Defensiveness under mild challenge at pitch stage prices what board meetings will be like.",
+              "What has gone wrong, what you got wrong, what you would do differently. Precise, unprompted honesty about what is not working is the strongest positive signal there is.",
           },
           {
-            title: "Halo hygiene",
+            title: "Team composition and the equity split",
             detail:
-              "Pedigree, charisma and resemblance to past winners are the three standard halos — each one a bias with a name, from the same catalogue the thinking roadmap teaches. Naming them in the memo is the antidote.",
+              "What is missing and whether the founder knows it — and the split as a signal: a founder split that does not reflect contribution predicts future conflict.",
+          },
+          {
+            title: "Documenting it, and bias hygiene",
+            detail:
+              "Write the assessment down so it can be checked later rather than remembered favourably. Pedigree, charisma and resemblance to past winners are the standard halos — naming them in the memo is the antidote.",
           },
         ],
         checks: [
           {
-            question: "What founder evidence can a pitch not manufacture?",
+            question: "What does founder-market fit mean concretely?",
             answer:
-              "Verified history — what they actually built, shipped or survived — and unrehearsed behaviour under challenge.",
+              "A specific reason this person is unusually well placed for this problem — prior operating experience in it, an insight from lived exposure, or a durable obsession. 'Passionate about the space' is not a reason.",
           },
           {
-            question: "What makes a reference call informative?",
+            question: "Why do off-list references matter more?",
             answer:
-              "Off-list references and questions that permit unflattering answers — hesitations included as data.",
+              "Provided references are selected. A former colleague found independently, or an investor from a prior company, gives you information the founder did not curate.",
           },
           {
-            question: "Name the three standard halos in founder assessment.",
+            question: "What is the strongest positive signal in a founder conversation?",
             answer:
-              "Pedigree, charisma, and resemblance to past winners — biases to name in the memo, not judgements.",
+              "Precise, unprompted honesty about what is not working. Founders who volunteer the weakest part of their business are almost always more reliable about everything else.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "Y Combinator Startup Library — evaluating founders",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "YC's essays on what they look for in founders — read one as the practitioner's benchmark, then notice how much of it is history and behaviour rather than polish. Your protocol should test for the same things.",
+              "YC has the largest dataset on this question of anyone and publishes freely about it. Read one founder-evaluation essay and notice how much of it is history and behaviour rather than polish.",
+          },
+          {
+            type: "read",
+            title: "First Round Review — reference checking",
+            url: "https://review.firstround.com/",
+            sourceName: "First Round Review",
+            editorNote:
+              "Search the Review for its reference-checking pieces — the practical method, including back-channel references, which is where the real information is.",
           },
         ],
         concepts: [
@@ -1143,61 +1252,67 @@ export default [
       },
       {
         title: "Legal, regulatory and compliance red flags",
-        summary: "The company's behaviour when nobody was watching, read from its filings.",
+        summary:
+          "You are not a lawyer and do not need to be — you need to know what to look for and when to escalate.",
         learningObjectives: [
-          "Run the compliance scan: filings, licences, disputes, related-party disclosure",
-          "Distinguish fatal flags from fixable hygiene — and price the fixable ones",
-          "Know when to stop and send for lawyers",
+          "Run the public compliance scan: MCA currency, charges, directors, litigation",
+          "Check cap table integrity, ESOP paper, founder agreements and IP assignment",
+          "Grade findings and know the point at which counsel takes over",
         ],
         whyToday:
-          "The adviser is not the lawyer, but the adviser is the person who decides when lawyers are needed — and the compliance record is character evidence: how the company behaves under rules predicts how it behaves under investors.",
+          "You are not a lawyer, and you do not need to be. You need to know what to look for and when to escalate — which is a distinct and teachable skill. Much of the record is publicly checkable before you ask anyone a question.",
         principle:
           "The compliance history tells you how the company behaves when nobody is watching.",
         commonMistake:
-          "Binary reading — clean or dirty. The useful reading is graded: late annual filings are hygiene, priced in time and cost to cure; undisclosed related-party flows or unregistered core IP are character; a licence the business cannot operate without, absent, is a valuation event, not a footnote.",
+          "Treating compliance as administrative. The compliance record is the highest-signal, lowest-cost proxy for how the company operates, and much of it is publicly checkable before you ask anyone a question.",
         challenge:
-          "Build the red-flag checklist for an Indian private company: what to pull, where it lives publicly, and a three-grade severity scale — hygiene, character, fatal — with one example each. Then run it on a real company as far as public records allow.",
-        challengeMinutes: 45,
-        estMinutes: 60,
-        points: 25,
+          "Take a real Indian startup. Check MCA for filing currency, directors and charges. Build a red-flag checklist across today's seven categories, marking what you can verify publicly, what requires document access, and what needs counsel. Then write the three items you would escalate first.",
+        challengeMinutes: 35,
+        estMinutes: 45,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "The public scan",
+            title: "Corporate hygiene and cap table integrity",
             detail:
-              "Statutory filings and their timeliness, charges on assets, director disqualifications, litigation, GST and tax standing. Much of it is public; the adviser's first pass costs an afternoon.",
+              "Board resolutions, statutory registers, filings up to date — the cheapest signal of internal discipline available. And the reconciliation: does the spreadsheet match MCA filings and the register of members?",
           },
           {
-            title: "The IP question",
+            title: "ESOP and founder paper",
             detail:
-              "Who owns the code, the brand, the patents — the company, or a founder personally, or a previous employer arguably? Assignment gaps are among the most common and most fixable pre-round findings.",
+              "Grants made without board approval or scheme documentation are a common and expensive gap. Founder agreements — vesting, IP assignment, non-compete — matter most when a co-founder has already left.",
           },
           {
-            title: "Grading severity",
+            title: "IP ownership",
             detail:
-              "Hygiene: cure with time and fees. Character: pattern of choices, priced into terms and trust. Fatal: the deal-stopper — operating without a required licence, undisclosed material litigation. The grade drives the response.",
+              "Is the intellectual property assigned to the company or held personally by a founder or a contractor? Contractor-built IP without assignment is one of the most common material gaps — a deal-breaker until cured, and curing it requires their cooperation.",
+          },
+          {
+            title: "Tax, statutory and sector licensing",
+            detail:
+              "GST, TDS, PF and ESI compliance — arrears are both a liability and a signal. Sector licences: RBI for fintech, FSSAI for food, and the rest. A required licence, absent, is a valuation event, not a footnote.",
           },
           {
             title: "When to escalate",
             detail:
-              "The adviser scans and grades; lawyers verify and cure. The escalation trigger is anything graded character or fatal — and the escalation itself, early, is part of the advice.",
+              "Any unresolved cap table discrepancy, any IP ownership question, any founder dispute, any regulatory arrears. Recognising the boundary of your competence is part of the professional skill.",
           },
         ],
         checks: [
           {
-            question: "Why is compliance history read as character evidence?",
+            question: "Why do overdue MCA filings matter beyond the penalty?",
             answer:
-              "It records the company's behaviour under rules when nobody was checking — the best available predictor of behaviour under investors.",
+              "They indicate the company does not maintain basic hygiene. If the statutory filings are late, the option grants and board resolutions probably are too.",
           },
           {
-            question: "What are the three severity grades and their responses?",
+            question: "What is the risk if IP is not assigned to the company?",
             answer:
-              "Hygiene (cure with time and fees), character (price into terms and trust), fatal (stop until resolved).",
+              "The company does not own its core asset. A contractor or departed founder may hold rights to the product, which is a deal-breaker until cured — and curing it requires their cooperation.",
           },
           {
-            question: "What is the most common fixable IP finding?",
+            question: "When do you stop and involve counsel?",
             answer:
-              "Assignment gaps — code or brand owned by a founder personally or clouded by a previous employer, curable before a round if caught.",
+              "Any unresolved cap table discrepancy, any IP ownership question, any founder dispute, and any regulatory arrears. Recognising the boundary of your competence is part of the professional skill.",
           },
         ],
         resources: [
@@ -1208,7 +1323,15 @@ export default [
               "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=1&ssid=3&smid=0",
             sourceName: "SEBI",
             editorNote:
-              "The regulator's own index of the rules. For private-company diligence it is context; module 7 makes it central. Bookmark it — this listing is where 'check the current circular' starts.",
+              "The regulator's own index of the rules. For private-company diligence it is context; module 7 makes it central. Bookmark it — 'check the current circular' starts here.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A DRHP's litigation and regulatory disclosures show what a company must reveal when a regulator reads it. See what those disclosures actually look like before writing your checklist. MCA itself blocks automated checks — today's challenge sends you to the portal by name.",
           },
         ],
         concepts: [
@@ -1218,63 +1341,86 @@ export default [
       },
       {
         title: "Writing the investment memo",
-        summary: "The module deliverable: the document that commits your judgement to paper.",
+        summary:
+          "The module and the analytical arc of the roadmap end in a document someone else can decide from.",
         learningObjectives: [
-          "Structure the memo: thesis, evidence, risks, valuation, recommendation, falsifier",
-          "Write the falsification clause — what would change your mind, specifically",
-          "Complete the full memo on a real startup",
+          "Structure the memo with the recommendation in the first three sentences",
+          "Write the thesis as falsifiable claims and the risks honestly",
+          "Complete the module deliverable: a three-page memo, every figure traceable",
         ],
         whyToday:
-          "Everything the module gathered becomes accountable here. The memo is where diligence stops being activity and becomes judgement — and the falsifier clause imports the calibration discipline this catalogue teaches into the document that firms actually argue over.",
+          "The module and the analytical arc of the roadmap end in a document. Everything from modules 3 through 6 exists to be written down here in a form someone else can decide from. Reread your day 20 valuation critique and day 34 audit notes first — both feed the memo.",
         principle: "A memo that does not state what would change your mind is not a memo.",
         commonMistake:
-          "Writing the memo as advocacy. A memo that only argues for the deal has pre-decided — the honest structure carries the bear case at full strength, states the kill conditions, and lets the recommendation survive contact with both. Partners fund memos they can argue with.",
+          "Writing the memo as advocacy. A memo that only supports the recommendation is a pitch, and readers discount it accordingly. The credibility comes from the risks section and the falsification conditions.",
         challenge:
-          "Complete the module deliverable: a full memo on one real startup — thesis, unit economics (module 4), valuation (module 3), diligence findings (this module), risks graded, recommendation, and the explicit falsifier: the two or three observations that would reverse your view. Two to four pages. This is a portfolio artefact; write it like one.",
-        challengeMinutes: 85,
-        estMinutes: 100,
-        points: 40,
+          "Write a complete investment memo on one real startup, three pages maximum. Include: recommendation, thesis as falsifiable claims, market with your bottom-up sizing, unit economics, valuation with your method stated, the three risks that matter, and an explicit section on what would change your view. Every figure traceable.",
+        challengeMinutes: 45,
+        estMinutes: 45,
+        points: 45,
         difficulty: "stretch",
         topics: [
           {
+            title: "What a memo is for",
+            detail:
+              "Enabling a decision by someone who has not done the work, and creating a record that can be checked later. The reader should know your view in the first three sentences.",
+          },
+          {
             title: "The structure",
             detail:
-              "One-paragraph thesis; the evidence for it; the bear case at full strength; valuation with the load-bearing assumption named; risks graded; recommendation; falsifier. Each section short enough to be argued with.",
+              "Recommendation first, then thesis, market, team, business and unit economics, financials, valuation, risks, and what would change the view. Two to four pages — a memo nobody finishes has failed regardless of quality.",
           },
           {
-            title: "The falsifier clause",
+            title: "The thesis as falsifiable claims",
             detail:
-              "Named in advance: 'if cohort retention is below X, if the top customer is related-party, if reference calls surface Y — I reverse.' It converts the memo from advocacy into a testable position, and it is the clause that makes post-mortems honest.",
+              "What must be true for this to work, stated as claims that could be observed to be false. 'The market is large' is not falsifiable; 'SMB adoption will reach X because Y is now cheap enough' is.",
           },
           {
-            title: "The bear case at strength",
+            title: "Risks written honestly",
             detail:
-              "Written as its best advocate would write it, not as a foil. A memo whose bear case is a strawman has told the reader the author stopped thinking at yes.",
+              "The ones you cannot resolve, not a list of generic startup risks. The bear case written as its best advocate would write it — a strawman bear case tells the reader the thinking stopped at yes.",
           },
           {
-            title: "Judgement, owned",
+            title: "What would change your mind",
             detail:
-              "The memo ends in a recommendation with a name on it. Hedged conclusions are the genre's failure mode — the entire apparatus exists so one person can say 'invest' or 'pass' and be examinable about why.",
+              "The section that separates a memo from a pitch, and the one most often omitted. It converts an opinion into a testable position and creates the record that makes you better over time.",
           },
         ],
         checks: [
           {
-            question: "What does the falsifier clause do to a memo?",
+            question: "Why does the recommendation come first?",
             answer:
-              "Converts it from advocacy into a testable position — the conditions that would reverse the view are named before the outcome is known.",
+              "The reader is deciding whether to spend time, and a memo that withholds its conclusion wastes theirs. It also forces you to have a view rather than assembling material.",
           },
           {
-            question: "What standard must the bear case meet?",
+            question: "What makes a thesis falsifiable?",
             answer:
-              "Its best advocate's — a strawman bear case tells the reader the thinking stopped at yes.",
+              "It states conditions that could be observed to be false. 'The market is large' is not falsifiable; 'SMB adoption will reach X because Y is now cheap enough' is.",
           },
           {
-            question: "What is the memo's failure mode?",
+            question: "Why is 'what would change my mind' the most important section?",
             answer:
-              "The hedged conclusion — the document exists so a named person can say invest or pass, examinably.",
+              "It converts an opinion into a testable position, tells the reader where the argument is weakest, and creates a record that makes you a better investor over time because you can check yourself later.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "Bessemer Venture Partners — the memo archive",
+            url: "https://www.bvp.com/memos",
+            sourceName: "Bessemer Venture Partners",
+            editorNote:
+              "Real historical investment memos, released publicly — Shopify, LinkedIn, Twilio among them. Read two in full before writing: the structure and the tone are learned by reading, not by description.",
+          },
+          {
+            type: "read",
+            title: "Writing to GOV.UK standards — the style guide",
+            url: "https://www.gov.uk/guidance/style-guide",
+            sourceName: "GOV.UK",
+            editorNote:
+              "The memo is a writing task, and the constraint that improves it most is cutting length. This is the plainest free style discipline available — apply its short-sentences rule to your draft and watch a page disappear.",
+          },
+        ],
         concepts: [
           "due-diligence-financial",
           "due-diligence-commercial",
