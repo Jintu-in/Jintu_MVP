@@ -1504,6 +1504,25 @@ export default [
             editorNote:
               "The why and the who of going public, in plain Indian-market language, free with no signup. Read it today; part 2 carries the process on day 46.",
           },
+          {
+            type: "video",
+            title: "BSE SME Platform Explained — Capital Market Masterclass",
+            url: "https://www.youtube.com/watch?v=Ux8JVB_cqgg",
+            sourceName: "The Hindu (YouTube)",
+            youtubeVideoId: "Ux8JVB_cqgg",
+            durationSec: 1388,
+            estSizeMb: 176,
+            editorNote:
+              "Twenty-three minutes on what the platform is for, with BSE's own leadership explaining it — the closest thing to exchange-published video that verifies. Note the date; criteria quoted in any video need re-checking against the exchange page.",
+          },
+          {
+            type: "read",
+            title: "Why and how do companies list — what is an IPO",
+            url: "https://zerodha.com/varsity/chapter/why-and-how-do-companies-list-and-what-is-an-ipo/",
+            sourceName: "Zerodha Varsity",
+            editorNote:
+              "The foundational chapter under part 1 — angel-to-IPO in one arc, with the embedded video. If the funding ladder from module 1 is fresh, skim; if not, this is the recap.",
+          },
         ],
         concepts: [
           "sme-ipo-framework",
@@ -1592,6 +1611,14 @@ export default [
             sourceName: "BSE",
             editorNote: "The main-site companion page — framework context around the platform.",
           },
+          {
+            type: "doc",
+            title: "BSE SME — the listing procedure",
+            url: "https://www.bsesme.com/static/getlisted/listingprocedure.aspx",
+            sourceName: "BSE",
+            editorNote:
+              "The get-listed pages carry the current criteria and steps — this is where the challenge's numbers come from, dated by the exchange itself. The equivalent NSE Emerge pages exist; their site blocks automated checks, so open them by hand and compare, as day 43's challenge asks.",
+          },
         ],
         concepts: [
           "sme-ipo-framework",
@@ -1664,6 +1691,14 @@ export default [
             sourceName: "SEBI",
             editorNote:
               "The regulator's own archive of filed offer documents — every DRHP, free. Pick tomorrow's document from here today: an SME issue in a business you can understand.",
+          },
+          {
+            type: "doc",
+            title: "BSE — live public issues",
+            url: "https://www.bseindia.com/publicissue.html",
+            sourceName: "BSE",
+            editorNote:
+              "The exchange side of the same paperwork — issues currently open or recently closed, with offer documents attached. Cross-reading a filing here against its SEBI copy shows you which document is which.",
           },
         ],
         concepts: [
@@ -1838,6 +1873,14 @@ export default [
             sourceName: "Zerodha Varsity",
             editorNote:
               "The process end of the story — from filing to listing in Indian-market terms. Read alongside your process map and reconcile the two.",
+          },
+          {
+            type: "read",
+            title: "Rights issue, OFS and FPO — how listed companies raise",
+            url: "https://zerodha.com/varsity/chapter/supplementary-note-ipo-ofs-fpo/",
+            sourceName: "Zerodha Varsity",
+            editorNote:
+              "The supplementary note on what happens after listing — rights issues, offers for sale, FPOs. Ten minutes that stop 'IPO' being the only word you know for a public raise.",
           },
         ],
         concepts: [

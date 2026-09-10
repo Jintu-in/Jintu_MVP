@@ -370,3 +370,30 @@ gov.uk — the last as stated OGL).
 Module 7 remains first-pass — the reference's own closing note: it is
 the most India-specific, needs the most verification against current
 SEBI circulars and exchange criteria, and rots fastest.
+
+---
+
+## Addendum 7 — module 7 sourcing raised to the modules-1–6 standard (2026-09-11)
+
+No owner reference exists for module 7 yet, so this pass strengthened
+sources only — day content untouched, the three interview checks
+untouched. Five verified additions:
+
+| Source | Where |
+|---|---|
+| **"BSE SME Platform Explained" — Capital Market Masterclass** (The Hindu's channel, BSE leadership presenting, 23 min) | Day 42 — the module's first video; the note says on its face that any criteria quoted in video need re-checking against the exchange page |
+| **Varsity — "Why and how do companies list"** (the foundational IPO chapter) | Day 42 |
+| **BSE SME — the listing procedure** (the get-listed deep page; the criteria page soft-404s to an error page and is not used) | Day 43 — where the challenge's numbers actually come from |
+| **BSE — live public issues** (bseindia.com/publicissue.html) | Day 44 — the exchange side of SEBI's filing archive |
+| **Varsity — rights issue, OFS and FPO supplementary note** | Day 46 |
+
+Still absent, per standing rulings: nseindia.com (403 on every path —
+day 43's note now tells the learner to open the NSE Emerge pages by
+hand and compare, which is also the lesson), and SEBI's deep ICDR
+regulation URLs (404; the legal-framework index on day 48 carries it).
+No new licence hosts needed. Module 7 tallies: 14 resources across 7
+days, 2 videos, 3 interview checks.
+
+If the owner authors a module-7 reference later, it replaces this
+pass's day content the way modules 1–6 were replaced; the sources
+above will mostly survive it.
