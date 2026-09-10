@@ -419,12 +419,25 @@ export default function Homepage({
             ))}
           </ul>
 
-          {samples.length ? (
-            <div className="mx-auto mt-10 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
-              {samples.slice(2).map((r) => (
-                <LinkCardMini key={r.title} resource={r} />
-              ))}
-            </div>
+          {samples.length > 2 ? (
+            <>
+              {/* The line that was missing: without it these three cards
+                  floated between two sections and read as a bug. They are
+                  the proof of the wall above — the same links, drawn the
+                  way a day page hands them over, note included. The gate is
+                  > 2 because the grid renders samples[2..], and a caption
+                  promising three cards above zero of them would be this
+                  bug's mirror image. */}
+              <p className="mx-auto mt-10 max-w-[52ch] text-center text-[14px] leading-[1.6] text-ink-600">
+                Three of those links, as a day page hands them to you — each with the note on why
+                this one and not another.
+              </p>
+              <div className="mx-auto mt-5 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
+                {samples.slice(2).map((r) => (
+                  <LinkCardMini key={r.title} resource={r} />
+                ))}
+              </div>
+            </>
           ) : null}
         </section>
       ) : null}
