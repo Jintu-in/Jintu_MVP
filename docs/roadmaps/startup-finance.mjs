@@ -27,17 +27,23 @@
  *     verifies and is cited hub-level on day 6; its deep links rot too
  *     and are not used.
  *
- * FOUR DAYS CARRY NO EXTERNAL LINK, deliberately: days 27, 30, 34 and 41
- * — the capstone, reconciliation, audit and memo days, where the work is
- * building or auditing an artefact the learner already has and any
- * reading would substitute for doing it. Each renders five sections
- * without a Read & do, which is honest.
+ * EVERY DAY NOW CARRIES AT LEAST ONE EXTERNAL LINK. The first-pass
+ * zero-link days (5, 22, 25, 27, 30, 34, 36-38, 41) all gained verified
+ * sources as the owner's module references named them; the last to fall
+ * was day 41, whose 'read two real memos' ask is served by Bessemer's
+ * public memo archive.
  *
- * MODULE 1 IS THE OWNER-AUTHORED REFERENCE (assets/Finance/
- * module-1-reference.md, received 2026-09-04): its challenges, checks,
- * topics and named sources — including the two YC videos and Brad Feld's
- * term-sheet series — replaced the first-pass authoring on 2026-09-04,
- * every URL verified before use.
+ * ALL OF MODULES 1–6 ARE THE OWNER-AUTHORED REFERENCES (assets/Finance/
+ * module-1/2/3/4/5/6-reference.md, received 2026-09-04/05):
+ * their challenges, checks, topics and named sources replaced the
+ * first-pass authoring, every URL verified before use. Module 3's
+ * remaining generic asks (a brokerage report, a published startup DCF)
+ * are challenge instructions, not links, by design.
+ *
+ * ANNUAL DATA REFRESH: Damodaran's data sets update early each year and
+ * his site occasionally reorganises. The quarterly review should re-click
+ * datacurrent.html, spreadsh.htm and the webcast index each January
+ * especially — those are the links learners follow into their own work.
  *
  * NO SELF-CHECKING RESOURCE. Nothing free marks a cap table or an
  * investment memo. The deliverables carry the verification burden instead:

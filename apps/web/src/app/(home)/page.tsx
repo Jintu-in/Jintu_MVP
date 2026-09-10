@@ -86,15 +86,28 @@ export default async function LandingPage() {
     key: c.key,
     label: c.label,
   }));
+  // The hero card and "Here is one day" render two DIFFERENT days — they
+  // used to share one row, which put the same day on the page twice and
+  // read as a bug. The hero's comes from another roadmap where the
+  // catalogue has one, a third of the way in so it lands mid-material
+  // rather than on an intro or a capstone; with a one-roadmap catalogue it
+  // falls back to a second day of the flagship. Day numbers are derived
+  // from nodeCount, so the pick cannot point past the end of a roadmap.
+  const heroSource = roadmaps.find((r) => r.slug !== FLAGSHIP && r.nodeCount > 0) ?? null;
+  const heroPick = heroSource
+    ? { slug: heroSource.slug, dayNumber: Math.max(1, Math.ceil(heroSource.nodeCount / 3)) }
+    : { slug: FLAGSHIP, dayNumber: 12 };
+
   // The flagship's modules and three annotated links: the homepage shows
   // the product rather than describing it, and both of those are the real
   // rows. Failures degrade to an empty array, and every section that uses
   // them renders without them.
-  const [links, sources, samples, day, spine] = await Promise.all([
+  const [links, sources, samples, day, heroDay, spine] = await Promise.all([
     countPublishedResources().catch(() => 0),
     topSourceNames(8).catch(() => []),
     sampleResources(5).catch(() => []),
     sampleDay(FLAGSHIP, 45).catch(() => null),
+    sampleDay(heroPick.slug, heroPick.dayNumber).catch(() => null),
     listModules(FLAGSHIP).catch(() => []),
   ]);
 
@@ -102,6 +115,7 @@ export default async function LandingPage() {
     <Homepage
       samples={samples}
       day={day}
+      heroDay={heroDay}
       spine={spine}
       signedIn={Boolean(viewer?.hasProfile)}
       initials={viewer ? initialsFor(viewer) : null}

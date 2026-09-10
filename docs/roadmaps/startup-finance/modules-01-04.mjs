@@ -3,10 +3,18 @@
  *
  * Built from the owner's brief in assets/Finance/roadmap-startup-finance.md.
  * Every module title, day title, principle and deliverable is the brief's,
- * verbatim; the rest of the day model is authored here. Module 1 follows the
- * owner's fully-authored reference (assets/Finance/module-1-reference.md,
- * received 2026-09-04): its challenges, checks, topics and named sources are
- * that document's, verified before use. Two of its source asks stay linkless
+ * verbatim; the rest of the day model is authored here. ALL FOUR MODULES
+ * in this file follow the owner's fully-authored references
+ * (assets/Finance/module-1/2/3/4-reference.md): their challenges, checks,
+ * topics and named sources are those documents', verified before use —
+ * the first pass's interview checks (four in module 2, three in module 3,
+ * five in module 4) are kept on top of the references' checks. Dated asks
+ * (Indian ESOP taxation, law-firm explainers, listed-company investor
+ * decks) are deliberately linkless: the challenges teach the
+ * check-the-date habit instead of citing pages that go stale. Module 4's
+ * a16z metrics pieces live at their post-redesign paths — the 2015-dated
+ * URLs that 404'd in the first build resolve again as
+ * a16z.com/16-startup-metrics/ and /16-more-startup-metrics/. Two of its source asks stay linkless
  * by rule 2: MCA (403s the checker — day 5's challenge sends the learner to
  * the portal instead) and "a current angel-tax article" (deliberately
  * undated-proof: day 2 teaches the check-the-date habit rather than linking
@@ -618,66 +626,71 @@ export default [
     objective: "The mechanical skill most finance graduates lack entirely.",
     deliverable:
       "A working cap table model that takes a SAFE, converts it at a priced round, creates a 10% ESOP pool, and produces an exit waterfall — all from formulas, no hardcoded percentages.",
-    estHours: 8.5,
+    estHours: 9.5,
     nodes: [
       {
         title: "What a cap table actually is",
         summary:
-          "The single document that records who owns what — and the discipline of rebuilding it from the deal documents.",
+          "What the document represents, where its authority comes from — and why the spreadsheet loses every argument with the filings.",
         learningObjectives: [
-          "Read a cap table: holders, share classes, fully-diluted versus issued",
-          "Explain why fully-diluted is the denominator that matters",
-          "Rebuild a simple table from a set of deal documents",
+          "Read a cap table: holders, share classes, issued versus fully diluted",
+          "Explain authorised versus issued capital and why it can delay an Indian round",
+          "Say where the truth lives when the spreadsheet and the documents disagree",
         ],
         whyToday:
-          "This module is the skill a PGDM does not teach and startup advisory runs on. Everything later — dilution, ESOP, conversion, waterfall — is an operation on this one table, so today establishes what the table is and what counts as knowing it.",
+          "Before any arithmetic, understand what the document represents and where its authority comes from. A cap table is a summary of legal instruments, and when the spreadsheet and the documents disagree, the documents win.",
         principle:
           "If you cannot rebuild the cap table from the documents, you do not understand the deal.",
         commonMistake:
-          "Trusting the summary percentages a founder sends over. Summary tables omit the option pool, the un-converted SAFEs, or a forgotten angel — and every valuation and dilution number computed on the wrong denominator is wrong in the founder's favour.",
+          "Treating the spreadsheet as the source of truth. Cap tables drift from reality through undocumented promises and unissued options, and the drift is discovered during diligence at the worst possible moment.",
         challenge:
-          "Take a company with three documented events — incorporation, an angel cheque, an ESOP grant — and rebuild the cap table from the documents alone. Then compare against the summary you were 'given' and find what it omitted.",
-        challengeMinutes: 40,
-        estMinutes: 60,
-        points: 30,
+          "Find one funded Indian startup on MCA. From the filings, list the share classes issued, the number of shares in each, and the dates. Then write two sentences on what you can and cannot determine about ownership from the public record alone.",
+        challengeMinutes: 20,
+        estMinutes: 50,
+        points: 25,
         difficulty: "core",
         topics: [
           {
-            title: "The rows and the classes",
+            title: "What it records",
             detail:
-              "Founders' equity, investors' preference shares, the ESOP pool, and anything convertible waiting to land. Each class carries different rights; the table records ownership and the rights ride the class.",
+              "Every share issued, to whom, of what class, at what price, on what date. Ordinary, preference, and in India CCPS — different rights, different economics, same table.",
           },
           {
             title: "Issued versus fully diluted",
             detail:
-              "Issued counts shares that exist; fully diluted adds everything that will exist — options granted and reserved, convertibles at expected conversion. Fully diluted is the denominator for every honest percentage.",
+              "The distinction that causes most cap table arguments. Options, warrants and convertibles are not issued shares but count in fully diluted — and an investor negotiating for 20% almost always means fully diluted.",
           },
           {
-            title: "The table as history",
+            title: "Authorised versus issued capital",
             detail:
-              "A cap table is the cumulative record of every deal the company ever did. Rebuilding it from documents is how an adviser verifies the history rather than inheriting its errors.",
+              "An Indian company must authorise before it issues, and running out of authorised capital delays a round — a shareholder resolution and a filing that nobody budgeted time for.",
           },
           {
-            title: "Who maintains it, and badly",
+            title: "Where the truth lives",
             detail:
-              "Early companies keep it in a spreadsheet maintained by whoever raised last. Assume errors; finding them politely is part of the job.",
+              "MCA filings, the register of members, share certificates, the SHA. The spreadsheet is a derivative, and rebuilding it from documents is how an adviser verifies the history rather than inheriting its errors.",
+          },
+          {
+            title: "Why cap tables go wrong",
+            detail:
+              "Informal promises, unissued options, a co-founder who left without documentation. Early companies keep the table in a spreadsheet maintained by whoever raised last — assume errors, and find them politely.",
           },
         ],
         checks: [
           {
-            question: "What does fully diluted include that issued does not?",
+            question: "Issued versus fully diluted — why does it matter?",
             answer:
-              "Everything that will become shares — granted and reserved options, and convertibles at their expected conversion.",
+              "Fully diluted includes options and convertibles that have not converted. An investor negotiating for 20% almost always means fully diluted, and agreeing on issued instead gives them materially less than they think.",
           },
           {
-            question: "Why rebuild a cap table from documents rather than accept the summary?",
+            question: "What is authorised capital and why does it delay rounds?",
             answer:
-              "Summaries omit pools, un-converted instruments and forgotten holders, and every percentage computed on the wrong denominator is wrong.",
+              "The maximum shares a company may issue under its constitution. Issuing beyond it requires a shareholder resolution and a filing, which takes time nobody budgeted for.",
           },
           {
-            question: "What travels with a share class besides ownership?",
+            question: "If the spreadsheet and the share register disagree, which is correct?",
             answer:
-              "Rights — preference, anti-dilution, votes, vetoes. The class defines what the shares can do, not just how many there are.",
+              "The register and the filings. The spreadsheet is a convenience; the legal record is the company.",
           },
         ],
         resources: [
@@ -687,7 +700,26 @@ export default [
             url: "https://carta.com/learn/startups/equity-management/cap-table/",
             sourceName: "Carta",
             editorNote:
-              "The cleanest plain-language explainer from the company whose product is cap tables. Read it before the challenge, then do the challenge without it open.",
+              "They explain the mechanics clearly and free, because they sell the software. Read the education pages, ignore the product pitch.",
+          },
+          {
+            type: "read",
+            title: "Stripe Atlas guides — the equity guide",
+            url: "https://stripe.com/atlas/guides",
+            sourceName: "Stripe Atlas",
+            editorNote:
+              "The clearest plain-English explanation of classes and dilution written for people who are not lawyers. The CCPS layer is Indian and comes from day 5 — the class logic here transfers.",
+          },
+          {
+            type: "video",
+            title: "Startup Mechanics — Kirsty Nathoo (Stanford CS183F)",
+            url: "https://www.youtube.com/watch?v=2_IpVq6vKR0",
+            sourceName: "Stanford Online (YouTube)",
+            youtubeVideoId: "2_IpVq6vKR0",
+            durationSec: 3507,
+            estSizeMb: 445,
+            editorNote:
+              "YC's CFO on the machinery under every round — shares, ownership, dilution, options — in one lecture. The middle third is this module in miniature; the US-specific filings talk maps to MCA equivalents here.",
           },
         ],
         concepts: [
@@ -696,60 +728,62 @@ export default [
       },
       {
         title: "Pre-money, post-money and the arithmetic",
-        summary: "Four quantities, one identity — and the ambiguity that moves crores.",
+        summary:
+          "Trivial arithmetic, constant confusion — get it precisely right today and the rest of the module follows.",
         learningObjectives: [
-          "Compute price per share, new shares and ownership from pre-money and cheque size",
-          "Convert fluently between pre-money and post-money statements",
-          "Spot when 'valuation' is being quoted ambiguously, and what the ambiguity is worth",
+          "Derive everything from the identity: post-money equals pre-money plus the investment",
+          "Compute price per share on pre-round fully diluted shares, and say why",
+          "Explain why a falling percentage can mean a rising value, with numbers",
         ],
         whyToday:
-          "This is the arithmetic every negotiation quotes and a surprising share of practitioners fumble. It has to be reflexive before day 9 builds it into a model — the model is only trustworthy if you can predict its outputs by hand.",
+          "The arithmetic is trivial and the confusion is constant. Get this precisely right today and every calculation for the rest of the module follows.",
         principle:
           "Pre-money and post-money differ by exactly the amount everyone argues about.",
         commonMistake:
-          "Hearing 'we raised at 50 crores' and not asking which. Pre versus post on the same headline number changes the investor's ownership — and whether the ESOP pool sits inside or outside changes it again. The ambiguity is not pedantry; it is the negotiation.",
+          "Dividing the investment by pre-money to get ownership. It overstates the investor's stake and produces a cap table that does not sum to 100%.",
         challenge:
-          "A company raises ₹10 crore at '₹50 crore valuation'. Compute investor ownership under: pre-money 50; post-money 50; pre-money 50 with a fresh 10% post-round pool. Three answers, one headline — write the sentence you would use to pin a term sheet down.",
-        challengeMinutes: 40,
-        estMinutes: 60,
+          "A company has 10,00,000 shares outstanding and raises ₹5 crore at ₹20 crore pre-money. Calculate: post-money, price per share, new shares issued, investor percentage, and the founders' percentage before and after. Do all of it by formula. Then change the raise to ₹8 crore and confirm every figure updates.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
             title: "The identity",
             detail:
-              "Post-money = pre-money + new cash. Investor ownership = cash ÷ post-money. Everything else in round arithmetic is derived from these two lines.",
+              "Post-money equals pre-money plus the investment. Investor ownership is investment divided by post-money — not by pre-money, which is the standard error. Everything else derives from these lines.",
           },
           {
             title: "Price per share",
             detail:
-              "Pre-money ÷ fully-diluted pre-round shares. New shares issued = investment ÷ price. The share count makes the percentages concrete and catches errors percentages hide.",
+              "Pre-money divided by pre-round fully diluted shares. This is the number that governs everything else, and new shares issued is simply investment divided by it.",
           },
           {
-            title: "Where the ambiguity hides",
+            title: "Dilution, honestly framed",
             detail:
-              "Headlines quote one number; term sheets specify which. The same '50 crore' is a sixth of the company or a fifth depending on the word before it.",
+              "What each existing holder's percentage becomes — and why percentage falling does not mean value falling. Your percentage falls while your value rises, and both are true; day 10 makes this the founder conversation.",
           },
           {
-            title: "The pool complication",
+            title: "Where the confusion originates",
             detail:
-              "A pool created pre-money dilutes founders before the investor buys in — same headline, different founder outcome. Day 11 makes this precise.",
+              "Founders quote pre-money, investors think post-money, and neither says which. The same headline number is a sixth of the company or a fifth depending on the word before it.",
           },
         ],
         checks: [
           {
-            question: "State the pre/post identity and the ownership formula.",
-            answer:
-              "Post-money equals pre-money plus new cash; investor ownership equals cash divided by post-money.",
+            question: "₹5 crore at ₹20 crore pre-money. What does the investor own?",
+            answer: "Post-money is ₹25 crore, so 5/25 = 20%.",
           },
           {
-            question: "₹10 crore in at ₹40 crore pre-money — what does the investor own?",
-            answer: "10 ÷ (40 + 10) = 20%.",
+            question: "Why is price per share calculated on pre-money shares?",
+            answer:
+              "The price is what the investor pays for shares that exist before their money arrives. Using post-money shares would be circular.",
           },
           {
-            question: "Why insist on share counts rather than working in percentages?",
+            question:
+              "A founder goes from 60% to 48% and the company is worth more. Better or worse off?",
             answer:
-              "Percentages hide denominator errors. Shares and price make every step checkable and force the fully-diluted question into the open.",
+              "Better, if the valuation rose enough. 60% of ₹20 crore is ₹12 crore; 48% of ₹25 crore is ₹12 crore — flat here, and positive in any round where value rises more than the dilution.",
           },
           {
             question:
@@ -763,12 +797,23 @@ export default [
         ],
         resources: [
           {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds — the arithmetic",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "She does the arithmetic on screen, slowly, with real numbers — the single most useful free video on this topic. You watched it in module 1 for the instruments; rewatch the priced-round arithmetic with a spreadsheet open.",
+          },
+          {
             type: "read",
-            title: "What is a cap table?",
-            url: "https://carta.com/learn/startups/equity-management/cap-table/",
+            title: "Share dilution — what causes it and how to prepare",
+            url: "https://carta.com/learn/startups/equity-management/share-dilution/",
             sourceName: "Carta",
             editorNote:
-              "Re-open yesterday's explainer at its dilution worked example — read it after doing today's challenge by hand, as the answer key rather than the method.",
+              "Good diagrams showing the same round from both sides. Read it after doing today's challenge by hand — as the answer key, not the method.",
           },
         ],
         concepts: [
@@ -778,61 +823,66 @@ export default [
       {
         title: "Building a cap table from scratch in Excel",
         summary:
-          "The model itself: share counts in, everything else derived, nothing hardcoded.",
+          "The build day: structure it around shares with derived percentages, because everything after this adds to the file created now.",
         learningObjectives: [
-          "Structure the model: events as columns, holders as rows, shares as the atoms",
-          "Derive every percentage from share counts — never type one",
+          "Structure the model on shares, with events as columns and every percentage derived",
+          "Keep inputs in one named block and add a check row that must sum to 100%",
           "Make the model extend to a new round without restructuring",
         ],
         whyToday:
-          "Today the arithmetic becomes an artefact. The module deliverable is this file, grown over the next four days — and the habits set now (shares as atoms, no hardcodes) decide whether day 13's waterfall is an afternoon or a rebuild.",
+          "This is the build day. Everything after this adds to the file you create now, so the structure matters more than the numbers.",
         principle:
           "A cap table with a hardcoded ownership percentage is a cap table that will be wrong next round.",
         commonMistake:
-          "Building in percentages because they are what everyone asks about. Percentages are outputs. A model whose inputs are percentages cannot absorb a new round — every cell is wrong the moment the denominator moves, which is what denominators do.",
+          "Building it as a static picture of today rather than a model. A cap table's purpose is answering 'what happens if', and a table of typed percentages cannot answer anything.",
         challenge:
-          "Build the base model: incorporation, an angel round, holder rows, event columns, fully-diluted total, and derived percentages. Test: add a fictional new investor by inserting shares only, and confirm every percentage updates with no other edit. If anything else needed touching, find the hardcode.",
-        challengeMinutes: 60,
-        estMinutes: 90,
+          "Build a cap table for a company with three founders (50/30/20) holding 10,00,000 shares. Every percentage must be a formula referencing share counts. Add a check row summing to 100%. Deliberately change one founder's shares and confirm every percentage updates and the check still holds. Before you start, open one free template — Carta's or a VC firm's — study its structure, close it, and build your own.",
+        challengeMinutes: 40,
+        estMinutes: 50,
         points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "Shares are the atoms",
+            title: "Shares, not percentages",
             detail:
-              "Every input is a share count from a document; every percentage is a formula over the fully-diluted sum. The model's discipline is that no ownership number is ever typed.",
+              "Percentages are outputs. A model built on percentages breaks at the first round — shares are the legal reality, and they are additive.",
           },
           {
-            title: "Events as columns",
+            title: "One row per holder, one column per event",
             detail:
-              "Each financing event is a column adding shares to holders. The table reads left to right as the company's history, and a new round is a new column, not a new file.",
+              "Founders, angels, each round, options. The table reads left to right as the company's history, and a new round is a new column, not a new file.",
           },
           {
-            title: "The fully-diluted row",
+            title: "The summary block and the check row",
             detail:
-              "One sum, referenced by every percentage. When the pool and the convertibles land in later days, they land here — the denominator has one home.",
+              "Issued, fully diluted, and each holder's percentage of both, all derived — plus a row where percentages must sum to exactly 100%. It should be impossible for the model to be wrong without you seeing it.",
           },
           {
-            title: "Lookups over copy-paste",
+            title: "Named inputs in one place",
             detail:
-              "Holder attributes — class, preference, dates — live in one reference range and are looked up where needed. XLOOKUP or INDEX/MATCH; the excel-at-work roadmap's lookup week is exactly this.",
+              "Every assumption in a single input block, never buried in a formula — so someone else can change one, and so you can audit them all at once.",
+          },
+          {
+            title: "Readable by someone else",
+            detail:
+              "Inputs, calculations and outputs visually distinct. The lookup layer — XLOOKUP or INDEX/MATCH over a holder reference range — is what keeps it maintainable when day 12 lands the SAFEs.",
           },
         ],
         checks: [
           {
-            question: "What is the one thing this model must never contain?",
+            question: "Why build on shares rather than percentages?",
             answer:
-              "A typed ownership percentage. Percentages are derived from share counts, or the model breaks silently next round.",
+              "Shares are the legal reality and they are additive. Percentages are derived and must be recalculated at every event — hardcoding them guarantees a wrong answer after the first round.",
           },
           {
-            question: "What is the test that the model has no hardcodes?",
+            question: "What does the check row protect against?",
             answer:
-              "Add a new investor's shares and confirm every percentage updates with no other edit.",
+              "Any error that breaks the total. If percentages sum to 99.7%, something is missing or double-counted, and you see it immediately rather than in a meeting.",
           },
           {
-            question: "Why are events columns rather than separate sheets?",
+            question: "Why keep inputs in one block?",
             answer:
-              "The table stays one readable history, and a new round extends it instead of forking it.",
+              "So someone else can change an assumption without hunting through formulas — and so you can see every assumption at once when auditing your own work.",
           },
         ],
         resources: [
@@ -842,7 +892,23 @@ export default [
             url: "https://exceljet.net/functions/xlookup-function",
             sourceName: "ExcelJet",
             editorNote:
-              "The reference for the lookup layer this model runs on. If this page reads as revision, good; if not, the excel-at-work roadmap's week 2 is the honest prerequisite.",
+              "The lookup layer that makes a cap table maintainable — you need it before day 10. If this reads as revision, good; if not, the excel-at-work roadmap's week 2 is the honest prerequisite.",
+          },
+          {
+            type: "read",
+            title: "INDEX and MATCH",
+            url: "https://exceljet.net/articles/index-and-match",
+            sourceName: "ExcelJet",
+            editorNote:
+              "The older, more flexible half of the lookup layer. Know both patterns — templates you inherit will use whichever their author learned first.",
+          },
+          {
+            type: "read",
+            title: "Overview of Excel tables",
+            url: "https://support.microsoft.com/en-us/office/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "Converting ranges to tables is what stops formulas breaking when rows are added — which they will be, on every one of the next four days.",
           },
         ],
         concepts: [
@@ -853,133 +919,154 @@ export default [
       {
         title: "Modelling a round and its dilution",
         summary:
-          "Add a priced round to the model and watch what it does to everyone — in value, not just percentage.",
+          "Yesterday's table becomes a model that answers the only question anyone actually asks: what does this round do to me?",
         learningObjectives: [
-          "Extend the model with a priced round from term-sheet inputs",
-          "Show each holder's dilution in percentage and in value",
-          "Explain why a diluted founder can still be better off — and when they are not",
+          "Add a priced round as an event column with every percentage recalculating",
+          "Model dilution in percentage and in value across multiple rounds",
+          "Build a two-way sensitivity of ownership across valuations and raise sizes",
         ],
         whyToday:
-          "Yesterday's model meets its first real event. Dilution is the number founders fixate on and the one advisers must reframe: the question is never 'how much less do I own' but 'what is my stake now worth'.",
+          "Yesterday's table shows a moment. Today it becomes a model that can answer the only question anyone actually asks: what does this round do to me?",
         principle: "Founders track their percentage. They should track their value.",
         commonMistake:
-          "Presenting dilution as loss. A founder going from 60% of a 40-crore company to 48% of a 60-crore company got richer — the model should print both columns, because the percentage column alone tells the story that scares clients out of good rounds.",
+          "Presenting dilution as a percentage loss. Framed that way every round looks like a defeat. Value alongside percentage turns it into the trade it actually is.",
         challenge:
-          "Add a ₹10 crore round at ₹40 crore pre to your model. Produce the before/after table: each holder's percentage, and each holder's value at the new price. Then re-run at ₹25 crore pre and write two sentences on what changed for whom.",
-        challengeMinutes: 50,
-        estMinutes: 75,
-        points: 30,
+          "Extend yesterday's model with a seed round: ₹3 crore at ₹12 crore pre-money. Then a Series A: ₹15 crore at ₹60 crore pre-money. Show each founder's percentage and value after each. Then build a two-way table showing founder ownership across three Series A valuations and three raise sizes.",
+        challengeMinutes: 35,
+        estMinutes: 50,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "The round as inputs",
+            title: "The round as a column",
             detail:
-              "Pre-money and cheque size in; price, new shares, and the new column out. The model from day 9 should absorb this with no restructuring — that was the point of building it right.",
+              "New shares issued, price per share, and every percentage recalculating. The day-9 model should absorb this with no restructuring — that was the point of building it right.",
           },
           {
-            title: "The two dilution columns",
+            title: "Dilution across multiple rounds",
             detail:
-              "Percentage before and after, and value before and after at the round price. Advisers who show only the first column create fear; only the second, complacency. Show both.",
+              "How a founder reaches single digits without any single round looking severe. The cumulative table is the honest one, and single-round explanations miss it entirely.",
           },
           {
-            title: "When dilution genuinely hurts",
+            title: "Value versus percentage",
             detail:
-              "Flat and down rounds, heavy pools, and stacked preferences — the cases where the value column falls with the percentage column. The model exists to catch these before signing.",
+              "Model both, so the conversation can be about the right one. A founder's value can rise sharply while their percentage falls — and in flat rounds, heavy pools and stacked preferences, both fall, which is what the model exists to catch.",
           },
           {
-            title: "Sensitivity as habit",
+            title: "Rounds that have not happened yet",
             detail:
-              "Every round modelled at two or three pre-money levels, as a habit rather than a request. The client conversation is the difference between the runs.",
+              "Scenario columns with different raise amounts and valuations. 'What do I own after Series B' requires modelling two rounds forward with assumptions stated — the terms of this round shape the next.",
+          },
+          {
+            title: "Presenting dilution to a founder",
+            detail:
+              "The framing that makes it a decision rather than a shock: both columns, two or three pre-money levels, and the sentence about what the next round must clear.",
           },
         ],
         checks: [
           {
-            question: "What two columns should a dilution table always show?",
+            question:
+              "A founder holds 30% and the round is ₹15 crore at ₹60 crore pre-money. What do they hold after?",
             answer:
-              "Ownership percentage before and after, and stake value before and after at the round price.",
+              "Post-money is ₹75 crore, the investor takes 20%, so the founder retains 30% × 80% = 24%.",
           },
           {
-            question: "When does dilution make a founder genuinely worse off?",
+            question: "Why can a founder's value rise while their percentage falls sharply?",
             answer:
-              "When the value column falls too — flat or down rounds, or terms that transfer value, not merely percentage.",
+              "Because the valuation rose by more than the dilution. 24% of ₹75 crore exceeds 30% of ₹15 crore by a wide margin.",
           },
           {
-            question: "What should adding a round require in a well-built model?",
+            question: "Why model two rounds forward rather than one?",
             answer:
-              "Entering the term-sheet inputs and nothing else — a new event column, no restructuring.",
+              "Because the terms of this round affect the next. A high valuation now can force a down round later, and the founder should see that before signing.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Carta — startup equity education",
-            url: "https://carta.com/learn/",
-            sourceName: "Carta",
+            title: "Stripe Atlas guides — dilution over multiple rounds",
+            url: "https://stripe.com/atlas/guides",
+            sourceName: "Stripe Atlas",
             editorNote:
-              "The dilution articles under 'equity management' walk the same before/after framing today's table produces. The hub is linked because Carta reshuffles deep URLs; the section is one click in.",
+              "The equity guide shows the cumulative effect across a full funding history, which single-round explanations miss entirely.",
+          },
+          {
+            type: "read",
+            title: "Calculate multiple results by using a data table",
+            url: "https://support.microsoft.com/en-us/office/calculate-multiple-results-by-using-a-data-table-e95e2487-6ca6-4413-ad12-77542a5ea50b",
+            sourceName: "Microsoft Support",
+            editorNote:
+              "The two-way data table is today's sensitivity tool — three valuations by three raise sizes, one formula. Module 5 uses the same machinery on a full operating model.",
           },
         ],
         concepts: [
           "cap-table-dilution",
+          "excel-scenario-analysis",
         ],
       },
       {
         title: "ESOP pools — sizing, timing and who pays",
-        summary: "The pool is a negotiation wearing accounting clothes.",
+        summary:
+          "The most economically significant term founders accept without understanding — and the Indian layer the US explainers skip.",
         learningObjectives: [
-          "Model a pool created pre-money versus post-money and show who it dilutes",
-          "Explain why investors ask for the pool before their money lands",
+          "Model a pool created pre-money versus post-money and show who it dilutes, in rupees",
           "Size a pool from a hiring plan rather than a convention",
+          "Track the four option states and say which count in fully diluted",
         ],
         whyToday:
-          "The ESOP pool is the least understood line on the table and a systematic transfer of value when mishandled. It is also the module's clearest example of arithmetic as negotiation — the same 10% pool costs different people depending on one word.",
+          "The pool shuffle is the most economically significant term that founders routinely accept without understanding. It frequently moves more value than the valuation negotiation does.",
         principle:
           "Who the pool dilutes depends entirely on whether it sits pre-money or post-money.",
         commonMistake:
-          "Treating the investor's requested pre-money pool as neutral housekeeping. A pool carved out pre-money dilutes only the existing holders — the investor buys in after the carve-out at an effectively lower price. It is a price term dressed as an HR provision.",
+          "Treating the pool as a housekeeping item and negotiating only the valuation. A 10% pre-money pool on a ₹40 crore pre-money round moves roughly ₹4 crore of value, which usually exceeds anything won in the valuation discussion.",
         challenge:
-          "Add a 10% pool to your model both ways — pre-money and post-money — for the same round. Produce the founder-ownership delta between the two, in percentage and value. That delta is what the negotiation is actually about; write it as one sentence a founder would understand.",
-        challengeMinutes: 50,
-        estMinutes: 70,
-        points: 30,
+          "Add a 10% ESOP pool to your model twice: once created pre-money, once post-money, with the same round. Calculate the founders' final ownership under each, and the difference in rupees at the post-money valuation. Write one sentence stating who paid for the pool in each case. Then find one dated Indian explainer on ESOP taxation and note when it was published — the treatment has changed, and checking the date is the habit.",
+        challengeMinutes: 35,
+        estMinutes: 45,
+        points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "What the pool is",
+            title: "What a pool is, and sizing it",
             detail:
-              "Shares reserved for current and future employees, sitting in the fully-diluted count from creation even before grants are made. Reserved but ungranted still dilutes — that is the point of counting fully diluted.",
+              "Shares reserved for future employees, unallocated at creation — typically 10–15% early, but driven by the hiring plan to the next round rather than convention. Oversized pools are pre-paid dilution for hires that never happen.",
           },
           {
-            title: "Pre-money pool mechanics",
+            title: "The pre-money shuffle",
             detail:
-              "The pool is created before the price is set, so the pre-money is spread over more shares, the price per share falls, and the existing holders absorb all of it. The investor's effective valuation is lower than the headline.",
+              "A pool created pre-money dilutes existing shareholders only, and lowers the effective price the investor pays. It is a price adjustment expressed as an administrative requirement.",
           },
           {
-            title: "Post-money pool mechanics",
+            title: "Post-money creation",
             detail:
-              "Created after the round, the pool dilutes everyone including the new investor. Same 10%, different payers — which is why the term sheet always specifies and the founder rarely notices.",
+              "Dilutes everyone including the new investor. Modelling both and showing the difference in rupees is the only way founders understand it.",
           },
           {
-            title: "Sizing honestly",
+            title: "Granted, vested, exercised, unallocated",
             detail:
-              "The defensible pool comes from the hiring plan to the next round — roles, counts, and market grant sizes — not from 'ten percent is standard'. Oversized pools are pre-paid dilution for hires that never happen.",
+              "Four states, and only some count in fully diluted — granted shares are committed under vesting; unallocated are reserved but unassigned. Both dilute from creation, which is why the pool lands on the table before a single grant is made.",
+          },
+          {
+            title: "Indian specifics",
+            detail:
+              "SEBI and Companies Act requirements, trust versus direct routes, and exercise taxation that employees discover too late. The Indian regime differs meaningfully from the US template — and it changes, so date-check anything you read.",
           },
         ],
         checks: [
           {
-            question: "Who pays for a pool created pre-money?",
+            question: "A 10% pool created pre-money — who is diluted?",
             answer:
-              "The existing holders only — the carve-out happens before the investor's price is set, lowering it.",
+              "Only the existing shareholders. The new investor's percentage is protected, so they effectively buy at a lower price than the headline valuation implies.",
           },
           {
-            question: "Why do reserved-but-ungranted options still dilute?",
+            question: "Why do investors ask for the pool pre-money?",
             answer:
-              "They sit in the fully-diluted denominator from creation; every percentage is computed over them.",
+              "It increases their effective ownership without changing the valuation they can quote. It is a price adjustment expressed as an administrative requirement.",
           },
           {
-            question: "What makes a pool size defensible?",
+            question: "What is the difference between granted and unallocated pool shares?",
             answer:
-              "A hiring plan to the next round with market grant sizes — evidence, not convention.",
+              "Granted shares are committed to named employees under a vesting schedule; unallocated are reserved but unassigned. Both count in fully diluted, which is why the pool dilutes on creation rather than on grant.",
           },
           {
             question:
@@ -993,12 +1080,23 @@ export default [
         ],
         resources: [
           {
+            type: "video",
+            title: "Understanding SAFEs and Priced Equity Rounds — the option pool section",
+            url: "https://www.youtube.com/watch?v=Dk6JNTDec9I",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "Dk6JNTDec9I",
+            durationSec: 2703,
+            estSizeMb: 343,
+            editorNote:
+              "The pool shuffle is the specific term YC's finance talks cover best. Watch the pool section twice — once before modelling, once after, when you will hear what you missed.",
+          },
+          {
             type: "read",
-            title: "Carta — startup equity education",
-            url: "https://carta.com/learn/",
+            title: "Stock options — vesting, cliffs and exercise",
+            url: "https://carta.com/learn/equity/stock-options/",
             sourceName: "Carta",
             editorNote:
-              "The employee-equity section covers pool mechanics and grant practice. Read after modelling, not before — the arithmetic should be yours first.",
+              "Vesting, cliffs, exercise and the four option states explained plainly. The Indian trust-route and taxation layer is dated material — today's challenge sends you to find a current explainer and check its date.",
           },
         ],
         concepts: [
@@ -1009,61 +1107,67 @@ export default [
       {
         title: "Convertible conversion at the next round",
         summary:
-          "The deferred argument arrives: SAFEs landing on the cap table, and the interaction that surprises everyone.",
+          "Day 3's instruments land on the cap table — individually, at their own prices, all at once.",
         learningObjectives: [
           "Convert a capped, discounted SAFE at a priced round inside the model",
-          "Show which term binds at different round prices",
-          "Model stacked SAFEs converting together and the combined dilution",
+          "Handle pre-money versus post-money SAFE conversion and say which the document is",
+          "Model multiple SAFEs converting together at different caps",
         ],
         whyToday:
-          "Day 3 taught the instrument; today the model executes it. Conversion is where founders discover what they sold two years ago, and the adviser's job is to have shown them before the term sheet makes it non-negotiable.",
+          "Day 3 covered what a SAFE is. Today is what it does to the cap table when it converts — which is the only moment it has any effect at all.",
         principle:
           "A SAFE's discount and cap interact, and the interaction surprises people at conversion.",
         commonMistake:
-          "Modelling conversion at the cap by default. The investor converts at the better of cap and discount for them — and with several SAFEs at different caps, each converts on its own terms, so the total new shares only emerge from doing each one properly.",
+          "Modelling SAFEs as a single blended line. They convert individually at individual prices, and blending them produces a wrong share count that then propagates through everything downstream.",
         challenge:
-          "Add two SAFEs to your model — different caps, same discount — and convert them in the day-10 round. Produce founder ownership: as the founder assumed (ignoring SAFEs), and as it actually lands. The gap between those numbers is the surprise this day exists to make unsurprising.",
-        challengeMinutes: 55,
-        estMinutes: 75,
+          "Add two SAFEs to your model: ₹1 crore at a ₹10 crore post-money cap with a 20% discount, and ₹50 lakh at a ₹15 crore post-money cap with no discount. Convert both at a Series A of ₹15 crore at ₹50 crore pre-money. Show the shares issued to each, the price applied, and every holder's final ownership. State for each SAFE whether the cap or the discount governed.",
+        challengeMinutes: 35,
+        estMinutes: 50,
         points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "The conversion price",
+            title: "The conversion event",
             detail:
-              "Min of (cap ÷ pre-round fully-diluted shares) and (round price × (1 − discount)). Whichever is lower gives the SAFE holder more shares; the model should compute both and take the binding one visibly.",
+              "A priced round triggers it, and the SAFE becomes shares at a price determined by cap or discount — calculate both, and the investor receives the more favourable.",
           },
           {
-            title: "Pre-money versus post-money SAFEs",
+            title: "Pre-money versus post-money SAFE conversion",
             detail:
-              "The post-money SAFE fixes the holder's ownership before the round, pushing all dilution onto founders; the older pre-money form shares it. Which form the document is changes the answer materially.",
+              "A materially different calculation, and the source of most conversion disputes. The post-money SAFE fixes the holder's ownership before the round, pushing all dilution onto founders; the older pre-money form shares it.",
           },
           {
-            title: "Stacking",
+            title: "Multiple SAFEs at different caps",
             detail:
-              "Multiple SAFEs at different caps each convert on their own terms in the same round. The combined dilution lands at once, and no one instrument's paperwork shows the total.",
+              "Each converts on its own terms, and modelling them together is where errors appear. The same round produces different conversion prices for different holders.",
           },
           {
-            title: "Showing the founder",
+            title: "The dilution surprise",
             detail:
-              "The adviser's artefact is the before/after with conversions included — produced at signing time, not at the round. Two years early is advice; at the round it is archaeology.",
+              "Founders often do not model SAFE conversion, then discover their ownership after a round is well below expectation. Nothing appeared on the table until it all appeared at once.",
+          },
+          {
+            title: "The interaction with the pool",
+            detail:
+              "A pool created at the same round compounds the effect. Day 11's shuffle and today's conversions land in the same denominator — which is why the model, not the documents, is where the founder sees the total.",
           },
         ],
         checks: [
           {
-            question: "At what price does a capped, discounted SAFE convert?",
+            question:
+              "A SAFE with a ₹10 crore cap converting at a ₹50 crore pre-money round — what price applies?",
             answer:
-              "The better of the two for the holder — the cap-implied price or the discounted round price, whichever is lower.",
+              "The cap, and by a wide margin. The investor converts as though the valuation were ₹10 crore, which is the entire purpose of the cap.",
           },
           {
-            question: "What does a post-money SAFE fix that a pre-money one does not?",
+            question: "Why do founders underestimate SAFE dilution?",
             answer:
-              "The holder's ownership percentage — the dilution from conversion falls on the founders rather than being shared.",
+              "Because nothing appears on the cap table until conversion. Money arrived, ownership looked unchanged, and the dilution lands all at once at the next round.",
           },
           {
-            question: "Why is stacked-SAFE dilution surprising?",
+            question: "Two SAFEs at different caps convert together. Same price?",
             answer:
-              "Each instrument converts on its own terms and no single document shows the combined effect — only the model does.",
+              "No. Each converts on its own terms, so the same round produces two different conversion prices — which is why modelling them individually matters.",
           },
           {
             question:
@@ -1078,11 +1182,19 @@ export default [
         resources: [
           {
             type: "doc",
-            title: "Y Combinator Safe financing documents",
+            title: "Y Combinator Safe financing documents — the conversion examples",
             url: "https://www.ycombinator.com/documents",
             sourceName: "Y Combinator",
             editorNote:
-              "Back to the source: the user guide's conversion examples are the test cases for your model. If your spreadsheet disagrees with their worked example, your spreadsheet is wrong.",
+              "YC publishes worked conversion examples alongside the documents. Work through them with a spreadsheet open — if your model disagrees with their example, your model is wrong.",
+          },
+          {
+            type: "read",
+            title: "Pre-money vs. post-money SAFEs",
+            url: "https://carta.com/learn/startups/fundraising/convertible-securities/pre-money-vs-post-money-safes/",
+            sourceName: "Carta",
+            editorNote:
+              "Day 3's read, now operational: before converting anything, establish which form each SAFE is. The two forms are different formulas, not different flavours.",
           },
         ],
         concepts: [
@@ -1093,61 +1205,67 @@ export default [
       {
         title: "Waterfall and exit distribution",
         summary:
-          "Who actually gets what when the company sells — the module deliverable, completed.",
+          "Where the money actually gets divided — and where day 4's abstract preference terms become the number that decides whether a founder receives anything.",
         learningObjectives: [
-          "Build the exit waterfall: preferences first, then conversion decisions, then common",
-          "Show holder outcomes across a range of exit values",
+          "Build the waterfall: preferences first, then conversion decisions, then ordinary shares",
+          "Find each preferred holder's conversion crossover and show the kink it makes",
           "Complete and test the full module deliverable end to end",
         ],
         whyToday:
-          "The waterfall is where every term from the fortnight becomes money. It is also the module deliverable's final piece — a model that runs from SAFE to conversion to pool to exit is the artefact that proves the skill exists.",
+          "The module ends where the money actually gets divided. This is also where preference terms — abstract on day 4 — become the number that determines whether a founder receives anything.",
         principle:
           "Liquidation preference decides who gets paid first, and in a modest exit that is everyone's answer.",
         commonMistake:
-          "Computing exits as ownership percentage times price. That is only true in exits large enough that every preference holder converts — in the modest exits that are most common, preferences bind, and common shares get what remains, which can be startlingly little.",
+          "Assuming an exit above the last valuation is good for everyone. With a preference stack, a founder can hold 30% of a company that sells for ₹50 crore and receive nothing at all.",
         challenge:
-          "Complete the deliverable: your model takes a SAFE, converts it at a priced round, carves a 10% pool, and produces a waterfall at five exit values from below-preference to clearly-above. Chart founder proceeds against exit value — the kink in that line is the fortnight's lesson in one picture.",
-        challengeMinutes: 70,
-        estMinutes: 90,
-        points: 40,
+          "Complete the model. Add a waterfall showing distribution across exit values from ₹10 crore to ₹200 crore in ₹10 crore steps, for: two founders, an ESOP pool, two converted SAFE holders, and a Series A investor with 1x non-participating preference. Identify the exit value at which the Series A investor is indifferent between preference and conversion. Then change to participating and record how the crossover moves.",
+        challengeMinutes: 45,
+        estMinutes: 45,
+        points: 45,
         difficulty: "stretch",
         topics: [
           {
-            title: "The order of payment",
+            title: "What a waterfall is",
             detail:
-              "Debt, then preferences by seniority, then common and converted holders share the rest. The waterfall is just this order executed at a given exit value.",
+              "The order in which exit proceeds are distributed: debt, then preferences by seniority, then ordinary and converted holders share the rest. The model executes this order at each exit value.",
+          },
+          {
+            title: "Non-participating, participating, and multiples",
+            detail:
+              "1x non-participating — the greater of money back or pro-rata — is the standard. Participating takes both and is much more aggressive; multiples above 1x appear in desperate rounds and signal exactly that.",
           },
           {
             title: "The conversion decision",
             detail:
-              "At each exit value, every preference holder takes the better of preference or converted ownership. The model computes both per holder — the crossover points are where the waterfall kinks.",
+              "A preferred holder converts to ordinary when pro-rata beats preference, and the crossover point is calculable per holder. The crossovers are where the waterfall kinks — chart founder proceeds against exit value and the kinks are the fortnight's lesson in one picture.",
           },
           {
-            title: "The modest exit",
+            title: "Why founders can receive nothing",
             detail:
-              "At exits near total preferences, common can receive almost nothing while the headline sale price sounds like success. This is the outcome advisers most need to show in advance.",
+              "A ₹50 crore exit against ₹60 crore of preference pays ordinary shareholders zero. The headline sounds like success; the waterfall says otherwise, and showing this in advance is the adviser's job.",
           },
           {
             title: "Testing the deliverable",
             detail:
-              "Extremes as sanity checks: at a huge exit everyone converts and shares pro rata; below total preference, common gets zero. If either end misbehaves, a formula is wrong.",
+              "Extremes as sanity checks: at a huge exit everyone converts and shares pro rata; below total preference, ordinary gets zero. If either end misbehaves, a formula is wrong.",
           },
         ],
         checks: [
           {
-            question: "When does 'ownership times exit value' give the right answer?",
+            question:
+              "1x non-participating on ₹15 crore invested for 25%. At a ₹40 crore exit, what do they take?",
             answer:
-              "Only when the exit is large enough that every preference holder is better off converting — above the highest crossover.",
+              "The greater of ₹15 crore (preference) or ₹10 crore (25% of ₹40 crore). They take the preference — ₹15 crore.",
           },
           {
-            question: "What choice does each preference holder make at exit?",
+            question: "At what exit value do they convert?",
             answer:
-              "Take the preference, or convert and take their ownership share — whichever pays more at that exit value.",
+              "Where 25% of the exit exceeds ₹15 crore, so above ₹60 crore. Below that, preference; above, conversion.",
           },
           {
-            question: "What sanity checks bound a waterfall model?",
+            question: "Why can founders receive nothing in a profitable-looking exit?",
             answer:
-              "Huge exits converge to pro-rata sharing; exits below total preferences pay common zero.",
+              "If total preference exceeds the exit value, preferred holders take everything before ordinary shareholders are paid. A ₹50 crore sale against ₹60 crore of preference leaves ordinary at zero.",
           },
           {
             question:
@@ -1162,11 +1280,27 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Term sheets — Carta's guide",
-            url: "https://carta.com/learn/startups/fundraising/term-sheets/",
+            title: "Term Sheet series — the liquidation preference posts",
+            url: "https://feld.com/archives/2005/08/term-sheet-series-wrap-up/",
+            sourceName: "Brad Feld",
+            editorNote:
+              "The clearest explanation of participating versus non-participating anywhere, free. Read the liquidation preference posts from the index before building.",
+          },
+          {
+            type: "read",
+            title: "Waterfall analysis — how to model exit waterfalls",
+            url: "https://carta.com/learn/startups/exit-strategies/waterfall-analysis/",
             sourceName: "Carta",
             editorNote:
-              "Re-read the liquidation preference section now that you have a waterfall to test its claims in. Participation and caps map directly onto model branches.",
+              "Diagrams showing the payout at different exit values — which is exactly what you are building. Compare their chart's shape with yours; the kinks should match.",
+          },
+          {
+            type: "read",
+            title: "First Round Review",
+            url: "https://review.firstround.com/",
+            sourceName: "First Round Review",
+            editorNote:
+              "Search the Review for a founder's account of a modest exit — the human consequence of the preference stack, discovered after the sale. Deep links rot here; the hub is one search away.",
           },
         ],
         concepts: [
@@ -1183,219 +1317,268 @@ export default [
     objective: "Where their existing DCF knowledge gets extended rather than replaced.",
     deliverable:
       "Value one real Indian startup three ways — a scenario DCF, a revenue multiple, and the VC method — and write one page on why the numbers differ and which you would defend.",
-    estHours: 7.75,
+    estHours: 9,
     nodes: [
       {
         title: "Why textbook DCF fails on a startup",
         summary:
           "Your best-trained tool, applied where its inputs do not exist — and what remains of it that is still useful.",
         learningObjectives: [
-          "Name where each DCF input breaks on a young company",
-          "Distinguish 'DCF fails' from 'discipline fails' — what survives the wreck",
-          "Recognise a spreadsheet-shaped opinion when a founder sends one",
+          "Name where each DCF input breaks on a young company — history, beta, terminal value",
+          "State what survival probability does to early-stage value and why standard DCF has no place for it",
+          "Say what a DCF is still good for at seed stage, and say it to a founder who built one",
         ],
         whyToday:
-          "This module extends what a PGDM taught rather than replacing it — but the extension only lands after an honest accounting of why the trained method breaks. Respect for the tool includes knowing its domain.",
+          "You can build a DCF. Today is about knowing when it produces a number that means nothing — and being able to say so to a founder who has built one and believes it.",
         principle: "A DCF on a pre-revenue company is a spreadsheet-shaped opinion.",
         commonMistake:
-          "Fixing startup DCFs by raising the discount rate. Cranking WACC to 25% to 'reflect risk' launders massive input uncertainty through one parameter and produces precision theatre — the problem is the cash flow forecast, not the rate applied to it.",
+          "Producing a DCF because it is expected, and defending the output rather than the assumptions. The value of the exercise is the list of things that must be true — that is what you should present.",
         challenge:
-          "Take a young company's five-year projection — a founder's or your own. For each DCF input, write one line: where this number came from, and what evidence would change it. Count the lines that end in 'assumed'. That count is today's finding.",
-        challengeMinutes: 40,
-        estMinutes: 60,
+          "Take any DCF you built during your PGDM. Recalculate what percentage of the total value sits in the terminal value. Then change the terminal growth rate by half a percentage point and record the change in enterprise value. Write two sentences on what that tells you about the reliability of the original number.",
+        challengeMinutes: 25,
+        estMinutes: 55,
         points: 30,
         difficulty: "core",
         topics: [
           {
+            title: "What a DCF requires",
+            detail:
+              "A forecastable cash flow, a discount rate that reflects the risk, and a terminal value that is not most of the answer. A startup usually fails all three.",
+          },
+          {
             title: "Where each input breaks",
             detail:
-              "Revenue has no base to grow from; margins have no history; reinvestment is a guess; beta has no comparable; and the terminal value — most of the answer — compounds all of it.",
+              "No history to forecast from, no beta to derive a discount rate from, and a terminal value that can be 90% or more of the total — computed from the least certain year of an uncertain forecast.",
           },
           {
-            title: "The terminal value problem",
+            title: "Survival probability",
             detail:
-              "In a mature DCF the terminal value is a check on the forecast; in a startup DCF it IS the valuation, computed from the least certain year of an uncertain forecast.",
+              "The input a standard DCF has no place for, and the one that dominates early-stage value. Tomorrow makes it an explicit line; today, notice that your trained method buries it.",
           },
           {
-            title: "What survives",
+            title: "What a DCF is still good for",
             detail:
-              "The discipline: value comes from future cash, growth costs reinvestment, risk demands return. Tomorrow's scenario methods keep the framework and make the ignorance explicit instead of burying it.",
+              "Forcing explicit assumptions, testing whether a business could ever be worth the price, and structuring an argument. As a reverse-engineering tool it survives; as a price-setting tool it does not.",
           },
           {
-            title: "The adviser's read",
+            title: "The false precision problem",
             detail:
-              "A founder's DCF is a narrative wearing formulas. Read it as a statement of what they believe, locate the belief doing the work, and price that belief — day 20 makes this a method.",
+              "A number to two decimal places built on a growth assumption someone invented. Precision and reliability are different properties, and the spreadsheet only displays one of them.",
           },
         ],
         checks: [
           {
-            question: "Why is raising the discount rate the wrong fix?",
+            question: "Why is a beta unavailable for a startup?",
             answer:
-              "It launders input uncertainty through one parameter and keeps the false precision — the forecast is the problem, not the rate.",
+              "Beta is derived from a share price history against a market. A private company with no traded shares has none, so you must borrow one from comparables and adjust — which imports assumptions rather than removing them.",
           },
           {
-            question: "Why is terminal value especially dangerous on startups?",
+            question: "If terminal value is 85% of your DCF, what have you actually valued?",
             answer:
-              "It is most of the answer and it compounds the least certain assumptions of the forecast's furthest year.",
+              "Your assumption about a state ten years away, not the forecast you spent a week building. This is the standard failure mode of startup DCFs.",
           },
           {
-            question: "What part of DCF thinking survives for young companies?",
+            question: "What does a DCF still contribute at seed stage?",
             answer:
-              "The discipline — future cash, reinvestment cost, risk-return — applied through explicit scenarios rather than a single forecast.",
+              "It forces you to state what must be true for the price to make sense. As a reverse-engineering tool it is genuinely useful; as a price-setting tool it is not.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Valuing young, start-up and growth companies",
+            title: "Valuing Young, Start-up and Growth Companies — sections 1–3",
             url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "The anchor paper for this whole module. Today read only the problem statement — the first section on why standard approaches fail. The solutions are tomorrow.",
+              "The definitive treatment of exactly this problem, by the person everyone else cites. You skimmed sections 1–2 on day 1 for framing; read them again properly now, and continue to 3. The rest is tomorrow's.",
+          },
+          {
+            type: "video",
+            title: "Valuing and Pricing Start-ups and Young High Growth Firms",
+            url: "https://www.youtube.com/watch?v=i80avS70k8E",
+            sourceName: "Aswath Damodaran (YouTube)",
+            youtubeVideoId: "i80avS70k8E",
+            durationSec: 1731,
+            estSizeMb: 220,
+            editorNote:
+              "He works through the estimation problems on screen rather than asserting them — twenty-nine minutes, from his own channel, where the full course also lives free.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — Damodaran's blog",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "Find a recent post where he values a specific company. Watching him do it on a real one, publicly, with his assumptions stated, is worth more than the theory — and locate the single assumption carrying his answer. There always is one.",
           },
         ],
         concepts: [
-          "startup-valuation",
           "dcf-valuation",
+          "startup-valuation",
         ],
       },
       {
         title: "Damodaran on young companies",
         summary:
-          "The serious version: scenario-based value, explicit survival probability, and uncertainty on the page instead of under it.",
+          "The most rigorous available answer to what replaces the broken DCF — and it is not 'give up and use a multiple'.",
         learningObjectives: [
-          "Build a small scenario DCF: two or three futures, probability-weighted",
-          "Apply a survival probability rather than a padded discount rate",
-          "Use Damodaran's templates as scaffolding, not as answers",
+          "Forecast revenue from market size down, not growth rates up",
+          "Set target margins and sales-to-capital from mature comparables and his sector data",
+          "Make survival probability an explicit, arguable line in the valuation",
         ],
         whyToday:
-          "Yesterday diagnosed; today treats. This is the single most valuable free material in the field, from the person the rest of the field cites — and it converts 'startup valuation is guessing' into 'startup valuation is structured, honest guessing'.",
+          "Yesterday established that the standard approach breaks. Today is the most rigorous available answer to what replaces it — the whole paper, the working spreadsheet, and the data that feeds both.",
         principle: "You cannot avoid the uncertainty. You can only make it explicit.",
         commonMistake:
-          "Building three scenarios that are one scenario at three volumes — base, base±20%. Honest scenarios differ in kind: the company that wins the market, the one that survives as a niche, the one that dies. If the downside scenario still shows growth, it is not a downside scenario.",
+          "Burying failure risk inside an inflated discount rate. A 40% discount rate is a survival assumption in disguise, and disguised assumptions cannot be argued with — which is precisely why people prefer them.",
         challenge:
-          "Value a young company you can get numbers for with a three-scenario DCF: win, survive, fail — cash flows per branch, honest probabilities, weighted value. Then write one line: which probability moves the answer most? That line is the diligence agenda for module 6.",
-        challengeMinutes: 55,
-        estMinutes: 80,
+          "Value one Indian startup using Damodaran's structure: market size, target share, target margin from a mature comparable, sales-to-capital, and a survival probability you can justify. State each assumption on a separate line. Then find his valuation of a recently-listed company on the blog you bookmarked yesterday and compare your assumption list with his. The number matters less than whether someone could argue with each input individually.",
+        challengeMinutes: 35,
+        estMinutes: 55,
         points: 35,
         difficulty: "stretch",
         topics: [
           {
-            title: "Scenarios over point estimates",
+            title: "Revenue from market size down",
             detail:
-              "Two or three genuinely different futures, each with its own cash flows, weighted by probability. The structure forces the argument to happen about the probabilities — which is where it belongs.",
+              "Start with the addressable market and a defensible share, rather than growing last year's revenue by a rate you chose. A share is a claim someone can contest — that is the point.",
           },
           {
-            title: "Survival as its own number",
+            title: "Target margins from a mature comparable",
             detail:
-              "Most young companies fail. Damodaran's move is to price failure as an explicit probability applied to value, not as an invisible bump in the discount rate — visible, arguable, and adjustable as evidence arrives.",
+              "What does this business look like when it works, and who already looks like that? The target margin comes from his sector data, not from a dated report or a hope.",
           },
           {
-            title: "The templates",
+            title: "Reinvestment and sales-to-capital",
             detail:
-              "His spreadsheets implement the machinery so your effort goes into inputs. Use them to check structure, then rebuild the core yourself once — scaffolding teaches; crutches do not.",
+              "How much capital is required to produce the revenue you forecast. Growth is not free, and the sales-to-capital ratio is where that honesty enters the model.",
           },
           {
-            title: "What this buys an adviser",
+            title: "A discount rate that changes over time",
             detail:
-              "A valuation whose disagreements are locatable. 'You believe survival is 60%, the investor prices 30%' is a negotiable sentence; two different DCF outputs are just a standoff.",
+              "High early, converging toward a sector cost of capital as the company matures. Holding it constant either overvalues the early years or undervalues the later ones.",
+          },
+          {
+            title: "Survival probability, explicit",
+            detail:
+              "Value the going concern, then weight it by the chance it survives to get there, adding liquidation value in the failure case. Separate and visible — the opposite of a cranked WACC.",
+          },
+          {
+            title: "Scenario valuation",
+            detail:
+              "Three futures with probabilities, rather than one with false confidence. The scenarios force the question a point estimate hides: what has to happen for each number to be real?",
           },
         ],
         checks: [
           {
-            question: "How does the scenario approach handle failure risk?",
+            question: "Why forecast revenue from market size down rather than growth up?",
             answer:
-              "As an explicit survival probability applied to value — visible and arguable, instead of hidden in the discount rate.",
+              "Growth rates compound into absurdity. Working down from a market forces you to state a share, which is a claim someone can contest — and that is the point.",
           },
           {
-            question: "What makes scenarios honest rather than cosmetic?",
+            question: "Why should the discount rate change over the forecast period?",
             answer:
-              "They differ in kind — win, survive, fail — not in volume. A downside that still grows is a base case in costume.",
+              "A five-year-old company with revenue is less risky than a pre-revenue one. Holding the rate constant either overvalues the early years or undervalues the later ones.",
           },
           {
-            question: "Where should the argument about a young company's value happen?",
+            question: "How does survival probability enter the calculation?",
             answer:
-              "At the probabilities and the branch assumptions — the structure exists to move the fight there.",
+              "Value the company assuming it succeeds, then multiply by the probability it survives to that point, adding any liquidation value in the failure case. Keeping it separate makes the assumption visible instead of burying it in the discount rate.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Valuing young, start-up and growth companies",
+            title: "Valuing Young, Start-up and Growth Companies — complete",
             url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Today, the solution sections — the estimation framework and the worked examples. Slow reading; it repays it more than anything else in this roadmap.",
+              "The whole paper today. It is the single most useful free document in this roadmap — slow reading, and it repays it more than anything else here.",
           },
           {
             type: "tool",
-            title: "Damodaran's valuation spreadsheets",
+            title: "Damodaran's valuation spreadsheets — the young-company model",
             url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Free, unprotected, and authored by the source. Take a young-company template for the challenge — then rebuild its core yourself before trusting your own version.",
+              "Open it and take it apart before using it. Understanding how he structures the estimation is the lesson; the formulas are secondary.",
+          },
+          {
+            type: "tool",
+            title: "Damodaran's data page — margins and sales-to-capital by sector",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "This is where your target margin comes from. Borrowing a number from a dated report is what you are learning to stop doing. The sets update annually, early in the year — check the date stamp.",
           },
         ],
         concepts: [
           "startup-valuation",
+          "market-sizing",
         ],
       },
       {
         title: "Revenue and EBITDA multiples",
-        summary: "The market's shorthand — and the DCF hiding inside every multiple.",
+        summary:
+          "How startup valuations are actually discussed in a room — and what the one number is concealing.",
         learningObjectives: [
-          "Apply revenue and EBITDA multiples correctly, including which revenue and whose EBITDA",
-          "Unpack a multiple into the growth, margin and risk assumptions it encodes",
-          "Choose the numerator honestly — EV versus equity value on the right base",
+          "Unpack what a multiple embeds — growth, margin, risk and reinvestment, compressed",
+          "Read ARR multiples correctly across different growth and retention profiles",
+          "Rank the sources of a multiple by reliability, with reported rounds last",
         ],
         whyToday:
-          "Multiples are how the market talks and how most Indian deals are actually struck. The extension of PGDM comps knowledge is not mechanics — it is learning to read a multiple as compressed assumptions rather than as a fact.",
+          "Multiples are how startup valuations are actually discussed in a room. You know how to calculate them; today is about knowing what they are concealing and when they mislead.",
         principle: "A multiple is a DCF with the assumptions hidden inside it.",
         commonMistake:
-          "Applying a sector-average multiple to a company that differs from the sector on exactly the drivers the multiple encodes. A 6x revenue average from companies growing 40% at 80% gross margin says nothing about a 15%-growth, 45%-margin business — the average is not a price list.",
+          "Treating a multiple as an objective market fact rather than an assumption set. Someone chose the peer group, the period and the metric — and each choice moved the answer.",
         challenge:
-          "Take one listed Indian company's multiple and reverse-engineer it: what growth, margin and risk roughly justify it? Then apply the same multiple to a startup and write down which of those encoded assumptions the startup fails. That sentence is the whole discipline.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Take three publicly reported Indian startup rounds in one sector. Calculate the implied revenue multiple for each. Then write two sentences per company explaining why they differ — and one sentence on which of the three numbers you trust least, and why.",
+        challengeMinutes: 25,
+        estMinutes: 45,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Which multiple for which company",
+            title: "What a multiple embeds",
             detail:
-              "Revenue multiples for pre-profit growth; EBITDA once operations mature enough to have one worth trusting. Using an EBITDA multiple on adjusted-to-death EBITDA is a category error module 6 returns to.",
+              "Growth, margin, risk and reinvestment, compressed into one number. It is not a shortcut past the analysis; it is the analysis, assumed.",
           },
           {
-            title: "The consistency rule",
+            title: "Revenue and ARR multiples",
             detail:
-              "Enterprise value over revenue or EBITDA; equity value over earnings. Mixing the numerators — an EV multiple on an equity base — is the most common silent error in amateur comps.",
+              "Why they dominate early-stage discussion for unprofitable companies, and why the same ARR multiple means different things at different growth rates and retention levels.",
           },
           {
-            title: "What a multiple encodes",
+            title: "EBITDA multiples",
             detail:
-              "Growth, margins, reinvestment and risk, compressed to one number. Two companies at the same multiple with different growth are not priced the same — one is cheap or the other is dear.",
+              "Where they apply and why they are largely irrelevant pre-profitability. A multiple of a number near zero is arithmetic, not valuation.",
           },
           {
-            title: "Forward versus trailing",
+            title: "Where the number comes from",
             detail:
-              "A multiple on next year's revenue is a different (and always lower-looking) number than on last year's. Founders quote forward; check which you are being shown.",
+              "Public comparables, transaction comparables, and reported rounds — each with its own bias, and each demanding you say which one you used.",
+          },
+          {
+            title: "Why reported round multiples are the least reliable",
+            detail:
+              "Headline valuations often reflect structure and preference rather than economics. Module 2's preference stack is exactly why the announced number and the economic number diverge.",
           },
         ],
         checks: [
           {
-            question: "What assumptions does a revenue multiple compress?",
+            question: "Two SaaS companies both at 10x ARR. What might justify it?",
             answer:
-              "Growth, eventual margins, reinvestment needs and risk — it is a DCF with the reasoning hidden.",
+              "Growth rate, net revenue retention, gross margin, market size and capital efficiency. Identical multiples on different fundamentals mean at least one is mispriced.",
           },
           {
-            question: "State the numerator consistency rule.",
+            question: "Why is a headline round valuation unreliable as a comparable?",
             answer:
-              "Enterprise value over pre-debt metrics like revenue and EBITDA; equity value over post-debt metrics like earnings.",
+              "It may reflect liquidation preferences, ratchets or structure that make the economic valuation materially lower than the number announced.",
           },
           {
-            question: "Why is a sector-average multiple not a price list?",
+            question: "When is an EBITDA multiple meaningless?",
             answer:
-              "The average encodes the average company's drivers; applying it to a company with different growth or margins imports assumptions that are false for it.",
+              "When EBITDA is negative or trivially small. A multiple of a number near zero is arithmetic, not valuation.",
           },
           {
             question: "Why can you not put an EV multiple on an equity base?",
@@ -1409,75 +1592,96 @@ export default [
         resources: [
           {
             type: "tool",
-            title: "Damodaran's current data page",
+            title: "Damodaran's data page — revenue and EBITDA multiples by industry",
             url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Sector multiples, margins and growth, updated annually and free. This is where a defensible multiple argument starts — with data, not with the last deal someone remembers.",
+              "Free, annual, and defensible. When someone asks where your multiple came from, this is a better answer than a news article.",
+          },
+          {
+            type: "read",
+            title: "Valuation course webcasts — the relative valuation sessions",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/webcasteqspr25.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "His full semester, session by session, free. Jump to the relative valuation and pricing sessions — he covers what a multiple implies about growth and risk, which is the part most people skip.",
+          },
+          {
+            type: "read",
+            title: "The SaaS Capital Index",
+            url: "https://www.saas-capital.com/the-saas-capital-index/",
+            sourceName: "SaaS Capital",
+            editorNote:
+              "A public multiples tracker with history. See how much the same companies' multiples move with market conditions — a multiple from eighteen months ago is not a comparable.",
           },
         ],
         concepts: [
-          "startup-valuation",
           "comparable-company-analysis",
+          "enterprise-vs-equity-value",
         ],
       },
       {
         title: "Choosing a defensible comparable set",
         summary:
-          "The quiet step where the valuation is actually decided — before any arithmetic runs.",
+          "The most consequential and least examined step in comparable analysis — and what to do when no clean comparable exists.",
         learningObjectives: [
-          "Select comparables on drivers — growth, margin, model — rather than sector labels",
-          "Defend inclusions and exclusions in writing",
-          "Adjust honestly when the true peers are foreign, listed or ten times the size",
+          "Establish comparability on drivers — model, growth, margin, capital intensity — not sector labels",
+          "Adjust explicitly for stage when comparing a startup to mature businesses",
+          "Detect a manipulated peer set, including your own",
         ],
         whyToday:
-          "Everyone checks the arithmetic; almost nobody interrogates the peer list. For Indian startups — where true peers are often unlisted or abroad — the peer-set judgement is most of the multiple's meaning, and it is where a motivated banker does their steering.",
+          "You learned comparable company analysis. What a PGDM does not usually teach is that the selection of comparables is the most consequential and least examined step — and in startup work there frequently is no clean comparable at all.",
         principle: "The peer set is where the valuation is really decided.",
         commonMistake:
-          "Building the set by sector code. A food-delivery startup's honest peers are chosen by unit economics and growth stage, which may make a foreign listed company more comparable than the Indian giant in the same 'sector' — the label is a filing convention, not an argument.",
+          "Selecting comparables, computing a median, and presenting it as market-derived. Every choice in that process was yours, and an experienced reader will test the ones you did not disclose.",
         challenge:
-          "Build a peer set for one real Indian startup: five candidates, each with a one-line reason in terms of drivers, and at least one deliberate exclusion of an obvious-looking name with the reason why. The exclusion line is the skill being practised.",
-        challengeMinutes: 50,
-        estMinutes: 70,
+          "Pick one Indian listed company. Build two defensible peer sets of five companies each — one that makes it look expensive, one that makes it look cheap. Calculate the median multiple for each. Then write one paragraph on which set you would actually defend and why. If you can, pull one free brokerage report on the same company and compare its peer set with both of yours.",
+        challengeMinutes: 25,
+        estMinutes: 45,
         points: 30,
-        difficulty: "stretch",
+        difficulty: "core",
         topics: [
           {
-            title: "Drivers, not labels",
+            title: "What makes a company comparable",
             detail:
-              "Comparability lives in growth rate, margin structure, capital intensity and business model. Sector codes correlate with these loosely; the argument must run on the drivers themselves.",
+              "Business model, growth, margin, capital intensity and risk. Not sector label — two 'fintech' companies can have nothing economically in common.",
           },
           {
-            title: "The written reasons",
+            title: "The startup problem",
             detail:
-              "One line per inclusion and exclusion, written before the multiples are computed — because the temptation to trim the set toward the desired answer only bites after you have seen the numbers.",
+              "No listed company exists at the same stage, so you compare to mature businesses and adjust, or to reported private rounds and accept bad data. Either is workable; hiding which you did is not.",
           },
           {
-            title: "The Indian problem",
+            title: "Adjusting for stage and growth",
             detail:
-              "True peers are frequently unlisted, foreign or vastly larger. The honest response is explicit adjustments — size, liquidity, geography — stated as adjustments, not silently absorbed.",
+              "The adjustment is a stated assumption, not a silent haircut. Being explicit that you adjusted, and by how much, is what separates analysis from advocacy.",
           },
           {
-            title: "Reading someone else's set",
+            title: "Transaction comparables",
             detail:
-              "A banker's comp set is an argument for a price. The fastest audit: which obvious candidates are missing, and what does their absence do to the median?",
+              "What an acquirer paid includes a control premium and expected synergies. Using transaction comparables to value a minority stake overstates it.",
+          },
+          {
+            title: "How the peer set gets manipulated",
+            detail:
+              "Including or excluding two companies can move the median substantially, and nobody checks. A DRHP's peer comparison section is an education in motivated selection — companies choose their own comparables there.",
           },
         ],
         checks: [
           {
-            question: "On what basis is comparability actually established?",
+            question: "Why is sector a poor basis for comparability?",
             answer:
-              "Shared drivers — growth, margins, capital intensity, model — not shared sector labels.",
+              "Economics differ within a sector. A payments processor and a lending business are both fintech and have entirely different margin structures, capital needs and risks.",
           },
           {
-            question: "Why write inclusion reasons before computing multiples?",
+            question: "What does a transaction multiple include that a trading multiple does not?",
             answer:
-              "To lock the set before the answer is known — the trimming temptation arrives with the numbers.",
+              "A control premium and expected synergies. Using transaction comparables to value a minority stake overstates it.",
           },
           {
-            question: "What is the fastest audit of someone else's peer set?",
+            question: "How do you defend a peer set?",
             answer:
-              "Look for the obvious candidates that are missing and ask what their absence does to the median.",
+              "State the selection criteria before showing the result, and show what happens if the two most contestable names are removed. A peer set defended after the fact is not defended.",
           },
           {
             question:
@@ -1491,12 +1695,28 @@ export default [
         ],
         resources: [
           {
+            type: "read",
+            title: "Valuation course webcasts — comparable selection",
+            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/webcasteqspr25.htm",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "The relative valuation sessions again, this time for the selection and adjustment problem — he is specific about it, which most treatments skip entirely.",
+          },
+          {
             type: "tool",
-            title: "Damodaran's current data page",
+            title: "Damodaran's data page — sector groupings",
             url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datacurrent.html",
             sourceName: "Aswath Damodaran (NYU Stern)",
             editorNote:
-              "Yesterday it supplied multiples; today use its sector driver data as the sanity check on your set — a peer group whose drivers straddle the target's is doing its job.",
+              "See how a rigorous source groups companies — and how often the grouping is contestable. Your peer set's drivers should straddle the target's; his sector data is the sanity check.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open any recent DRHP and find its 'comparison with listed industry peers' section. Companies choose their own comparables there — reading one critically is an education in motivated peer selection.",
           },
         ],
         concepts: [
@@ -1507,60 +1727,65 @@ export default [
       {
         title: "Scorecard, Berkus and the VC method",
         summary:
-          "The pre-revenue toolkit — useful, crude, and honest only when labelled as what it is.",
+          "The pre-revenue toolkit used constantly in real rounds and taught in no finance curriculum — negotiation anchors, honestly labelled.",
         learningObjectives: [
-          "Apply the scorecard, Berkus and VC methods to a pre-revenue company",
-          "State what each method actually anchors on",
-          "Say plainly when you are valuing and when you are negotiating",
+          "Run the VC method with explicit exit, return and dilution assumptions",
+          "Apply the scorecard and Berkus methods and state what each actually anchors on",
+          "Present any of them without overstating its rigour",
         ],
         whyToday:
-          "Below the reach of even scenario DCFs sits the pre-revenue deal, and this is the vocabulary those deals are done in. The extension a finance graduate needs is not the methods — they are trivial — but the honesty about their epistemic status.",
-        principle: "These are negotiation anchors, not valuations. Know which you are doing.",
+          "These methods are used constantly in early-stage rounds and appear nowhere in a finance curriculum. They are not rigorous, and understanding why is more useful than the methods themselves.",
+        principle: "These are negotiation anchors, not valuations. Know which one you are doing.",
         commonMistake:
-          "Presenting a VC-method output with DCF gravitas. Backing out today's price from an assumed exit and an assumed return is coherent arithmetic on two assumptions — presenting three decimal places of it as analysis is how advisers lose the trust of anyone numerate in the room.",
+          "Presenting a scorecard output with the confidence of a DCF. These methods produce a starting point for a negotiation, and describing them accurately is part of advising well.",
         challenge:
-          "Value one pre-revenue idea by all three methods. Then write the paragraph you would actually say in a negotiation, using them honestly — as anchors and cross-checks, with their assumptions stated. The paragraph, not the numbers, is the deliverable.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Value one pre-revenue startup three ways: the VC method with a stated exit assumption and required return, the scorecard method, and the Berkus method. Then write a paragraph on which you would present to a founder, which to an investment committee, and why they differ.",
+        challengeMinutes: 25,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The scorecard",
-            detail:
-              "Start from the typical local pre-seed valuation and adjust by weighted factors — team, market, product, competition. It anchors on the local market rate, which is its honesty: it prices the round, not the company.",
-          },
-          {
-            title: "Berkus",
-            detail:
-              "Assign value chunks to risk-reduction milestones — idea, prototype, team, traction, relationships. Crude by design; its use is forcing a conversation about which risks have actually been retired.",
-          },
-          {
             title: "The VC method",
             detail:
-              "Assume an exit value and a target return, discount back, subtract for dilution. Every input is an assumption; its honest use is revealing what the investor must believe to pay a given price.",
+              "Work back from an expected exit value and a required return, subtracting for dilution. The most defensible of the group because the logic is explicit — four assumptions, all visible.",
           },
           {
-            title: "Using them together",
+            title: "Scorecard method",
             detail:
-              "Three crude methods agreeing loosely beats one crude method quoted precisely. Their convergence zone is a negotiating range — call it that and credibility survives.",
+              "Adjust a regional average pre-money by weighted factors — team, market, product, competition. It anchors on what other people in the region paid, which is its honesty: it prices the round, not the company.",
+          },
+          {
+            title: "Berkus method",
+            detail:
+              "Assign value to qualitative milestones for pre-revenue companies. A structured conversation about which risks have been retired, and presenting it as more than that is dishonest.",
+          },
+          {
+            title: "Risk factor summation",
+            detail:
+              "Adjust a baseline up or down across a list of risk categories. The list forces breadth; the baseline still comes from the market.",
+          },
+          {
+            title: "What they share, and when each applies",
+            detail:
+              "They anchor a negotiation and structure a conversation; none derives value from cash flows. Three crude methods agreeing loosely beats one crude method quoted precisely — the convergence zone is a negotiating range.",
           },
         ],
         checks: [
           {
-            question: "What does the scorecard method actually anchor on?",
+            question: "What does the VC method actually require you to assume?",
             answer:
-              "The going rate for local rounds at that stage — it prices the round in its market, not the company's cash flows.",
+              "An exit value, an exit timing, a required return, and expected dilution before exit. Four assumptions, all explicit — which is its main virtue.",
           },
           {
-            question: "What is the honest use of the VC method?",
+            question: "Why is the scorecard method not really a valuation?",
             answer:
-              "Revealing the assumptions — exit value and required return — an investor must hold to justify a price.",
+              "It adjusts a regional average, so the answer is anchored to what other people in that region paid. It transmits market conditions rather than deriving value.",
           },
           {
-            question: "How should the three methods be presented together?",
+            question: "When would you use Berkus?",
             answer:
-              "As a convergence range with assumptions stated — anchors for negotiation, never precision.",
+              "Pre-revenue, where nothing else has inputs. It is a structured conversation about milestones, and presenting it as more than that is dishonest.",
           },
           {
             question:
@@ -1572,6 +1797,22 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "doc",
+            title: "Valuing pre-revenue companies — the scorecard, Berkus and VC methods",
+            url: "https://angelcapitalassociation.org/data/Documents/Resources/AngelCapitalEducation/ACEF_-_Valuing_Pre-revenue_Companies.pdf",
+            sourceName: "Angel Capital Association",
+            editorNote:
+              "An angel federation's own published guidance, with worked arithmetic for every method on today's list. This is what a real investor group actually uses — one careful read covers the mechanics of all of them.",
+          },
+          {
+            type: "read",
+            title: "Valuing Young, Start-up and Growth Companies — the venture capital section",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "Return to the paper's treatment of venture capital valuation approaches — he treats these methods critically rather than as received wisdom, which is the framing you need.",
+          },
           {
             type: "read",
             title: "How to raise money",
@@ -1587,70 +1828,97 @@ export default [
       },
       {
         title: "Valuation in a negotiation",
-        summary: "Where the number meets leverage — and what analysis can and cannot do there.",
+        summary:
+          "Where the analysis meets the room — leverage, fund construction, signalling, and the price that none of the models set.",
         learningObjectives: [
-          "Separate the defensible range from the negotiated point",
           "Name the leverage factors that move a price off its analysis",
-          "Prepare a founder for the conversation rather than just the spreadsheet",
+          "Explain how fund construction and ownership targets drive investor pricing",
+          "Present a valuation as a range with drivers, and survive being challenged on it",
         ],
         whyToday:
-          "The week built a range; deals close at a point. The distance between them is leverage — competition, runway, momentum — and an adviser who pretends the point is analytic serves the client worse than one who names the leverage honestly.",
+          "Every method so far assumes valuation is analytical. In practice a startup's price is negotiated, and the analysis is one input among several. This is the day the finance training meets the room.",
         principle: "The number is an output of leverage as much as of analysis.",
         commonMistake:
-          "Defending the model in the room. The model's job was to set the range and the walk-away before the meeting; in the room, the variables are alternatives and time. Advisers who argue spreadsheet cells against a term sheet are fighting on the wrong field.",
+          "Bringing a model to a negotiation and expecting it to settle the question. The model earns you credibility and frames the discussion. It does not decide the price.",
         challenge:
-          "For a company you have valued this week, write the negotiation brief: the defensible range, the walk-away, the three leverage factors on each side, and the one move that most improves the client's position before talks start. One page.",
-        challengeMinutes: 40,
-        estMinutes: 55,
-        points: 25,
+          "Write a one-page valuation recommendation for a founder raising a seed round. Include a range rather than a point, the three assumptions that drive it, what would change your view, and one paragraph on what a valuation 40% above your range would cost them at the next round.",
+        challengeMinutes: 25,
+        estMinutes: 45,
+        points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Range versus point",
+            title: "What actually moves the number",
             detail:
-              "Analysis produces a range and a walk-away. The point within it is produced by alternatives, urgency and momentum. Confusing the two makes advisers either rigid or decorative.",
+              "Competing term sheets, runway remaining, sector heat, the investor's fund cycle, and how badly each side needs the deal. These are checkable facts; list them before the meeting the way you would list comps.",
           },
           {
-            title: "The leverage inventory",
+            title: "The investor's position",
             detail:
-              "Competing term sheets, months of runway, growth trajectory, and who needs the deal sooner. These are checkable facts; list them before the meeting the way you would list comps.",
+              "Ownership targets, fund construction, and reserve strategy. Many funds need a minimum percentage, which drives the price more than the model does — price is not always adversarial.",
           },
           {
-            title: "What moves leverage",
+            title: "The founder's position",
             detail:
-              "A second interested investor moves price more than any model refinement. Sometimes the best valuation work is process work — sequencing conversations so alternatives exist simultaneously.",
+              "Dilution, control, and the signalling cost of a valuation too high for the next round to clear. The best deal is the one the next round can build on.",
           },
           {
-            title: "Price versus terms, again",
+            title: "Structure versus price",
             detail:
-              "Day 4's lesson returns with force: conceding price and winning clean terms often beats the reverse. The brief should say which terms are worth more than the last crore of headline.",
+              "Preferences, ratchets and pool timing move economics without changing the headline. Day 4's lesson returns with force: conceding price and winning clean terms often beats the reverse.",
+          },
+          {
+            title: "Why an inflated valuation damages a company",
+            detail:
+              "The down round that follows reprices employee options, triggers anti-dilution, and damages confidence. The adviser's paragraph on this is the most valuable one in the recommendation.",
+          },
+          {
+            title: "Presenting a valuation you will be challenged on",
+            detail:
+              "Lead with assumptions, show the sensitivity, name the weakest input yourself. Damodaran's value-versus-price distinction is the frame: the model estimates value; the room sets a price.",
           },
         ],
         checks: [
           {
-            question: "What does analysis contribute to a negotiation, and what does it not?",
+            question: "Why might an investor push a valuation up rather than down?",
             answer:
-              "It sets the defensible range and the walk-away; the point within the range is set by leverage — alternatives and time.",
+              "To win a competitive round, or because their fund needs to deploy a certain cheque size at a certain ownership. Price is not always adversarial.",
           },
           {
-            question: "What single fact most moves an early-stage price?",
+            question: "What is the cost of a valuation set too high?",
             answer:
-              "A credible competing offer — alternatives move price more than model refinements.",
+              "The next round must clear it. If it cannot, a down round follows — repricing employee options, triggering anti-dilution, and damaging confidence in the company.",
           },
           {
-            question: "Why not defend the model in the room?",
+            question: "Why present a range rather than a number?",
             answer:
-              "The room runs on leverage, not cells. The model's work was finished when it set the range and walk-away.",
+              "A point estimate invites a debate about precision you do not have. A range with stated drivers moves the conversation to the assumptions, which is where it belongs.",
           },
         ],
         resources: [
+          {
+            type: "read",
+            title: "Term Sheet series — the economics posts",
+            url: "https://feld.com/archives/2005/08/term-sheet-series-wrap-up/",
+            sourceName: "Brad Feld",
+            editorNote:
+              "From day 4's index, read the valuation and economics posts specifically — written from the investor side about what is actually negotiated.",
+          },
           {
             type: "read",
             title: "How to raise money",
             url: "https://www.ycombinator.com/library/6m-how-to-raise-money",
             sourceName: "Y Combinator",
             editorNote:
-              "Re-read with yesterday's methods in mind, watching for one thing: how much of the essay is about process and leverage rather than valuation. That proportion is the honest answer to how prices get set.",
+              "Re-read with this module's methods in mind, watching for one thing: how much of the essay is about process and leverage rather than valuation. That proportion is the honest answer to how prices get set.",
+          },
+          {
+            type: "read",
+            title: "Musings on Markets — value versus price",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
+            editorNote:
+              "Search the blog for his price-and-value posts — the distinction between what a model estimates and what a market pays is the intellectual frame for this entire day.",
           },
         ],
         concepts: [
@@ -1661,70 +1929,105 @@ export default [
       {
         title: "Sanity-checking someone else's valuation",
         summary:
-          "The module deliverable: three methods on one real company, and the assumption that carries everything.",
+          "The module ends where the job actually is: taking a valuation apart in twenty minutes and finding the assumption carrying it.",
         learningObjectives: [
-          "Run the full toolkit on one company: scenario DCF, multiple, VC method",
-          "Locate the single assumption doing the most work in each",
-          "Write the one-page reconciliation the module deliverable requires",
+          "Run the checking order: terminal value share, growth, margins, rate, share count",
+          "Reverse-engineer a price into its implied assumptions and test their plausibility",
+          "Complete the module deliverable — three methods on one company, reconciled on one page",
         ],
         whyToday:
-          "Advisers audit more valuations than they originate. The capstone therefore practises the auditing move — finding the load-bearing assumption — across your own three methods, which is both the deliverable and the habit.",
+          "The module ends where the job actually is. In advisory work you will assess far more valuations than you build, and the skill of taking one apart quickly is what makes you useful in a meeting.",
         principle: "Find the one assumption carrying the whole answer. There always is one.",
         commonMistake:
-          "Reconciling by averaging. Three methods giving three numbers are three arguments, not three samples — averaging them launders their disagreements instead of explaining them, and the explanation is the entire value of doing three.",
+          "Rebuilding the model instead of interrogating it. Your value in a meeting is finding the assumption everything rests on in twenty minutes — not producing your own version by Friday.",
         challenge:
-          "Complete the deliverable: one real Indian startup valued by scenario DCF, revenue multiple, and VC method. One page: why the numbers differ, which assumption carries each, and which valuation you would defend. Then the audit drill — for each method, change its load-bearing assumption 20% and report what happens.",
-        challengeMinutes: 70,
-        estMinutes: 90,
+          "Take a startup valuation you can find — a reported round, a pitch deck, or one you built earlier in this module. Produce a one-page critique: the implied assumptions, the load-bearing input, two things you would want to verify, and the single question you would ask in a meeting. Then complete the module deliverable: your three-method valuation of one real Indian startup, with one page on why the numbers differ and which you would defend.",
+        challengeMinutes: 45,
+        estMinutes: 45,
         points: 40,
         difficulty: "stretch",
         topics: [
           {
-            title: "The load-bearing assumption",
+            title: "The order to check things in",
             detail:
-              "In a scenario DCF it is usually the success probability; in a multiple, the peer set or the revenue base; in the VC method, the exit value. Sensitivity is how you find it: shake each input and watch which one moves the house.",
+              "Terminal value share, revenue growth, margin trajectory, discount rate, share count. Most errors are in the first two, so start there and often stop there.",
           },
           {
-            title: "Why the methods disagree",
+            title: "Reverse-engineering a price",
             detail:
-              "They anchor on different things — beliefs about the future, the market's current mood, an investor's required return. Their spread is information about which anchor dominates this company's story.",
+              "What growth and margin does this valuation require, and is that plausible for anyone in this sector? Working backward from a price to its implied assumptions is the single most useful technique in this module.",
           },
           {
-            title: "Defending one",
+            title: "Finding the load-bearing assumption",
             detail:
-              "The deliverable asks which you would defend — meaning: for this company, at this stage, before this audience. The answer is contextual, and stating the context is what makes it defensible.",
+              "Change each input by 10% and see which one moves the answer most. That is the assumption to interrogate — and in a scenario DCF it is usually the survival probability; in a multiple, the peer set; in the VC method, the exit value.",
           },
           {
-            title: "The auditor's move, generalised",
+            title: "Common manipulations",
             detail:
-              "Applied to a founder's or banker's model, the same drill: find the assumption whose small change breaks the conclusion, and put the diligence effort there. Module 6 does this at full scale.",
+              "A peer set with the two cheapest names removed, a terminal growth rate above the discount rate, revenue recognised aggressively, adjusted EBITDA with too many adjustments. Each is visible if you look for it specifically.",
+          },
+          {
+            title: "Arithmetic before logic",
+            detail:
+              "Hardcodes, broken sum ranges, sign errors and circular references. Errors are more often mechanical than conceptual — and one hardcode means the model has not been audited, so there are probably more.",
+          },
+          {
+            title: "How to raise a problem",
+            detail:
+              "Ask what the assumption is based on, rather than announcing that it is wrong. The question does the same work and leaves the room intact.",
           },
         ],
         checks: [
           {
-            question: "Why is averaging the three methods wrong?",
+            question: "A model shows 60% revenue growth for five straight years. What do you ask?",
             answer:
-              "They are arguments from different anchors, not noisy samples of one truth — the spread is the information, and averaging destroys it.",
+              "What in the market or the business supports that, and who else has ever done it in this sector? Sustained growth at that rate is rare and the burden of proof sits with the model.",
           },
           {
-            question: "How do you find the load-bearing assumption?",
+            question: "Terminal growth is 6% and the discount rate is 9%. Is that acceptable?",
             answer:
-              "Sensitivity: perturb each input and watch which single change moves the conclusion disproportionately.",
+              "Terminal growth cannot exceed long-run economic growth — the company would eventually exceed the economy. 6% is almost certainly too high, and it inflates terminal value substantially.",
           },
           {
-            question: "What makes 'which would you defend' answerable?",
+            question:
+              "You find a hardcoded number in a formula range. Why does it matter beyond the error itself?",
             answer:
-              "Context — the company's stage, the audience, and which method's anchor is most trustworthy for this case. Stating that context is the defence.",
+              "It tells you the model has not been audited, so there are probably more. One hardcode is a reason to check everything.",
           },
         ],
         resources: [
           {
-            type: "tool",
-            title: "Damodaran's valuation spreadsheets",
-            url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/spreadsh.htm",
-            sourceName: "Aswath Damodaran (NYU Stern)",
+            type: "read",
+            title: "Musings on Markets — reverse DCFs",
+            url: "https://aswathdamodaran.blogspot.com/",
+            sourceName: "Aswath Damodaran",
             editorNote:
-              "Cross-check your scenario DCF's structure against his young-company template one last time before writing the page. Structural agreement plus different inputs is fine; structural disagreement means a bug.",
+              "His company posts routinely work backward from a market price to the growth and margin it implies. Find one and study the move — it is today's method, demonstrated on a real ticker.",
+          },
+          {
+            type: "read",
+            title: "Hindenburg Research — the report archive",
+            url: "https://hindenburgresearch.com/",
+            sourceName: "Hindenburg Research",
+            editorNote:
+              "The firm wound down in 2025 but its reports remain published. Whatever you think of the conclusions, read one for method — they are a masterclass in taking apart someone else's numbers, section by section.",
+          },
+          {
+            type: "read",
+            title: "The FAST Standard",
+            url: "https://fast-standard.org/",
+            sourceName: "FAST Standard Organisation",
+            editorNote:
+              "Free modelling standard. Knowing what a well-built model looks like tells you where to look in a badly built one — read the structure rules, not the whole document.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A filed DRHP's financial section is real numbers, real disclosures, and real adjustments to interrogate — free practice material for exactly this drill, and module 7 returns here.",
           },
         ],
         concepts: [
@@ -1740,64 +2043,70 @@ export default [
     objective: "The layer between the pitch narrative and the financial model.",
     deliverable:
       "Take a real startup's public numbers, build the unit economics, and identify the two metrics you would want before investing.",
-    estHours: 7.5,
+    estHours: 9.25,
     nodes: [
       {
         title: "CAC, LTV and the ratio everyone quotes wrongly",
-        summary: "The most-quoted numbers in startup finance, and the honest versions of each.",
+        summary:
+          "The two numbers in every pitch deck, almost always calculated to flatter — and the honest versions of each.",
         learningObjectives: [
-          "Compute CAC fully loaded and LTV on contribution margin, not revenue",
-          "Explain why LTV:CAC without payback period is half a sentence",
-          "Catch the standard inflations of both numbers",
+          "Compute blended and paid CAC separately, and say why founders quote blended",
+          "Build LTV on gross margin and retention, and show how each assumption moves it",
+          "Put the payback period beside the ratio, where it belongs",
         ],
         whyToday:
-          "Unit economics are the bridge between the deck's story and the model's rows, and this pair is where every conversation starts. An adviser fluent in the honest versions can read a pitch in minutes; one who accepts the quoted versions cannot read it at all.",
+          "These two numbers appear in almost every pitch deck and are almost always calculated to flatter. Getting them right is the entry ticket to everything else in this module.",
         principle: "An LTV:CAC of 3 means nothing without the payback period beside it.",
         commonMistake:
-          "Accepting LTV built on revenue and CAC built on ad spend alone. LTV must be contribution margin over the retention curve actually observed; CAC must carry salaries, tools and content — the inflations run in opposite directions and multiply.",
+          "Accepting an LTV:CAC ratio without asking how LTV was calculated. It is the most assumption-dependent number in a pitch deck and the least often interrogated.",
         challenge:
-          "Take one startup's quoted LTV:CAC and rebuild both numbers honestly from whatever is public or assumable. Write the quoted ratio, your ratio, and the two adjustments that moved it most. Tomorrow adds payback; keep the file.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Take a startup you can find data for. Calculate blended CAC and paid CAC separately. Then calculate LTV under two retention assumptions — one optimistic, one conservative — and produce both ratios. Write two sentences on which pair you would present to an investment committee and why.",
+        challengeMinutes: 25,
+        estMinutes: 55,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "Honest CAC",
+            title: "What CAC actually includes",
             detail:
-              "All acquisition spend — media, salaries, tools, agency, content — over new customers from that spend. Blended versus paid CAC differ, and which one a founder quotes is itself information.",
+              "All sales and marketing cost divided by new customers acquired — salaries, tools, agency and content included. Blended CAC includes organic customers and is therefore lower and less useful than paid CAC, which is why founders quote blended.",
           },
           {
-            title: "Honest LTV",
+            title: "LTV and its assumptions",
             detail:
-              "Contribution margin per period times observed retention, discounted if the horizon is long. Revenue-based LTV overstates by the whole cost of serving — for a thin-margin business, several-fold.",
+              "Gross margin, retention and a discount rate. Change any one and the number moves substantially — which is why the assumptions, not the output, are what an adviser reads.",
           },
           {
-            title: "Why payback is the missing half",
+            title: "The 3:1 convention",
             detail:
-              "A 3:1 ratio repaid over four years is a cash furnace; over four months, a machine. The ratio states profitability eventually; payback states survivability meanwhile — and startups die of meanwhile.",
+              "Where it came from and why it is a heuristic rather than a threshold. A ratio without its inputs is a slogan.",
           },
           {
-            title: "The denominator games",
+            title: "Why payback period matters more",
             detail:
-              "Counting signups as customers, blending organic into paid, annualising a good month. Each inflates the ratio; day 27 catalogues the full set.",
+              "A 3:1 ratio with a 30-month payback is a cash-flow problem regardless of the ratio. The ratio states profitability eventually; payback states survivability meanwhile — and startups die of meanwhile.",
+          },
+          {
+            title: "The circularity trap",
+            detail:
+              "LTV built on a retention assumption that came from too little data. Day 23's cohort table is where that assumption gets tested against evidence.",
           },
         ],
         checks: [
           {
-            question: "What must LTV be built on, and why not revenue?",
+            question: "Why is blended CAC lower than paid CAC, and why does it matter?",
             answer:
-              "Contribution margin over observed retention — revenue-based LTV ignores the cost of serving and overstates accordingly.",
+              "Blended divides total spend by all customers including organic ones you did not pay for. It flatters efficiency and hides whether paid acquisition works at all — which is the question an investor is asking.",
           },
           {
-            question: "Why does LTV:CAC need payback period beside it?",
+            question: "LTV:CAC is 4:1 with a 24-month payback. Concerned?",
             answer:
-              "The ratio says whether customers are eventually profitable; payback says how long cash is trapped — and cash, not eventual profit, is what startups run out of.",
+              "Yes. The ratio is healthy and the cash position is not: you fund two years of a customer's cost before recovering it, which limits growth to your balance sheet regardless of the ratio.",
           },
           {
-            question: "Name two standard CAC understatements.",
+            question: "What is the most common LTV manipulation?",
             answer:
-              "Excluding salaries and tools from acquisition cost, and blending organic customers into the paid denominator.",
+              "An optimistic retention assumption derived from too short a history, sometimes with revenue rather than gross margin. Both inflate the number without changing anything real.",
           },
           {
             question:
@@ -1812,11 +2121,38 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "16 Startup Metrics",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
             editorNote:
-              "The library's growth and metrics essays define these terms the way investors actually use them. Read one on unit economics today — and notice it agrees with the honest versions, not the quoted ones.",
+              "Written by investors about the numbers they are shown and how they are misled — it names the manipulations directly. The CAC, LTV and GMV entries are today's; the rest of the list serves the whole module.",
+          },
+          {
+            type: "read",
+            title: "SaaS Metrics 2.0",
+            url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+            sourceName: "David Skok (for Entrepreneurs)",
+            editorNote:
+              "The most widely cited free treatment of the payback question. Long — read the LTV, CAC and payback sections carefully today; the NRR and churn sections are day 24's.",
+          },
+          {
+            type: "video",
+            title: "Startup Pricing 101 — Kevin Hale",
+            url: "https://www.youtube.com/watch?v=jwXlo9gy_k4",
+            sourceName: "Y Combinator (YouTube)",
+            youtubeVideoId: "jwXlo9gy_k4",
+            durationSec: 1172,
+            estSizeMb: 149,
+            editorNote:
+              "Twenty minutes on how price drives CAC, LTV and everything downstream of them. The four pricing mistakes he lists are the same four you will find inside gamed unit economics on day 27.",
+          },
+          {
+            type: "read",
+            title: "User and subscriber businesses — the good, the bad and the ugly",
+            url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/UserbasedValue.pdf",
+            sourceName: "Aswath Damodaran (NYU Stern)",
+            editorNote:
+              "Connects unit economics back to company value — the link module 3 needs and most metrics writing ignores. A user's value to the business is an LTV computation wearing valuation clothes.",
           },
         ],
         concepts: [
@@ -1825,60 +2161,67 @@ export default [
       },
       {
         title: "Contribution margin and payback",
-        summary: "The layer where a business model is either real or not.",
+        summary:
+          "Where you find out whether the transactions actually make money — and the number Indian consumer businesses most often lack.",
         learningObjectives: [
-          "Build contribution margin per unit from first principles for a real company",
-          "Compute CAC payback in months from contribution, not revenue",
-          "Read a business's viability from these two numbers before any growth story",
+          "Build contribution margin per unit through every variable cost, discounts included",
+          "Work the CM1/CM2/CM3 layering used in Indian consumer businesses",
+          "Compute payback from contribution margin, not revenue",
         ],
         whyToday:
-          "Everything yesterday leaned on contribution margin; today builds it properly. This is the single number that separates businesses that scale into profits from businesses that scale into larger losses — growth multiplies whatever the unit is.",
+          "Revenue growth is easy to manufacture. Contribution margin is where you find out whether the transactions actually make money — and it is the number Indian consumer businesses most often lack.",
         principle: "Contribution margin is where a business model is either real or not.",
         commonMistake:
-          "Computing contribution with gross margin and calling it done. Contribution must carry everything that scales with the unit — payment fees, delivery, support, returns, incentives. The gap between gross and contribution is precisely where weak models hide.",
+          "Presenting a path to profitability that depends on fixed cost leverage while contribution margin is negative. If each transaction loses money, volume makes it worse, and no amount of scale fixes it.",
         challenge:
-          "Build the per-unit P&L for one transaction of a real Indian startup — price down through every variable cost to contribution. Then compute CAC payback in months. Two numbers on one page; write one sentence on what growth does to this company.",
-        challengeMinutes: 45,
-        estMinutes: 60,
+          "Build a contribution margin model for a delivery business: order value, take rate, payment cost, delivery cost, discount, support cost. Calculate CM1, CM2 and CM3. Then find the order volume at which the business breaks even on fixed costs, and identify which single variable cost, if halved, most changes the answer.",
+        challengeMinutes: 30,
+        estMinutes: 45,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The per-unit P&L",
+            title: "Contribution margin per unit",
             detail:
-              "One order, one user-month, one ride: price, minus COGS, payment fees, fulfilment, support, incentives, returns. What remains funds fixed costs and CAC — or does not.",
+              "Revenue minus all variable cost — cost of goods, payment processing, delivery, support. What each transaction contributes toward fixed costs, or takes from them.",
           },
           {
-            title: "Gross versus contribution",
+            title: "Discounts as negative revenue",
             detail:
-              "Gross margin stops at COGS; contribution carries all variable costs. Companies quote gross because it is bigger; analysis runs on contribution because it is true.",
+              "A business 'profitable before discounts' is not profitable. Discounts are deliberate acquisition or retention spend, and treating them as a cost makes their size visible — companies that net them into revenue are usually hiding it.",
           },
           {
-            title: "Payback in months",
+            title: "CM1, CM2 and CM3",
             detail:
-              "CAC divided by contribution per month. It is the cash-cycle number: how long each customer's acquisition cost stays on the balance sheet before the customer has earned it back.",
+              "The layered convention used in Indian consumer and commerce businesses — each layer adds another band of variable cost, and which layer a company quotes is itself information.",
           },
           {
-            title: "Negative contribution",
+            title: "The path to positive",
             detail:
-              "Some models lose money on every unit by design-for-now — the question is what specifically changes the sign, at what scale, and whether that change is priced or wished.",
+              "Which costs fall with scale and which do not. Fixed costs per unit fall; delivery cost per order, payment processing and support per ticket often do not — which is why some businesses never reach positive contribution.",
+          },
+          {
+            title: "Payback calculated properly",
+            detail:
+              "CAC divided by monthly contribution margin, not by revenue. Revenue-based payback ignores the cost of serving and understates the period, often by a factor of two or more.",
           },
         ],
         checks: [
           {
-            question: "What belongs in contribution margin that gross margin excludes?",
+            question: "Why is discount a cost rather than lower revenue?",
             answer:
-              "Every cost that scales with the unit — payment fees, delivery, support, returns, incentives.",
+              "Either treatment is defensible if applied consistently, but discount is a deliberate acquisition or retention spend and treating it as a cost makes that visible. Companies that net it into revenue are usually hiding its size.",
           },
           {
-            question: "How is CAC payback computed?",
+            question: "Which costs genuinely fall with scale?",
             answer:
-              "CAC divided by monthly contribution margin per customer — months to recover.",
+              "Fixed costs per unit, and some negotiated input costs. Delivery cost per order, payment processing and support per ticket often do not — which is why some businesses never reach positive contribution.",
           },
           {
-            question: "What does growth do to a negative-contribution business?",
+            question:
+              "Payback of CAC ÷ monthly revenue versus CAC ÷ monthly contribution margin. Which is right?",
             answer:
-              "Multiplies the loss. Scale amplifies the unit; it does not repair it unless something specific changes the unit's sign.",
+              "Contribution margin. Revenue-based payback ignores the cost of serving the customer and understates the period, often by a factor of two or more.",
           },
           {
             question:
@@ -1890,6 +2233,22 @@ export default [
           },
         ],
         resources: [
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "Open a recent Indian consumer company's DRHP and read the financial discussion: real disclosed unit costs, in a document that had to survive a regulator. Several disclose CM1/CM2/CM3 layering — reading a real one beats a template.",
+          },
+          {
+            type: "read",
+            title: "16 More Startup Metrics",
+            url: "https://a16z.com/16-more-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "The second half of the list — gross margin, AOV, direct versus blended CAC. The distinction between gross revenue, net revenue and contribution is where commerce businesses are most often misread.",
+          },
           {
             type: "tool",
             title: "Damodaran's current data page",
@@ -1905,60 +2264,66 @@ export default [
       },
       {
         title: "Cohort retention and what a growth chart hides",
-        summary: "The difference between a company acquiring users and a company keeping them.",
+        summary:
+          "The skill that most distinguishes someone who can assess a startup from someone who can only read its deck.",
         learningObjectives: [
-          "Build a cohort retention table from raw signup and activity data",
-          "Read flattening versus decaying curves and what each implies for LTV",
-          "Explain what cumulative charts conceal and why founders prefer them",
+          "Build a retention table from a transaction list — cohorts down, months across",
+          "Answer the flattening question and say what it licenses you to compute",
+          "Compare cohort quality over time and explain why later cohorts are often worse",
         ],
         whyToday:
-          "Retention is the truth serum of unit economics — LTV is a bet on the retention curve, and the curve cannot be faked the way a growth chart can. This day also pays forward: the diligence module reads these tables as evidence.",
+          "This is the analytical skill that most distinguishes someone who can assess a startup from someone who can only read its deck. Cohort analysis is where growth is either real or an illusion created by acquisition spend. If you have done the data-analyst roadmap, its day 47 built this table in SQL — this is the finance application of it.",
         principle: "Cumulative charts always go up. That is why founders use them.",
         commonMistake:
-          "Reading blended retention across all users. A blend mixes old cohorts with new ones, so a company whose product is getting worse can show stable blended numbers while every recent cohort decays faster than the last. Only the cohort view shows direction.",
+          "Reading the cumulative growth chart in the deck and stopping. It is the one chart in a pitch that cannot go down, which is precisely why it is on slide four.",
         challenge:
-          "Take any cohort data you can get — public, a friend's product, or synthesised honestly — and build the triangle: cohorts down, months across. Then draw the same data as a cumulative user chart and put the two side by side. That pairing is the day's lesson in one image.",
-        challengeMinutes: 50,
-        estMinutes: 70,
-        points: 30,
+          "Build a cohort retention table in Excel from a transaction list — cohorts down, months across. Then answer three questions in writing: does retention flatten, are later cohorts better or worse than earlier ones, and what would you want to see before believing the growth is durable.",
+        challengeMinutes: 35,
+        estMinutes: 50,
+        points: 35,
         difficulty: "core",
         topics: [
           {
             title: "The cohort table",
             detail:
-              "Each row a signup month, each column months-since, each cell the share still active. The data-analyst roadmap builds this in SQL; here the skill is reading it.",
+              "Customers grouped by when they arrived, tracked forward separately — cohorts down, months since acquisition across, share still active in each cell.",
           },
           {
-            title: "Flattening versus decaying",
+            title: "The flattening question",
             detail:
-              "A curve that flattens at any level means a retained core exists and LTV is computable. A curve that decays to zero means every LTV is a guess about when the bleeding stops.",
+              "A curve that flattens above zero means a durable business with a calculable long-run value. One that decays to zero means you are renting customers — and every LTV is a guess about when the bleeding stops.",
           },
           {
-            title: "Cohort-over-cohort direction",
+            title: "Revenue retention versus logo retention",
             detail:
-              "Are newer cohorts retaining better or worse than older ones at the same age? That trend is the product improving or degrading — and it is invisible in every blended number.",
+              "A company can lose customers and grow revenue, and the reverse. Both views, always — their divergence is a finding, and day 24 makes it precise.",
           },
           {
-            title: "What cumulative hides",
+            title: "What cumulative charts conceal",
             detail:
-              "Total registered users rises even as active users collapse. Any chart that cannot go down is not evidence; the adviser's reflex is to ask for the same data by cohort.",
+              "Total users always rises; the cohort table shows whether anyone stays. The adviser's reflex is to ask for the same data by cohort.",
+          },
+          {
+            title: "Cohort quality over time",
+            detail:
+              "Later cohorts are often worse, because the cheapest, most motivated customers were acquired first. Declining cohort quality is normal and worth quantifying, not hiding.",
           },
         ],
         checks: [
           {
-            question: "Why is blended retention misleading?",
+            question: "A retention curve flattens at 40% after month six. What does that tell you?",
             answer:
-              "It mixes cohort ages, so worsening recent cohorts hide behind the accumulated base — direction is invisible.",
+              "Roughly 40% of each cohort is durable. That is a real business with a calculable long-run value, unlike a curve heading toward zero.",
           },
           {
-            question: "What does a flattening retention curve license you to do?",
+            question: "Total users are rising and every cohort decays to zero. What is happening?",
             answer:
-              "Compute LTV on the retained core — a stable fraction persists, so lifetime value has a floor.",
+              "The company is buying growth. Total rises only while acquisition spend rises, and it stops the moment spending does.",
           },
           {
-            question: "What is the reflex response to a cumulative chart?",
+            question: "Why are later cohorts often worse?",
             answer:
-              "Ask for the same data as a cohort table — any chart that cannot go down is not evidence.",
+              "The earliest customers are usually the most motivated and cheapest to reach. As acquisition scales, you reach less-motivated customers at higher cost — so declining cohort quality is normal and worth quantifying, not hiding.",
           },
           {
             question:
@@ -1973,11 +2338,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "16 Startup Metrics — the retention entries",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "Re-read the churn, retention and active-user entries with today's table in front of you — the clearest free statement of why cumulative charts mislead, from the people shown them daily.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — retention essays",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The library's essays on retention and growth accounting are the investor-side reading of exactly these tables — find one and note the vocabulary: it is what partner meetings speak.",
+              "The essays on retention curves treat the flattening question properly — it is the single most important thing in this day. Some listed Indian internet companies disclose cohort tables in investor materials; find one and form a view before reading anyone's commentary.",
           },
         ],
         concepts: [
@@ -1987,60 +2360,66 @@ export default [
       },
       {
         title: "SaaS metrics — MRR, ARR, NRR, churn",
-        summary: "The metric system of the most-funded business model.",
+        summary:
+          "The dominant Indian startup category selling to global markets — and the specific definitions that are widely misquoted.",
         learningObjectives: [
-          "Define MRR, ARR, gross and net revenue retention, and logo churn precisely",
-          "Decompose MRR movement: new, expansion, contraction, churn",
-          "Explain why NRR above 100% changes what a company is worth",
+          "Build the MRR bridge: new, expansion, contraction, churn",
+          "Compute gross and net revenue retention and read the gap between them",
+          "Name the standard ARR manipulations and the diligence question for each",
         ],
         whyToday:
-          "SaaS has the most standardised metrics of any model, which makes it the easiest place to be precisely wrong. Indian SaaS is also a hiring market this roadmap's audience advises into — fluency here is table stakes.",
+          "SaaS is the dominant Indian startup category selling to global markets, and its metrics have specific definitions that are widely misquoted.",
         principle: "Net revenue retention above 100% is the single strongest signal in SaaS.",
         commonMistake:
-          "Multiplying a good month by twelve and calling it ARR. Annualising a spike — or counting one-time services, or pilots not yet converted — turns ARR from a run-rate into a hope. The decomposition exists precisely to catch this.",
+          "Accepting an ARR figure without asking for the definition. In private companies ARR is not a standardised term, and two companies quoting the same number may be measuring different things.",
         challenge:
-          "Build the MRR bridge for a company (real or given): opening MRR, plus new, plus expansion, minus contraction, minus churn, closing MRR. From it compute gross and net retention. Then write which single line of the bridge you would interrogate first, and why.",
-        challengeMinutes: 45,
-        estMinutes: 65,
+          "Build an MRR bridge for twelve months from a subscription list: opening MRR, new, expansion, contraction, churn, closing. Then calculate gross and net revenue retention. Write two sentences on what the gap between them tells you. Finish by pulling one listed SaaS company's investor presentation and comparing its stated definitions with yours — public companies define their terms; private ones often do not.",
+        challengeMinutes: 30,
+        estMinutes: 50,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The bridge",
+            title: "MRR, ARR and the bridge",
             detail:
-              "MRR movement decomposed: new business, expansion from existing customers, contraction, and churn. Every SaaS conversation is really about the relative size of these four flows.",
+              "ARR quoted on one strong month is not ARR. The bridge — new, expansion, contraction, churn — is the four movements that explain any change, and every SaaS conversation is really about their relative size.",
           },
           {
-            title: "Gross versus net retention",
+            title: "Net revenue retention",
             detail:
-              "Gross retention caps at 100% — it measures only what was kept. Net adds expansion and can exceed 100%, meaning the base grows with zero new sales. That is the compounding investors pay up for.",
+              "The metric that matters most. Above 100% means the existing base grows without new customers — the compounding investors pay up for.",
           },
           {
-            title: "Logo versus revenue churn",
+            title: "Gross revenue retention",
             detail:
-              "Losing many small customers and few large ones look identical in revenue churn and opposite in logo churn. Both numbers, always — their divergence is a finding.",
+              "The floor, which NRR can disguise. High NRR over low GRR means strong expansion over a leaking base — and the leak is invisible if you only look at NRR.",
           },
           {
-            title: "ARR hygiene",
+            title: "Logo churn versus revenue churn",
             detail:
-              "Contracted, recurring, live revenue times twelve — not services, not pilots, not the best month annualised. What a company includes in ARR is a diligence question with a fast answer.",
+              "Losing small customers while growing large ones is a good quarter that looks like a bad one. Both numbers, always — their divergence locates the problem.",
+          },
+          {
+            title: "Efficiency and the manipulations",
+            detail:
+              "The magic number and CAC ratio measure sales efficiency. The manipulations: annualising a good month, counting non-recurring revenue as recurring, excluding certain churn — day 27 catalogues the detection questions.",
           },
         ],
         checks: [
           {
-            question: "What does NRR above 100% mean mechanically?",
+            question: "NRR is 115% and GRR is 85%. What does that say?",
             answer:
-              "Expansion from existing customers exceeds contraction plus churn — revenue compounds with no new logos at all.",
+              "Substantial churn, offset by strong expansion within the surviving base. The business grows from existing customers but leaks badly, and the leak is invisible if you only look at NRR.",
           },
           {
-            question: "Why report both logo and revenue churn?",
+            question: "Why is annualising a strong month misleading?",
             answer:
-              "They diverge when customer sizes differ — many small losses versus one large loss — and the divergence locates the problem.",
+              "ARR should reflect the recurring run rate, not the best month multiplied by twelve. Founders annualise peaks; the correction usually appears in diligence.",
           },
           {
-            question: "Name two things that do not belong in ARR.",
+            question: "What is the most common recurring-revenue manipulation?",
             answer:
-              "One-time services revenue, and annualised spikes or unconverted pilots — ARR is contracted recurring run-rate.",
+              "Counting one-off implementation, setup or services revenue as recurring. It inflates ARR and the multiple applied to it, which compounds the error in valuation.",
           },
           {
             question:
@@ -2055,11 +2434,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "SaaS Metrics 2.0 — the NRR and churn sections",
+            url: "https://www.forentrepreneurs.com/saas-metrics-2/",
+            sourceName: "David Skok (for Entrepreneurs)",
             editorNote:
-              "The SaaS metrics essays here are the canonical definitions this day uses. Pick the key-metrics piece for SaaS and check your bridge's vocabulary against it.",
+              "The most cited free treatment of the SaaS metric set. You read the payback sections on day 21; today read NRR and churn carefully — the definitions here are the ones diligence recomputes against.",
+          },
+          {
+            type: "read",
+            title: "SaaS Capital — research and benchmarks",
+            url: "https://www.saas-capital.com/research/",
+            sourceName: "SaaS Capital",
+            editorNote:
+              "NRR expectations differ substantially between SMB and enterprise, and quoting a single benchmark is a mistake. Their retention research is segmented, dated and free.",
           },
         ],
         concepts: [
@@ -2069,70 +2456,84 @@ export default [
       },
       {
         title: "Marketplace and D2C metrics",
-        summary: "Two models where the headline number and the business are furthest apart.",
+        summary:
+          "The models that dominate Indian consumer startups — where the headline number and the business are furthest apart.",
         learningObjectives: [
-          "Work from GMV to net revenue via take rate — and know why the order matters",
-          "Read marketplace health: liquidity, repeat rate, concentration",
-          "Apply the D2C set: AOV, repeat, returns, contribution after logistics",
+          "Work the cascade from GMV through take rate to net revenue and contribution",
+          "Read marketplace liquidity — fill rate, match rate, time to transaction",
+          "Model what category mix and returns do to a growing GMV line",
         ],
         whyToday:
-          "India's largest startups are marketplaces and D2C brands, and both models are quoted in the metrics most distant from economic reality. The adviser's job is the translation — GMV to net revenue, orders to contribution.",
+          "Marketplaces and D2C dominate Indian consumer startups, and their metrics differ from SaaS in ways that matter. A GMV number without a take rate is a headline, not information.",
         principle: "GMV is a vanity metric until you know the take rate.",
         commonMistake:
-          "Comparing a marketplace's GMV multiple to a SaaS company's revenue multiple. A marketplace books only its take of GMV as revenue — comparing gross flow to net revenue across models is a category error that flatters every marketplace by the inverse of its take rate.",
+          "Comparing a marketplace's GMV to a SaaS company's ARR. They are not the same kind of number — GMV is transaction volume the company does not keep, and the comparable figure is net revenue.",
         challenge:
-          "Take one Indian marketplace or D2C company with public numbers. Build the cascade: GMV (or gross sales) → net revenue → contribution. Write the two percentages — take rate and contribution margin — and one sentence on what the headline number concealed.",
-        challengeMinutes: 45,
-        estMinutes: 60,
+          "Model a marketplace: GMV, take rate, return rate, net revenue, contribution margin. Then model a scenario where GMV grows 40% but category mix shifts toward a lower-take-rate category. Show what happens to net revenue and contribution, and write one sentence on what the headline GMV growth concealed.",
+        challengeMinutes: 30,
+        estMinutes: 45,
         points: 30,
         difficulty: "core",
         topics: [
           {
-            title: "The GMV cascade",
+            title: "GMV, net revenue and the take rate",
             detail:
-              "Gross merchandise value is everything transacted; the platform's revenue is its take rate slice; its economics are contribution after incentives and logistics. Each step down is where a different weakness hides.",
+              "The relationship, and why GMV is quoted most. Returns and cancellations — deducted from GMV or not — change the true number, and in cash-on-delivery categories the gap is large.",
           },
           {
-            title: "Marketplace liquidity",
+            title: "Liquidity",
             detail:
-              "Fill rate, time-to-match, repeat usage on both sides. A marketplace's moat is liquidity, and these are its gauges — GMV can grow while liquidity decays, briefly.",
+              "The metric that actually determines whether a marketplace works: fill rate, match rate, time to transaction. Low liquidity means both sides have a bad experience and churn, regardless of how large GMV is — and the chicken-and-egg problem shows here before the narrative admits it.",
           },
           {
-            title: "Incentives as negative revenue",
+            title: "Repeat rate and order frequency",
             detail:
-              "Discounts and cashbacks funded by the platform are contra-revenue, not marketing, whatever the P&L classification. Reclassifying them is a standard diligence adjustment.",
+              "The D2C equivalent of retention. AOV rides alongside — and raising it via bundling differs from raising it via price.",
           },
           {
-            title: "The D2C set",
+            title: "Category mix",
             detail:
-              "AOV, repeat purchase rate, return rate, contribution after logistics. Returns are the model-breaker in Indian D2C — a 30% return rate quietly destroys a 55% gross margin.",
+              "A shift toward lower-margin categories can grow GMV while shrinking contribution. Mix is the standard explanation for a growing top line over a worsening bottom one — model it, do not guess it.",
+          },
+          {
+            title: "Incentives as contra-revenue",
+            detail:
+              "Discounts and cashbacks funded by the platform reduce the real take whatever the P&L classification. Reclassifying them is a standard diligence adjustment.",
           },
         ],
         checks: [
           {
-            question: "Why can't GMV multiples be compared with revenue multiples?",
+            question: "GMV grew 50% and net revenue grew 20%. What happened?",
             answer:
-              "GMV is gross flow; revenue is the platform's take of it. The comparison flatters marketplaces by the inverse of their take rate.",
+              "Take rate fell — from mix shift toward lower-commission categories, competitive pressure, or discounting funded by the platform. Growth was bought.",
           },
           {
-            question: "How should platform-funded discounts be treated?",
+            question: "What is marketplace liquidity and why does it matter more than GMV?",
             answer:
-              "As contra-revenue — they reduce the real take, regardless of where the P&L classifies them.",
+              "The probability that a listing transacts, and how quickly. Low liquidity means both sides have a bad experience and churn, regardless of how large GMV is.",
           },
           {
-            question: "What is the model-breaking metric in Indian D2C?",
+            question: "Why does return rate matter more in India than in some markets?",
             answer:
-              "Return rate — returns carry two-way logistics and refurbishment, and can erase an apparently healthy gross margin.",
+              "Cash on delivery and high return rates in certain categories mean reported GMV can substantially exceed delivered, retained revenue.",
           },
         ],
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
-            url: "https://www.ycombinator.com/library",
-            sourceName: "Y Combinator",
+            title: "16 Startup Metrics — GMV and the revenue entries",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
             editorNote:
-              "The marketplace and consumer essays define liquidity and take-rate the way investors use them — find the marketplace-metrics piece and check today's cascade against its vocabulary.",
+              "The GMV, revenue and bookings entries state the cascade plainly, from investors who have funded many marketplaces. Read them against today's model.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "An Indian e-commerce DRHP's operational metrics section discloses real GMV, take rate, repeat rate and return rate to a regulator. The category-mix effect is concrete there — find it in the numbers before reading management's words about it.",
           },
         ],
         concepts: [
@@ -2143,60 +2544,65 @@ export default [
       {
         title: "Burn, runway and the calculation that matters most",
         summary:
-          "The one number a founder must never be wrong about — and advisers get to check.",
+          "Everything else informs a valuation. This determines whether the company survives to be valued.",
         learningObjectives: [
-          "Compute gross burn, net burn and runway from actuals, not projections",
-          "Adjust runway for the receipts that will not arrive on time",
-          "State the raise-timing arithmetic: runway minus process time equals the real deadline",
+          "Compute gross burn, net burn and runway month by month, not on an average",
+          "Answer the default alive question for a real cash model",
+          "Work back from runway to the month a fundraise must start",
         ],
         whyToday:
-          "Runway is the deadline every other number lives inside. The startup-CFO's defining task and the diligence analyst's first check are the same calculation, and it is taught here — before the deck module — because decks are written against runway pressure.",
+          "Everything else in this module informs a valuation. This one determines whether the company survives to be valued — and it is the calculation an adviser is asked for most often and most urgently.",
         principle: "Runway is the only number a founder must never be wrong about.",
         commonMistake:
-          "Computing runway from projected collections and planned cost cuts. Honest runway uses trailing actual net burn and stress-tests receipts — the version built from the plan is exactly as reliable as the plan, which is what the runway was supposed to protect against.",
+          "Calculating runway on average burn and discovering the shortfall in a month with an annual payment in it. Monthly timing is not a refinement; it is the calculation.",
         challenge:
-          "From any company's last three months of actuals (real or supplied): gross burn, net burn, months of runway — then the stressed version at 70% collections. Finally the deadline: runway minus five months of fundraise process. Write the date. That date is the advice.",
-        challengeMinutes: 40,
-        estMinutes: 60,
-        points: 30,
+          "Build a monthly cash model for eighteen months: opening cash, revenue, costs with realistic timing including annual payments, closing cash. Calculate runway. Then answer the default alive question, and identify the month a fundraise would need to start given a four-month process.",
+        challengeMinutes: 30,
+        estMinutes: 45,
+        points: 35,
         difficulty: "core",
         topics: [
           {
-            title: "Gross and net",
+            title: "Gross burn versus net burn",
             detail:
-              "Gross burn is total cash out per month; net burn subtracts cash actually collected. The gap between revenue booked and cash collected is where optimistic runways are manufactured.",
+              "Total spend versus spend minus revenue. Investors ask for net; the distinction matters when revenue is volatile — and the honest version runs on bank actuals, not the P&L.",
           },
           {
-            title: "Trailing actuals",
+            title: "Modelling runway properly",
             detail:
-              "Three-month trailing average of net burn, from bank movements rather than the P&L. Accrual accounting is for accuracy; runway is for survival, and survival runs on cash.",
+              "Month by month with actual timing, not a flat monthly average. Annual payments, advance tax and salary revisions cluster — an average can show four months when the real answer is two.",
           },
           {
-            title: "The stress case",
+            title: "The burn multiple",
             detail:
-              "Receivables late, one customer lost, the cost cut that never quite happens. Stressed runway is usually the true number; the founder's version is the ceiling.",
+              "Net burn divided by net new ARR: how much you spend to add a rupee of recurring revenue. Two companies with identical runway can differ greatly here, and the difference predicts the next round's difficulty.",
           },
           {
-            title: "The real deadline",
+            title: "Default alive versus default dead",
             detail:
-              "A fundraise takes months, and terms degrade as runway shortens — the worst time to raise is when you must. Deadline = runway − process time − buffer, and it is earlier than anyone wants.",
+              "Whether current growth reaches profitability before cash runs out. The question reframes runway from an arithmetic exercise into a strategic one — and it connects to module 3's survival probability directly.",
+          },
+          {
+            title: "When to start raising",
+            detail:
+              "Working backward from runway, because a round takes three to six months and terms degrade as the runway visibly shortens. Starting with four months of cash means accepting whatever is offered — and the order in which runway-extending levers actually get pulled is part of the advice.",
           },
         ],
         checks: [
           {
-            question: "What separates gross from net burn?",
+            question: "Why is a single average burn figure inadequate?",
             answer:
-              "Cash collected — net burn is gross cash out minus actual receipts, and it is the runway number.",
+              "Costs are lumpy. Annual insurance, advance tax, appraisal cycles and one-off payments cluster in particular months, and an average can show four months of runway when the real answer is two.",
           },
           {
-            question: "Why compute burn from bank actuals rather than the P&L?",
+            question: "What does the burn multiple tell you that runway does not?",
             answer:
-              "Accrual timing differs from cash timing, and runway is a cash-survival number — booked revenue does not pay salaries.",
+              "Efficiency. Two companies with identical runway can differ greatly in how much they spend per rupee of new ARR, and that difference predicts the next round's difficulty.",
           },
           {
-            question: "State the real fundraise deadline formula.",
+            question: "When should a founder start raising?",
             answer:
-              "Runway minus expected process time minus buffer — because terms degrade as the runway visibly shortens.",
+              "Working back from runway, allowing three to six months for the process, and leaving a buffer to negotiate rather than accept. Starting with four months of cash means accepting whatever is offered.",
           },
           {
             question:
@@ -2211,11 +2617,19 @@ export default [
         resources: [
           {
             type: "read",
-            title: "Y Combinator Startup Library",
+            title: "Default Alive or Default Dead?",
+            url: "https://paulgraham.com/aord.html",
+            sourceName: "Paul Graham",
+            editorNote:
+              "The clearest statement of the question a founder must be able to answer. Short, free, and it reframes the whole calculation — the strongest single reading in this roadmap.",
+          },
+          {
+            type: "read",
+            title: "Y Combinator Startup Library — managing runway",
             url: "https://www.ycombinator.com/library",
             sourceName: "Y Combinator",
             editorNote:
-              "The library's pieces on burn and default-alive are the sharpest short reading on this exact arithmetic — search 'default alive' and read what comes back.",
+              "The practical framing of when to raise and how long a round takes. Read one piece on runway management after building today's model — the model gives the essay teeth.",
           },
         ],
         concepts: [
@@ -2225,28 +2639,33 @@ export default [
       {
         title: "How each of these gets gamed",
         summary:
-          "The module capstone: every metric's standard manipulation, and the module deliverable completed.",
+          "The module turns around: you can calculate these — now detect when someone else has calculated them favourably.",
         learningObjectives: [
-          "Catalogue the standard inflation for every metric in this module",
-          "Detect each from the outside — what to ask for, what to recompute",
-          "Complete the deliverable: real company, honest unit economics, the two metrics you would demand",
+          "Write the manipulation catalogue for every metric in days 21–26",
+          "Distinguish legitimate adjustments from manipulations, EBITDA included",
+          "Ask the questions that surface a definition without accusing anyone",
         ],
         whyToday:
-          "The module ends by weaponising it. Every number from the last six days has a standard manipulation, and diligence is largely knowing the catalogue — this day writes it down and applies it to a real company.",
+          "The module closes by turning around. You have learned to calculate these; today is learning to detect when someone else has calculated them favourably — which is what advisory work actually consists of. Day 20's valuation-audit drill is the same skill one layer up; metrics feed valuation, so errors here compound upward.",
         principle: "Every metric in this module has a standard manipulation. Learn all of them.",
         commonMistake:
-          "Treating manipulations as lies. Most are choices — a flattering definition, a favourable window, an undisclosed blend — each defensible alone. The skill is noticing that every choice in the deck happens to point the same direction, which is not chance.",
+          "Assuming manipulation means dishonesty. Most of it is optimism plus a definition nobody standardised. Asking for the definition is normal professional practice, and treating it as an accusation is how junior advisers lose access.",
         challenge:
-          "Complete the deliverable: one real startup's public numbers, unit economics rebuilt honestly, and the two metrics you would want before investing — with one line each on why those two. Append your manipulation catalogue: metric, standard game, detection question. Keep both; module 6 reuses them.",
-        challengeMinutes: 60,
-        estMinutes: 75,
+          "Take a real pitch deck or investor update you can find. List every metric quoted. For each, write the definition you would need before you could use it, and the manipulation most likely to be present. Then write the five questions you would ask in a meeting — phrased as requests for clarification, not accusations. Finish the module deliverable: one real startup's numbers rebuilt honestly, and the two metrics you would want before investing.",
+        challengeMinutes: 35,
+        estMinutes: 50,
         points: 40,
         difficulty: "stretch",
         topics: [
           {
             title: "The catalogue, by metric",
             detail:
-              "CAC: exclude salaries, blend organic. LTV: revenue base, assumed lifetime. Retention: blended not cohort. ARR: annualised spike, services inside. GMV: incentives uncounted. Runway: planned cuts. One line each — the list fits a page and reads like an audit programme.",
+              "CAC: blended instead of paid, excluding salaries. LTV: optimistic retention, revenue instead of gross margin, no discounting. ARR: annualised peak, services inside, known churn excluded. Retention: a flattering definition of active, reset cohorts, cumulative charts. GMV: returns and cancellations included, gross of discounts. One line each — the list fits a page and reads like an audit programme.",
+          },
+          {
+            title: "Adjusted EBITDA",
+            detail:
+              "The adjustments that are legitimate remove genuinely non-recurring items — a settlement, a restructuring. The manipulations remove recurring costs the business will keep incurring, such as ongoing marketing described as 'growth investment'.",
           },
           {
             title: "Detection is recomputation",
@@ -2256,32 +2675,58 @@ export default [
           {
             title: "Direction as evidence",
             detail:
-              "Each individual choice may be defensible; twelve choices all flattering is a posture. Diligence reports the pattern, not just the items.",
+              "Each individual choice may be defensible; twelve choices all flattering the same direction is a posture. Diligence reports the pattern, not just the items.",
           },
           {
-            title: "The two-metric discipline",
+            title: "How to ask",
             detail:
-              "For any company there are one or two numbers that, honestly computed, decide the thesis. Naming them in advance — before the data room — is what separates targeted diligence from a checklist crawl.",
+              "Questions that surface a definition without accusing anyone: 'how do you define active here?' does the same work as an allegation, and leaves the relationship intact.",
           },
         ],
         checks: [
           {
-            question: "What is the universal detection method for gamed metrics?",
+            question: "A deck says 'ARR ₹12 crore, growing 200%'. What do you ask first?",
             answer:
-              "Recomputation — obtain the raw inputs and rebuild the metric under its standard definition.",
+              "How ARR is defined — whether it includes services or one-off revenue, and whether it is annualised from a single month. Then what the base was, since 200% from a small base is a different claim.",
           },
           {
-            question: "Why does the direction of definitional choices matter?",
+            question: "A founder says retention is 90%. What is missing?",
             answer:
-              "Any single choice may be defensible; all choices flattering the same way is a pattern, and the pattern is the finding.",
+              "Retention of what, measured how, over what period, for which cohort. Ninety percent monthly logo retention and ninety percent annual revenue retention are wildly different statements.",
           },
           {
-            question: "What makes 'the two metrics you would want' a discipline?",
+            question:
+              "What is the difference between a legitimate EBITDA adjustment and a manipulation?",
             answer:
-              "Naming them before seeing the data room forces the thesis to be explicit and makes diligence targeted rather than ritual.",
+              "Legitimate adjustments remove genuinely non-recurring items — a one-time legal settlement, a restructuring. Manipulations remove recurring costs the business will keep incurring, such as ongoing marketing described as 'growth investment'.",
           },
         ],
-        resources: [],
+        resources: [
+          {
+            type: "read",
+            title: "16 Startup Metrics — read as a manipulation catalogue",
+            url: "https://a16z.com/16-startup-metrics/",
+            sourceName: "Andreessen Horowitz",
+            editorNote:
+              "Investors listing the specific manipulations they see, metric by metric — the most directly useful reading in this module. Third read this module; this time, extract the games rather than the definitions.",
+          },
+          {
+            type: "read",
+            title: "Hindenburg Research — the report archive",
+            url: "https://hindenburgresearch.com/",
+            sourceName: "Hindenburg Research",
+            editorNote:
+              "Whatever you make of the conclusions, short-seller reports are a masterclass in detecting favourable definitions. Read one for method — the firm wound down in 2025; the archive stays up.",
+          },
+          {
+            type: "doc",
+            title: "SEBI — public issue filings",
+            url: "https://www.sebi.gov.in/filings/public-issues.html",
+            sourceName: "SEBI",
+            editorNote:
+              "A DRHP's risk factors and accounting policies sections are where companies must disclose their definitions. Compare a company's filed definition with how its marketing describes the same number.",
+          },
+        ],
         concepts: [
           "unit-economics",
           "traction-metrics",

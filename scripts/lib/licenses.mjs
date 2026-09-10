@@ -75,6 +75,22 @@ export const BY_HOST = {
   "firstround.com": assumed(),
   "trifectacapital.in": assumed(),
   "alteriacapital.com": assumed(),
+  "aswathdamodaran.blogspot.com": assumed(), // Musings on Markets
+  "fast-standard.org": assumed(), // the FAST modelling standard — free to read
+  "saas-capital.com": assumed(),
+  "hindenburgresearch.com": assumed(), // report archive; firm wound down 2025, site stays up
+  "angelcapitalassociation.org": assumed(),
+  "paulgraham.com": assumed(), // free to read, copyrighted — link only, per the owner inventory
+  "forentrepreneurs.com": assumed(), // David Skok
+  "a16z.com": assumed(),
+  "sequoiacap.com": assumed(),
+  "mospi.gov.in": assumed(), // Indian government works are NOT public domain like US federal works
+  "eusprig.org": assumed(),
+  "bvp.com": assumed(), // Bessemer's published memo archive
+  "kpmg.com": assumed(),
+  "pwc.in": assumed(),
+  "icai.org": assumed(),
+  "gov.uk": stated("permissive", "Crown copyright under the Open Government Licence v3.0 — gov.uk content is OGL unless a page states otherwise"),
 
   // ── established, and reusable ───────────────────────────────────────────
   "en.wikipedia.org": stated("cc-by-sa", "Wikipedia:Copyrights — CC BY-SA 4.0"),

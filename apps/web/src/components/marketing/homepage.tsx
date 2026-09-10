@@ -45,6 +45,24 @@ export interface HomepageRoadmap {
   sizeLine: string;
 }
 
+export interface HomepageDay {
+  roadmapSlug: string;
+  roadmapTitle: string;
+  nodeSlug: string;
+  dayNumber: number;
+  totalDays: number;
+  moduleTitle: string;
+  title: string;
+  principle: string | null;
+  resources: {
+    title: string;
+    sourceName: string;
+    type: string;
+    minutes: number | null;
+    editorNote: string | null;
+  }[];
+}
+
 export interface HomepageProps {
   roadmaps: HomepageRoadmap[];
   counts: { roadmaps: number; days: number; hours: number; links: number };
@@ -68,23 +86,14 @@ export interface HomepageProps {
    * day that had never existed. It is a row now, and null when the query
    * fails, which hides the section rather than inventing one.
    */
-  day: {
-    roadmapSlug: string;
-    roadmapTitle: string;
-    nodeSlug: string;
-    dayNumber: number;
-    totalDays: number;
-    moduleTitle: string;
-    title: string;
-    principle: string | null;
-    resources: {
-      title: string;
-      sourceName: string;
-      type: string;
-      minutes: number | null;
-      editorNote: string | null;
-    }[];
-  } | null;
+  day: HomepageDay | null;
+  /**
+   * A second, different real day for the hero card. The hero and "Here is
+   * one day" used to render the same row — honest, but it put Day 45 twice
+   * on one page, which reads as a bug. Null falls back to `day`: one day
+   * shown twice degrades better than an invented one shown once.
+   */
+  heroDay: HomepageDay | null;
   /** The flagship roadmap's modules, in order, for the spine. */
   spine: { position: number; title: string; weekRange: string | null }[];
   /**
@@ -187,11 +196,11 @@ function StatPill({
  * the fifth had to go somewhere that clears both the nav and the day card.
  */
 const STAT_PINS = [
-  "top-[210px] left-[64px] opacity-95",
-  "top-[152px] right-[148px] opacity-95",
-  "top-[288px] right-[76px] opacity-90",
-  "bottom-[220px] left-[104px] opacity-90",
-  "right-[64px] bottom-[260px] opacity-95",
+  "xl:top-[210px] xl:left-[64px] xl:opacity-95",
+  "xl:top-[152px] xl:right-[148px] xl:opacity-95",
+  "xl:top-[288px] xl:right-[76px] xl:opacity-90",
+  "xl:bottom-[220px] xl:left-[104px] xl:opacity-90",
+  "xl:right-[64px] xl:bottom-[260px] xl:opacity-95",
 ] as const;
 
 const STEPS = [
@@ -241,12 +250,17 @@ export default function Homepage({
   sources,
   samples,
   day,
+  heroDay,
   spine,
   subjects,
   signedIn,
   initials = null,
   displayName = null,
 }: HomepageProps) {
+  // The hero's day, distinct from the section's wherever the catalogue
+  // offers two. Falling back to `day` keeps the card honest when the
+  // second query fails — a real day twice beats a missing hero.
+  const hero = heroDay ?? day;
   /**
    * The five facts. Every number is derived — the design asked for "500+
    * links checked" and there are 228 — and ₹0 is here rather than in a
@@ -300,9 +314,12 @@ export default function Homepage({
               "properly." are two beats and the pause between them is the
               line; balance would occasionally join them. It disappears below
               sm, where there is no room for two long lines. */}
+          {/* Exactly one space lives between the two beats — it sits before
+              the br, so the extracted text is "Learn anything, properly."
+              with a single space at every width. The {" "} that used to
+              follow the br doubled it in any text serialisation. */}
           <h1 className="t-hero text-white">
-            Learn anything,
-            <br className="hidden sm:inline" />{" "}
+            Learn anything, <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent">
               properly.
             </span>
@@ -316,30 +333,25 @@ export default function Homepage({
           <SearchBar id="hero-search" />
         </div>
 
-        {/* The five facts, from one list rendered twice: a wrapped row
-            everywhere, and the same five pinned to the corners at xl, where
-            there is genuinely space beside the headline. Absolute
-            positioning at smaller widths is what was colliding with the nav
-            and the card. One source, so the two can never disagree — and
-            the pinned copy is aria-hidden, so the facts are announced once.
+        {/* The five facts, in the DOM exactly once. This used to be the
+            same list rendered twice — a wrapped row below xl and an
+            aria-hidden pinned copy at xl — which read fine to a screen
+            reader and doubled every fact for anything that extracts text.
+            Now the list itself goes display:contents at xl, so each item
+            pins itself to the header's corners and there is no second copy
+            to disagree with. A ul, so extraction breaks between facts
+            instead of running "9 roadmaps₹0 forever" together.
 
             ₹0 forever is the fifth. It was a whole section, which is the
             shape of a page with tiers to compare; as a number among four
             other true numbers it makes the same claim without staging it. */}
-        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-2.5 xl:hidden">
+        <ul className="relative z-10 mt-8 flex list-none flex-wrap justify-center gap-2.5 p-0 xl:contents">
           {stats.map((s) => (
-            <StatPill key={s.text} glyph={s.glyph}>
-              {s.text}
-            </StatPill>
+            <li key={s.text} className={`xl:absolute xl:z-10 ${s.pin}`}>
+              <StatPill glyph={s.glyph}>{s.text}</StatPill>
+            </li>
           ))}
-        </div>
-        <div aria-hidden className="hidden xl:block">
-          {stats.map((s) => (
-            <StatPill key={s.text} glyph={s.glyph} className={`absolute ${s.pin}`}>
-              {s.text}
-            </StatPill>
-          ))}
-        </div>
+        </ul>
 
         {/* The day card, straddling the fold.
 
@@ -350,23 +362,23 @@ export default function Homepage({
             prove the curation was real was the one thing on the page that
             was invented. It is the same row the section below renders now,
             so the two cannot disagree and neither can outrun the data. */}
-        {day ? (
+        {hero ? (
           <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
-              Day {day.dayNumber} of {day.totalDays}
+              Day {hero.dayNumber} of {hero.totalDays}
             </div>
             <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
-              {day.title}
+              {hero.title}
             </div>
-            {day.principle ? (
+            {hero.principle ? (
               <p className="mt-2.5 text-[15px] leading-[1.65] text-pretty text-ink-600 italic sm:text-[16px]">
-                {day.principle}
+                {hero.principle}
               </p>
             ) : null}
 
-            {day.resources.length ? (
+            {hero.resources.length ? (
               <div className="mt-5 flex flex-col gap-3">
-                {day.resources.slice(0, 2).map((r) => (
+                {hero.resources.slice(0, 2).map((r) => (
                   <div key={r.title} className="rounded-lg border border-ink-100 p-3.5">
                     <div className="text-[14px] leading-[1.4] font-medium text-ink-900">
                       {r.title}
@@ -387,7 +399,7 @@ export default function Homepage({
               {/* Was "Your progress · 45 of 91 days", to a signed-out
                   stranger who has no progress. It describes the card. */}
               <span className="font-mono text-[12px] leading-none text-ink-500">
-                {day.roadmapTitle} · day {day.dayNumber} of {day.totalDays}
+                {hero.roadmapTitle} · day {hero.dayNumber} of {hero.totalDays}
               </span>
               <Link href="/learn" className="text-[13.5px] font-medium text-brand-700">
                 Browse roadmaps →
@@ -421,12 +433,25 @@ export default function Homepage({
             ))}
           </ul>
 
-          {samples.length ? (
-            <div className="mx-auto mt-10 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
-              {samples.slice(2).map((r) => (
-                <LinkCardMini key={r.title} resource={r} />
-              ))}
-            </div>
+          {samples.length > 2 ? (
+            <>
+              {/* The line that was missing: without it these three cards
+                  floated between two sections and read as a bug. They are
+                  the proof of the wall above — the same links, drawn the
+                  way a day page hands them over, note included. The gate is
+                  > 2 because the grid renders samples[2..], and a caption
+                  promising three cards above zero of them would be this
+                  bug's mirror image. */}
+              <p className="mx-auto mt-10 max-w-[52ch] text-center text-[14px] leading-[1.6] text-ink-600">
+                Three of those links, as a day page hands them to you — each with the note on why
+                this one and not another.
+              </p>
+              <div className="mx-auto mt-5 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
+                {samples.slice(2).map((r) => (
+                  <LinkCardMini key={r.title} resource={r} />
+                ))}
+              </div>
+            </>
           ) : null}
         </section>
       ) : null}
@@ -512,7 +537,7 @@ export default function Homepage({
             read a sentence and then went hunting for what it referred to.
             They are anchored now — a hairline runs from each note to the row
             it is about at lg, and below that they sit under the card. */}
-        <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-0">
+        <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-0">
           <div className="relative rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[560px] lg:flex-none">
             <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
               Day {day.dayNumber} of {day.totalDays} · {day.moduleTitle}
@@ -530,30 +555,26 @@ export default function Homepage({
                 <LinkCardMini resource={day.resources[0]} />
               </div>
             ) : null}
-
-            {/* Below lg the notes follow the card inline; the connectors only
-                exist where there is a column to run them to. */}
-            <ul className="mt-6 flex list-none flex-col gap-3 p-0 lg:hidden">
-              {ANNOTATIONS.map((a) => (
-                <li key={a.note} className="flex gap-2.5 text-[14px] leading-[1.55] text-ink-600">
-                  <span aria-hidden className="mt-2 h-px w-4 flex-none bg-brand-500" />
-                  {a.note}
-                </li>
-              ))}
-            </ul>
           </div>
 
-          <ul className="hidden list-none flex-1 flex-col p-0 lg:flex">
+          {/* The four notes, in the DOM exactly once — this was two lists,
+              one inside the card below lg and one beside it above, which
+              doubled every note for anything that reads the page as text.
+              One list now: stacked under the card below lg, and at lg each
+              note takes its hand-set offset (via a CSS variable, since an
+              inline margin-top cannot be responsive) so the hairline meets
+              the card row it is about. */}
+          <ul className="flex list-none flex-col gap-3 p-0 lg:flex-1 lg:gap-0">
             {ANNOTATIONS.map((a) => (
               <li
                 key={a.note}
-                className="flex items-start text-[14px] leading-[1.55] text-pretty text-ink-600"
-                style={{ marginTop: a.top }}
+                style={{ "--pin": `${a.top}px` } as React.CSSProperties}
+                className="flex items-start gap-2.5 text-[14px] leading-[1.55] text-pretty text-ink-600 lg:gap-3.5 lg:[margin-top:var(--pin)]"
               >
                 {/* The line is the connection. Without it these are just a
                     second list of claims, which is what they were. */}
-                <span aria-hidden className="mt-[10px] h-px w-14 flex-none bg-brand-500" />
-                <span className="pl-3.5">{a.note}</span>
+                <span aria-hidden className="mt-2 h-px w-4 flex-none bg-brand-500 lg:mt-[10px] lg:w-14" />
+                <span>{a.note}</span>
               </li>
             ))}
           </ul>
@@ -572,12 +593,14 @@ export default function Homepage({
           </div>
           <h2 className="t-sect mt-3 text-ink-900">Four steps, then a habit.</h2>
 
-          {/* list-none explicitly: preflight already resets ol, but the mono "01"
-              IS the marker here, and a stylesheet change that dropped preflight
-              would put a second number in front of every one of them. */}
-          <ol className="mt-8 grid list-none grid-cols-1 gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Not an ol, deliberately. The mono "01" IS the numbering, and an
+              ordered list numbers itself in every surface CSS cannot reach —
+              reader modes, text extraction, some screen readers — so the
+              steps kept coming out as "1. 01 Pick a roadmap". One number,
+              the visible one; the h3s carry the structure. */}
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(([n, head, body], i) => (
-              <li key={n} className="border-t border-ink-200 pt-4">
+              <div key={n} className="border-t border-ink-200 pt-4">
                 <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
                 <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
                 <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
@@ -592,9 +615,9 @@ export default function Homepage({
                   {i === 2 ? <StreakStrip mini className="h-24" /> : null}
                   {i === 3 ? <ContribGrid /> : null}
                 </div>
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
         </div>
       </section>
 

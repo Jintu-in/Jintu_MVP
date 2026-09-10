@@ -404,14 +404,25 @@ export type SampleResource = {
  */
 export async function sampleResources(limit = 3): Promise<SampleResource[]> {
   const supabase = createPublicClient();
+  // Over-fetch, then keep one link per source. Ordered by added_at alone,
+  // the first rows with notes are consecutive entries from the oldest
+  // import's opening module — which put three Pro Git cards side by side on
+  // the homepage as though the catalogue had one source. The sample exists
+  // to show breadth, so breadth is what it selects for.
   const { data, error } = await supabase
     .from("resources")
     .select("title, source_name, type, duration_sec, editor_note")
     .not("editor_note", "is", null)
     .order("added_at")
-    .limit(limit);
+    .limit(limit * 8);
   if (error) throw describeSupabaseError("sampling resources", error);
-  return (data ?? []).map((r) => ({
+  const seen = new Set<string>();
+  const rows = (data ?? []).filter((r) => {
+    if (seen.has(r.source_name)) return false;
+    seen.add(r.source_name);
+    return true;
+  });
+  return rows.slice(0, limit).map((r) => ({
     title: r.title,
     sourceName: r.source_name,
     type: r.type,

@@ -60,8 +60,16 @@ test("the highlight carries the day it came from", () => {
 
 test("the day page's notes are anchored, not a second list beside it", () => {
   assert.match(home, /const ANNOTATIONS = \[/);
-  assert.match(home, /h-px w-14 flex-none bg-brand-500/, "a connector runs to the card at lg");
+  assert.match(home, /bg-brand-500 lg:mt-\[10px\] lg:w-14/, "a connector runs to the card at lg");
   assert.ok(!home.includes("const BULLETS"), "the unanchored list is gone");
+  // One list in the DOM, restyled per breakpoint — it used to render twice
+  // (inside the card below lg, beside it above), which doubled every note
+  // for anything that reads the page as text.
+  assert.strictEqual(
+    home.split("ANNOTATIONS.map").length - 1,
+    1,
+    "the annotations render exactly once",
+  );
 });
 
 test("there is no pricing section — the claim is woven in instead", () => {
@@ -168,11 +176,13 @@ test("the day cards are queried, never typed", () => {
   );
   assert.match(home, /Why this one — \{r\.editorNote\}/, "the hero note reads editorNote");
 
-  // Both cards read the same prop, so they cannot drift apart.
-  assert.ok(
-    (home.match(/day\.dayNumber/g) ?? []).length >= 2,
-    "both the hero card and the one-day section should render day.dayNumber",
-  );
+  // Two cards, two QUERIED rows. They used to share one prop — honest, but
+  // it put the same day on the page twice, which read as a bug. The hero
+  // renders its own row now (falling back to the section's when the second
+  // query fails), and both still interpolate everything.
+  assert.match(home, /hero\.dayNumber/, "the hero card renders its own day row");
+  assert.match(home, /day\.dayNumber/, "the one-day section renders the day row");
+  assert.match(home, /const hero = heroDay \?\? day;/, "a missing hero day falls back, never invents");
   assert.match(home, /\{day\.principle\}/, "the principle comes from the day row");
 });
 
