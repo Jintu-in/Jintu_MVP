@@ -55,8 +55,11 @@ export function ModuleSpine({
     <div aria-hidden className={cn("flex flex-col gap-[7px]", className)}>
       {modules.map((m, i) => (
         <div key={m.position} className="flex items-center gap-2.5">
+          {/* The trailing space costs nothing inside a fixed-width span and
+              keeps text extraction from reading "01How data work actually
+              works" — flex gap separates things visually, never textually. */}
           <span className="w-4 flex-none font-mono text-[10px] leading-none text-ink-500">
-            {String(m.position).padStart(2, "0")}
+            {`${String(m.position).padStart(2, "0")} `}
           </span>
           <span
             className={cn("h-[5px] flex-none rounded-full", i < 3 ? "bg-brand-700" : "bg-ink-200")}
@@ -120,9 +123,12 @@ export function StreakStrip({ mini = false, className }: { mini?: boolean; class
           />
         ))}
       </div>
+      {/* The trailing space in the first label is invisible under
+          justify-between and stops extraction reading "8-day streak63
+          days total". */}
       {!mini ? (
         <div className="mt-2.5 flex items-baseline justify-between font-mono text-[11px] leading-none text-ink-500">
-          <span>8-day streak</span>
+          <span>{"8-day streak "}</span>
           <span>63 days total</span>
         </div>
       ) : null}

@@ -60,8 +60,16 @@ test("the highlight carries the day it came from", () => {
 
 test("the day page's notes are anchored, not a second list beside it", () => {
   assert.match(home, /const ANNOTATIONS = \[/);
-  assert.match(home, /h-px w-14 flex-none bg-brand-500/, "a connector runs to the card at lg");
+  assert.match(home, /bg-brand-500 lg:mt-\[10px\] lg:w-14/, "a connector runs to the card at lg");
   assert.ok(!home.includes("const BULLETS"), "the unanchored list is gone");
+  // One list in the DOM, restyled per breakpoint — it used to render twice
+  // (inside the card below lg, beside it above), which doubled every note
+  // for anything that reads the page as text.
+  assert.strictEqual(
+    home.split("ANNOTATIONS.map").length - 1,
+    1,
+    "the annotations render exactly once",
+  );
 });
 
 test("there is no pricing section — the claim is woven in instead", () => {
