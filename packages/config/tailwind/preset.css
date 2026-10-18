@@ -34,6 +34,13 @@
   --color-brand-900: #17505c; /*  8.98:1 — text */
   --color-brand-950: #0b333d; /* 13.50:1 — text on a brand-50 surface */
 
+  /* The redesign names its own distinct Link colour — #0B5567, not
+   * brand-700. Genuinely missed in the first token pass (which focused on
+   * ink/night/dark/status and transcribed every HANDOFF.md row except this
+   * one) and only caught building the first real component to need it. */
+  --color-link: #0b5567; /*  8.37:1 vs white, 7.47:1 vs ink-50 */
+  --color-link-hover: #0a3b46; /* 12.16:1 vs white — same hex as night-900 */
+
   /* Text specifically ON a brand-500 fill. The redesign (design/jintu-design/
    * HANDOFF.md) names this as its own value rather than reusing ink-900 —
    * #06262c is darker and slightly teal-shifted, not the same colour, even
