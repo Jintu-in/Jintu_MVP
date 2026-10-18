@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in, email code</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 12px">
+<a href="V2Login.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">step 1 of 3</div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 24px; padding: 12px 20px 0">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font: 700 32px/36px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">Check your email</h1>
+<p style="margin: 0; font-size: 16px; line-height: 24px; color: #45626A">We sent a 6-digit code to <span style="font-weight: 600; color: #0C2A30">asha@example.com</span>.</p>
+</div>
+
+<div role="group" aria-label="6-digit code" style="display: flex; gap: 8px">
+<div style="flex: 1; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF; font: 500 26px/1 'JetBrains Mono', ui-monospace, monospace">4</div>
+<div style="flex: 1; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF; font: 500 26px/1 'JetBrains Mono', ui-monospace, monospace">8</div>
+<div style="flex: 1; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF; font: 500 26px/1 'JetBrains Mono', ui-monospace, monospace">2</div>
+<div style="flex: 1; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF; font: 500 26px/1 'JetBrains Mono', ui-monospace, monospace">1</div>
+<div style="flex: 1; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid #0B5567; border-radius: 16px; background: #FFFFFF"><span aria-hidden="true" style="width: 2px; height: 28px; background: #0B5567"></span></div>
+<div style="flex: 1; height: 64px; box-sizing: border-box; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF"></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 14.5px; line-height: 22px; color: #45626A">Nothing yet? You can ask for a new code in <span style="font: 500 13.5px/22px 'JetBrains Mono', ui-monospace, monospace; color: #0C2A30">0:24</span></div>
+<a href="V2Login.dc.html" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; font-size: 14.5px; font-weight: 600; text-decoration: none">Use a different email</a>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 16px; border-radius: 20px; background: #FFFFFF; font-size: 14.5px; line-height: 21px; color: #45626A">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B5567" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+<span>The code proves the address is yours before any account exists. Check spam if it has not arrived in a minute.</span>
+</div>
+
+</div>
+
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<a href="V2Password.dc.html" aria-disabled="true" style="height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: #D3DFE1; color: #45626A; font-size: 16.5px; font-weight: 600; text-decoration: none">Enter all 6 digits</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

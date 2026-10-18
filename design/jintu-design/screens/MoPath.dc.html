@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Block path, drawing itself</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+@keyframes growA { 0% { transform: scaleY(0) } 100% { transform: scaleY(1) } }
+@keyframes growB { 0% { transform: scaleY(0) } 100% { transform: scaleY(1) } }
+@keyframes popA { 0% { transform: scale(0.2); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+@keyframes popB { 0% { transform: scale(0.2); opacity: 0 } 60% { transform: scale(1.2); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+@keyframes ringA { 0% { stroke-dashoffset: 163.36 } 100% { stroke-dashoffset: 122.52 } }
+@keyframes ringB { 0% { stroke-dashoffset: 163.36 } 100% { stroke-dashoffset: 122.52 } }
+@keyframes here { 0% { box-shadow: 0 0 0 0 rgba(67,180,200,0.6) } 100% { box-shadow: 0 0 0 12px rgba(67,180,200,0) } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div onScroll="{{ onScroll }}" style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden">
+
+<div style="position: sticky; top: 0; z-index: 2; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px; background: {{barBg}}; box-shadow: {{barShadow}}; transition: background 200ms ease-out, box-shadow 200ms ease-out">
+<a href="MoToday.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; opacity: {{barTitleO}}; transform: {{barTitleT}}; transition: opacity 220ms ease-out, transform 220ms ease-out">
+<div style="font-size: 15px; line-height: 20px; font-weight: 600">Git &amp; GitHub</div>
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">3 of 12 done</div>
+</div>
+<button onClick="{{ replay }}" style="height: 44px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 14px; border: 0; border-radius: 22px; background: #FFFFFF; color: #0C2A30; font: 600 13.5px/1 Figtree, system-ui, sans-serif; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.500-5.800"></path><path d="M4 4v4.500h4.500"></path></svg>
+<span>Replay</span>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 8px 20px 28px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; line-height: 18px; font-weight: 600; color: #0B5567">Block 1 · foundations</div>
+<h1 style="margin: 0; font: 700 34px/38px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">Git &amp; GitHub</h1>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 24px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 10px 28px rgba(12,42,48,0.08)">
+<svg width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="3 of 12 lessons done" style="flex: none">
+<circle cx="32" cy="32" r="26" fill="none" stroke="#DCE6E7" stroke-width="7"></circle>
+<circle cx="32" cy="32" r="26" fill="none" stroke="#43B4C8" stroke-width="7" stroke-linecap="round" stroke-dasharray="163.36 163.36" stroke-dashoffset="122.52" transform="rotate(-90 32 32)" style="animation: ring{{v}} 900ms ease-out 150ms both"></circle>
+<text x="32" y="37" text-anchor="middle" font-family="'Bricolage Grotesque', Figtree, sans-serif" font-size="15" font-weight="700" fill="#0C2A30">3/12</text>
+</svg>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12.5px; line-height: 18px; color: #5E777D">Next up · lesson 4</div>
+<div style="font-size: 16.5px; line-height: 22px; font-weight: 600">Read history to answer a question</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; padding: 0 20px 20px">
+<sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+<div style="display: flex; flex-direction: column; opacity: {{row.o}}; transform: {{row.t}}; transition: opacity 420ms ease-out, transform 420ms ease-out">
+
+<div style="display: {{row.labelDisplay}}; height: 36px; align-items: center; gap: 14px">
+<span style="width: 28px; flex: none; align-self: stretch; display: flex; justify-content: center"><span style="width: 2px; background: {{row.labelLine}}"></span></span>
+<span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5E777D">{{row.label}}</span>
+</div>
+
+<div style="height: 64px; display: flex; align-items: stretch; gap: 14px">
+<span style="width: 28px; flex: none; display: flex; flex-direction: column; align-items: center">
+<span style="flex: 1; width: 2px; display: flex; background: {{row.topTrack}}"><span style="flex: 1; background: {{row.topFill}}; transform-origin: 50% 0; animation: {{row.topAnim}}"></span></span>
+<span role="img" aria-label="{{row.state}}" style="width: 24px; height: 24px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid {{row.ring}}; background: {{row.nodeBg}}; color: {{row.nodeFg}}; font: 500 10.5px/1 'JetBrains Mono', ui-monospace, monospace; animation: {{row.nodeAnim}}">{{row.mark}}</span>
+<span style="flex: 1; width: 2px; display: flex; background: {{row.botTrack}}"><span style="flex: 1; background: {{row.botFill}}; transform-origin: 50% 0; animation: {{row.botAnim}}"></span></span>
+</span>
+<span style="flex: 1; min-width: 0; margin: 4px 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: {{row.pad}}; border-radius: 16px; background: {{row.cardBg}}; box-shadow: {{row.shadow}}; color: {{row.fg}}; font-size: 15px; line-height: 20px; font-weight: {{row.w}}">
+<span style="min-width: 0">{{row.title}}</span>
+<span style="display: {{row.tagDisplay}}; flex: none; height: 24px; align-items: center; padding: 0 10px; border-radius: 12px; background: #DDF3F7; color: #0B5567; font-size: 12px; font-weight: 600">Next</span>
+</span>
+</div>
+
+</div>
+</sc-for>
+
+<div style="margin-top: 20px; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 24px; background: #0A3B46; color: #FFFFFF; opacity: {{endO}}; transform: {{endT}}; transition: opacity 480ms ease-out, transform 480ms cubic-bezier(0.2, 1.2, 0.4, 1)">
+<div style="font-size: 12.5px; line-height: 18px; font-weight: 600; color: #7FD6E6">After lesson 12</div>
+<div style="font: 600 20px/26px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em; text-wrap: balance">A repository a new teammate can run from the README alone</div>
+</div>
+</div>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+var self = this;
+var st = this.state || {};
+var s = st.s || 0;
+var run = st.run || 0;
+var v = run % 2 === 0 ? 'A' : 'B';
+var still = false;
+try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+var data = [
+['Install Git and make your first commit', 'Save and read your work'],
+['See what changed before you save it', ''],
+['Commit small and say why', ''],
+['Read history to answer a question', ''],
+['Try an idea on a branch', 'Branch, merge and share'],
+['Merge it back and fix a conflict', ''],
+['Put the project on GitHub', ''],
+['Stay in sync with a teammate', ''],
+['Open a pull request and respond to review', ''],
+['Park unfinished work', 'Handle real situations'],
+['Undo a mistake safely', ''],
+['Hand over a clean repository', '']
+];
+var CUR = 3;
+var SEG = 110;
+var top = 296;
+var rows = data.map(function (d, i) {
+var isDone = i < CUR;
+var isCur = i === CUR;
+var hasLabel = d[1] !== '';
+var rowTop = top;
+top += 64 + (hasLabel ? 36 : 0);
+var seen = still || rowTop < s + 790;
+var t0 = 250 + i * 2 * SEG;
+function grow(delay) { return 'grow' + v + ' ' + SEG + 'ms linear ' + delay + 'ms both'; }
+return {
+title: d[0],
+label: d[1],
+labelDisplay: hasLabel ? 'flex' : 'none',
+labelLine: i === 0 ? 'transparent' : '#C9D8DB',
+o: seen ? 1 : 0,
+t: seen ? 'translateY(0)' : 'translateY(18px)',
+state: isDone ? 'Done' : (isCur ? 'Next' : 'Not started'),
+mark: isDone ? '✓' : (isCur ? '' : String(i + 1)),
+ring: isDone ? '#0A3B46' : (isCur ? '#43B4C8' : '#B4C7CB'),
+nodeBg: isDone ? '#0A3B46' : (isCur ? '#43B4C8' : '#FFFFFF'),
+nodeFg: isDone ? '#FFFFFF' : '#45626A',
+nodeAnim: isDone ? 'pop' + v + ' 360ms cubic-bezier(0.2, 1.3, 0.4, 1) ' + (t0 + (i === 0 ? 0 : SEG)) + 'ms both' : (isCur ? 'pop' + v + ' 360ms cubic-bezier(0.2, 1.3, 0.4, 1) ' + (t0 + SEG) + 'ms both, here 1.8s ease-out ' + (t0 + SEG + 500) + 'ms infinite' : 'none'),
+topTrack: i === 0 ? 'transparent' : (i <= CUR ? 'transparent' : '#C9D8DB'),
+topFill: i > 0 && i <= CUR ? '#0A3B46' : 'transparent',
+topAnim: i > 0 && i <= CUR ? grow(t0) : 'none',
+botTrack: i === data.length - 1 ? 'transparent' : (isDone ? 'transparent' : '#C9D8DB'),
+botFill: isDone ? '#0A3B46' : 'transparent',
+botAnim: isDone ? grow(t0 + SEG) : 'none',
+pad: isCur ? '0 14px' : '0',
+cardBg: isCur ? '#FFFFFF' : 'transparent',
+shadow: isCur ? '0 1px 2px rgba(12,42,48,0.06), 0 8px 20px rgba(12,42,48,0.08)' : 'none',
+fg: isDone ? '#5E777D' : '#0C2A30',
+w: isCur ? 600 : 400,
+tagDisplay: isCur ? 'flex' : 'none'
+};
+});
+var endSeen = still || top + 20 < s + 810;
+return {
+v: v,
+rows: rows,
+barBg: s > 30 ? 'rgba(238,243,243,1)' : 'rgba(238,243,243,0)',
+barShadow: s > 30 ? '0 6px 18px rgba(12,42,48,0.1)' : 'none',
+barTitleO: s > 70 ? 1 : 0,
+barTitleT: s > 70 ? 'translateY(0)' : 'translateY(8px)',
+endO: endSeen ? 1 : 0,
+endT: endSeen ? 'scale(1)' : 'scale(0.92)',
+onScroll: function (e) {
+self._y = e.currentTarget.scrollTop;
+if (self._raf) { return; }
+self._raf = requestAnimationFrame(function () {
+self._raf = null;
+self.setState({ s: self._y });
+});
+},
+replay: function () {
+self.setState({ run: run + 1 });
+}
+};
+}
+}
+</script>
+</body>
+</html>

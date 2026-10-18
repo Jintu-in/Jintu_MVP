@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review cards</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+@keyframes cardA { 0% { transform: translateX(24px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@keyframes cardB { 0% { transform: translateX(24px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@keyframes flip { 0% { transform: perspective(900px) rotateY(-78deg); opacity: 0.3 } 100% { transform: perspective(900px) rotateY(0deg); opacity: 1 } }
+@keyframes pop { 0% { transform: scale(0.2) } 60% { transform: scale(1.18) } 100% { transform: scale(1) } }
+@keyframes showA { 0% { transform: translateY(8px); opacity: 0 } 100% { transform: translateY(0); opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px">
+<a href="V2Today.dc.html" aria-label="Back to today" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 15px; line-height: 20px; font-weight: 600">Review</div>
+<div style="font-size: 12.5px; line-height: 18px; color: #5E777D">Two minutes, before today's lesson</div>
+</div>
+<div style="height: 32px; display: flex; align-items: center; padding: 0 12px; border-radius: 16px; background: #FFFFFF; font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace; color: #0C2A30">{{due}}</div>
+</div>
+
+<div style="flex: none; display: flex; gap: 4px; padding: 0 20px" role="img" aria-label="{{progressLabel}}">
+<sc-for list="{{ pills }}" as="pill" hint-placeholder-count="3">
+<div style="flex: 1; height: 6px; border-radius: 3px; background: {{pill.bg}}; transition: background 320ms ease-out"></div>
+</sc-for>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; padding: 28px 20px 0">
+
+<sc-if value="{{ active }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 28px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 14px 32px rgba(12,42,48,0.1); animation: {{cardAnim}}">
+<div style="font-size: 12.5px; line-height: 18px; font-weight: 600; color: #0B5567">{{from}}</div>
+<h1 style="margin: 0; font: 600 23px/30px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em; text-wrap: balance">{{front}}</h1>
+
+<sc-if value="{{ hidden }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px dashed #B4C7CB; border-radius: 16px; font-size: 14.5px; line-height: 21px; color: #45626A">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#45626A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="8.500"></circle><path d="M12 8v4.500l3 1.800"></path></svg>
+<span>Answer in your head first. Recalling it is the exercise.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; animation: showA 260ms ease-out both">
+<div style="display: flex; gap: 10px; padding: 14px 16px; border-radius: 16px; background: #0A1F24; font: 500 14px/22px 'JetBrains Mono', ui-monospace, monospace; color: #FFFFFF; overflow-wrap: anywhere"><span aria-hidden="true" style="flex: none; color: #43B4C8">{{prompt}}</span><span style="min-width: 0">{{back}}</span></div>
+<div style="font-size: 15px; line-height: 22px; color: #45626A">{{why}}</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ finished }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 28px 24px; border-radius: 28px; background: #0A3B46; color: #FFFFFF; animation: showA 320ms ease-out both">
+<div aria-hidden="true" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFB627; animation: pop 520ms cubic-bezier(0.2, 1.3, 0.4, 1) 160ms both"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3D2600" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+<div style="font: 700 28px/32px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">Nothing due</div>
+<div style="font-size: 15.5px; line-height: 23px; color: #C2DDE2">The ones you found hard come back sooner. The easy ones wait longer.</div>
+</div>
+</sc-if>
+
+</div>
+
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<sc-if value="{{ hidden }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ reveal }}" style="width: 100%; height: 56px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 16px; background: #43B4C8; color: #06262C; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer">Show the answer</button>
+</sc-if>
+<sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="How well did you remember it?" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ ratings }}" as="rate" hint-placeholder-count="4">
+<button onClick="{{ rate.pick }}" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 1.5px solid {{rate.ring}}; border-radius: 16px; background: {{rate.bg}}; color: {{rate.fg}}; cursor: pointer; animation: showA 240ms ease-out {{rate.delay}} both">
+<span style="font: 600 14.5px/1 Figtree, system-ui, sans-serif">{{rate.label}}</span>
+<span style="font: 400 11.5px/1 Figtree, system-ui, sans-serif; opacity: 0.8">{{rate.hint}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ finished }}" hint-placeholder-val="{{ false }}">
+<a href="V2Step.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: #43B4C8; color: #06262C; font-size: 16.5px; font-weight: 600; text-decoration: none">Go to today's lesson</a>
+</sc-if>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+var self = this;
+var st = this.state || {};
+var i = st.i || 0;
+var shown = !!st.shown;
+var cards = [
+{ from: 'From lesson 2 · See what changed before you save it', front: 'Which command shows exactly what your next commit will contain?', prompt: '$', back: 'git diff --staged', why: 'It shows only the changes you chose with git add.' },
+{ from: 'From lesson 1 · Install Git and make your first commit', front: 'Git says a file is untracked. What does that mean?', prompt: '', back: 'Git can see the file but is not recording it yet.', why: 'git add chooses it for the next commit.' },
+{ from: 'From lesson 2 · See what changed before you save it', front: 'You ran git add on the wrong file. How do you take it back out and keep your edit?', prompt: '$', back: 'git restore --staged <file>', why: 'Your edit stays in the file. git status shows this command as a reminder.' }
+];
+var finished = i >= cards.length;
+var cur = finished ? cards[0] : cards[i];
+var left = finished ? 0 : cards.length - i;
+function rate(label, hint, strong, order) {
+return {
+delay: (order * 50) + 'ms',
+label: label,
+hint: hint,
+bg: strong ? '#43B4C8' : '#FFFFFF',
+fg: strong ? '#06262C' : '#0C2A30',
+ring: strong ? '#43B4C8' : '#C5D5D8',
+pick: function () { self.setState({ i: i + 1, shown: false }); }
+};
+}
+return {
+v: i % 2 === 0 ? 'A' : 'B',
+due: left + ' due',
+progressLabel: (cards.length - left) + ' of ' + cards.length + ' cards done',
+pills: cards.map(function (c, k) { return { bg: k < i ? '#0A3B46' : (k === i ? '#43B4C8' : '#D3DFE1') }; }),
+active: !finished,
+finished: finished,
+hidden: !finished && !shown,
+revealed: !finished && shown,
+from: cur.from,
+front: cur.front,
+prompt: cur.prompt,
+back: cur.back,
+why: cur.why,
+ratings: [rate('Again', 'blank', false, 0), rate('Hard', 'barely', false, 1), rate('Good', 'got it', false, 2), rate('Easy', 'instant', false, 3)],
+cardAnim: !finished && shown ? 'flip 420ms cubic-bezier(0.2, 0.9, 0.3, 1) both' : 'card' + (i % 2 === 0 ? 'A' : 'B') + ' 320ms ease-out both',
+reveal: function () { self.setState({ shown: true }); },
+again: function () { self.setState({ i: 0, shown: false }); }
+};
+}
+}
+</script>
+</body>
+</html>

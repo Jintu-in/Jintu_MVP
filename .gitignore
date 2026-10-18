@@ -55,3 +55,4 @@ docs/*.pdf
 docs/*.zip
 supabase/migrations.old/
 docs/tracks/
+assets/Finance/*.csv

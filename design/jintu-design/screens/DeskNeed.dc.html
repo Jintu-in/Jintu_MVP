@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First run, what you need most, on desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; box-sizing: border-box; display: flex; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif; ">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="height: 88px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 48px">
+<div style="width: 160px; display: flex"><a href="DeskGoal.dc.html" aria-label="Back" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="display: flex; gap: 6px" role="img" aria-label="Question 2 of 2"><span style="width: 56px; height: 6px; border-radius: 3px; background: #0A3B46"></span><span style="width: 56px; height: 6px; border-radius: 3px; background: #0A3B46"></span></span><span style="font: 400 13px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">2 of 2</span></div>
+<div style="width: 160px; display: flex; justify-content: flex-end"><a href="DeskNew.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 14px; font-size: 15px; font-weight: 600; text-decoration: none">Skip</a></div>
+</div>
+<div style="flex: 1; min-height: 0; display: flex; justify-content: center; padding: 56px 48px 0; overflow: hidden">
+<div style="width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; font: 700 48px/52px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.03em">What do you need most right now?</h1>
+<p style="margin: 0; font-size: 18px; line-height: 28px; color: #45626A">One answer. It decides what your home screen shows first.</p>
+</div>
+<div role="radiogroup" aria-label="What you need most" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{ needs }}" as="need" hint-placeholder-count="4">
+<button role="radio" aria-checked="{{need.on}}" onClick="{{ need.pick }}" style="min-height: 96px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 12px 20px; border: 2px solid {{need.ring}}; border-radius: 24px; background: #FFFFFF; color: #0C2A30; text-align: left; cursor: pointer; transition: border-color 160ms ease-out">
+<span aria-hidden="true" style="width: 48px; height: 48px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: {{need.dot}}; color: {{need.dotFg}}; font: 600 17px/1 'JetBrains Mono', ui-monospace, monospace; transition: background 160ms ease-out, color 160ms ease-out">{{need.mark}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font: 600 18px/24px Figtree, system-ui, sans-serif">{{need.title}}</span>
+<span style="font: 400 15px/21px Figtree, system-ui, sans-serif; color: #45626A">{{need.gives}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 20px 20px 24px; border-radius: 24px; background: #DDF3F7; color: #0A3B46">
+<div style="min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 14px; line-height: 20px; font-weight: 600; color: #0B5567">Your home screen will open on</div>
+<div style="font: 600 24px/30px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">{{opens}}</div>
+</div>
+<a href="DeskNew.dc.html" style="height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 32px; border-radius: 16px; background: #43B4C8; color: #06262C; border: 0; font-size: 16.5px; font-weight: 600; text-decoration: none; "><span>Finish</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+var self = this;
+var st = this.state || {};
+var cur = st.need || 'start';
+var items = [
+{ k: 'start', mark: '1', title: 'Tell me where to start', gives: 'One path, in order', opens: 'Your path, with the first lesson ready' },
+{ k: 'finish', mark: '2', title: 'Help me finish what I start', gives: 'A streak and one reminder a day', opens: 'Your streak and this week' },
+{ k: 'time', mark: '3', title: 'Fit it into 15 minutes', gives: 'Short lessons, one step at a time', opens: 'Today, one 15-minute lesson' },
+{ k: 'show', mark: '4', title: 'Something to show for it', gives: 'A profile and cards you can share', opens: 'Your profile and share card' }
+];
+var chosen = items[0];
+items.forEach(function (it) { if (it.k === cur) { chosen = it; } });
+return {
+opens: chosen.opens,
+needs: items.map(function (it) {
+var on = it.k === cur;
+return {
+title: it.title,
+gives: it.gives,
+mark: on ? '✓' : '',
+on: on ? 'true' : 'false',
+ring: on ? '#0A3B46' : '#FFFFFF',
+dot: on ? '#0A3B46' : '#EEF3F3',
+dotFg: on ? '#FFFFFF' : '#45626A',
+pick: function () { self.setState({ need: it.k }); }
+};
+})
+};
+}
+}
+</script>
+</body>
+</html>

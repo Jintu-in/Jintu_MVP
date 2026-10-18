@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tabs, sliding marker and loading shapes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+@keyframes inR { 0% { transform: translateX(26px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@keyframes inL { 0% { transform: translateX(-26px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@keyframes pulse { 0% { opacity: 1 } 100% { opacity: 0.45 } }
+@keyframes hopA { 0% { transform: translateY(0) } 40% { transform: translateY(-5px) } 100% { transform: translateY(0) } }
+@keyframes hopB { 0% { transform: translateY(0) } 40% { transform: translateY(-5px) } 100% { transform: translateY(0) } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 76px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px 0">
+<h1 style="margin: 0; font: 700 30px/36px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">{{title}}</h1>
+<div style="height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 16px; background: #FFF1D1; color: #6B4200; font-size: 13.5px; font-weight: 600" role="img" aria-label="3 day streak">
+<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 3.6 5 5.6 5 10.2a5 5 0 0 1-10 0c0-1.7.6-3 1.6-4 .3 1.5 1 2.4 2 2.7C10.4 8.4 10.8 5 12 2z" fill="#F29D00"></path></svg>
+<span>3</span>
+</div>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; padding: 12px 20px 0">
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+<div aria-label="Loading" role="status" style="display: flex; flex-direction: column; gap: 12px; animation: pulse 700ms ease-in-out infinite alternate">
+<sc-for list="{{ bones }}" as="bone" hint-placeholder-count="3">
+<div style="height: 92px; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 50%; background: #DCE6E7"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+<span style="width: {{bone.a}}; height: 10px; border-radius: 5px; background: #DCE6E7"></span>
+<span style="width: {{bone.b}}; height: 14px; border-radius: 7px; background: #C5D5D8"></span>
+<span style="width: {{bone.c}}; height: 10px; border-radius: 5px; background: #DCE6E7"></span>
+</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px; animation: in{{dir}} 340ms ease-out both">
+<sc-for list="{{ cards }}" as="card" hint-placeholder-count="3">
+<div style="min-height: 92px; box-sizing: border-box; display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 8px 20px rgba(12,42,48,0.06)">
+<span aria-hidden="true" style="width: 48px; height: 48px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: {{card.bg}}; color: {{card.fg}}; font: 600 15px/1 'JetBrains Mono', ui-monospace, monospace">{{card.badge}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12.5px; line-height: 18px; font-weight: 600; color: #0B5567">{{card.kicker}}</span>
+<span style="font-size: 16.5px; line-height: 22px; font-weight: 600">{{card.title}}</span>
+<span style="font-size: 13.5px; line-height: 19px; color: #45626A">{{card.sub}}</span>
+</span>
+</div>
+</sc-for>
+<div style="padding: 4px 4px 0; font-size: 13.5px; line-height: 20px; color: #5E777D">{{foot}}</div>
+</div>
+</sc-if>
+
+</div>
+
+<nav aria-label="Main" style="position: relative; height: 72px; flex: none; display: flex; align-items: stretch; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<span aria-hidden="true" style="position: absolute; left: 0; top: 10px; width: 64px; height: 32px; border-radius: 16px; background: #DDF3F7; transform: {{markT}}; transition: transform 360ms cubic-bezier(0.3, 1.25, 0.5, 1)"></span>
+<button onClick="{{ t0.go }}" aria-current="{{t0.current}}" style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; padding: 0; background: transparent; color: {{t0.fg}}; font: {{t0.w}} 11.5px/14px Figtree, system-ui, sans-serif; cursor: pointer; transition: color 200ms ease-out">
+<span style="height: 32px; display: flex; align-items: center; justify-content: center; animation: {{t0.anim}}">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
+</span>
+<span>Today</span>
+</button>
+<button onClick="{{ t1.go }}" aria-current="{{t1.current}}" style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; padding: 0; background: transparent; color: {{t1.fg}}; font: {{t1.w}} 11.5px/14px Figtree, system-ui, sans-serif; cursor: pointer; transition: color 200ms ease-out">
+<span style="height: 32px; display: flex; align-items: center; justify-content: center; animation: {{t1.anim}}">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"></path><path d="M4 18a2 2 0 1 0 4 0a2 2 0 1 0-4 0M16 6a2 2 0 1 0 4 0a2 2 0 1 0-4 0"></path></svg>
+</span>
+<span>Roadmaps</span>
+</button>
+<button onClick="{{ t2.go }}" aria-current="{{t2.current}}" style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; padding: 0; background: transparent; color: {{t2.fg}}; font: {{t2.w}} 11.5px/14px Figtree, system-ui, sans-serif; cursor: pointer; transition: color 200ms ease-out">
+<span style="height: 32px; display: flex; align-items: center; justify-content: center; animation: {{t2.anim}}">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z"></path><path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+</span>
+<span>Roles</span>
+</button>
+<button onClick="{{ t3.go }}" aria-current="{{t3.current}}" style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; padding: 0; background: transparent; color: {{t3.fg}}; font: {{t3.w}} 11.5px/14px Figtree, system-ui, sans-serif; cursor: pointer; transition: color 200ms ease-out">
+<span style="height: 32px; display: flex; align-items: center; justify-content: center; animation: {{t3.anim}}">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 9a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0"></path><path d="M5 19c1.2-3 4-4.5 7-4.5s5.8 1.5 7 4.5"></path></svg>
+</span>
+<span>Profile</span>
+</button>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+componentWillUnmount() {
+clearTimeout(this._t);
+}
+renderVals() {
+var self = this;
+var st = this.state || {};
+var i = st.i || 0;
+var n = st.n || 0;
+var loading = !!st.loading;
+var still = false;
+try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+var amber = ['#FFF1D1', '#6B4200'];
+var teal = ['#DDF3F7', '#0B5567'];
+var deep = ['#0A3B46', '#FFFFFF'];
+var soft = ['#EEF3F3', '#45626A'];
+function card(c, badge, kicker, title, sub) { return { bg: c[0], fg: c[1], badge: badge, kicker: kicker, title: title, sub: sub }; }
+var pages = [
+{
+name: 'Today',
+foot: 'Tap another tab to see the marker slide.',
+cards: [
+card(amber, '3', 'Day streak', 'One lesson today makes it 4', 'Wed, Thu and Fri done'),
+card(deep, '4', 'Git & GitHub · lesson 4 of 12', 'Read history to answer a question', 'About 15 minutes'),
+card(teal, '3', 'Review', '3 cards due', 'Two minutes, before the lesson')
+]
+},
+{
+name: 'Roadmaps',
+foot: 'One roadmap is open at relaunch. The rest follow.',
+cards: [
+card(deep, 'G', 'Open now', 'Git & GitHub', '3 of 12 lessons · about 15 min each'),
+card(soft, 'D', 'Opening next', 'DSA starter', 'Being written'),
+card(soft, 'L', 'Opening next', 'Linux command line', 'Being rebuilt'),
+card(soft, 'J', 'Opening next', 'Java', 'Being rebuilt')
+]
+},
+{
+name: 'Roles',
+foot: '60 roles in 10 groups.',
+cards: [
+card(teal, 'SE', 'Build software', 'Associate software engineer', 'First block open: Git & GitHub'),
+card(soft, 'DA', 'Work with data', 'Data analyst', 'Often confused with business analyst'),
+card(soft, 'BA', 'Work with data', 'Business analyst', 'Often confused with product analyst'),
+card(soft, 'PA', 'Work with data', 'Product analyst', 'Often confused with analytics engineer')
+]
+},
+{
+name: 'Profile',
+foot: 'Your public page: jintu.in/u/asha',
+cards: [
+card(teal, 'AV', 'jintu.in/u/asha', 'Asha Verma', '3 day streak · 75 points'),
+card(amber, '3', 'Last 5 weeks', '3 days learned', '3 lessons finished'),
+card(soft, '✓', 'Finished in Git & GitHub', 'Commit small and say why', 'Lesson 3')
+]
+}
+];
+var cur = pages[i];
+var tabs = pages.map(function (p, k) {
+var on = k === i;
+return {
+name: p.name,
+current: on ? 'page' : 'false',
+fg: on ? '#0B5567' : '#5E777D',
+w: on ? 600 : 500,
+anim: on && n > 0 ? 'hop' + (n % 2 === 0 ? 'A' : 'B') + ' 420ms ease-out' : 'none',
+go: function () {
+if (k === i) { return; }
+clearTimeout(self._t);
+if (still) { self.setState({ i: k, n: n + 1, loading: false }); return; }
+self.setState({ i: k, n: n + 1, dir: k > i ? 'R' : 'L', loading: true });
+self._t = setTimeout(function () { self.setState({ loading: false }); }, 520);
+}
+};
+});
+return {
+t0: tabs[0], t1: tabs[1], t2: tabs[2], t3: tabs[3],
+title: cur.name,
+loading: loading,
+ready: !loading,
+dir: st.dir || 'R',
+cards: cur.cards,
+foot: cur.foot,
+bones: [{ a: '38%', b: '82%', c: '56%' }, { a: '46%', b: '70%', c: '40%' }, { a: '30%', b: '76%', c: '50%' }],
+markT: 'translateX(' + (i * 97.5 + 16.75) + 'px)'
+};
+}
+}
+</script>
+</body>
+</html>

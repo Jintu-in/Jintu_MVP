@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson step, working out a number (Startup finance)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; box-sizing: border-box; display: flex; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif; flex-direction: column">
+<div style="height: 64px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px">
+<a href="V2Roadmaps.dc.html" aria-label="Back to the roadmap" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 15px; line-height: 20px; font-weight: 600">Sample lesson</div>
+<div style="font-size: 12.5px; line-height: 18px; color: #5E777D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Startup finance & fundraising</div>
+</div>
+<div style="height: 32px; flex: none; display: flex; align-items: center; padding: 0 12px; border-radius: 16px; background: #FFFFFF; font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace; color: #0C2A30">3 / 6</div>
+</div>
+<div style="flex: none; display: flex; gap: 4px; padding: 0 20px" role="img" aria-label="2 of 6 steps done, step 3 in progress"><div style="flex: 1; height: 6px; border-radius: 3px; background: #0A3B46"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #0A3B46"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #43B4C8"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div></div>
+<div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 24px 20px 0">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 13px; line-height: 18px; font-weight: 600; color: #0B5567">Step 3</span><span style="height: 22px; display: flex; align-items: center; padding: 0 9px; border-radius: 11px; background: #DCE6E7; color: #45626A; font-size: 11.5px; font-weight: 600">Number</span></div>
+<h1 style="margin: 0; font: 600 26px/31px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em; text-wrap: balance">Work out the post-money valuation</h1>
+</div>
+<div style="display: flex; flex-direction: column; padding: 14px 16px 18px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 10px 28px rgba(12,42,48,0.08)">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #5E777D">The deal</div>
+<div style="margin-top: 8px; display: flex; flex-direction: column"><div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 28px; font-size: 15px; line-height: 22px"><span style="color: #45626A">A fund invests</span><span style="font: 500 15px/22px 'JetBrains Mono', ui-monospace, monospace">₹2 crore</span></div><div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 28px; font-size: 15px; line-height: 22px"><span style="color: #45626A">Pre-money valuation</span><span style="font: 500 15px/22px 'JetBrains Mono', ui-monospace, monospace">₹8 crore</span></div></div>
+<div style="height: 1px; margin: 14px 0; background: #DCE6E7"></div>
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #5E777D">Your answer</div>
+<div style="margin-top: 10px; display: flex; gap: 10px"><label for="un-post" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; line-height: 18px; font-weight: 600">Post-money</span><span style="display: flex; align-items: center; gap: 8px; height: 52px; box-sizing: border-box; padding: 0 12px; border: 2px solid #0B5567; border-radius: 14px; background: #FFFFFF"><input id="un-post" type="text" inputmode="decimal" value="10" style="flex: 1; min-width: 0; width: 100%; border: 0; outline: 0; padding: 0; background: transparent; color: #0C2A30; font: 500 18px/1 'JetBrains Mono', ui-monospace, monospace"><span style="flex: none; font-size: 13.5px; color: #45626A">₹ crore</span></span></label><label for="un-share" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; line-height: 18px; font-weight: 600">The fund owns</span><span style="display: flex; align-items: center; gap: 8px; height: 52px; box-sizing: border-box; padding: 0 12px; border: 2px solid #0B5567; border-radius: 14px; background: #FFFFFF"><input id="un-share" type="text" inputmode="decimal" value="20" style="flex: 1; min-width: 0; width: 100%; border: 0; outline: 0; padding: 0; background: transparent; color: #0C2A30; font: 500 18px/1 'JetBrains Mono', ui-monospace, monospace"><span style="flex: none; font-size: 13.5px; color: #45626A">%</span></span></label></div>
+<div style="height: 1px; margin: 14px 0; background: #DCE6E7"></div>
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #5E777D">Check your working</div>
+<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px; font: 400 14px/22px 'JetBrains Mono', ui-monospace, monospace">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 6px 4px 10px; border-radius: 8px; background: #DDF3F7"><span>8 + 2 = 10</span><span style="flex: none; padding: 0 8px; border-radius: 9px; background: #43B4C8; color: #06262C; font: 600 11px/18px Figtree, system-ui, sans-serif">post-money</span></div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 6px 4px 10px; border-radius: 8px; background: #DDF3F7"><span>2 ÷ 10 = 20%</span><span style="flex: none; padding: 0 8px; border-radius: 9px; background: #43B4C8; color: #06262C; font: 600 11px/18px Figtree, system-ui, sans-serif">the fund's share</span></div>
+</div>
+</div>
+<div style="padding: 14px 16px; border-radius: 16px; background: #FFFFFF; font-size: 15px; line-height: 22px">Post-money is pre-money plus the money that came in. This teaches the method. It is not investment advice.</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" style="height: 44px; display: flex; align-items: center; padding: 0 16px; border: 1px solid #DCE6E7; border-radius: 22px; background: #FFFFFF; color: #0C2A30; font: 500 14px/1 Figtree, system-ui, sans-serif; cursor: pointer">I got something else</button>
+<button type="button" style="height: 44px; display: flex; align-items: center; padding: 0 16px; border: 0; border-radius: 22px; background: #DDF3F7; color: #0B5567; font: 600 14px/1 Figtree, system-ui, sans-serif; cursor: pointer">Ask about this step</button>
+</div>
+</div>
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<button type="button" style="width: 100%; box-sizing: border-box; height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 28px; border-radius: 16px; background: #43B4C8; color: #06262C; border: 0; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer; "><span>I got ₹10 crore and 20%</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

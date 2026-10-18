@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Delete account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; box-sizing: border-box; display: flex; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif; flex-direction: column">
+<div style="height: 64px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px"><a href="V2Settings.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a><div style="flex: 1"></div></div>
+<div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 0">
+<h1 style="margin: 0; font: 700 30px/35px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.025em">Delete your account?</h1>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 20px; background: #FFFFFF">
+<div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5E777D">This removes</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column"><li style="display: flex; align-items: center; gap: 12px; min-height: 32px; font-size: 16px; line-height: 24px"><span aria-hidden="true" style="width: 8px; height: 8px; flex: none; border-radius: 50%; background: #A4371A"></span><span>3 days of progress</span></li><li style="display: flex; align-items: center; gap: 12px; min-height: 32px; font-size: 16px; line-height: 24px"><span aria-hidden="true" style="width: 8px; height: 8px; flex: none; border-radius: 50%; background: #A4371A"></span><span>3 saved links</span></li><li style="display: flex; align-items: center; gap: 12px; min-height: 32px; font-size: 16px; line-height: 24px"><span aria-hidden="true" style="width: 8px; height: 8px; flex: none; border-radius: 50%; background: #A4371A"></span><span>your public profile</span></li><li style="display: flex; align-items: center; gap: 12px; min-height: 32px; font-size: 16px; line-height: 24px"><span aria-hidden="true" style="width: 8px; height: 8px; flex: none; border-radius: 50%; background: #A4371A"></span><span>your account</span></li></ul>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 20px; border-radius: 20px; background: #FFF1D1; color: #3D2600">
+<div style="font-size: 15.5px; line-height: 23px">This is immediate and cannot be undone. Download your data first if you want it.</div>
+<button type="button" style="height: 48px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; border-radius: 14px; background: #FFFFFF; color: #0C2A30; border: 1px solid #C5D5D8; font: 600 15px/1 Figtree, system-ui, sans-serif; cursor: pointer; "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="M8 11l4 4 4-4"></path><path d="M5 19h14"></path></svg><span>Download everything first</span></button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="V2-confirm" style="font-size: 14.5px; line-height: 21px; font-weight: 600">Type <span style="font: 500 14px/21px 'JetBrains Mono', ui-monospace, monospace">asha@example.com</span> to confirm</label>
+<input id="V2-confirm" type="email" style="height: 56px; box-sizing: border-box; padding: 0 16px; border: 1px solid #C5D5D8; border-radius: 16px; background: #FFFFFF; color: #0C2A30; font: 400 16px/1 Figtree, system-ui, sans-serif">
+</div>
+<button type="button" style="width: 100%; box-sizing: border-box; height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 28px; border-radius: 16px; background: #D3DFE1; color: #45626A; border: 0; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer; "><span>Delete my account</span></button>
+<a href="V2Settings.dc.html" style="align-self: center; min-height: 44px; display: flex; align-items: center; font-size: 15px; font-weight: 600">Cancel, keep my account</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

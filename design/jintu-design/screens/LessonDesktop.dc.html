@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 1 on a laptop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+a{color:#17758A}a:hover{color:#175E6E}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F7F7F7; color: #231F20; font-family: Inter, system-ui, sans-serif">
+
+<div style="height: 56px; flex: none; display: flex; align-items: center; gap: 20px; padding: 0 24px; background: #FFFFFF; border-bottom: 1px solid #EDEDED">
+<a href="Catalogue.dc.html" style="display: flex; align-items: center; gap: 8px; height: 48px; text-decoration: none; color: #17758A; font-size: 17px; font-weight: 500">
+<span aria-hidden="true" style="width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #17758A; color: #FFFFFF; font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace">J</span>
+<span>jintu</span>
+</a>
+<div style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; color: #585556"><a href="Block.dc.html" style="text-decoration: none">Git &amp; GitHub</a> <span aria-hidden="true" style="color: #8D8B8B">/</span> <span style="color: #231F20">Install Git and make your first commit</span></div>
+<div style="font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #585556">lesson 1 of 12 · 4 of 8 steps</div>
+</div>
+
+<div style="flex: none; display: flex; gap: 3px; background: #FFFFFF; border-bottom: 1px solid #EDEDED" role="img" aria-label="4 of 8 steps done, step 5 in progress">
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #43B4C8"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex">
+
+<nav aria-label="Steps in this lesson" style="width: 248px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; gap: 2px; padding: 24px 12px; border-right: 1px solid #EDEDED">
+<div style="padding: 0 12px 10px; font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">Steps</div>
+<a href="#s1" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #706D6E; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 20 20" role="img" aria-label="Done" style="flex: none"><circle cx="10" cy="10" r="10" fill="#15803D"></circle><path d="M6 10.2l2.7 2.7L14 7.6" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Check Git is installed</span>
+</a>
+<a href="#s2" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #706D6E; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 20 20" role="img" aria-label="Done" style="flex: none"><circle cx="10" cy="10" r="10" fill="#15803D"></circle><path d="M6 10.2l2.7 2.7L14 7.6" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Tell Git who you are</span>
+</a>
+<a href="#s3" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #706D6E; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 20 20" role="img" aria-label="Done" style="flex: none"><circle cx="10" cy="10" r="10" fill="#15803D"></circle><path d="M6 10.2l2.7 2.7L14 7.6" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Create the project</span>
+</a>
+<a href="#s4" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #706D6E; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 20 20" role="img" aria-label="Done" style="flex: none"><circle cx="10" cy="10" r="10" fill="#15803D"></circle><path d="M6 10.2l2.7 2.7L14 7.6" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span>Create the first file</span>
+</a>
+<a href="#s5" aria-current="step" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; background: #EFFAFC; text-decoration: none; color: #0B333D; font-size: 14px; font-weight: 500">
+<span style="width: 16px; flex: none; text-align: center; font: 500 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #175E6E">5</span>
+<span>Ask Git what it sees</span>
+</a>
+<a href="#s6" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">
+<span style="width: 16px; flex: none; text-align: center; font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">6</span>
+<span>Choose the file</span>
+</a>
+<a href="#s7" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">
+<span style="width: 16px; flex: none; text-align: center; font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">7</span>
+<span>Save the version</span>
+</a>
+<a href="#s8" style="height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">
+<span style="width: 16px; flex: none; text-align: center; font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">8</span>
+<span>Read the history</span>
+</a>
+<div style="height: 1px; margin: 10px 12px; background: #EDEDED"></div>
+<a href="#turn" style="height: 36px; display: flex; align-items: center; padding: 0 12px 0 38px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">Your turn</a>
+<a href="#questions" style="height: 36px; display: flex; align-items: center; padding: 0 12px 0 38px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">Questions</a>
+<a href="#deeper" style="height: 36px; display: flex; align-items: center; padding: 0 12px 0 38px; border-radius: 8px; text-decoration: none; color: #231F20; font-size: 14px">Go deeper</a>
+</nav>
+
+<main style="flex: 1; min-width: 0; display: flex; justify-content: center; padding: 32px 40px 0; background: #FFFFFF; overflow: hidden">
+<div style="width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">step 5 of 8</div>
+<h1 style="margin: 0; font-size: 22px; line-height: 30px; font-weight: 500; letter-spacing: -0.01em">Ask Git what it sees</h1>
+<div style="margin-top: 6px; display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1px solid #DCDBDB; border-radius: 8px; padding: 2px 2px 2px 14px">
+<span aria-hidden="true" style="font: 500 14px/20px 'JetBrains Mono', ui-monospace, monospace; color: #17758A">$</span>
+<code style="flex: 1; min-width: 0; font: 400 14px/20px 'JetBrains Mono', ui-monospace, monospace; color: #231F20">git status</code>
+<button style="height: 44px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 0; background: transparent; color: #17758A; font: 500 13px/20px Inter, system-ui, sans-serif; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+<span>Copy</span>
+</button>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">You should see</div>
+<div style="font-size: 12px; line-height: 16px; color: #175E6E">The marked line is the one to find</div>
+</div>
+<div style="display: flex; flex-direction: column; padding: 12px 14px; background: #F7F7F7; border: 1px solid #EDEDED; border-radius: 8px; font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #585556; overflow-wrap: anywhere">
+<div>On branch main</div>
+<div style="height: 12px"></div>
+<div>No commits yet</div>
+<div style="height: 12px"></div>
+<div>Untracked files:</div>
+<div style="padding-left: 16px">(use "git add &lt;file&gt;..." to include in what will be committed)</div>
+<div style="margin: 2px -8px; padding: 2px 8px 2px 72px; background: #D3F0F6; border-radius: 4px; color: #0B333D; font-weight: 500">README.md</div>
+<div style="height: 12px"></div>
+<div>nothing added to commit but untracked files present (use "git add" to track)</div>
+</div>
+</div>
+
+<p style="margin: 0; font-size: 16px; line-height: 26px; color: #231F20">"Untracked" means Git can see the file but is not recording it yet.</p>
+
+<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 20px; padding-top: 4px">
+<a href="#s6" style="height: 48px; display: flex; align-items: center; justify-content: center; padding: 0 20px; border-radius: 8px; background: #17758A; color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none">I see this. Go to step 6</a>
+<a href="#help" style="font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none">My screen shows something different</a>
+</div>
+
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 6px; padding-top: 24px; border-top: 1px solid #EDEDED">
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">step 6 of 8</div>
+<h2 style="margin: 0; font-size: 22px; line-height: 30px; font-weight: 500; letter-spacing: -0.01em; color: #706D6E">Choose the file for your next version, then look again</h2>
+</div>
+
+</div>
+</main>
+
+<aside aria-label="Your project now" style="width: 320px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; padding: 32px 24px; border-left: 1px solid #EDEDED">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 500">Your project after this step</h2>
+<div style="font-size: 13px; line-height: 20px; color: #585556">If yours looks different, go back one step.</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">Folder</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px; background: #FFFFFF; border: 1px solid #EDEDED; border-radius: 12px; font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #231F20">
+<div>team-notes/</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding-left: 16px"><span style="color: #706D6E">.git/</span><span style="color: #706D6E">hidden</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding-left: 16px"><span>README.md</span><span style="color: #8B4A07">untracked</span></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">History</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px; background: #FFFFFF; border: 1px solid #EDEDED; border-radius: 12px">
+<div style="font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">No commits yet</div>
+<div style="font-size: 13px; line-height: 20px; color: #585556">Your first one arrives in step 7.</div>
+</div>
+</div>
+</aside>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 1 start</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+a{color:#17758A}a:hover{color:#175E6E}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F7F7F7; color: #231F20; font-family: Inter, system-ui, sans-serif">
+
+<div style="height: 56px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 16px 0 4px; background: #FFFFFF; border-bottom: 1px solid #EDEDED">
+<a href="Block.dc.html" aria-label="Back to Git and GitHub" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #231F20">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px">
+<div style="font-size: 14px; line-height: 20px; font-weight: 500">Git &amp; GitHub</div>
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">lesson 1 of 12</div>
+</div>
+<div style="font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #585556">0 of 8 steps</div>
+</div>
+
+<div style="flex: none; display: flex; gap: 3px; padding: 0 16px; background: #FFFFFF; border-bottom: 1px solid #EDEDED" role="img" aria-label="0 of 8 steps done">
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+<div style="flex: 1; height: 4px; background: #EDEDED"></div>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h1 style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 500; letter-spacing: -0.01em; text-wrap: balance">Install Git and make your first commit</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<div style="height: 28px; box-sizing: border-box; display: flex; align-items: center; padding: 0 10px; border: 1px solid #DCDBDB; border-radius: 8px; background: #FFFFFF; font: 400 12.5px/1 'JetBrains Mono', ui-monospace, monospace; color: #585556">15 min</div>
+<div style="height: 28px; box-sizing: border-box; display: flex; align-items: center; padding: 0 10px; border: 1px solid #DCDBDB; border-radius: 8px; background: #FFFFFF; font-size: 13px; line-height: 1; color: #585556">Needs a terminal</div>
+<div style="height: 28px; box-sizing: border-box; display: flex; align-items: center; padding: 0 10px; border: 1px solid #DCDBDB; border-radius: 8px; background: #FFFFFF; font-size: 13px; line-height: 1; color: #585556">No coding needed</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; background: #EFFAFC; border-radius: 12px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #175E6E">You will finish with</div>
+<div style="font-size: 15px; line-height: 24px; color: #0B333D">A project on your own computer with two saved versions, each carrying your name and a reason.</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">Situation</div>
+<p style="margin: 0; font-size: 16px; line-height: 26px; color: #231F20">You have joined a three-person team that keeps its shared notes in plain text files. The team wants every change recorded, with who made it and why. Today you set up the project and save its first version.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 20px; border-top: 1px solid #EDEDED">
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">step 1 of 8</div>
+<h2 style="margin: 0; font-size: 17px; line-height: 24px; font-weight: 500">Check that Git is installed</h2>
+<div style="font-size: 15px; line-height: 24px; color: #585556">Open a terminal and type:</div>
+<div style="margin-top: 4px; display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1px solid #DCDBDB; border-radius: 8px; padding: 2px 2px 2px 14px">
+<span aria-hidden="true" style="font: 500 14px/20px 'JetBrains Mono', ui-monospace, monospace; color: #17758A">$</span>
+<code style="flex: 1; min-width: 0; font: 400 14px/20px 'JetBrains Mono', ui-monospace, monospace; color: #231F20">git --version</code>
+<button aria-label="Copy command" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; padding: 0; background: transparent; color: #585556; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+</button>
+</div>
+</div>
+
+</div>
+
+<div style="flex: none; padding: 16px 20px; background: #FFFFFF; border-top: 1px solid #EDEDED">
+<a href="LessonStep.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #17758A; color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none">I ran it. Show what I should see</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

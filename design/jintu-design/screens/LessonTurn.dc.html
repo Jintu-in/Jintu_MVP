@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 1 your turn</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+a{color:#17758A}a:hover{color:#175E6E}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F7F7F7; color: #231F20; font-family: Inter, system-ui, sans-serif">
+
+<div style="height: 56px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 16px 0 4px; background: #FFFFFF; border-bottom: 1px solid #EDEDED">
+<a href="Block.dc.html" aria-label="Back to Git and GitHub" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #231F20">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px">
+<div style="font-size: 14px; line-height: 20px; font-weight: 500">Git &amp; GitHub</div>
+<div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #706D6E">lesson 1 of 12</div>
+</div>
+<div style="font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #585556">8 of 8 steps</div>
+</div>
+
+<div style="flex: none; display: flex; gap: 3px; padding: 0 16px; background: #FFFFFF; border-bottom: 1px solid #EDEDED" role="img" aria-label="8 of 8 steps done">
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+<div style="flex: 1; height: 4px; background: #231F20"></div>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #175E6E">Your turn · about 5 min</div>
+<h2 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 500; text-wrap: balance">Add your own notes file and save it as a second commit</h2>
+<div style="font-size: 15px; line-height: 24px; color: #585556">This time nobody gives you every command. Use your own name for the file.</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: flex-start; gap: 10px; background: #FFFFFF; border: 1px solid #DCDBDB; border-radius: 8px; padding: 2px 2px 2px 14px">
+<span aria-hidden="true" style="padding-top: 12px; font: 500 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #17758A">$</span>
+<code style="flex: 1; min-width: 0; padding: 12px 0; display: flex; flex-direction: column; font: 400 13px/20px 'JetBrains Mono', ui-monospace, monospace; color: #231F20; overflow-wrap: anywhere">
+<span>mkdir notes</span>
+<span>echo "- Joined the team on Monday" &gt; notes/asha.md</span>
+</code>
+<button aria-label="Copy commands" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; padding: 0; background: transparent; color: #585556; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+</button>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: #231F20">Now add the file, commit it with a message of your own, and run <code style="font: 400 13.5px/20px 'JetBrains Mono', ui-monospace, monospace; background: #EDEDED; border-radius: 4px; padding: 2px 5px">git log --oneline</code>.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 20px; border-top: 1px solid #EDEDED">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #706D6E">You are done when</div>
+<div style="font-size: 15px; line-height: 24px; color: #231F20">The log shows two lines, newest first:</div>
+<div style="display: flex; flex-direction: column; padding: 12px 14px; background: #EDEDED; border-radius: 8px; font: 400 12.5px/20px 'JetBrains Mono', ui-monospace, monospace; color: #585556; overflow-wrap: anywhere">
+<div>b0a90a5 Add my first note</div>
+<div>4e230e0 Add README with project title</div>
+</div>
+<div style="font-size: 13px; line-height: 20px; color: #706D6E">Your ids and your message will be different. Two lines is what counts.</div>
+</div>
+
+<button style="height: 48px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border: 1px solid #DCDBDB; border-radius: 8px; background: #FFFFFF; color: #17758A; font: 500 14px/20px Inter, system-ui, sans-serif; cursor: pointer; text-align: left">
+<span>Stuck? Show the three commands</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+</button>
+
+</div>
+
+<div style="flex: none; padding: 16px 20px; background: #FFFFFF; border-top: 1px solid #EDEDED">
+<a href="LessonEnd.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #17758A; color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none">My log shows two lines</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
