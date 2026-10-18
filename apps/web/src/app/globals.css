@@ -2,6 +2,14 @@
 @import "@jintu/config/tailwind/preset.css";
 @import "@jintu/config/tailwind/type-scale.css";
 
+/* Phase 0 of the redesign: the `dark:` variant is keyed to a `data-theme`
+   attribute on the root element, not `prefers-color-scheme` (Tailwind v4's
+   own default). Nothing sets that attribute yet — no toggle exists, no page
+   renders dark — this just means `dark:bg-dark-bg` etc. will do the right
+   thing the moment Phase 7 adds one, rather than silently following the
+   OS setting in the meantime. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* The loaded faces (next/font in the root layout) take over from the
    preset's fallback stacks. Mono is semantic here — measured numbers are
    mono, prose is sans — so the real faces matter, not just the look.

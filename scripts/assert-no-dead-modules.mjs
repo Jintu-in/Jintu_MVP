@@ -62,8 +62,17 @@ for (const f of files) {
 const ENTRY =
   /(^|\/)(page|layout|route|loading|error|not-found|template|default|global-error|opengraph-image|twitter-image|icon|apple-icon|sitemap|robots|manifest|middleware|proxy|sw|instrumentation(-client)?)\.tsx?$/;
 
+/**
+ * Vitest co-located component tests (Phase 0 of the redesign, see
+ * vitest.config.ts — `*.test.tsx` beside the component it tests). Vitest
+ * discovers and runs these directly; nothing in src imports a test file by
+ * design, the same reason apps/web/sandbox's `*.test.mjs` suite was never
+ * in scope for this guard (it walks apps/web/src only).
+ */
+const TEST = /\.test\.tsx?$/;
+
 const dead = files
-  .filter((f) => !ENTRY.test(norm(f)))
+  .filter((f) => !ENTRY.test(norm(f)) && !TEST.test(norm(f)))
   .filter((f) => {
     const k = norm(f).replace(/\.tsx?$/, "");
     return !imported.has(k) && !imported.has(`${k}/index`);
