@@ -140,10 +140,48 @@ except it's already a live inconsistency, not a hypothetical** — see §1.
 
 ---
 
-## 1. Decisions — `BUILD-PLAN.md §1`, plus what exploration added
+## 1. Decisions — `BUILD-PLAN.md §1`, plus what exploration added, and answers
 
-Asked separately in this conversation; summarized here for the written
-record once you've answered.
+Asked and answered 2026-10-18; recorded here as the standing reference for
+every later phase.
+
+**1. Sign-in method → Restyle only.** Phase 3 keeps the exact flow (email
+code, password, Google OAuth, email-link reset) and re-skins it. Dormant
+phone/WhatsApp OTP code stays as-is — not wired on, not deleted.
+
+**2. Lesson step types → Self-check only.** `UniChoose`/`UniFind`/
+`UniFormula`/`UniNumber`/`UniWrite` and the quiz type get richer
+interactive presentation (pick an option, type an answer, see it compared
+visually) but **never store or score correctness anywhere** — same
+self-check model `node_checks` already uses today, just a nicer widget. No
+schema change, no CLAUDE.md conflict, no amendment needed. **This is now a
+hard constraint on Phase 5's design, not just a recommendation** — any
+step-type component that writes a right/wrong result to the database is
+out of scope without a separate, explicit conversation first.
+
+**3. Settings canonical page → `/profile`.** `/account` retires with a 301
+to `/profile` once Phase 3 ships. Until then both stay live.
+
+**4. Domain → fix now.** Every hardcoded `jintu.in` reference (manifest,
+OG images, footer mailto, legal pages) gets replaced with the env-driven
+`getSiteUrl()`/`NEXT_PUBLIC_SITE_URL` value, which currently resolves to
+`jintu-mvp.vercel.app`. Scoped as early Phase 1 work (it touches the public
+pages' metadata/footer, not Phase 0's foundations).
+
+**5. Reminders — provider answered, sender deferred.** Email already runs
+on SendGrid in production; no decision needed there. The actual
+reminder-*sending* mechanism (reading `reminder_prefs`, firing an email on
+schedule) doesn't exist and is being treated as **out of scope for this
+redesign** unless raised again — restyle the preference UI in Phase 6
+Settings, but don't build the sender.
+
+**6. Pair learning → later**, per `BUILD-PLAN.md`'s own suggestion.
+Phase 8, not touched until everything before it ships.
+
+**Still open: the `review_card_grade()` bug (§0.3)** — proposed as a tiny,
+isolated patch to `main`, separate from the redesign branch, since it's a
+live production bug unrelated to the redesign's product questions. Asked
+alongside the Phase 0 proposal below; not yet answered.
 
 1. **Sign-in method** — turns out to be essentially already decided and
    built: see §3.1. The live question is narrower than "which to build."
