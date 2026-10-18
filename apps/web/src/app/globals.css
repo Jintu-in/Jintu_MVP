@@ -147,8 +147,18 @@
 .jhome .jgrid91 > span { opacity: 0; transform: scale(.6); transition: opacity 420ms ease-out, transform 420ms ease-out }
 .jhome .jgrid91.jgrid-in > span { opacity: 1; transform: scale(1) }
 
-.jhome .jwordmark { filter: grayscale(1); opacity: .55; transition: opacity 160ms, filter 160ms }
-.jhome .jwordmark:hover { filter: grayscale(0); opacity: 1 }
+/* Quiet at rest, brightens on hover — but NOT via opacity, which is what an
+   axe-core e2e pass (apps/web/e2e/smoke) caught: 55% opacity on ink-900
+   computes to ~3.6:1 against white, under AA, for text a sighted low-vision
+   reader still needs to read ("the material comes from" is real
+   information, not decoration). ink-600 at full opacity is the same
+   quieter weight and is itself AA-verified (6.55:1) — the colour SWAPS
+   instead of fading, so resting state can never fall out of contrast
+   regardless of what colour the token resolves to later. grayscale(1)
+   is kept for when these might be the sourceName's own small logo image
+   rather than plain text; it is a no-op on today's near-neutral text. */
+.jhome .jwordmark { filter: grayscale(1); color: var(--color-ink-600); transition: color 160ms, filter 160ms }
+.jhome .jwordmark:hover { filter: grayscale(0); color: var(--color-ink-900); }
 
 .jhome .jcard-hover { transition: transform 200ms ease-out, border-color 200ms ease-out }
 .jhome .jcard-hover:hover { transform: translateY(-4px) }

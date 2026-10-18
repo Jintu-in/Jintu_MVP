@@ -426,7 +426,11 @@ export default function Homepage({
             {sources.map((s) => (
               <li
                 key={s}
-                className="jwordmark text-[14px] leading-none font-medium text-ink-900 sm:text-[17px]"
+                // Colour comes from the .jwordmark CSS rule (globals.css),
+                // not a text-ink-* utility here — it SWAPS token at rest vs
+                // hover rather than fading opacity, which is what keeps the
+                // resting state AA-legible. See that rule's comment.
+                className="jwordmark text-[14px] leading-none font-medium sm:text-[17px]"
               >
                 {s}
               </li>
@@ -741,7 +745,17 @@ export default function Homepage({
                 {n.href ? (
                   <>
                     {" "}
-                    <Link href={n.href} className="text-brand-700 underline-offset-4 hover:underline">
+                    {/* underline, not hover:underline: a link embedded in
+                        running prose needs to be distinguishable by more
+                        than colour alone (WCAG 1.4.1) — brand-700 against
+                        ink-900 body text is 2.84:1, under the 3:1 a
+                        colour-only distinction would need. A permanent
+                        underline sidesteps the ratio question entirely,
+                        which axe-core's e2e pass (apps/web/e2e/smoke)
+                        caught and the className-level contrast guard
+                        structurally cannot — it checks a token against its
+                        own background, not a link against adjacent text. */}
+                    <Link href={n.href} className="text-brand-700 underline underline-offset-4 hover:text-brand-800">
                       {n.linkText}
                     </Link>
                   </>
