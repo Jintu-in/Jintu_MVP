@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { getSiteUrl } from "@/lib/env";
 
 /**
  * The one site footer, on every screen — rebuilt against the redesign's own
@@ -79,7 +80,11 @@ export function SiteFooter() {
 
       <div className="mx-auto mt-8 flex max-w-[1280px] flex-col gap-2 border-t border-white/10 pt-5 text-[13.5px] leading-[1.45] text-on-night-muted-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div>For people aged 18 and over. We do not promise you a job.</div>
-        <div className="font-mono text-[12.5px]">jintu.in</div>
+        {/* The real current host (decision 4, CURRENT-STATE.md §1): jintu.in
+            does not resolve today, so this reads getSiteUrl() rather than
+            the mockup's own literal "jintu.in" — it will say jintu.in on
+            its own, correctly, the day NEXT_PUBLIC_SITE_URL points there. */}
+        <div className="font-mono text-[12.5px]">{getSiteUrl().host}</div>
       </div>
     </footer>
   );

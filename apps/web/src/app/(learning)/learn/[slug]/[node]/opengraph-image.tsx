@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getSiteUrl } from "@/lib/env";
 import { getRoadmap } from "@/lib/roadmaps";
 
 /**
@@ -53,7 +54,7 @@ export default async function Image({
             bottom. The design's "16 sections" is omitted until block counts
             exist in data — never invent a number. */}
         <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: "#17758a" }}>
-          jintu.in
+          {getSiteUrl().host}
         </div>
         <div
           style={{

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getSiteUrl } from "@/lib/env";
 import { getRoadmap } from "@/lib/roadmaps";
 
 /**
@@ -38,7 +39,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             single full-width brand bar at the bottom — the one place
             brand-500 is allowed, a decorative fill. */}
         <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: "#17758a" }}>
-          jintu.in
+          {getSiteUrl().host}
         </div>
         <div
           style={{

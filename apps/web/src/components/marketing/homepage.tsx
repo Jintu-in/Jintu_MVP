@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { HomepageEffects } from "@/components/marketing/homepage-effects";
 import { FIELD_ART } from "@/components/marketing/homepage-field-art";
 import type { RoleDomain } from "@/content/roles";
+import { getSiteUrl } from "@/lib/env";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
 
@@ -509,7 +510,7 @@ export default function Homepage({
               </div>
               <div className="flex items-center justify-between gap-3 text-[14.5px] font-medium">
                 <div>3 lessons done · 75 points</div>
-                <div className="font-mono text-[12.5px]">jintu.in/u/asha</div>
+                <div className="font-mono text-[12.5px]">{getSiteUrl().host}/u/asha</div>
               </div>
             </div>
           </div>
