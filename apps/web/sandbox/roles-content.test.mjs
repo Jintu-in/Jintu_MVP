@@ -26,9 +26,14 @@ const rolePage = read("src/components/roles/role-page.tsx");
 const comparePage = read("src/components/roles/comparison-page.tsx");
 
 test("every role and comparison route exists", () => {
+  // /roles and /roles/[slug] moved to the (learning) route group in
+  // Phase 2 — they now carry the app shell (sidebar/tab-bar) rather than
+  // the marketing SiteNav/SiteFooter. /roles/compare/[slug] stayed on
+  // marketing chrome: its own design screen draws the full dark footer,
+  // unlike the other two. Route groups don't change the URL either way.
   const routes = [
-    "src/app/(marketing)/roles/page.tsx",
-    "src/app/(marketing)/roles/[slug]/page.tsx",
+    "src/app/(learning)/roles/page.tsx",
+    "src/app/(learning)/roles/[slug]/page.tsx",
     "src/app/(marketing)/roles/compare/[slug]/page.tsx",
   ];
   for (const r of routes) {
@@ -38,7 +43,7 @@ test("every role and comparison route exists", () => {
 
 test("the dynamic routes are statically generated and refuse unknown slugs", () => {
   for (const r of [
-    "src/app/(marketing)/roles/[slug]/page.tsx",
+    "src/app/(learning)/roles/[slug]/page.tsx",
     "src/app/(marketing)/roles/compare/[slug]/page.tsx",
   ]) {
     const src = read(r);
