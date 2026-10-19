@@ -52,12 +52,9 @@ export default async function JoinPage({
   const message = error ? (AUTH_ERRORS[error] ?? AUTH_ERRORS.access_denied) : null;
 
   return (
-    <main className="mx-auto max-w-md px-5 py-10">
+    <main className="mx-auto max-w-md px-5 py-10 sm:py-14">
       {message ? (
-        <p
-          role="alert"
-          className="mb-6 rounded-card border border-warn-600/20 bg-warn-600/10 px-4 py-3 text-pretty text-ink-800"
-        >
+        <p role="alert" className="mb-6 rounded-2xl bg-warn-bg px-4 py-3.5 text-[14.5px] text-pretty text-warn-700">
           {message}
         </p>
       ) : null}

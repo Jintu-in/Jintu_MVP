@@ -18,7 +18,10 @@ export function Steps({ current, label }: { current: number; label: string }) {
             key={i}
             className={cn(
               "h-full flex-1 rounded-full",
-              i < current ? "bg-brand-700" : "bg-ink-200",
+              // Fill-only decorative use — the redesign's own convention for
+              // this (brand-500, not brand-700, which is reserved for text
+              // and buttons; see packages/config/tailwind/preset.css).
+              i < current ? "bg-brand-500" : "bg-ink-200",
             )}
           />
         ))}

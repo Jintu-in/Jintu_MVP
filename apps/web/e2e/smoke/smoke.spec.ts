@@ -41,7 +41,12 @@ const collectConsoleErrors = (page: Page) => {
  * What it DOES need — a real, non-empty heading exists, loads without
  * erroring, and is accessible — is checked regardless of wording.
  */
-const PUBLIC_PAGES = ["/", "/learn", "/roles", "/pricing", "/contact", "/privacy", "/terms", "/refunds"];
+// /join's entry step only — a plain page load triggers no Supabase action
+// (checkEmail/requestOtp need a submitted email), so it's safe here. The
+// other steps (code/password/create/forgot) need a real test account and
+// belong in the auth-fixture suite (e2e/auth, not yet built — see
+// playwright.auth.config.ts's own deferred status), not this one.
+const PUBLIC_PAGES = ["/", "/learn", "/roles", "/pricing", "/contact", "/privacy", "/terms", "/refunds", "/join"];
 
 for (const path of PUBLIC_PAGES) {
   test(`${path} loads, has a heading, no console errors, axe clean`, async ({ page }) => {
