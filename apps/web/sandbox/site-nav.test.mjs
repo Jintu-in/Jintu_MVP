@@ -29,13 +29,17 @@ test("the wordmark is hard left and everything else is hard right", () => {
   assert.ok(account > links, "and the account control is last");
 });
 
-test("there is no Free item — it reads as a claim, not a destination", () => {
-  assert.ok(!menu.includes('label: "Free"'), "not in the menu");
-  assert.ok(!/>\s*Free\s*</.test(nav), "not on the bar");
-  // The word still appears where it is a statement rather than a link: the
-  // hero pill, the pricing section, and the footer.
-  assert.ok(!nav.includes('href="/pricing"'), "and pricing is not linked from the bar");
-  assert.ok(!menu.includes('"/pricing"'), "nor from the menu");
+test("Pricing is on the bar, and so is a real 'Start free' action", () => {
+  // The redesign deliberately reverses the earlier rule here (which read
+  // "Free" as a claim rather than a destination, and kept Pricing off the
+  // bar entirely): DeskHome.dc.html's header carries "Roadmaps · Roles ·
+  // How it works · Pricing" plus a filled "Start free" button beside Sign
+  // in, so the bar now has a real conversion action, not only a link list.
+  assert.match(nav, /href=\{"\/pricing" as Route\}/, "Pricing is linked from the bar");
+  assert.match(nav, />\s*Pricing\s*</, "and labelled plainly");
+  assert.match(nav, /Start free/, "the filled CTA is on the bar");
+  assert.match(nav, /!signedIn \? \(/, "shown only to a visitor who does not already have an account");
+  assert.match(menu, /"\/pricing"/, "the same link exists in the mobile menu");
 });
 
 test("the bar's links appear from sm up and nowhere below it", () => {
@@ -79,5 +83,9 @@ test("the trigger is a real 40px target and says what it does", () => {
 
 test("the overlay variant still inverts on the homepage hero", () => {
   assert.match(menu, /\[\.jscrolled_&\]:text-ink-900/, "the trigger follows the scrolled bar");
-  assert.match(nav, /\[\.jscrolled_&\]:fill-brand-700/, "and so does the mark");
+  // The mark is a literal "j" badge now (the redesign's own header glyph),
+  // not an svg path — but it still has to invert the same way: white-on-dark
+  // over the hero, brand-on-white once the bar takes a solid surface.
+  assert.match(nav, /\[\.jscrolled_&\]:bg-brand-500/, "and so does the mark's fill");
+  assert.match(nav, /\[\.jscrolled_&\]:text-on-brand/, "and its text");
 });

@@ -111,61 +111,24 @@
 }
 
 /* ── Marketing homepage only ──────────────────────────────────────────────
-   From the design project's "Marketing homepage v2". Every rule is scoped
-   under .jhome so none of it can reach the app: the reading surfaces stay
-   plain, which is the whole reason the effect budget is spent in one place.
+   Scoped under .jhome so none of it can reach the app: the reading surfaces
+   stay plain, which is the whole reason the effect budget is spent in one
+   place. The hero's own decoration (the two ring circles, the wavy close
+   section) is plain markup in homepage.tsx now rather than a blurred-glow
+   CSS treatment — the redesign's hero is a flat colour, not a gradient, and
+   has nothing for a blur filter to soften.
 
    Motion is gated twice — a reduced-motion query that removes animation
    outright rather than freezing it mid-frame, and in-view classes applied
-   by a one-shot IntersectionObserver so nothing animates off-screen.
-   ------------------------------------------------------------------------ */
-@keyframes jdrift { 0%, 100% { transform: translate(0, 0) } 50% { transform: translate(30px, -20px) } }
-
-.jhome .jglow1,
-.jhome .jglow2 { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none }
-.jhome .jglow1 {
-  width: 600px; height: 600px; top: -150px; left: -100px;
-  background: radial-gradient(circle, rgba(255, 255, 255, .35), transparent 70%);
-  animation: jdrift 24s ease-in-out infinite;
-}
-.jhome .jglow2 {
-  width: 500px; height: 500px; bottom: -100px; right: -80px;
-  background: radial-gradient(circle, rgba(211, 240, 246, .4), transparent 70%);
-  animation: jdrift 24s ease-in-out infinite reverse;
-}
-
-.jhome .jgrain {
-  position: absolute; inset: 0; opacity: .035; mix-blend-mode: overlay; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+   by a one-shot IntersectionObserver so nothing animates off-screen. */
 
 /* Reveals are transition-driven and one-shot: the observer adds .jrevealed
    and stops watching, so scrolling back never replays a section. */
 .jhome .jreveal { opacity: 0; transform: translateY(22px); transition: opacity 560ms ease-out, transform 560ms ease-out }
 .jhome .jreveal.jrevealed { opacity: 1; transform: translateY(0) }
 
-.jhome .jgrid91 > span { opacity: 0; transform: scale(.6); transition: opacity 420ms ease-out, transform 420ms ease-out }
-.jhome .jgrid91.jgrid-in > span { opacity: 1; transform: scale(1) }
-
-/* Quiet at rest, brightens on hover — but NOT via opacity, which is what an
-   axe-core e2e pass (apps/web/e2e/smoke) caught: 55% opacity on ink-900
-   computes to ~3.6:1 against white, under AA, for text a sighted low-vision
-   reader still needs to read ("the material comes from" is real
-   information, not decoration). ink-600 at full opacity is the same
-   quieter weight and is itself AA-verified (6.55:1) — the colour SWAPS
-   instead of fading, so resting state can never fall out of contrast
-   regardless of what colour the token resolves to later. grayscale(1)
-   is kept for when these might be the sourceName's own small logo image
-   rather than plain text; it is a no-op on today's near-neutral text. */
-.jhome .jwordmark { filter: grayscale(1); color: var(--color-ink-600); transition: color 160ms, filter 160ms }
-.jhome .jwordmark:hover { filter: grayscale(0); color: var(--color-ink-900); }
-
 .jhome .jcard-hover { transition: transform 200ms ease-out, border-color 200ms ease-out }
 .jhome .jcard-hover:hover { transform: translateY(-4px) }
-
-.jhome .jsearch { transition: box-shadow 160ms ease-out }
-.jhome .jsearch:hover,
-.jhome .jsearch:focus-within { box-shadow: 0 0 0 3px rgba(23, 117, 138, .16) }
 
 /* The nav rides over the dark end of the hero, so it starts transparent
    with white text. Once the hero has scrolled past, it takes a solid
@@ -182,7 +145,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .jhome .jglow1, .jhome .jglow2 { animation: none }
   .jhome .jreveal { opacity: 1; transform: none; transition: none }
-  .jhome .jgrid91 > span { opacity: 1; transform: none; transition: none }
 }

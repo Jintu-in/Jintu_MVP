@@ -1,199 +1,136 @@
 /**
- * The homepage shows the product rather than describing it.
+ * The job-first homepage: every count on it is read, never written.
  *
  *   node apps/web/sandbox/homepage-shows.test.mjs
  *
- * The rule: if a sentence describes something visual, the sentence goes and
- * the thing appears. That is easy to apply once and easy to undo by accident
- * — a later edit that "adds a bit of explanation" under a heading puts the
- * claim back without removing the component, and the page is describing
- * itself again with the evidence sitting right there unread.
- *
- * So each section that was converted gets a line here naming the sentence
- * that must stay gone and the component that must stay.
+ * This replaced an earlier aggregator-style homepage (search bar, a 91-day
+ * grid, a module "spine") with the redesign's job-first one: pick a field,
+ * meet the roles in it, then the roadmap. The one rule carried over from the
+ * old suite is the one that matters most: a number on this page must come
+ * off a real row, never be typed in because the mockup showed a round one.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "..", "src");
 const home = readFileSync(join(SRC, "components", "marketing", "homepage.tsx"), "utf8");
-const mini = readFileSync(join(SRC, "components", "marketing", "product-miniatures.tsx"), "utf8");
 const route = readFileSync(join(SRC, "app", "(home)", "page.tsx"), "utf8");
+const art = readFileSync(join(SRC, "components", "marketing", "homepage-field-art.tsx"), "utf8");
 
-test("the spine is real modules, not a drawn approximation", () => {
-  assert.match(route, /listModules\(FLAGSHIP\)/, "read from the database");
-  assert.match(home, /<ModuleSpine modules=\{spine\}/, "and handed to the component");
+test("the old aggregator miniatures are gone, not just unused", () => {
   assert.ok(
-    !home.includes("Twenty modules in one order"),
-    'the sentence claiming a spine must not sit next to the spine',
+    !existsSync(join(SRC, "components", "marketing", "product-miniatures.tsx")),
+    "ModuleSpine/DayCardMini/StreakStrip/ContribGrid had no caller left after the rebuild " +
+      "and were deleted rather than kept as dead weight the guard would otherwise flag",
   );
 });
 
-test("each of the four steps carries the component it names", () => {
-  const block = /\{STEPS\.map\(\(\[n, head, body\], i\) => \([\s\S]*?\)\)\}/.exec(home)?.[0] ?? "";
-  for (const c of ["ModuleSpine", "DayCardMini", "StreakStrip", "ContribGrid"]) {
-    assert.ok(block.includes(c), `${c} should ride in a step`);
+test("the hero's role chips and their count are both read, not written", () => {
+  assert.match(route, /rolesInDomain\(d\.key\)\[0\]\?\.title/, "one real role per field, not file order");
+  assert.match(route, /ROLES\.length - heroChips\.length/, "the '+N more' count is derived");
+  assert.match(home, /heroChips\.map/, "and the component renders whatever it is handed");
+  assert.ok(!/\+53 more/.test(home), "the mockup's own illustrative count must not survive as a literal");
+});
+
+test("every field tile's role list and overflow count are derived per-domain", () => {
+  assert.match(route, /rolesInDomain\(d\.key\)/);
+  assert.match(route, /Math\.max\(0, roles\.length - 2\)/, "moreCount is never typed in");
+  assert.match(home, /field\.roleTitles\.join/);
+  assert.match(home, /field\.moreCount > 0/, "the '+N more' span hides itself rather than ever showing +0");
+});
+
+test("the ten field illustrations are keyed by the real role domain, not a grid position", () => {
+  assert.match(art, /RoleDomain/);
+  for (const domain of [
+    "software",
+    "data",
+    "product",
+    "gtm",
+    "marketing",
+    "design",
+    "operations",
+    "health",
+    "finance",
+    "other",
+  ]) {
+    assert.match(art, new RegExp(`${domain}:\\s*\\w+FieldArt`), `${domain} should have an illustration`);
   }
-  // 96px, per the brief. [&>*]:w-full because three of the four size
-  // themselves in percentages and a flex item is content-width by default.
-  assert.match(block, /className="mt-4 flex h-24 items-center \[&>\*\]:w-full"/);
 });
 
-test("the streak card is the strip, and the strip has a gap in it", () => {
-  assert.match(home, /<h3[^>]*>The streak<\/h3>\s*\{\/\*[\s\S]*?\*\/\}\s*<StreakStrip/);
-  const days = /const STREAK_DAYS = \[([^\]]*)\]/.exec(mini)?.[1] ?? "";
-  assert.ok(days.includes("0"), "a strip with no missed day illustrates a claim nobody made");
+test("'open now' is read from the real catalogue, never asserted", () => {
+  assert.match(route, /listPublishedRoadmaps\(\)/);
+  assert.match(route, /openSlugs\.has\(p\.slug\)/, "a planned roadmap is 'open' only once it is actually published");
+  assert.match(home, /r\.open \? \(/, "the badge itself is conditional on the real flag");
+  // The mockup's own illustrative framing — a round "ten roadmaps" and "one
+  // open today" — must not survive as a hardcoded string once this reads a
+  // real, currently-smaller-or-larger catalogue.
+  assert.ok(!/Ten roadmaps, opening one at a time/.test(home), "the literal mockup copy must not survive verbatim");
+  assert.match(home, /\{openRoadmapCount\} of \{totalRoadmapCount\}/, "the heading itself interpolates the real counts");
 });
 
-test("checked-by-a-person shows a real note, not a written-out example", () => {
-  assert.match(home, /<LinkCardMini resource=\{samples\[1\]\}/);
-  assert.match(route, /sampleResources\(/);
-  assert.match(mini, /not \(select 1|editorNote/, "the note is what the card is for");
+test("the planned-roadmap list is real content, not invented titles", () => {
+  // Every title in PLANNED_ROADMAPS must correspond to an actual file this
+  // repo ships — docs/roadmaps/<slug>.mjs — so the "coming soon" list can
+  // never claim a roadmap that does not exist anywhere as real content.
+  const slugs = [...route.matchAll(/slug:\s*"([a-z-]+)"/g)].map((m) => m[1]);
+  assert.ok(slugs.length >= 9, "the planned catalogue should list the real docs/roadmaps/*.mjs files");
+  assert.ok(!slugs.includes("dsa-starter"), "a roadmap with no content file anywhere must not be listed as planned");
 });
 
-test("the highlight carries the day it came from", () => {
-  assert.match(home, /<cite[\s\S]{0,200}Day 31/, "a quote with no citation is not 'yours to keep'");
+test("the self-check copy says what it is: no score, no grading", () => {
+  // CLAUDE.md's hard invariant: no grading, no verification, as an option or
+  // otherwise. The homepage's own "inside a lesson" section is the one place
+  // a visitor could read this as a graded product if it slipped back in.
+  assert.match(home, /No score is kept/);
+  assert.ok(!/\bgrade[ds]?\b/i.test(home), "no grading language anywhere on the page");
+  assert.ok(!/\bcorrect answer\b/i.test(home), "nor language implying a right answer is checked for you");
 });
 
-test("the day page's notes are anchored, not a second list beside it", () => {
-  assert.match(home, /const ANNOTATIONS = \[/);
-  assert.match(home, /bg-brand-500 lg:mt-\[10px\] lg:w-14/, "a connector runs to the card at lg");
-  assert.ok(!home.includes("const BULLETS"), "the unanchored list is gone");
-  // One list in the DOM, restyled per breakpoint — it used to render twice
-  // (inside the card below lg, beside it above), which doubled every note
-  // for anything that reads the page as text.
-  assert.strictEqual(
-    home.split("ANNOTATIONS.map").length - 1,
-    1,
-    "the annotations render exactly once",
-  );
+test("what this is not says the job line is a negation, never a guarantee", () => {
+  assert.match(home, /We do not promise you a job\./);
+  assert.ok(!/\bguarantee/i.test(home), "no guarantee language anywhere on the page");
+  // Not a bare "100%" — the svg illustrations legitimately carry
+  // width="100%" — only the banned claim shapes themselves.
+  assert.ok(!/100% placement|job assured|job[- ]?placement/i.test(home), "nor any of the other banned claim shapes");
 });
 
-test("there is no pricing section — the claim is woven in instead", () => {
-  // A pricing section compares tiers or converts to a purchase. There is one
-  // tier and nothing to buy, so it had no job, and a free product that keeps
-  // staging its own freeness invites the suspicion it means to allay.
-  assert.ok(!home.includes("FREE_INCLUDES"), "the tick list is gone");
-  assert.ok(!/── pricing ─/.test(home), "and so is the section");
-  assert.ok(!/text-\[128px\]/.test(home), "and the display-size ₹0 with it");
-
-  // Three places carry the claim now, none of them a section.
-  assert.match(home, /text: "₹0 forever"/, "a fifth stat, among four other true numbers");
-  assert.match(home, /Free · No account needed to read/, "the hero pill");
-  assert.match(home, /Everything is free, and if that ever changes this page changes first/);
+test("there is no third-party imagery on the page — illustration only", () => {
+  assert.ok(!/<img/.test(home), "every visual is drawn (svg), never someone else's screenshot or logo");
 });
 
-test("the page still points a sceptical reader at /pricing", () => {
-  const footer = readFileSync(join(SRC, "components", "site", "site-footer.tsx"), "utf8");
-  assert.match(footer, /\/pricing/, "the footer link stays — that page is where you go to check");
-  assert.match(home, /href: "\/pricing" as Route/, "and so does the one in 'what this is not'");
-});
-
-test("what this is not says the three things, and the job line is a negation", () => {
-  const block = /const NOT[\s\S]*?\n\];/.exec(home)?.[0] ?? "";
-  assert.match(block, /We do not promise you a job\./);
-  assert.match(block, /We do not host anyone's content/);
-  assert.match(block, /Everything is free/);
-  // Rule 4 forbids promising an outcome. Saying plainly that we do not is
-  // the opposite, and pnpm claims agrees — but a later edit that drops the
-  // "not" would turn the best sentence on the page into the banned one.
-  assert.ok(!/\bguarantee/i.test(block), "no guarantee language anywhere near it");
-});
-
-test("the sections run in the order that tells the story", () => {
-  const at = (name) => {
-    const i = home.indexOf(`── ${name} ─`);
-    assert.ok(i > -1, `missing section: ${name}`);
+test("the sections run in the order the story is told in", () => {
+  const at = (needle) => {
+    const i = home.indexOf(needle);
+    assert.ok(i > -1, `missing: ${needle}`);
     return i;
   };
-  // Roadmaps, then straight inside one, then how the habit works. Pricing
-  // used to sit between the steps and the day, three sections from the cards
-  // it was interrupting.
   const order = [
-    "hero",
-    "the sources",
-    "the roadmaps",
-    "here is one day",
-    "how it works",
-    "the bento",
-    "the day grid",
-    "what this is not",
-    "the close",
+    'id="fields"',
+    'id="how-it-works"',
+    "Inside a lesson",
+    "As you learn</div>",
+    "From twelve open tabs",
+    'id="all"',
+    'id="free"',
+    'id="faq"',
+    "Your first lesson takes about 15 minutes",
   ].map(at);
   assert.deepEqual(order, [...order].sort((a, b) => a - b), "sections are out of order");
 });
 
-test("the close has cards cropped by the section, and only where they can crop", () => {
-  assert.match(home, /overflow-hidden px-5 py-\[var\(--space-section\)\] text-center/, "the section does the cropping");
-  assert.match(home, /rotate-\[-7deg\]/);
-  assert.match(home, /hidden lg:block/, "at 390px there is no margin to crop into");
+test("the hero CTA points at a real route — not the mockup's unbuilt goal screen", () => {
+  // The design's own "Find my roadmap" button targets a goal-picker screen
+  // (V2Goal.dc.html) that was never built as a real flow. Pointing there
+  // would pixel-match a button into a 404, which is worse than landing on
+  // the real catalogue page it is standing in for.
+  assert.ok((home.match(/Find my roadmap/g) ?? []).length >= 2, "both CTAs carry the label");
+  assert.ok(!/href="\/goal"|V2Goal/.test(home), "no link to the unbuilt goal-picker flow anywhere on the page");
 });
 
-test("the source wall stays names — never logos, never a screenshot", () => {
-  assert.match(home, /Names, never logos/, "the reason is written down where the change would be made");
-  assert.match(home, /samples\.slice\(2\)\.map/, "our own rendering of their link, not their page");
-  assert.ok(!/<img/.test(home), "no third-party imagery on this page at all");
-});
-
-test("every miniature is decorative and paired with words that carry the claim", () => {
-  for (const c of ["ModuleSpine", "StreakStrip", "ContribGrid", "DayCardMini", "CategoryCap"]) {
-    const body = new RegExp(`export function ${c}\\(`).exec(mini);
-    assert.ok(body, `${c} should exist`);
-  }
-  // A screen reader should hear each claim once, in words.
-  assert.equal((mini.match(/aria-hidden/g) ?? []).length >= 5, true);
-});
-
-test("the contribution grid is deterministic", () => {
-  assert.ok(!mini.includes("Math.random("), "a random fill differs between server and client");
-  assert.match(mini, /const filled = \(i: number\)/);
-});
-
-/**
- * The "one day" cards showed a day that had never existed: a hardcoded day
- * number, a hardcoded title, a principle belonging to a different day, and
- * — in the hero — two "curated links" with hand-written why-notes for
- * resources that were not in the database at all. Both cards are fed from
- * one `sampleDay()` row now.
- *
- * This is the section whose entire job is to prove the curation is real, so
- * it is the last place on the site that should be illustrated rather than
- * queried. The test pins that.
- */
-test("the day cards are queried, never typed", () => {
-  // No literal "Day 12 of 34" anywhere: both cards interpolate.
-  const hardcoded = home.match(/Day\s+\d+\s+of\s+\d+/g) ?? [];
-  assert.deepEqual(hardcoded, [], `hardcoded day counter: ${hardcoded.join(", ")}`);
-
-  // The editor note is the claim this page makes about curation. It must
-  // come off a row, so no literal why-note may be written in the file.
-  assert.ok(
-    !/Why this one — \{?["']/.test(home),
-    "a why-note is written into the component rather than read from a resource",
-  );
-  assert.match(home, /Why this one — \{r\.editorNote\}/, "the hero note reads editorNote");
-
-  // Two cards, two QUERIED rows. They used to share one prop — honest, but
-  // it put the same day on the page twice, which read as a bug. The hero
-  // renders its own row now (falling back to the section's when the second
-  // query fails), and both still interpolate everything.
-  assert.match(home, /hero\.dayNumber/, "the hero card renders its own day row");
-  assert.match(home, /day\.dayNumber/, "the one-day section renders the day row");
-  assert.match(home, /const hero = heroDay \?\? day;/, "a missing hero day falls back, never invents");
-  assert.match(home, /\{day\.principle\}/, "the principle comes from the day row");
-});
-
-/**
- * The day grid drew exactly 91 squares and said "Ninety-one days" beside
- * them, which was the data analyst's length rather than the catalogue's.
- * It read as a fact about the product and stopped being one the moment a
- * second roadmap shipped.
- */
-test("the catalogue's size is derived, not written", () => {
-  assert.ok(!/Ninety-one|ninety-one/.test(home), "a day count is spelled out in the component");
-  assert.ok(!/length:\s*91\b/.test(home), "the day grid hardcodes 91 squares");
-  assert.match(home, /length: counts\.days/, "the grid is sized from counts.days");
+test("the 'As you learn' share card is a labelled illustration, not a claim about a real learner", () => {
+  assert.match(home, /is an illustration of/i, "the comment says plainly that this is not real user data");
+  assert.match(home, /Asha is on a 3 day streak/);
 });

@@ -34,6 +34,7 @@ const NAV_LINKS: { href: Route; label: string }[] = [
   { href: "/learn" as Route, label: "Roadmaps" },
   { href: "/roles" as Route, label: "Roles" },
   { href: "/#how-it-works" as Route, label: "How it works" },
+  { href: "/pricing" as Route, label: "Pricing" },
 ];
 
 const ACCOUNT_LINKS: { href: Route; label: string }[] = [

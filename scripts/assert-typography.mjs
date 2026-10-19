@@ -108,19 +108,29 @@ if (!/clamp\(/.test(scale)) fail("the scale contains no clamp() — it is not fl
 else console.log("  ok    the display classes are clamp()-based");
 
 // ── 4. inline runs ──────────────────────────────────────────────────────────
-// "⚡4 roadmaps" is what you get when two spans sit adjacent with no gap. Any
-// container holding several text spans needs an explicit gap, never a space.
+// "Find my roadmap→" is what you get when an icon sits flush against the
+// text beside it with no gap. Every call site that renders the shared
+// ARROW_RIGHT icon beside a label is checked here — not one named
+// component, because the redesign spreads this pairing across several
+// buttons rather than funnelling it through a single StatPill-style
+// primitive the way the earlier homepage did.
 console.log("\n── inline runs have explicit gaps ──");
 const pill = readFileSync(path.join(SRC, "components", "marketing", "homepage.tsx"), "utf8");
-// A window after the declaration, not a brace-matched slice: StatPill's
-// destructured props close with a brace at column 0 before the body starts,
-// so a lazy match to the first "\n}" stops before the className it is
-// checking — and the guard passes itself while testing nothing.
-const at = pill.indexOf("function StatPill");
-const stat = at < 0 ? "" : pill.slice(at, at + 1200);
-if (!/inline-flex[^"]*gap-\d/.test(stat))
-  fail("StatPill has no gap — the glyph and the number will touch");
-else console.log("  ok    StatPill separates its glyph and label with a gap");
+const arrowSites = [...pill.matchAll(/\{ARROW_RIGHT\}/g)];
+if (arrowSites.length === 0) {
+  fail("no ARROW_RIGHT usage found — update this guard if the icon was renamed");
+} else {
+  let allGapped = true;
+  for (const m of arrowSites) {
+    // The className is on the enclosing tag, which opens before the icon
+    // and the label it sits beside — a window back from the match, not a
+    // brace-matched slice, is enough to reach it.
+    const before = pill.slice(Math.max(0, m.index - 400), m.index);
+    if (!/gap-[\d.]/.test(before)) allGapped = false;
+  }
+  if (!allGapped) fail("an ARROW_RIGHT use has no gap — the icon and its label will touch");
+  else console.log(`  ok    every ARROW_RIGHT use (${arrowSites.length}) sits in a gapped container`);
+}
 
 // ── 5. nothing wider than the narrowest screen ──────────────────────────────
 // 320px is the floor. Minus the standard px-5 gutter that leaves 280px of
