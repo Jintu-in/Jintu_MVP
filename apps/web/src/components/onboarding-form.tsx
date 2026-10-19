@@ -5,10 +5,18 @@ import { useId } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { completeOnboarding } from "@/actions/auth";
+import { FieldInput, FieldShell } from "@/components/ui/field-shell";
 import { cn } from "@/lib/utils";
 
 type FieldErrors = Record<string, { _errors?: string[] } | undefined>;
 const firstError = (e: FieldErrors | undefined, f: string) => e?.[f]?._errors?.[0];
+
+const ARROW_RIGHT = (
+  <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </svg>
+);
 
 /**
  * The consent screen. Every rule here comes from docs/LEGAL.md §2.2:
@@ -37,6 +45,13 @@ const OPTIONAL = [
   },
 ] as const;
 
+/**
+ * Restyled against V2Join.dc.html's "one last step" card. One real
+ * deviation from the mockup, preserving real, already-reasoned behaviour:
+ * the mockup shows only a name and a phone field, but collegeName and
+ * batchYear are real, validated fields (packages/contracts/src/auth.ts) —
+ * the mockup appears to predate them, so both stay, styled to match.
+ */
 export function OnboardingForm() {
   const id = useId();
   const router = useRouter();
@@ -66,7 +81,7 @@ export function OnboardingForm() {
         })
       }
     >
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <Field id={`${id}-name`} name="fullName" label="Full name" optional autoComplete="name" />
         <Field
           id={`${id}-college`}
@@ -89,35 +104,75 @@ export function OnboardingForm() {
             for — and the sentence under it is not decoration: DPDP wants the
             purpose stated where the data is collected, not only in a notice
             nobody opens. */}
-        <Field
-          id={`${id}-phone`}
-          name="phone"
-          label="Mobile number"
-          type="tel"
-          inputMode="numeric"
-          autoComplete="tel"
-          placeholder="98765 43210"
-          error={firstError(errors, "phone")}
-          hint="For deadline reminders and so we can reach you about your cohort. Indian mobile numbers only."
-        />
+        <div>
+          <label htmlFor={`${id}-phone`} className="mb-1.5 block text-[13.5px] font-semibold text-ink-700">
+            Mobile number
+          </label>
+          <FieldShell className="h-14">
+            <span aria-hidden className="font-mono text-[14px] font-medium text-ink-600">
+              +91
+            </span>
+            <span aria-hidden className="h-5 w-px flex-none bg-ink-100" />
+            <FieldInput
+              id={`${id}-phone`}
+              name="phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              placeholder="98765 43210"
+              aria-invalid={firstError(errors, "phone") ? true : undefined}
+              aria-describedby={`${id}-phone-hint${firstError(errors, "phone") ? ` ${id}-phone-error` : ""}`}
+              className="text-[16px]"
+            />
+          </FieldShell>
+          <p id={`${id}-phone-hint`} className="mt-1.5 text-[14px] text-pretty text-ink-500">
+            For deadline reminders and so we can reach you about your cohort. Indian mobile numbers
+            only.
+          </p>
+          {firstError(errors, "phone") ? (
+            <p id={`${id}-phone-error`} className="mt-1.5 text-[14px] text-pretty text-risk-600">
+              {firstError(errors, "phone")}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       <fieldset className="mt-8">
-        <legend className="text-sm font-medium text-ink-900">Required</legend>
+        <legend className="text-[13.5px] font-semibold text-ink-700">Required</legend>
         <div className="mt-3">
-          <Check id={`${id}-adult`} name="isAdultConfirmed" error={firstError(errors, "isAdultConfirmed")}>
+          <label
+            htmlFor={`${id}-adult`}
+            className={cn(
+              "flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 border-ink-100 bg-white px-4 text-[15.5px] font-semibold text-ink-900",
+              "has-[:checked]:border-ink-900",
+              firstError(errors, "isAdultConfirmed") && "border-risk-600",
+            )}
+          >
+            <input
+              type="checkbox"
+              id={`${id}-adult`}
+              name="isAdultConfirmed"
+              aria-invalid={firstError(errors, "isAdultConfirmed") ? true : undefined}
+              aria-describedby={firstError(errors, "isAdultConfirmed") ? `${id}-adult-error` : undefined}
+              className="size-5 shrink-0 accent-brand-700"
+            />
             I am 18 years old or older.
-          </Check>
+          </label>
+          {firstError(errors, "isAdultConfirmed") ? (
+            <p id={`${id}-adult-error`} className="mt-1.5 ml-1 text-[14px] text-risk-600">
+              {firstError(errors, "isAdultConfirmed")}
+            </p>
+          ) : null}
         </div>
       </fieldset>
 
       <fieldset className="mt-8">
-        <legend className="text-sm font-medium text-ink-900">
+        <legend className="text-[13.5px] font-semibold text-ink-700">
           Optional — none of these affect your place
         </legend>
-        <div className="mt-3 space-y-3">
+        <div className="mt-3 flex flex-col divide-y divide-ink-100 overflow-hidden rounded-[20px] bg-white">
           {OPTIONAL.map((o) => (
-            <Check key={o.name} id={`${id}-${o.name}`} name={o.name} detail={o.detail} boxed>
+            <Check key={o.name} id={`${id}-${o.name}`} name={o.name} detail={o.detail}>
               {o.label}
             </Check>
           ))}
@@ -125,7 +180,7 @@ export function OnboardingForm() {
       </fieldset>
 
       {result?.serverError ? (
-        <p role="alert" className="mt-5 text-sm text-risk-600">
+        <p role="alert" className="mt-5 text-[14px] text-risk-600">
           {result.serverError}
         </p>
       ) : null}
@@ -133,16 +188,13 @@ export function OnboardingForm() {
       <button
         type="submit"
         disabled={status === "executing"}
-        className={cn(
-          "mt-8 flex h-12 w-full items-center justify-center rounded-lg font-medium text-white",
-          "bg-brand-700 hover:bg-brand-800 disabled:bg-ink-500",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
-        )}
+        className="mt-8 flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16px] font-semibold text-on-brand hover:bg-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:bg-ink-100 disabled:text-ink-600"
       >
-        {status === "executing" ? "Saving…" : "Create my account"}
+        <span>{status === "executing" ? "Saving…" : "Create my account"}</span>
+        {status === "executing" ? null : ARROW_RIGHT}
       </button>
 
-      <p className="mt-3 text-sm text-ink-500">
+      <p className="mt-3 text-[13px] leading-[1.45] text-ink-500">
         You can change or withdraw any of the optional choices at any time, as
         easily as you gave them. See the{" "}
         <Link href="/privacy" className="underline hover:text-brand-800">
@@ -160,7 +212,6 @@ function Field({
   label,
   optional,
   error,
-  hint,
   ...input
 }: {
   id: string;
@@ -168,41 +219,25 @@ function Field({
   label: string;
   optional?: boolean;
   error?: string;
-  /** Why we are asking. Rendered under the field and named by aria-describedby. */
-  hint?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
-  // Both the hint and the error are described-by, in that order, so a screen
-  // reader gets the purpose as well as the problem rather than one replacing
-  // the other.
-  const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
-    .filter(Boolean)
-    .join(" ");
-
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-ink-700">
+      <label htmlFor={id} className="mb-1.5 block text-[13.5px] font-semibold text-ink-700">
         {label}
-        {optional ? <span className="ml-1 text-ink-500">(optional)</span> : null}
+        {optional ? <span className="ml-1 font-normal text-ink-500">(optional)</span> : null}
       </label>
-      <input
-        {...input}
-        id={id}
-        name={name}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy || undefined}
-        className={cn(
-          "mt-1.5 block h-12 w-full rounded-lg border bg-white px-3 text-ink-900",
-          "focus-visible:border-brand-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-700",
-          error ? "border-risk-600" : "border-ink-200",
-        )}
-      />
-      {hint ? (
-        <p id={`${id}-hint`} className="mt-1.5 text-sm text-pretty text-ink-500">
-          {hint}
-        </p>
-      ) : null}
+      <FieldShell className="h-14">
+        <FieldInput
+          {...input}
+          id={id}
+          name={name}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className="text-[16px]"
+        />
+      </FieldShell>
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-sm text-pretty text-risk-600">
+        <p id={`${id}-error`} className="mt-1.5 text-[14px] text-pretty text-risk-600">
           {error}
         </p>
       ) : null}
@@ -214,45 +249,34 @@ function Check({
   id,
   name,
   detail,
-  error,
-  boxed,
   children,
 }: {
   id: string;
   name: string;
   detail?: string;
-  error?: string;
-  /** Optional purposes sit in their own card, so they read as separable from
-   *  the required confirmation above them rather than as one block of terms. */
-  boxed?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn(boxed && "rounded-card border border-ink-100 bg-white p-4")}>
-      <div className="flex gap-2.5">
-        {/* Never defaultChecked — see the note at the top of this file. */}
-        <input
-          type="checkbox"
-          id={id}
-          name={name}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={detail ? `${id}-detail` : undefined}
-          className="mt-1 size-4 shrink-0 accent-brand-700"
-        />
-        <div>
-          <label htmlFor={id} className="text-sm text-pretty text-ink-800">
-            {children}
-          </label>
-          {detail ? (
-            <p id={`${id}-detail`} className="text-sm text-pretty text-ink-500">
-              {detail}
-            </p>
-          ) : null}
-        </div>
+    <label
+      htmlFor={id}
+      className="flex min-h-[60px] cursor-pointer items-center gap-3 px-4 py-3"
+    >
+      {/* Never defaultChecked — see the note at the top of this file. */}
+      <input
+        type="checkbox"
+        id={id}
+        name={name}
+        aria-describedby={detail ? `${id}-detail` : undefined}
+        className="size-5 shrink-0 accent-brand-700"
+      />
+      <div>
+        <span className="block text-[15px] font-medium text-ink-900">{children}</span>
+        {detail ? (
+          <span id={`${id}-detail`} className="block text-[13px] text-pretty text-ink-500">
+            {detail}
+          </span>
+        ) : null}
       </div>
-      {error ? (
-        <p className="mt-1 ml-6.5 text-sm text-risk-600">{error}</p>
-      ) : null}
-    </div>
+    </label>
   );
 }
