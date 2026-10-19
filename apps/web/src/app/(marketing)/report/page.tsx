@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BrokenLinkIcon } from "@/components/marketing/contact-card";
 
 export const metadata: Metadata = {
   title: "Report a problem",
@@ -7,7 +8,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * /report — the curriculum page's "something broken?" target.
+ * /report — the curriculum page's "something broken?" target, and the
+ * destination for V2Contact.dc.html's third card (see contact-card.tsx).
  *
  * Minimum honest version: an email with a promise attached, not a form that
  * pretends a ticketing system exists. Link health is also checked
@@ -20,30 +22,30 @@ export const metadata: Metadata = {
  */
 export default function ReportPage() {
   return (
-    <main className="mx-auto max-w-2xl px-5 py-12">
-      <h1 className="text-3xl leading-tight font-medium text-balance text-ink-900">
-        Something broken or out of date?
-      </h1>
-      <p className="mt-4 max-w-[62ch] text-pretty text-ink-600">
+    <main className="mx-auto max-w-[640px] px-5 py-12 sm:py-16">
+      <span aria-hidden className="flex size-12 items-center justify-center rounded-full bg-brand-50 text-link">
+        {BrokenLinkIcon}
+      </span>
+      <h1 className="t-sect mt-4 text-ink-900">Something broken or out of date?</h1>
+      <p className="mt-3 max-w-[62ch] text-[16px] leading-[1.6] text-pretty text-ink-600">
         Dead links are flagged automatically and replaced by hand — never by a
         model, because silently swapping a resource under a learner mid-unit
         is worse than a dead link. Everything else needs a human to hear about
-        it: a dead link, a video that moved, a claim
-        that aged badly.
+        it: a dead link, a video that moved, a claim that aged badly.
       </p>
-      <div className="mt-6 rounded-card border border-ink-100 bg-white p-5">
-        <p className="text-pretty text-ink-700">
-          Email{" "}
-          <a
-            className="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
-            href="mailto:contact@tindata.com?subject=Broken%20on%20Jintu"
-          >
-            contact@tindata.com
-          </a>{" "}
-          with the page link and one line on what is wrong. It is read by the
+      <div className="mt-6 flex flex-col gap-4 rounded-[24px] bg-white p-6 shadow-[0_1px_2px_rgba(12,42,48,0.06),0_10px_28px_rgba(12,42,48,0.08)]">
+        <p className="text-[15.5px] leading-[1.6] text-pretty text-ink-800">
+          Send the page link and one line on what is wrong. It is read by the
           person who can fix it, and curriculum fixes ship as a new version so
-          nobody's work changes underneath them.
+          nobody&apos;s work changes underneath them.
         </p>
+        <a
+          href="mailto:contact@tindata.com?subject=Broken%20on%20Jintu"
+          className="flex h-13 items-center justify-center gap-2.5 rounded-2xl bg-night-900 font-mono text-[15px] text-white no-underline"
+        >
+          <span aria-hidden>{BrokenLinkIcon}</span>
+          <span>contact@tindata.com</span>
+        </a>
       </div>
     </main>
   );

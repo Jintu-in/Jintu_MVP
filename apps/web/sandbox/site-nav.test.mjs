@@ -83,9 +83,9 @@ test("the trigger is a real 40px target and says what it does", () => {
 
 test("the overlay variant still inverts on the homepage hero", () => {
   assert.match(menu, /\[\.jscrolled_&\]:text-ink-900/, "the trigger follows the scrolled bar");
-  // The mark is a literal "j" badge now (the redesign's own header glyph),
-  // not an svg path — but it still has to invert the same way: white-on-dark
-  // over the hero, brand-on-white once the bar takes a solid surface.
+  // The mark is a drawn "j" glyph (an svg path, not text — see the comment
+  // in site-nav.tsx on why), but it still has to invert the same way:
+  // white-badge-on-dark-hero, brand-badge-on-white once the bar scrolls.
   assert.match(nav, /\[\.jscrolled_&\]:bg-brand-500/, "and so does the mark's fill");
-  assert.match(nav, /\[\.jscrolled_&\]:text-on-brand/, "and its text");
+  assert.match(nav, /\[\.jscrolled_&\]:stroke-on-brand/, "and its glyph");
 });

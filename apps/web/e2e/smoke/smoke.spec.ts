@@ -61,15 +61,21 @@ test("a nonexistent route renders the 404 page, not a server error", async ({ pa
   await assertNoSeriousA11yViolations(page);
 });
 
-test("the search form on / is a real GET form — works with JavaScript off", async ({ browser }) => {
+test("the hero's primary action on / is a real link — works with JavaScript off", async ({ browser }) => {
+  // The redesign's homepage (components/marketing/homepage.tsx) dropped the
+  // earlier GET-search-form hero in favour of "Find my roadmap", a plain
+  // <a href="/learn">. A real anchor needs no JS by construction, but the
+  // point of this test is to prove that stays true rather than assume it —
+  // a future hero that wraps the link in an onClick-only handler would pass
+  // every other check and still fail someone with JavaScript off.
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/");
-  const form = page.locator("form[action='/learn']").first();
-  await expect(form).toBeVisible();
-  await form.locator("input[name='q']").fill("python");
-  await form.locator("button[type=submit]").click();
-  await expect(page).toHaveURL(/\/learn\?q=python/);
+  const cta = page.getByRole("link", { name: "Find my roadmap" }).first();
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveAttribute("href", "/learn");
+  await cta.click();
+  await expect(page).toHaveURL(/\/learn$/);
   await context.close();
 });
 

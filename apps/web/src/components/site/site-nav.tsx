@@ -70,19 +70,32 @@ export function SiteNav({
       )}
     >
       <Link href="/" aria-label="Jintu — home" className={cn("flex items-center gap-2", strong)}>
-        {/* The literal "j" badge from the redesign's own header mark —
-            on-brand text on a brand-500 fill, exactly like every other
-            brand-500 use: a decorative fill, never the text colour itself. */}
+        {/* The redesign's header mark is a literal "j" glyph. Drawn here
+            rather than left as real text: axe's label-content-name-mismatch
+            check (WCAG 2.5.3) treats text inside an aria-hidden node as part
+            of the link's VISIBLE label even though it is excluded from the
+            computed accessible NAME — so a literal "j" character here would
+            read as "jjintu" against the "jintu — home" aria-label and fail,
+            on every single page, since this nav is global. A drawn mark has
+            no text node for that check to catch, same colour treatment. */}
         <span
           aria-hidden
           className={cn(
-            "flex size-[26px] items-center justify-center rounded-[9px] font-mono text-[13px] font-bold",
+            "flex size-[26px] items-center justify-center rounded-[9px]",
             overlay
-              ? "bg-white/90 text-night-900 [.jscrolled_&]:bg-brand-500 [.jscrolled_&]:text-on-brand"
-              : "bg-brand-500 text-on-brand",
+              ? "bg-white/90 [.jscrolled_&]:bg-brand-500"
+              : "bg-brand-500",
           )}
         >
-          j
+          <svg width={13} height={15} viewBox="0 0 13 15" fill="none">
+            <path
+              d="M9.5 1v8.5a4 4 0 0 1-4 4H2.5"
+              className={overlay ? "stroke-night-900 [.jscrolled_&]:stroke-on-brand" : "stroke-on-brand"}
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <circle cx="9.5" cy="1" r="0.2" className={overlay ? "fill-night-900 [.jscrolled_&]:fill-on-brand" : "fill-on-brand"} />
+          </svg>
         </span>
         jintu
       </Link>
