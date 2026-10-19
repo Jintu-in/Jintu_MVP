@@ -68,15 +68,15 @@ test("the migration is safe to run twice", () => {
 });
 
 test("the roadmap shows its day count once at every width", () => {
-  // The desktop-only sticky bar that carried the second copy is gone — the
-  // shared SiteNav replaced it. One count survives, and it must not be
-  // breakpoint-gated, or the width its twin used to cover loses the number.
+  // The desktop-only sticky bar that carried a second copy is gone — first
+  // the shared SiteNav replaced it, then the V2Block/DeskBlock rebuild
+  // (roadmap-page.tsx) moved the whole page into the left-column progress
+  // card, rendered identically at every width (no lg:-gated duplicate).
+  // One count survives either way, and it must not be breakpoint-gated.
   const uses = [...roadmapPage.matchAll(/progress\.daysCount/g)];
   assert.equal(uses.length, 1, "expected exactly one count, in the card");
-  const card = /text-\[15px\] leading-\[1\.4\] text-ink-900">/.test(roadmapPage);
-  assert.ok(card, "the card count should render at every width");
-  assert.ok(
-    !/text-\[15px\] leading-\[1\.4\] text-ink-900 lg:hidden/.test(roadmapPage),
-    "the surviving count must not be hidden at any breakpoint",
-  );
+  const [line] = roadmapPage.match(/<div className="[^"]*">\s*\{progress\.daysCount\}/) ?? [];
+  assert.ok(line, "the count should render inside a real element, not be missing");
+  assert.ok(!line.includes("lg:hidden"), "the surviving count must not be hidden at any breakpoint");
+  assert.ok(!line.includes("sm:hidden"), "nor hidden below any breakpoint");
 });

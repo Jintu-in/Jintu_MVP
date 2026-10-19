@@ -19,6 +19,10 @@ const SRC = join(dirname(fileURLToPath(import.meta.url)), "..", "src");
 const home = readFileSync(join(SRC, "components", "marketing", "homepage.tsx"), "utf8");
 const route = readFileSync(join(SRC, "app", "(home)", "page.tsx"), "utf8");
 const art = readFileSync(join(SRC, "components", "marketing", "homepage-field-art.tsx"), "utf8");
+// The planned-roadmap list and the published/planned merge logic moved
+// here in Phase 2, so both /learn and the homepage read the exact same
+// list rather than each keeping their own copy that could drift.
+const plannedLib = readFileSync(join(SRC, "lib", "planned-roadmaps.ts"), "utf8");
 
 test("the old aggregator miniatures are gone, not just unused", () => {
   assert.ok(
@@ -62,7 +66,8 @@ test("the ten field illustrations are keyed by the real role domain, not a grid 
 
 test("'open now' is read from the real catalogue, never asserted", () => {
   assert.match(route, /listPublishedRoadmaps\(\)/);
-  assert.match(route, /openSlugs\.has\(p\.slug\)/, "a planned roadmap is 'open' only once it is actually published");
+  assert.match(route, /buildCatalogue\(published\)/, "home builds its catalogue from the shared, real merge");
+  assert.match(plannedLib, /open: openSlugs\.has\(r\.slug\)|open: true/, "open is only ever set from a real published row");
   assert.match(home, /r\.open \? \(/, "the badge itself is conditional on the real flag");
   // The mockup's own illustrative framing — a round "ten roadmaps" and "one
   // open today" — must not survive as a hardcoded string once this reads a
@@ -71,13 +76,17 @@ test("'open now' is read from the real catalogue, never asserted", () => {
   assert.match(home, /\{openRoadmapCount\} of \{totalRoadmapCount\}/, "the heading itself interpolates the real counts");
 });
 
-test("the planned-roadmap list is real content, not invented titles", () => {
+test("the planned-roadmap list is real content, not invented titles, and is shared rather than duplicated", () => {
   // Every title in PLANNED_ROADMAPS must correspond to an actual file this
   // repo ships — docs/roadmaps/<slug>.mjs — so the "coming soon" list can
   // never claim a roadmap that does not exist anywhere as real content.
-  const slugs = [...route.matchAll(/slug:\s*"([a-z-]+)"/g)].map((m) => m[1]);
+  const slugs = [...plannedLib.matchAll(/slug:\s*"([a-z-]+)"/g)].map((m) => m[1]);
   assert.ok(slugs.length >= 9, "the planned catalogue should list the real docs/roadmaps/*.mjs files");
   assert.ok(!slugs.includes("dsa-starter"), "a roadmap with no content file anywhere must not be listed as planned");
+  // The homepage must import the shared list, not keep a second copy that
+  // could silently diverge from the one /learn reads.
+  assert.match(route, /from "@\/lib\/planned-roadmaps"/);
+  assert.ok(!/PLANNED_ROADMAPS\s*[:=]/.test(route), "the homepage route must not re-declare its own copy");
 });
 
 test("the self-check copy says what it is: no score, no grading", () => {

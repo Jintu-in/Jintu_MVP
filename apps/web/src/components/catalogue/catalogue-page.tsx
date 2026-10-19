@@ -1,411 +1,245 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { CatalogueSearch } from "@/components/catalogue/catalogue-search";
-import { CatalogueSheet } from "@/components/catalogue/catalogue-sheet";
-import { TopicRequestForm } from "@/components/learn/topic-request-form";
-import { CATEGORY_ACCENT } from "@/components/ui/category-accent";
-import { Eyebrow } from "@/components/ui/patterns";
 import {
-  activePills,
   applyFilters,
-  buildFacets,
   CATEGORIES,
-  EMPTY_FILTERS,
-  hasAnyFacet,
   resultLine,
-  SORTS,
-  toQueryString,
   toggled,
+  toQueryString,
   type CatalogueRow,
   type Filters,
-  type Group,
 } from "@/lib/catalogue-filters";
 import { cn } from "@/lib/utils";
 
 /**
- * The catalogue (/learn), from the design's "Catalogue with sidebar".
+ * The catalogue (/learn) — rebuilt against V2Roadmaps.dc.html /
+ * DeskRoadmaps.dc.html.
  *
- * A server component with two client islands — the debounced search field and
- * the mobile filter sheet. Everything else is a link, because everything else
- * is in the URL: /learn?c=software&level=beginner is a page you can share,
- * bookmark, crawl and reverse with the back button. There is no filter state
- * to lose on reload and no first paint that disagrees with the address bar.
+ * This replaced a richer, facet-sidebar catalogue (Level/Length/Format/
+ * certification/prerequisites, three sort orders) built against an older
+ * design. See catalogue-filters.ts's own header for why that was cut down
+ * to category + search — asked and answered 2026-10-19, not a default.
  *
- * Subject appears exactly once at any width — the rail owns it from lg up,
- * the chip row owns it below, and the sheet does not offer it at all.
- *
- * TWO DELIBERATE DEVIATIONS from the design, both about not lying to people:
- *
- *   - The design draws Level, Format and the two booleans as square
- *     checkboxes and Subject and Length as round radios, but the brief makes
- *     all four groups single-select. A control shaped like a checkbox that
- *     clears its sibling is a bug you can see. So: circles for the four
- *     single-select groups, squares only for the two genuine booleans.
- *   - The card badges are white on rgba(255,255,255,.2) over the accent,
- *     which is 2.3:1 on the mid accent and 1.8:1 on the palest. They are a
- *     near-solid white chip with ink text here, which keeps "a light chip on
- *     colour" and stays legible on all four.
+ * One mark style throughout — a filled circle with a two-letter mono
+ * initial, brand-500/on-brand for the open roadmap, white/link for the
+ * rest — reusing the homepage's "the roadmaps" section treatment rather
+ * than building the design's second illustration set (a 68×68 bespoke
+ * drawing per roadmap). Same visual language, bounded effort; the
+ * per-roadmap illustrations are the one deliberate fidelity gap in this
+ * page.
  */
+
+const ARROW_RIGHT = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </svg>
+);
+
+const BELL_ICON = (
+  <svg aria-hidden width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" />
+    <path d="M10 20a2 2 0 0 0 4 0" />
+  </svg>
+);
 
 export type { CatalogueRow } from "@/lib/catalogue-filters";
 
 export interface CataloguePageProps {
   rows: CatalogueRow[];
   filters: Filters;
+  streakDays: number | null;
 }
 
 const href = (f: Filters) => `/learn${toQueryString(f)}` as Route;
 
-/**
- * Short labels for the card badge. The colour and glyph come from the shared
- * CATEGORY_ACCENT — they were duplicated here, which meant a sixth category
- * had to be added in two places and would render untyped in one of them.
- */
-const SHORT_CATEGORY: Record<CatalogueRow["category"], string> = {
-  data: "Data",
-  software: "Software",
-  business: "Business",
-  health: "Health",
-  judgement: "Judgement",
-  foundations: "Basics",
-};
-
-const SHORT_LEVEL: Record<CatalogueRow["level"], string> = {
-  beginner: "Beg.",
-  intermediate: "Int.",
-  advanced: "Adv.",
-};
-
-function CardCap({ row }: { row: CatalogueRow }) {
-  const a = CATEGORY_ACCENT[row.category];
+function Mark({ row }: { row: CatalogueRow }) {
   return (
-    <div className={cn("relative flex h-24 items-start justify-between overflow-hidden p-2.5", a.bg)}>
-      <svg
-        aria-hidden
-        width={46}
-        height={46}
-        viewBox="0 0 24 24"
-        fill="none"
-        className={cn("absolute -bottom-1 left-1 opacity-20", a.dark ? "text-white" : "text-ink-900")}
-      >
-        <path d={a.glyph} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <span className="relative rounded-md bg-white/90 px-2 py-1 text-[10px] leading-none text-ink-900">
-        {SHORT_CATEGORY[row.category]}
-      </span>
-      <span className="relative rounded-md bg-white/90 px-2 py-1 text-[10px] leading-none text-ink-900">
-        {SHORT_LEVEL[row.level]}
-      </span>
+    <span
+      aria-hidden
+      className={cn(
+        "flex size-11 flex-none items-center justify-center rounded-2xl font-mono text-[13px] font-semibold",
+        row.open ? "bg-brand-500 text-on-brand" : "bg-white text-link",
+      )}
+    >
+      {row.title.slice(0, 2)}
+    </span>
+  );
+}
+
+/** The one open roadmap — the bento-style hero card. */
+function OpenCard({ row }: { row: CatalogueRow }) {
+  return (
+    <div className="flex flex-col gap-3.5 rounded-[24px] bg-night-900 p-4 text-white sm:p-5">
+      <div className="flex flex-wrap items-center gap-2.5">
+        <span className="flex h-[26px] items-center gap-1.5 rounded-xl bg-brand-500/20 px-2.5 text-[12px] font-semibold text-on-night-muted">
+          <span aria-hidden className="size-[7px] rounded-full bg-brand-500" />
+          Open now
+        </span>
+        <span className="font-mono text-[12.5px] text-on-night-muted-2">
+          {CATEGORIES.find((c) => c.key === row.category)?.label}
+          {row.weeks ? ` · ${row.weeks} weeks` : null}
+        </span>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="t-card text-white">{row.title}</div>
+        <p className="text-[15px] leading-[1.45] text-pretty text-on-night-muted">{row.summary}</p>
+      </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        {row.progress ? (
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <span aria-hidden className="block h-1.5 overflow-hidden rounded-full bg-white/15">
+              <span className="block h-1.5 rounded-full bg-brand-500" style={{ width: `${row.progress.pct}%` }} />
+            </span>
+            <span className="font-mono text-[12px] text-on-night-muted-2">{row.progress.line}</span>
+          </div>
+        ) : row.finished ? (
+          <span className="font-mono text-[12px] text-on-night-muted-2">{row.finished.line}</span>
+        ) : (
+          <span className="font-mono text-[12px] text-on-night-muted-2">{row.footLine}</span>
+        )}
+        <Link
+          href={row.href as Route}
+          className="flex h-12 flex-none items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-5 text-[15.5px] font-semibold text-on-brand hover:bg-brand-400"
+        >
+          <span>{row.progress ? "Continue" : row.finished ? "Read again" : "Start"}</span>
+          {ARROW_RIGHT}
+        </Link>
+      </div>
     </div>
   );
 }
 
-function RoadmapCard({ row }: { row: CatalogueRow }) {
+/** Every other roadmap — "coming soon," with a notify button. */
+function PlannedCard({ row }: { row: CatalogueRow }) {
   return (
-    <Link
-      href={row.href as Route}
-      className="flex flex-col overflow-hidden rounded-2xl border border-ink-100 bg-white no-underline outline-offset-2 transition-colors hover:border-ink-200 focus-visible:outline-2 focus-visible:outline-brand-700"
-    >
-      <CardCap row={row} />
-      <div className="flex flex-1 flex-col gap-1.5 p-3 lg:gap-2 lg:p-4">
-        <div className="flex items-start gap-1.5">
-          {row.finished ? (
-            <span className="mt-px flex size-4 flex-none items-center justify-center rounded-full bg-check-machine text-white">
-              <svg aria-hidden width={9} height={9} viewBox="0 0 12 12" fill="none">
-                <path d="M2.5 6.2 4.8 8.5 9.5 3.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          ) : null}
-          <span className="line-clamp-2 text-[14px] leading-[1.3] font-medium text-ink-900 lg:text-[15px]">
-            {row.title}
-          </span>
+    <div className="flex items-start gap-3.5 rounded-[22px] bg-white p-3.5 sm:p-4">
+      <Mark row={row} />
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[12px] leading-4 font-semibold text-link">
+          {CATEGORIES.find((c) => c.key === row.category)?.label}
         </div>
-        <p className="m-0 line-clamp-2 text-[11.5px] leading-[1.4] text-ink-600 lg:text-[12.5px]">
-          {row.summary}
-        </p>
-        <span className="font-mono text-[10.5px] leading-[1.3] text-ink-500 lg:text-[11px]">
-          {row.metaLine}
-        </span>
-        {row.progress ? (
-          <span aria-hidden className="mt-0.5 block h-1 overflow-hidden rounded-full bg-ink-100">
-            {/* Inline on purpose: a computed percentage is genuinely dynamic. */}
-            <span className="block h-1 rounded-full bg-check-machine" style={{ width: `${row.progress.pct}%` }} />
+        <div className="t-card mt-0.5 text-ink-900">{row.title}</div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          <span className="flex h-6 items-center rounded-xl bg-ink-50 px-2.5 text-[12px] font-semibold text-ink-600">
+            Coming soon
           </span>
-        ) : null}
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-ink-100 pt-2.5">
-          <span className="min-w-0 truncate font-mono text-[10.5px] leading-[1.3] text-ink-500 lg:text-[11px]">
-            {row.finished ? row.finished.line : row.progress ? row.progress.line : row.footLine}
-          </span>
-          <span className="flex-none rounded-full bg-brand-700 px-3 py-1.5 text-[11px] leading-none text-white lg:text-[12px]">
-            {row.finished ? "Read again" : row.progress ? "Resume" : "Start"}
+          <span className="font-mono text-[12px] text-ink-500">
+            {row.level ? row.level[0]!.toUpperCase() + row.level.slice(1) : null}
+            {row.weeks ? ` · ${row.weeks} weeks` : null}
           </span>
         </div>
       </div>
-    </Link>
+      <button
+        type="button"
+        aria-label={`Tell me when ${row.title} opens`}
+        className="flex size-11 flex-none items-center justify-center rounded-full bg-ink-50 text-link"
+      >
+        {BELL_ICON}
+      </button>
+    </div>
   );
 }
 
-/** One sidebar row: radio or checkbox, label, live count, × when chosen. */
-function FacetRow({
-  filters,
-  group,
-  facetKey,
-  label,
-  count,
-  selected,
-  shape,
-}: {
-  filters: Filters;
-  group: Group;
-  facetKey: string;
-  label: string;
-  count: number;
-  selected: boolean;
-  shape: "radio" | "checkbox";
-}) {
-  return (
-    <Link
-      href={href(toggled(filters, group, facetKey))}
-      scroll={false}
-      aria-current={selected ? "true" : undefined}
-      className={cn(
-        "-mx-2 flex items-center justify-between gap-2 rounded-md px-2 py-[7px] no-underline",
-        selected ? "bg-brand-50" : "hover:bg-white",
-      )}
-    >
-      <span
-        className={cn(
-          "flex items-center gap-2 text-[13.5px] leading-none",
-          selected ? "text-brand-900" : "text-ink-900",
-        )}
-      >
-        <span
-          aria-hidden
-          className={cn(
-            "size-[15px] flex-none border-[1.5px]",
-            shape === "radio" ? "rounded-full" : "rounded",
-            selected ? "border-brand-700 bg-brand-700" : "border-ink-200",
-          )}
-        />
-        {label}
-      </span>
-      <span
-        className={cn(
-          "flex items-center gap-1.5 font-mono text-[12px] leading-none",
-          selected ? "text-brand-900" : "text-ink-500",
-        )}
-      >
-        {count}
-        {selected ? (
-          <svg aria-hidden width={9} height={9} viewBox="0 0 10 10" fill="none">
-            <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-          </svg>
-        ) : null}
-      </span>
-    </Link>
-  );
-}
-
-export default function CataloguePage({ rows, filters }: CataloguePageProps) {
+export default function CataloguePage({ rows, filters, streakDays }: CataloguePageProps) {
   const shown = applyFilters(rows, filters);
-  const groups = buildFacets(rows, filters);
-  const subjectGroup = groups.find((g) => g.group === "c");
-  const pills = activePills(filters);
-  const cleared: Filters = { ...EMPTY_FILTERS, q: filters.q, sort: filters.sort };
+  const open = shown.filter((r) => r.open);
+  const planned = shown.filter((r) => !r.open);
+  const [hero, ...restOpen] = open;
 
   return (
-    <div className="bg-white lg:bg-ink-50">
-      <div className="flex">
-        {/* ── the rail ─────────────────────────────────────────────────────── */}
-        {/* No "Filters" heading: the group labels below say what these are,
-            and the word already belongs to the mobile sheet's trigger. */}
-        <aside
-          aria-label="Filter roadmaps"
-          className="sticky top-[72px] hidden h-fit w-[240px] flex-none flex-col gap-[22px] border-r border-ink-100 bg-ink-50 px-5 py-7 lg:flex"
-        >
-          <CatalogueSearch filters={filters} size="compact" />
-
-          {groups.map((g) => (
-            <div key={g.group} className="flex flex-col gap-2.5">
-              {g.label ? (
-                <span className="font-mono text-[10.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
-                  {g.label}
-                </span>
-              ) : null}
-              <div className="flex flex-col">
-                {g.facets.map((x) => (
-                  <FacetRow
-                    key={`${x.group}-${x.key}`}
-                    filters={filters}
-                    group={x.group}
-                    facetKey={x.key}
-                    label={x.label}
-                    count={x.count}
-                    selected={x.selected}
-                    shape={g.kind === "boolean" ? "checkbox" : "radio"}
+    <div className="flex min-w-0 flex-1 flex-col">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-5 px-5 py-6 sm:px-8 lg:px-12 lg:py-9">
+        <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="flex items-center justify-between gap-3 lg:justify-start lg:gap-4">
+            <h1 className="t-sect text-ink-900">Roadmaps</h1>
+            {streakDays !== null && streakDays > 0 ? (
+              <span className="flex h-8 items-center gap-1.5 rounded-2xl bg-warn-bg px-3 text-[13.5px] font-semibold text-warn-700">
+                <svg aria-hidden width={14} height={14} viewBox="0 0 24 24">
+                  <path
+                    d="M12 2c1 3.6 5 5.6 5 10.2a5 5 0 0 1-10 0c0-1.7.6-3 1.6-4 .3 1.5 1 2.4 2 2.7C10.4 8.4 10.8 5 12 2z"
+                    fill="#F29D00"
                   />
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {hasAnyFacet(filters) ? (
-            <Link href={href(cleared)} scroll={false} className="text-[12.5px] leading-none text-brand-700">
-              Clear all
-            </Link>
-          ) : null}
-
-          {/* A footnote under the filters, not a call to action. It sits
-              below the rule with its own quiet heading and an outlined
-              button, so it reads as "and if none of these" rather than
-              competing with the four roadmaps on the right. */}
-          <div className="flex flex-col gap-1.5 border-t border-ink-100 pt-4">
-            <span className="text-[13px] leading-none font-medium text-ink-900">Not here yet?</span>
-            <p className="m-0 mb-1 text-[12px] leading-[1.45] text-ink-600">
-              Tell us the subject and it goes on the list.
-            </p>
-            <TopicRequestForm source="sidebar" size="compact" defaultValue={filters.q} />
-          </div>
-        </aside>
-
-        {/* ── results ──────────────────────────────────────────────────────── */}
-        <div className="min-w-0 flex-1">
-          <div className="mx-auto max-w-[900px] px-4 pt-5 pb-10 sm:px-6 lg:px-10 lg:pt-9">
-            <Eyebrow glyph="◆">Roadmaps</Eyebrow>
-            {/* No break: balance splits it at whatever width the rail
-                leaves, which changes with the sidebar. */}
-            <h1 className="t-page mt-3.5 mb-0 text-ink-900">
-              Pick a subject. Follow it to the end.
-            </h1>
-            <p className="t-lead mt-3.5 mb-0 text-ink-600">
-              Every roadmap is free, readable without an account, and checked by a person before it
-              shipped.
-            </p>
-
-            {/* the search field, below lg — the rail has it above */}
-            <div className="mt-4 lg:hidden">
-              <CatalogueSearch filters={filters} />
-            </div>
-
-            {/* subject chips, below lg — the rail owns Subject above */}
-            {subjectGroup ? (
-              <div className="relative mt-4 lg:hidden">
-                <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  <Link
-                    href={href({ ...filters, c: null })}
-                    scroll={false}
-                    className={cn(
-                      "flex min-h-10 flex-none items-center gap-1.5 rounded-full px-3.5 text-[12.5px] whitespace-nowrap no-underline",
-                      filters.c === null
-                        ? "bg-ink-900 text-white"
-                        : "border border-ink-100 bg-white text-ink-600",
-                    )}
-                  >
-                    All <span className="font-mono">{rows.length}</span>
-                  </Link>
-                  {subjectGroup.facets.map((x) => (
-                    <Link
-                      key={x.key}
-                      href={href(toggled(filters, "c", x.key))}
-                      scroll={false}
-                      className={cn(
-                        "flex min-h-10 flex-none items-center gap-1.5 rounded-full px-3.5 text-[12.5px] whitespace-nowrap no-underline",
-                        x.selected
-                          ? "border border-brand-700 bg-brand-50 text-brand-900"
-                          : "border border-ink-100 bg-white text-ink-600",
-                      )}
-                    >
-                      {/* Short labels here: "Marketing & commerce" in a
-                          scrolling row is one chip and half a screen. */}
-                      {CATEGORIES.find((c) => c.key === x.key)!.label.split(" & ")[0]}
-                      <span className="font-mono text-[11.5px]">{x.count}</span>
-                    </Link>
-                  ))}
-                </div>
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute top-0 right-0 bottom-1 w-8 bg-gradient-to-r from-transparent to-white"
-                />
-              </div>
-            ) : null}
-
-            {/* active filters, removable one at a time */}
-            {pills.length > 0 ? (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {pills.map((p) => (
-                  <Link
-                    key={p.group}
-                    href={href(toggled(filters, p.group, p.key))}
-                    scroll={false}
-                    aria-label={`Remove filter: ${p.label}`}
-                    className="flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1.5 text-[12px] leading-none text-brand-900 no-underline"
-                  >
-                    {p.label}
-                    <svg aria-hidden width={9} height={9} viewBox="0 0 10 10" fill="none">
-                      <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    </svg>
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-
-            {/* count · sort, and the sheet trigger below lg */}
-            <div className="mt-5 flex items-center justify-between gap-3">
-              <span className="min-w-0 truncate font-mono text-[12.5px] leading-none text-ink-500">
-                {resultLine(shown.length, filters)}
+                </svg>
+                <span>{streakDays}</span>
               </span>
-              <div className="hidden gap-4 lg:flex">
-                {SORTS.map((s) => (
-                  <Link
-                    key={s.key}
-                    href={href({ ...filters, sort: s.key })}
-                    scroll={false}
-                    aria-current={filters.sort === s.key ? "true" : undefined}
-                    className={cn(
-                      "text-[13px] leading-none no-underline",
-                      filters.sort === s.key ? "text-ink-900" : "text-ink-600 hover:text-ink-900",
-                    )}
-                  >
-                    {s.label}
-                  </Link>
-                ))}
-              </div>
-              <div className="lg:hidden">
-                <CatalogueSheet rows={rows} filters={filters} />
-              </div>
-            </div>
-
-            {shown.length > 0 ? (
-              <div className="mt-3.5 grid grid-cols-2 gap-3 lg:mt-4 lg:gap-4">
-                {shown.map((row) => (
-                  <RoadmapCard key={row.slug} row={row} />
-                ))}
-              </div>
-            ) : (
-              /* Nothing matched. The catalogue is four roadmaps deep, so this
-                 is the expected outcome for most searches, not an error — the
-                 request box is the page rather than a footnote on it. */
-              <div className="mt-5 rounded-2xl border border-ink-100 bg-white p-6">
-                <div className="text-[18px] leading-[1.3] font-medium text-ink-900">
-                  Nothing matches that yet.
-                </div>
-                <p className="mt-3 mb-0 max-w-[52ch] text-[14px] leading-[1.5] text-pretty text-ink-600">
-                  We have {rows.length} roadmaps so far, and we are writing more.
-                </p>
-                <div className="mt-3">
-                  <TopicRequestForm source="no_results" defaultValue={filters.q} />
-                </div>
-                <Link
-                  href={"/learn" as Route}
-                  scroll={false}
-                  className="mt-4 inline-block text-[13px] leading-none text-brand-700"
-                >
-                  Clear all filters
-                </Link>
-              </div>
-            )}
+            ) : null}
+          </div>
+          <div className="lg:w-[340px] lg:flex-none">
+            <CatalogueSearch filters={filters} />
           </div>
         </div>
+
+        <div role="group" aria-label="Groups" className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden">
+          <Link
+            href={href({ ...filters, c: null })}
+            scroll={false}
+            className={cn(
+              "flex min-h-11 flex-none items-center rounded-2xl border px-4 text-[14px] whitespace-nowrap no-underline",
+              filters.c === null ? "border-night-900 bg-night-900 text-white font-semibold" : "border-ink-100 bg-white text-ink-900",
+            )}
+          >
+            All {rows.length}
+          </Link>
+          {CATEGORIES.map((c) => (
+            <Link
+              key={c.key}
+              href={href(toggled(filters, "c", c.key))}
+              scroll={false}
+              className={cn(
+                "flex min-h-11 flex-none items-center rounded-2xl border px-4 text-[14px] whitespace-nowrap no-underline",
+                filters.c === c.key ? "border-night-900 bg-night-900 text-white font-semibold" : "border-ink-100 bg-white text-ink-900",
+              )}
+            >
+              {c.label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="font-mono text-[12.5px] leading-none text-ink-500">{resultLine(shown.length, filters)}</div>
+
+        {shown.length > 0 ? (
+          <div className="flex flex-col gap-2.5">
+            {hero ? <OpenCard row={hero} /> : null}
+            {restOpen.map((r) => (
+              <OpenCard key={r.slug} row={r} />
+            ))}
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {planned.map((r) => (
+                <PlannedCard key={r.slug} row={r} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-[22px] bg-white p-6">
+            <div className="t-card text-ink-900">Nothing matches that yet.</div>
+            <p className="mt-2 max-w-[52ch] text-[14px] leading-[1.5] text-pretty text-ink-600">
+              We have {rows.length} roadmaps so far, and we are writing more.
+            </p>
+            <Link href="/contact" className="mt-3 inline-flex min-h-11 items-center text-[13.5px] font-semibold text-ink-900">
+              Tell us what you want to learn
+            </Link>
+          </div>
+        )}
+
+        <Link
+          href="/contact"
+          className="flex min-h-[64px] items-center gap-3.5 rounded-[22px] border border-dashed border-ink-200 p-4 text-ink-900 no-underline"
+        >
+          <span aria-hidden className="flex size-11 flex-none items-center justify-center rounded-2xl bg-white">
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[15px] font-semibold">Ask for a roadmap</span>
+            <span className="text-[13.5px] text-ink-600">
+              Entrepreneurship, sales, something else? Tell us what you want to learn.
+            </span>
+          </span>
+        </Link>
       </div>
     </div>
   );
