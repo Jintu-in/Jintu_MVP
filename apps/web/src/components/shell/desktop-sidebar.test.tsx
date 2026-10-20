@@ -27,4 +27,12 @@ describe("DesktopSidebar", () => {
     expect(screen.getByText("Asha Verma")).toBeVisible();
     expect(screen.getByText("75 points")).toBeVisible();
   });
+
+  test("links to Settings only when signed in — DeskProfileNew.dc.html's own sidebar", () => {
+    render(<DesktopSidebar active="today" user={null} />);
+    expect(screen.queryByRole("link", { name: /settings/i })).toBeNull();
+
+    render(<DesktopSidebar active="today" user={{ displayName: "Asha Verma", initials: "AV", points: 75 }} />);
+    expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/settings");
+  });
 });

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SettingsNavIcon } from "@/components/ui/icons";
 import { NAV_ITEMS, type NavKey } from "./nav-items";
 
 /**
@@ -61,6 +62,16 @@ export function DesktopSidebar({
           </Link>
         );
       })}
+
+      {user ? (
+        <Link
+          href="/settings"
+          className="flex h-12 items-center gap-3 rounded-14 px-3 text-[15px] text-on-night"
+        >
+          <SettingsNavIcon size={22} />
+          <span>Settings</span>
+        </Link>
+      ) : null}
 
       {user ? (
         <div className="mt-auto flex items-center gap-3 rounded-2xl bg-white/8 p-3">

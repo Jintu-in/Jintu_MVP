@@ -16,6 +16,16 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
+  // Design update 2 retired these routes in favour of /settings (Decision 3,
+  // design/jintu-design/CURRENT-STATE.md §5) — permanent redirects, per
+  // HANDOFF.md's own rule ("if a route really must change, add a 301").
+  async redirects() {
+    return [
+      { source: "/account", destination: "/settings", permanent: true },
+      { source: "/profile/consents", destination: "/settings/consents", permanent: true },
+      { source: "/profile/delete", destination: "/settings/delete", permanent: true },
+    ];
+  },
   // Workspace packages ship TS source, not build output.
   transpilePackages: ["@jintu/ui", "@jintu/grading", "@jintu/contracts"],
   images: {

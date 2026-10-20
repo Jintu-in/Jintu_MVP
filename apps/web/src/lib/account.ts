@@ -1,5 +1,6 @@
 import "server-only";
 import { OPTIONAL_PURPOSES } from "@jintu/contracts";
+import { latestConsents } from "@/lib/consent-events";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
 import { createClient } from "@/lib/supabase/server";
@@ -13,11 +14,12 @@ import { createClient } from "@/lib/supabase/server";
  * that replaces it, so a new account never renders a wall of zeros.
  */
 
+/** One purpose's current state, per the append-only consent_events log. */
 export type ConsentRow = {
   purpose: string;
-  grantedAt: string | null;
-  withdrawnAt: string | null;
-  noticeVersion: string | null;
+  granted: boolean;
+  /** When the latest *grant* happened — null when not currently granted. */
+  at: string | null;
 };
 
 export type AccountData = {
@@ -31,6 +33,8 @@ export type AccountData = {
   publicProfile: { handle: string | null; isPublic: boolean };
   suggestedHandle: string;
   consents: ConsentRow[];
+  /** When a password was last saved — null means email-code-only. */
+  passwordSetAt: string | null;
   /** False for an account that has not finished a day — no zeros are drawn. */
   hasRecord: boolean;
   /** Counts for the delete page's "this removes" list. */
@@ -62,15 +66,17 @@ export async function getAccount(): Promise<AccountData | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [profileRes, remindersRes, publicRes, consentsRes, daysRes, savedRes] = await Promise.all([
+  const [profileRes, remindersRes, publicRes, consentState, daysRes, savedRes] = await Promise.all([
     retryRead(() =>
-      supabase.from("profiles").select("full_name, display_name, timezone").eq("id", user.id).maybeSingle(),
+      supabase
+        .from("profiles")
+        .select("full_name, display_name, timezone, password_set_at")
+        .eq("id", user.id)
+        .maybeSingle(),
     ),
     retryRead(() => supabase.from("reminder_prefs").select("*").maybeSingle()),
     retryRead(() => supabase.from("public_profiles").select("handle, is_public").maybeSingle()),
-    retryRead(() =>
-      supabase.from("consents").select("purpose, granted_at, withdrawn_at, notice_version").order("granted_at"),
-    ),
+    latestConsents(supabase, user.id),
     retryRead(() => supabase.from("activity_days").select("done_on", { count: "exact", head: true })),
     retryRead(() =>
       supabase.from("saved_resources").select("resource_id", { count: "exact", head: true }),
@@ -83,7 +89,6 @@ export async function getAccount(): Promise<AccountData | null> {
   for (const [what, res] of [
     ["your reminders", remindersRes],
     ["your public profile", publicRes],
-    ["your consents", consentsRes],
     ["your activity", daysRes],
     ["your saved links", savedRes],
   ] as const) {
@@ -94,20 +99,16 @@ export async function getAccount(): Promise<AccountData | null> {
   const fullName = profileRes.data.full_name ?? null;
   const displayName = profileRes.data.display_name ?? null;
 
-  // Latest row per purpose — a purpose can be granted, withdrawn and granted
-  // again, and the current state is the last word.
-  const byPurpose = new Map<string, ConsentRow>();
-  for (const c of consentsRes.data ?? []) {
-    byPurpose.set(c.purpose, {
-      purpose: c.purpose,
-      grantedAt: c.granted_at,
-      withdrawnAt: c.withdrawn_at,
-      noticeVersion: c.notice_version,
-    });
-  }
-  const consents: ConsentRow[] = ["core_service", ...OPTIONAL_PURPOSES].map(
-    (p) => byPurpose.get(p) ?? { purpose: p, grantedAt: null, withdrawnAt: null, noticeVersion: null },
-  );
+  // core_service never appears in consent_events with granted = false (the
+  // CHECK constraint forbids it) — absent entirely only means it predates
+  // this log and lives solely in the older consents table (onboarding's own
+  // row), which still exists and is still true. Treat "never logged" for
+  // core_service as granted; for everything else, absent means not agreed.
+  const consents: ConsentRow[] = ["core_service", ...OPTIONAL_PURPOSES].map((p) => {
+    const state = consentState[p];
+    if (state) return { purpose: p, granted: state.granted, at: state.at };
+    return { purpose: p, granted: p === "core_service", at: null };
+  });
 
   return {
     userId: user.id,
@@ -128,6 +129,7 @@ export async function getAccount(): Promise<AccountData | null> {
     },
     suggestedHandle: suggestHandle(displayName ?? fullName, email),
     consents,
+    passwordSetAt: profileRes.data.password_set_at ?? null,
     hasRecord: (daysRes.count ?? 0) > 0,
     counts: {
       days: daysRes.count ?? 0,

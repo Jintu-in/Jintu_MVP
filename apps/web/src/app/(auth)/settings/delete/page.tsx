@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function DeleteAccountPage() {
+export default async function SettingsDeletePage() {
   const account = await getAccount();
-  if (!account) redirect("/join?next=/profile");
+  if (!account) redirect("/join?next=/settings");
 
   const removes = [
     account.counts.days > 0
@@ -35,13 +35,13 @@ export default async function DeleteAccountPage() {
   ].filter((x): x is string => Boolean(x));
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-[520px] bg-white px-5 pt-4 pb-12">
+    <main className="mx-auto min-h-dvh w-full max-w-[520px] bg-ink-50 px-5 pt-4 pb-12">
       <Link
-        href="/profile"
+        href="/settings"
         className="-ml-2 inline-flex h-12 items-center gap-1.5 px-2 text-[14px] text-brand-700"
       >
         <BackIcon />
-        Profile
+        Settings
       </Link>
 
       <h1 className="mt-2 text-[22px] leading-[1.3] font-medium text-ink-900">
