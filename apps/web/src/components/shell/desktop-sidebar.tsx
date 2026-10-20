@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IdentityMark } from "@/components/avatar/identity-mark";
 import { SettingsNavIcon } from "@/components/ui/icons";
 import { NAV_ITEMS, type NavKey } from "./nav-items";
 
@@ -24,7 +25,9 @@ export function DesktopSidebar({
   active: NavKey;
   /** Null renders nothing in the account slot — a signed-out shell has no
    *  account to show, not a skeleton pretending one is loading. */
-  user: { displayName: string; initials: string; points: number } | null;
+  user:
+    | { displayName: string; initials: string; points: number; avatarAnimal?: string | null; avatarColor?: string | null }
+    | null;
 }) {
   return (
     <nav
@@ -75,12 +78,7 @@ export function DesktopSidebar({
 
       {user ? (
         <div className="mt-auto flex items-center gap-3 rounded-2xl bg-white/8 p-3">
-          <div
-            aria-hidden
-            className="flex size-10 flex-none items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-link"
-          >
-            {user.initials}
-          </div>
+          <IdentityMark avatarAnimal={user.avatarAnimal} avatarColor={user.avatarColor} size={40} />
           <div className="min-w-0 flex flex-col">
             <div className="truncate text-sm leading-5 font-semibold">{user.displayName}</div>
             <div className="font-mono text-xs leading-4 text-on-night-muted-2">

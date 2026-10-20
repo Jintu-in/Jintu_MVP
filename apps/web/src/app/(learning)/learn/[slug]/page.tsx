@@ -185,6 +185,8 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
               displayName: viewer.fullName ?? viewer.email ?? "You",
               initials: initialsFor(viewer),
               points: momentum?.totalPoints ?? 0,
+              avatarAnimal: viewer.avatarAnimal,
+              avatarColor: viewer.avatarColor,
             }
           : null
       }

@@ -1,5 +1,11 @@
 export {
+  ANIMALS,
+  COLORS,
+  DEFAULT_ANIMAL,
+  DEFAULT_COLOR,
   RESERVED_HANDLES,
+  avatarInput,
+  colorHex,
   deleteAccountInput,
   displayNameInput,
   handleSchema,
@@ -7,6 +13,9 @@ export {
   reminderPrefsInput,
   timezoneSchema,
   timezoneUpdateInput,
+  type AnimalKey,
+  type AvatarInput,
+  type ColorKey,
   type PublicProfileInput,
   type ReminderPrefsInput,
 } from "./account";

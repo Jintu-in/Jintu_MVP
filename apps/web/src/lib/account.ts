@@ -35,6 +35,9 @@ export type AccountData = {
   consents: ConsentRow[];
   /** When a password was last saved — null means email-code-only. */
   passwordSetAt: string | null;
+  /** Phase 4 Part B — null until chosen; IdentityMark applies the default. */
+  avatarAnimal: string | null;
+  avatarColor: string | null;
   /** False for an account that has not finished a day — no zeros are drawn. */
   hasRecord: boolean;
   /** Counts for the delete page's "this removes" list. */
@@ -70,7 +73,7 @@ export async function getAccount(): Promise<AccountData | null> {
     retryRead(() =>
       supabase
         .from("profiles")
-        .select("full_name, display_name, timezone, password_set_at")
+        .select("full_name, display_name, timezone, password_set_at, avatar_animal, avatar_color")
         .eq("id", user.id)
         .maybeSingle(),
     ),
@@ -130,6 +133,8 @@ export async function getAccount(): Promise<AccountData | null> {
     suggestedHandle: suggestHandle(displayName ?? fullName, email),
     consents,
     passwordSetAt: profileRes.data.password_set_at ?? null,
+    avatarAnimal: profileRes.data.avatar_animal ?? null,
+    avatarColor: profileRes.data.avatar_color ?? null,
     hasRecord: (daysRes.count ?? 0) > 0,
     counts: {
       days: daysRes.count ?? 0,

@@ -239,6 +239,13 @@ try {
 } catch { /* purpose CHECK */ }
 check(!bundled, "consent purposes are a closed list — no bundled catch-all");
 
+let fakeAnimal = false;
+try {
+  await as(ua, `update public.profiles set avatar_animal = 'dragon' where id = '${ua}'`);
+  fakeAnimal = true;
+} catch { /* avatar_animal CHECK */ }
+check(!fakeAnimal, "the avatar is one of the 16 fixed animals — no made-up value");
+
 console.log("\n── the consent log is append-only, and user-scoped ─────────");
 await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
               values ('${ua}', 'reminders', true, 'v1') returning id`);

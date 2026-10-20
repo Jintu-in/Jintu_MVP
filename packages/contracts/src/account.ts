@@ -96,3 +96,41 @@ export const deleteAccountInput = z.object({
 
 export type ReminderPrefsInput = z.infer<typeof reminderPrefsInput>;
 export type PublicProfileInput = z.infer<typeof publicProfileInput>;
+
+/**
+ * Phase 4 Part B: the avatar (V2Avatar/AvatarKit). The 16 animals and 8
+ * colours are the mockup's own fixed lists, transcribed verbatim — kept
+ * here as the one place both the validation and the UI (avatar-kit.tsx,
+ * apps/web) read them from, and the shape the 0029 migration's CHECK
+ * constraints mirror.
+ */
+export const ANIMALS = [
+  "bear", "lion", "elephant", "hippo", "koala", "panda", "monkey", "pig",
+  "penguin", "rabbit", "fox", "sheep", "tiger", "cat", "owl", "frog",
+] as const;
+export type AnimalKey = (typeof ANIMALS)[number];
+
+export const COLORS = [
+  { key: "teal", hex: "#43B4C8" },
+  { key: "amber", hex: "#FFB627" },
+  { key: "green", hex: "#7CCB8F" },
+  { key: "coral", hex: "#F4795B" },
+  { key: "pink", hex: "#F29AB8" },
+  { key: "violet", hex: "#A99AE0" },
+  { key: "sky", hex: "#8EC5F0" },
+  { key: "sand", hex: "#F2D9A6" },
+] as const;
+export type ColorKey = (typeof COLORS)[number]["key"];
+
+export const DEFAULT_ANIMAL: AnimalKey = "fox";
+export const DEFAULT_COLOR: ColorKey = "teal";
+
+export function colorHex(key: ColorKey): string {
+  return COLORS.find((c) => c.key === key)?.hex ?? COLORS[0].hex;
+}
+
+export const avatarInput = z.object({
+  avatarAnimal: z.enum(ANIMALS),
+  avatarColor: z.enum(COLORS.map((c) => c.key) as [ColorKey, ...ColorKey[]]),
+});
+export type AvatarInput = z.infer<typeof avatarInput>;

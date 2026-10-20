@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import {
+  avatarInput,
   deleteAccountInput,
   displayNameInput,
   publicProfileInput,
@@ -79,6 +80,28 @@ export const updateDisplayName = actionClient
     revalidatePath("/settings");
     revalidatePath("/", "layout");
     return { displayName: parsedInput.displayName ?? null };
+  });
+
+/**
+ * Phase 4 Part B (V2Avatar). "Surprise me" picks locally and does not call
+ * this — only Save does, matching the mockup's own distinction ("not saved
+ * until Save" per CHANGES.md item 5).
+ */
+export const setAvatar = actionClient
+  .inputSchema(avatarInput)
+  .action(async ({ parsedInput }) => {
+    const { supabase, user } = await requireUser();
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_animal: parsedInput.avatarAnimal, avatar_color: parsedInput.avatarColor })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save your avatar: ${error.message}`);
+
+    revalidatePath("/profile");
+    revalidatePath("/settings");
+    revalidatePath("/", "layout");
+    return { avatarAnimal: parsedInput.avatarAnimal, avatarColor: parsedInput.avatarColor };
   });
 
 /**

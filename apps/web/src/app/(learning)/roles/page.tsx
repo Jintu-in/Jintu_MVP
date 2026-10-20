@@ -93,7 +93,13 @@ export default async function RolesIndex({
       active="roles"
       user={
         viewer
-          ? { displayName: viewer.fullName ?? viewer.email ?? "You", initials: initialsFor(viewer), points: momentum?.totalPoints ?? 0 }
+          ? {
+              displayName: viewer.fullName ?? viewer.email ?? "You",
+              initials: initialsFor(viewer),
+              points: momentum?.totalPoints ?? 0,
+              avatarAnimal: viewer.avatarAnimal,
+              avatarColor: viewer.avatarColor,
+            }
           : null
       }
     >

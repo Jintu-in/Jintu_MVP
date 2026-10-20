@@ -4,7 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import { updatePublicProfile } from "@/actions/account";
+import { IdentityMark } from "@/components/avatar/identity-mark";
 import { SettingsNavIcon } from "@/components/ui/icons";
+
+const EDIT_PENCIL = (
+  <svg aria-hidden width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 20l1-4L16 5l3 3L8 19l-4 1z" />
+    <path d="M14 7l3 3" />
+  </svg>
+);
 
 const SHARE_ICON = (
   <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -26,14 +34,16 @@ const SHARE_ICON = (
  * to be reachable somehow).
  */
 export function ProfileHeader({
-  initials,
+  avatarAnimal,
+  avatarColor,
   name,
   handle,
   suggestedHandle,
   isPublic,
   siteHost,
 }: {
-  initials: string | null;
+  avatarAnimal: string | null;
+  avatarColor: string | null;
   name: string;
   handle: string | null;
   suggestedHandle: string;
@@ -81,12 +91,15 @@ export function ProfileHeader({
   return (
     <div className="flex flex-none flex-col gap-3">
       <div className="flex items-center gap-3.5">
-        <span
-          aria-hidden
-          className="flex size-16 flex-none items-center justify-center rounded-full bg-night-900 font-heading text-[22px] font-semibold text-on-night"
-        >
-          {initials ?? "?"}
-        </span>
+        <Link href="/profile/avatar" aria-label="Change avatar" className="relative flex-none">
+          <IdentityMark avatarAnimal={avatarAnimal} avatarColor={avatarColor} size={64} />
+          <span
+            aria-hidden
+            className="absolute -right-0.5 -bottom-0.5 flex size-6 items-center justify-center rounded-full border-2 border-ink-50 bg-white text-ink-700"
+          >
+            {EDIT_PENCIL}
+          </span>
+        </Link>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-[24px] leading-[28px] font-bold tracking-[-0.02em] text-ink-900">
             {name}

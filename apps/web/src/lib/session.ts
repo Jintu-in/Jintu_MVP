@@ -25,6 +25,9 @@ export type Viewer = {
    * the UI must not offer them the account it implies.
    */
   hasProfile: boolean;
+  /** Phase 4 Part B — null until chosen; IdentityMark applies the default. */
+  avatarAnimal: string | null;
+  avatarColor: string | null;
 };
 
 export async function getViewer(): Promise<Viewer | null> {
@@ -41,7 +44,7 @@ export async function getViewer(): Promise<Viewer | null> {
     // single() would throw on it.
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, avatar_animal, avatar_color")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -50,6 +53,8 @@ export async function getViewer(): Promise<Viewer | null> {
       email: user.email ?? null,
       fullName: profile?.full_name ?? null,
       hasProfile: Boolean(profile),
+      avatarAnimal: profile?.avatar_animal ?? null,
+      avatarColor: profile?.avatar_color ?? null,
     };
   } catch (error) {
     /*

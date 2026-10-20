@@ -41,11 +41,18 @@ export default async function ProfilePage() {
   return (
     <AppShell
       active="profile"
-      user={{ displayName: name, initials: account.initials, points: momentum?.totalPoints ?? 0 }}
+      user={{
+        displayName: name,
+        initials: account.initials,
+        points: momentum?.totalPoints ?? 0,
+        avatarAnimal: account.avatarAnimal,
+        avatarColor: account.avatarColor,
+      }}
     >
       <main className="mx-auto min-h-dvh w-full max-w-[720px] bg-ink-50 px-5 pt-6 pb-12">
         <ProfileHeader
-          initials={account.initials}
+          avatarAnimal={account.avatarAnimal}
+          avatarColor={account.avatarColor}
           name={name}
           handle={account.publicProfile.handle}
           suggestedHandle={account.suggestedHandle}

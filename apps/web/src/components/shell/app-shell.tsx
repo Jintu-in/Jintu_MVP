@@ -24,7 +24,15 @@ export function AppShell({
   children,
 }: {
   active: NavKey;
-  user: { displayName: string; initials: string | null; points: number } | null;
+  user:
+    | {
+        displayName: string;
+        initials: string | null;
+        points: number;
+        avatarAnimal?: string | null;
+        avatarColor?: string | null;
+      }
+    | null;
   children: React.ReactNode;
 }) {
   return (
@@ -32,7 +40,17 @@ export function AppShell({
       <div className="hidden lg:flex">
         <DesktopSidebar
           active={active}
-          user={user ? { displayName: user.displayName, initials: user.initials ?? "", points: user.points } : null}
+          user={
+            user
+              ? {
+                  displayName: user.displayName,
+                  initials: user.initials ?? "",
+                  points: user.points,
+                  avatarAnimal: user.avatarAnimal,
+                  avatarColor: user.avatarColor,
+                }
+              : null
+          }
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col pb-[72px] lg:pb-0">{children}</div>
