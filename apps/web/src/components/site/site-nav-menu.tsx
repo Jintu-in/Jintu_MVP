@@ -41,7 +41,7 @@ const ACCOUNT_LINKS: { href: Route; label: string }[] = [
   { href: "/dashboard" as Route, label: "Dashboard" },
   { href: "/profile" as Route, label: "Your record" },
   { href: "/profile/saved" as Route, label: "Saved" },
-  { href: "/account" as Route, label: "Account" },
+  { href: "/settings" as Route, label: "Settings" },
 ];
 
 export function SiteNavMenu({ signedIn, initials, displayName, overlay }: SiteNavMenuProps) {

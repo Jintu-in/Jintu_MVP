@@ -163,6 +163,27 @@ export const onboardingInput = z.object({
 export type OnboardingInput = z.infer<typeof onboardingInput>;
 
 /**
+ * Phase 4 Part A, step 1 (V2Goal): what they want to become. `custom` tells
+ * the action whether this came from the preset list or the "type my own"
+ * field — only the latter also becomes a topic_requests row, matching the
+ * mockup's own copy ("No path for it yet? We note the request"), which only
+ * appears under the typed-answer state.
+ */
+export const goalInput = z.object({
+  goal: z.string().trim().min(2, "Tell us the subject in a word or two.").max(200, "Shorter than that, please."),
+  custom: z.boolean(),
+});
+
+/** Phase 4 Part A, step 2 (V2Need): the four fixed options verbatim from
+ *  V2Need's own data (`k` values), nothing freeform. */
+export const needInput = z.object({
+  need: z.enum(["start", "finish", "time", "show"]),
+});
+
+export type GoalInput = z.infer<typeof goalInput>;
+export type NeedInput = z.infer<typeof needInput>;
+
+/**
  * Sanitises a `?next=` redirect target.
  *
  * A sign-in page that redirects wherever the query string says is an open
@@ -174,7 +195,7 @@ export type OnboardingInput = z.infer<typeof onboardingInput>;
  * are both rejected, which is why the second character is checked and not
  * just the first — a protocol-relative URL starts with a slash too.
  */
-export function safeNextPath(next: string | undefined, fallback = "/account"): string {
+export function safeNextPath(next: string | undefined, fallback = "/profile"): string {
   if (!next) return fallback;
   if (!next.startsWith("/")) return fallback;
   if (next.startsWith("//")) return fallback;

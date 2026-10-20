@@ -56,7 +56,9 @@ export function OnboardingForm() {
   const id = useId();
   const router = useRouter();
   const { execute, result, status } = useAction(completeOnboarding, {
-    onSuccess: () => router.replace("/account"),
+    // Phase 4 Part A: two short screens (goal, need) follow sign-up, before
+    // landing anywhere real — see (auth)/onboarding/goal/page.tsx.
+    onSuccess: () => router.replace("/onboarding/goal"),
   });
 
   const errors = result?.validationErrors as FieldErrors | undefined;

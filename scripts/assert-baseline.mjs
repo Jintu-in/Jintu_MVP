@@ -239,6 +239,41 @@ try {
 } catch { /* purpose CHECK */ }
 check(!bundled, "consent purposes are a closed list — no bundled catch-all");
 
+console.log("\n── the consent log is append-only, and user-scoped ─────────");
+await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
+              values ('${ua}', 'reminders', true, 'v1') returning id`);
+check(
+  (await as(ub, "select * from public.consent_events")).length === 0,
+  "RLS stops user A reading user B's consent events",
+);
+let falseCoreService = false;
+try {
+  await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
+                values ('${ua}', 'core_service', false, 'v1')`);
+  falseCoreService = true;
+} catch { /* consent_events_core_service_never_withdrawn */ }
+check(!falseCoreService, "core_service can never be logged as withdrawn");
+// No USING policy for update/delete, on purpose (append-only). Depending on
+// whether the role's table-level grant even extends to UPDATE/DELETE, a
+// missing policy surfaces either as a thrown permission error or as an
+// affected-rows count of zero (RLS's implicit "no rows visible" filter) —
+// same two-shaped hedge as deniedOrEmpty above, just for the owner's own
+// row instead of anon's.
+const deniedOrNoop = async (uid, sql) => {
+  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}';`);
+  try { return (await rows(sql)).length === 0; }
+  catch { return true; }
+  finally { await db.exec("rollback;"); }
+};
+check(
+  await deniedOrNoop(ua, `update public.consent_events set granted = false where user_id = '${ua}' returning id`),
+  "a consent event cannot be edited after the fact, even by its own owner",
+);
+check(
+  await deniedOrNoop(ua, `delete from public.consent_events where user_id = '${ua}' returning id`),
+  "a consent event cannot be deleted by its own owner — append-only means append-only",
+);
+
 console.log("\n── service-side tables are unreachable from clients ────────");
 // With no grant at all, the select is DENIED outright — stronger than an
 // empty result, and exactly what "service-role only" should mean.

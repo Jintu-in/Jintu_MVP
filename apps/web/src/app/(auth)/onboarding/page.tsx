@@ -22,10 +22,15 @@ export default async function OnboardingPage() {
   // profile cannot exist without the 18+ confirmation having been given.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id")
+    .select("goal, need")
     .eq("id", user.id)
     .maybeSingle();
-  if (profile) redirect("/account");
+  if (profile) {
+    // goal/need (Phase 4 Part A, migration 0028) are a short first-run flow
+    // of their own, after consent and before anywhere real — resume there if
+    // it was never finished, same as this page's own next-step link.
+    redirect(profile.goal && profile.need ? "/profile" : "/onboarding/goal");
+  }
 
   return (
     <main className="mx-auto max-w-md px-5 py-10 sm:py-14">

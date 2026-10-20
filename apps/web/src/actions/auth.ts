@@ -6,6 +6,8 @@ import {
   NOTICE_VERSION,
   OPTIONAL_PURPOSES,
   consentToggleInput,
+  goalInput,
+  needInput,
   onboardingInput,
   otpRequestInput,
   otpVerifyInput,
@@ -233,6 +235,65 @@ export const completeOnboarding = actionClient
     }
 
     return { onboarded: true };
+  });
+
+/**
+ * Phase 4 Part A, step 1 (V2Goal). A custom-typed goal also becomes a
+ * topic_requests row (0015/0017) — the same table the catalogue's "not here
+ * yet?" box writes to, and the mockup's own copy ("No path for it yet? We
+ * note the request") only appears in the typed state, never the preset list.
+ *
+ * No separate rate limit here, unlike requestTopic (actions/requests.ts):
+ * that guards an anonymous, public surface; this one is already behind a
+ * session and a completed sign-up, a much higher bar than an IP address.
+ */
+export const setGoal = actionClient
+  .inputSchema(goalInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ goal: parsedInput.goal })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save that: ${error.message}`);
+
+    if (parsedInput.custom) {
+      const { error: requestError } = await supabase.from("topic_requests").insert({
+        wanted: parsedInput.goal,
+        source: "sidebar",
+        user_id: user.id,
+      });
+      // Best-effort: the goal itself is already saved above, and a person's
+      // first-run flow should not stall over a secondary demand-signal row.
+      if (requestError) console.error("[auth] topic_requests write failed", requestError.message);
+    }
+
+    return { goal: parsedInput.goal };
+  });
+
+/** Phase 4 Part A, step 2 (V2Need). Decides what /today opens on, once
+ *  Phase 6 builds it — see migration 0028's comment on the column. */
+export const setNeed = actionClient
+  .inputSchema(needInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ need: parsedInput.need })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save that: ${error.message}`);
+
+    return { need: parsedInput.need };
   });
 
 /**
