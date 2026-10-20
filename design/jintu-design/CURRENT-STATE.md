@@ -536,15 +536,23 @@ modulo the two bugs in §0.3:**
   the two "ask me" questions in `CHANGES.md` item 4 (what share does
   with a private profile; empty-state copy for a public visitor) before
   the share button and the public `/u/<handle>` route can be finished.
-- **Today with 2+ roadmaps** (`UniToday`/`DeskUniToday`): new —
-  `/today` is currently a `redirect("/learn")` stub (no real page yet),
-  and nothing in the schema tracks which roadmaps a user follows. Needs
-  a new `enrollments(user_id, roadmap_id, last_opened_at)` table (see
-  §5) and a streak-rule change: **a lesson in any enrolled roadmap keeps
-  the streak**, which needs a new retention unit test alongside the
-  existing ones in `retention:verify` — currently that RPC family only
-  reasons about one roadmap's progress. Open question in §5: cap how
-  many roadmaps one person can follow, or not.
+- **Today with 2+ roadmaps** (`UniToday`/`DeskUniToday`): `/today` is
+  currently a `redirect("/learn")` stub (no real page yet), but the
+  table this needs mostly already exists — `public.roadmap_enrollments`
+  (`0003_progress.sql:52`, `(user_id, roadmap_id)` primary key,
+  `last_node_id`, `completed_at`), upserted on every
+  `complete_day`/`uncomplete_day` call
+  (`apps/web/src/actions/progress.ts:58`). The real gap: it has
+  `started_at` (set once, never touched again) but no "most recently
+  opened" timestamp — needs one new column, `last_opened_at timestamptz
+  not null default now()`, touched in that same upsert, not a whole new
+  `enrollments` table as `CHANGES.md`'s sketch assumed. Smaller
+  migration than expected. Still needs a streak-rule change: **a lesson
+  in any enrolled roadmap keeps the streak**, with a new retention unit
+  test alongside the existing ones in `retention:verify` — currently
+  that RPC family only reasons about one roadmap's progress. Open
+  question in §5 resolved: no cap on how many roadmaps one person can
+  follow.
 
 ### Phase 7 — Dark theme + motion
 
@@ -661,21 +669,23 @@ phase scope addition, not rework. The one structural change is Decision
 `/settings/consents`, `/settings/account`, `/settings/delete`), not
 finishing out `/profile`.
 
-### 5.1 Open questions (from `CHANGES.md`, verbatim asks)
+### 5.1 Open questions (from `CHANGES.md`, verbatim asks) — answered 2026-10-20
 
-These block finishing Phase 3 Part C and are tracked here until answered:
-
-1. Saving a new password on `/settings/account` — should it sign out
-   other devices? (`CHANGES.md` item 3)
+1. Saving a new password on `/settings/account` — **yes, sign out other
+   devices.** Matches the existing emailed-reset flow's own stated
+   behavior. Implementation note (not a migration): `auth.updateUser({
+   password })` on its own does not revoke other sessions — follow it
+   with `supabase.auth.signOut({ scope: "others" })`, client-callable,
+   no service role needed. (item 3)
 2. The profile-day-one share button, when the public profile is off —
-   hide it, or prompt to turn public-profile on? (item 4)
-3. Does the avatar (once built) replace the "AV" monogram everywhere it
-   appears (sidebar, profile header), or sit alongside it? (item 5)
-4. Build the forecast log (storage + due-date reminder) now, as part of
-   Phase 5's Write-step panel, or ship that one panel read-only for now?
-   (item 6)
-5. Cap how many roadmaps one person can enrol in via `/today`'s "Add a
-   roadmap," or leave it unlimited? (item 7)
+   **prompt to turn public-profile on**, then share once it is. (item 4)
+3. Avatar vs. the "AV" monogram — **avatar replaces the monogram**
+   everywhere it appears (sidebar, profile header), once the avatar
+   picker is built. (item 5)
+4. The forecast-log panel (Phase 5, Write step) — **read-only for now**;
+   no `forecasts` table, no due-date reminder, until the reminder-send
+   mechanism itself is built (§1 Decision 5). (item 6)
+5. `/today`'s "Add a roadmap" — **no cap.** (item 7)
 
 Also asked directly (not an open design question, answered below rather
 than left pending): does the hosted Supabase project need
@@ -715,10 +725,13 @@ phase starts.
 - Phase 4/6 (avatar): `profiles.avatar_animal text`, `profiles.
   avatar_color text`, both checked against a fixed 16-animal/8-colour
   list, defaulting to fox/teal.
-- Phase 5 (forecast log, pending question 4 above):
-  `forecasts(user_id, text, confidence, due_on, outcome)`, plus whatever
-  the due-date reminder needs (likely reuses the still-unbuilt reminder-
-  send mechanism from §1 decision 5, not a new sender).
-- Phase 6 (multi-roadmap Today): `enrollments(user_id, roadmap_id,
-  last_opened_at)`, plus a retention-RPC change so a completion in any
-  enrolled roadmap counts for the one streak.
+- Phase 5 (forecast log) — **resolved read-only for now (§5.1 item 4):
+  no migration.** The Write-step panel renders the forecast text
+  directly from the step/answer data already on screen; no `forecasts`
+  table, no reminder, until the reminder-send mechanism itself exists.
+- Phase 6 (multi-roadmap Today) — **smaller than `CHANGES.md`'s sketch:
+  `public.roadmap_enrollments` already exists (`0003_progress.sql`).**
+  Just add `last_opened_at timestamptz not null default now()` to it and
+  touch it in the existing upsert in `actions/progress.ts:58`, plus the
+  retention-RPC change so a completion in any enrolled roadmap counts
+  for the one streak.
