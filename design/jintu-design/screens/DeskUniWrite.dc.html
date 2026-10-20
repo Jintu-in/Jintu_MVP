@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson step on desktop, writing (Thinking under uncertainty)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; box-sizing: border-box; display: flex; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+<nav aria-label="Steps in this lesson" style="width: 288px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #0A3B46; color: #FFFFFF">
+<div style="padding: 0 8px"><a href="DeskHome.dc.html" style="display: flex; align-items: center; gap: 10px; height: 48px; text-decoration: none; color: #FFFFFF; font: 600 21px/1 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em">
+<span aria-hidden="true" style="width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; border-radius: 9px; background: #43B4C8; color: #06262C; font: 700 16px/1 'Bricolage Grotesque', Figtree, system-ui, sans-serif">j</span>
+<span>jintu</span>
+</a></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 20px 8px 16px">
+<a href="DeskRoadmaps.dc.html" style="font-size: 13px; line-height: 18px; font-weight: 500; color: #8FD3E0; text-decoration: none">Thinking clearly under uncertainty · sample lesson</a>
+<div style="font: 600 19px/24px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em">Base rates and forecasts you can check</div>
+</div>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; text-decoration: none; color: #A9C7CD; font-size: 14.5px"><span role="img" aria-label="Done" style="width: 20px; height: 20px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span>Read the setup</span></a>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; text-decoration: none; color: #A9C7CD; font-size: 14.5px"><span role="img" aria-label="Done" style="width: 20px; height: 20px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span>You test positive: how likely?</span></a>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; text-decoration: none; color: #A9C7CD; font-size: 14.5px"><span role="img" aria-label="Done" style="width: 20px; height: 20px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span>Count it out of 100 people</span></a>
+<a href="#" aria-current="step" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; background: rgba(255,255,255,0.12); text-decoration: none; color: #FFFFFF; font-size: 14.5px; font-weight: 600"><span style="width: 20px; height: 20px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0A3B46; font: 500 11px/1 'JetBrains Mono', ui-monospace, monospace">4</span><span>Write one forecast</span></a>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; text-decoration: none; color: #DCEBEE; font-size: 14.5px"><span style="width: 20px; height: 20px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.45); font: 400 11px/1 'JetBrains Mono', ui-monospace, monospace">5</span><span>Check an old forecast</span></a>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 8px; border-radius: 12px; text-decoration: none; color: #DCEBEE; font-size: 14.5px"><span style="width: 20px; height: 20px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.45); font: 400 11px/1 'JetBrains Mono', ui-monospace, monospace">6</span><span>Say what would change your mind</span></a>
+<div style="height: 1px; margin: 10px 8px; background: rgba(255,255,255,0.14)"></div>
+<a href="#" style="height: 40px; display: flex; align-items: center; padding: 0 8px 0 40px; border-radius: 12px; text-decoration: none; color: #DCEBEE; font-size: 14.5px">Your turn</a><a href="#" style="height: 40px; display: flex; align-items: center; padding: 0 8px 0 40px; border-radius: 12px; text-decoration: none; color: #DCEBEE; font-size: 14.5px">Questions</a><a href="#" style="height: 40px; display: flex; align-items: center; padding: 0 8px 0 40px; border-radius: 12px; text-decoration: none; color: #DCEBEE; font-size: 14.5px">Go deeper</a>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; line-height: 18px; color: #DCEBEE"><span>This lesson</span><span style="font: 400 12px/18px 'JetBrains Mono', ui-monospace, monospace">about 15 min</span></div>
+<div style="display: flex; gap: 4px" role="img" aria-label="3 of 6 steps done"><div style="flex: 1; height: 6px; border-radius: 3px; background: #43B4C8"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #43B4C8"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #43B4C8"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #FFFFFF"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2)"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2)"></div></div>
+</div>
+</nav><main style="flex: 1; min-width: 0; display: flex; justify-content: center; padding: 48px 46px 0; overflow: hidden">
+<div style="width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="font-size: 14px; line-height: 20px; font-weight: 600; color: #0B5567">Step 4 of 6</span><span style="height: 24px; display: flex; align-items: center; padding: 0 10px; border-radius: 12px; background: #DCE6E7; color: #45626A; font-size: 12px; font-weight: 600">Write</span></div>
+<h1 style="margin: 0; font: 700 36px/40px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em; text-wrap: balance">Write one forecast you can check later</h1>
+</div>
+<div style="display: flex; flex-direction: column; padding: 20px 22px 22px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 10px 28px rgba(12,42,48,0.08)">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #5E777D">Fill the blanks, in your own words</div>
+<div style="margin-top: 8px; font: 500 15.5px/24px 'JetBrains Mono', ui-monospace, monospace; color: #45626A">I am __% sure that __ by __.</div>
+<label for="dw-forecast" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Your forecast</label>
+<textarea id="dw-forecast" rows="2" style="margin-top: 10px; box-sizing: border-box; min-height: 84px; padding: 14px 16px; border: 2px solid #0B5567; border-radius: 14px; background: #FFFFFF; color: #0C2A30; font: 400 17px/26px Figtree, system-ui, sans-serif; resize: none">I am 70% sure that I will finish Git &amp; GitHub by 30 November.</textarea>
+<div style="height: 1px; margin: 16px 0; background: #DCE6E7"></div>
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #5E777D">A forecast you can check has three parts</div>
+<div style="margin-top: 10px; display: flex; gap: 10px"><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: #EEF3F3"><div style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 22px; height: 22px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="font-size: 14px; line-height: 20px; font-weight: 500">A number</span></div><span style="font: 500 15px/20px 'JetBrains Mono', ui-monospace, monospace; color: #0B5567">70%</span></div><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: #EEF3F3"><div style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 22px; height: 22px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="font-size: 14px; line-height: 20px; font-weight: 500">Something you can see happen</span></div><span style="font: 500 15px/20px 'JetBrains Mono', ui-monospace, monospace; color: #0B5567">finish</span></div><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: #EEF3F3"><div style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 22px; height: 22px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #43B4C8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06262C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="font-size: 14px; line-height: 20px; font-weight: 500">A date</span></div><span style="font: 500 15px/20px 'JetBrains Mono', ui-monospace, monospace; color: #0B5567">30 Nov</span></div></div>
+</div>
+<p style="margin: 0; font-size: 17px; line-height: 26px">Words like "probably" cannot be checked later. A number and a date can.</p>
+<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px">
+<button type="button" style="height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 28px; border-radius: 16px; background: #43B4C8; color: #06262C; border: 0; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer"><span>Mine has all three parts</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+<button type="button" style="height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 20px; border-radius: 16px; background: #FFFFFF; color: #0C2A30; border: 1px solid #C5D5D8; font: 600 15px/1 Figtree, system-ui, sans-serif; cursor: pointer"><span>Help me fix mine</span></button>
+</div>
+</div>
+</main>
+<aside aria-label="Your work and help" style="width: 380px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; padding: 28px 24px; background: #FFFFFF; border-left: 1px solid #DCE6E7">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font: 600 19px/24px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em">Your forecast log</h2>
+<div style="font-size: 13.5px; line-height: 20px; color: #45626A">Every forecast you write in this roadmap, waiting to be checked.</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 2px solid #43B4C8; border-radius: 16px; background: #DDF3F7">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font: 500 22px/26px 'JetBrains Mono', ui-monospace, monospace">70%</span><span style="flex: none; padding: 0 8px; border-radius: 9px; background: #43B4C8; color: #06262C; font: 600 11px/18px Figtree, system-ui, sans-serif">new</span></div>
+<div style="font-size: 15px; line-height: 22px">I will finish Git &amp; GitHub by 30 November.</div>
+<div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #45626A">Check on 30 Nov · right or wrong</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; background: #EEF3F3">
+<div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5E777D">What happens next</div>
+<div style="font-size: 14px; line-height: 21px; color: #45626A">On 30 Nov this card asks you one thing: did it happen? Over time the log shows how well your 70% matches reality.</div>
+</div>
+</div>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #DDF3F7">
+<label for="dw-ask" style="font-size: 15.5px; line-height: 22px; font-weight: 600; color: #0A3B46">Stuck? Ask about this step</label>
+<input id="dw-ask" type="text" placeholder="Type what you got" style="height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid #A9D5DE; border-radius: 12px; background: #FFFFFF; color: #0C2A30; font: 400 15px/1 Figtree, system-ui, sans-serif">
+</div>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

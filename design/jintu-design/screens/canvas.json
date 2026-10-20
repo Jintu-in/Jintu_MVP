@@ -42,6 +42,22 @@
       "x": 1520,
       "y": 964
     },
+    "DarkDeskHome.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Home on desktop · the first screen",
+      "w": 1440,
+      "x": 3040,
+      "y": 964
+    },
+    "DarkDeskLogin.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Sign in on desktop",
+      "w": 1440,
+      "x": 4560,
+      "y": 964
+    },
     "DarkHome.dc.html": {
       "h": 844,
       "page": "dark",
@@ -82,6 +98,30 @@
       "x": 470,
       "y": 0
     },
+    "DeskAccount.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Email and password · no password yet",
+      "w": 1440,
+      "x": 1520,
+      "y": 12745
+    },
+    "DeskAccountSet.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Email and password · password set",
+      "w": 1440,
+      "x": 3040,
+      "y": 12745
+    },
+    "DeskAvatar.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "Pick your avatar · desktop (press Play)",
+      "w": 1440,
+      "x": 1520,
+      "y": 2584
+    },
     "DeskBlock.dc.html": {
       "h": 900,
       "page": "desk",
@@ -105,6 +145,14 @@
       "w": 1440,
       "x": 0,
       "y": 10252
+    },
+    "DeskConsents.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "What you agreed to",
+      "w": 1440,
+      "x": 0,
+      "y": 12745
     },
     "DeskContact.dc.html": {
       "h": 1015,
@@ -245,6 +293,14 @@
       "x": 1520,
       "y": 1264
     },
+    "DeskPairWait.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "A step · waiting for your partner · desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 1264
+    },
     "DeskPassword.dc.html": {
       "h": 900,
       "page": "desk",
@@ -268,6 +324,14 @@
       "w": 1440,
       "x": 0,
       "y": 4200
+    },
+    "DeskProfileNew.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Profile · day one",
+      "w": 1440,
+      "x": 4560,
+      "y": 12745
     },
     "DeskQuestions.dc.html": {
       "h": 900,
@@ -375,6 +439,46 @@
       "w": 1440,
       "x": 3200,
       "y": 0
+    },
+    "DeskUniChoose.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · choosing on desktop (Thinking sample)",
+      "w": 1440,
+      "x": 1520,
+      "y": 2584
+    },
+    "DeskUniFind.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · finding it in a source on desktop (Medical coding sample)",
+      "w": 1440,
+      "x": 3040,
+      "y": 2584
+    },
+    "DeskUniFormula.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · a formula on desktop (Excel sample)",
+      "w": 1440,
+      "x": 4560,
+      "y": 2584
+    },
+    "DeskUniToday.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Today on desktop · two roadmaps at once",
+      "w": 1440,
+      "x": 7600,
+      "y": 2584
+    },
+    "DeskUniWrite.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · writing on desktop (Thinking sample)",
+      "w": 1440,
+      "x": 6080,
+      "y": 2584
     },
     "LessonDesktop.dc.html": {
       "h": 800,
@@ -601,6 +705,22 @@
       "x": 940,
       "y": 1320
     },
+    "V2Account.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Email and password · no password yet",
+      "w": 390,
+      "x": 470,
+      "y": 11120
+    },
+    "V2AccountSet.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Email and password · password set",
+      "w": 390,
+      "x": 940,
+      "y": 11120
+    },
     "V2Avatar.dc.html": {
       "h": 844,
       "is_interactive": true,
@@ -633,6 +753,14 @@
       "w": 390,
       "x": 3290,
       "y": 7042
+    },
+    "V2Consents.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "What you agreed to",
+      "w": 390,
+      "x": 0,
+      "y": 11120
     },
     "V2Contact.dc.html": {
       "h": 1740,
@@ -829,6 +957,14 @@
       "x": 1880,
       "y": 1720
     },
+    "V2ProfileNew.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Profile · day one",
+      "w": 390,
+      "x": 1410,
+      "y": 11120
+    },
     "V2Questions.dc.html": {
       "h": 844,
       "page": "v2",
@@ -957,7 +1093,7 @@
   "notes": {
     "dark1": {
       "kind": "title1",
-      "maxW": 2960,
+      "maxW": 6000,
       "page": "dark",
       "text": "Dark theme",
       "w": 240,
@@ -999,6 +1135,15 @@
       "w": 240,
       "x": 0,
       "y": 6340
+    },
+    "desk5": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "desk",
+      "text": "Account: consents, password, day-one profile",
+      "w": 240,
+      "x": 0,
+      "y": 12445
     },
     "landing1": {
       "kind": "title1",
@@ -1047,7 +1192,7 @@
     },
     "pair2": {
       "kind": "title1",
-      "maxW": 2960,
+      "maxW": 4480,
       "page": "pair",
       "text": "On desktop",
       "w": 240,
@@ -1056,7 +1201,7 @@
     },
     "pair3": {
       "kind": "title1",
-      "maxW": 1440,
+      "maxW": 2960,
       "page": "pair",
       "text": "Avatars for everyone, a crown for the team",
       "w": 240,
@@ -1110,9 +1255,9 @@
     },
     "uni3": {
       "kind": "title1",
-      "maxW": 1440,
+      "maxW": 8000,
       "page": "uni",
-      "text": "A non-coding lesson on desktop",
+      "text": "Every kind of step on desktop, and Today with two roadmaps",
       "w": 240,
       "x": 0,
       "y": 2284
@@ -1170,6 +1315,15 @@
       "w": 240,
       "x": 0,
       "y": 6742
+    },
+    "v2row7": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "v2",
+      "text": "Account: consents, password, day-one profile",
+      "w": 240,
+      "x": 0,
+      "y": 10820
     }
   },
   "order": [
@@ -1287,7 +1441,24 @@
     "V2Avatar.dc.html",
     "DeskPair.dc.html",
     "DeskPairStep.dc.html",
-    "AvatarKit.dc.html"
+    "AvatarKit.dc.html",
+    "V2Consents.dc.html",
+    "V2Account.dc.html",
+    "V2AccountSet.dc.html",
+    "V2ProfileNew.dc.html",
+    "DeskConsents.dc.html",
+    "DeskAccount.dc.html",
+    "DeskAccountSet.dc.html",
+    "DeskProfileNew.dc.html",
+    "DeskUniChoose.dc.html",
+    "DeskUniFind.dc.html",
+    "DeskUniFormula.dc.html",
+    "DeskUniWrite.dc.html",
+    "DeskUniToday.dc.html",
+    "DeskPairWait.dc.html",
+    "DeskAvatar.dc.html",
+    "DarkDeskHome.dc.html",
+    "DarkDeskLogin.dc.html"
   ],
   "pages": [
     {

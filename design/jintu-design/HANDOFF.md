@@ -35,7 +35,7 @@ Fonts (Google Fonts): **Bricolage Grotesque** (headings, 500/600/700, opsz 12–
 Light theme
 | Role | Hex |
 |---|---|
-| Primary / CTA | `#43B4C8` (text on it `#06262C`) |
+| Primary / CTA | `#43B4C8` (text on it `#06262C`). Exception: the account screens (consents, email and password, day-one profile) use `#0A3B46` buttons with white text. Copy what each screen shows. |
 | Deep teal (streak card, dark surfaces) | `#0A3B46` |
 | Ink | `#0C2A30` |
 | Muted text | `#45626A`, `#5E777D` |
@@ -80,24 +80,27 @@ jintu-mvp.vercel.app is in production. The redesign replaces the UI of an app pe
 | Home page | `V2Landing` (+ `V2Home` first screen) | `DeskHome` | `/` (existing) |
 | Sign in / sign up | `V2Login`, `V2Code`, `V2Password`, `V2SetPass`, `V2Join` | `DeskLogin`, `DeskCode`, `DeskPassword`, `DeskSetPass`, `DeskJoin` | `/join` (existing) — steps as states or sub-routes under it |
 | Reset password | `V2Reset` | `DeskReset` | `/join/reset` (new) |
-| First run | `V2Goal`, `V2Need`, `V2Avatar` | `DeskGoal`, `DeskNeed` | `/onboarding` (new) |
-| Today | `V2Today`, `V2New`, `V2Restart` | `DeskToday`, `DeskNew`, `DeskRestart` | `/today` (new, 3 states) |
+| First run | `V2Goal`, `V2Need` | `DeskGoal`, `DeskNeed` | `/onboarding` (new) |
+| Avatar picker | `V2Avatar` | `DeskAvatar` | from Profile, e.g. `/profile/avatar` (new) |
+| Today | `V2Today`, `V2New`, `V2Restart`, `UniToday` | `DeskToday`, `DeskNew`, `DeskRestart`, `DeskUniToday` | `/today` (new; 4 states, the last is two or more roadmaps at once) |
 | Roadmaps | `V2Roadmaps` | `DeskRoadmaps` | `/learn` (existing; the group filter = `?c=`) |
 | Roadmap / block | `V2Block` | `DeskBlock` | `/learn/[slug]` (existing) |
 | Lesson | `V2Step`, `V2Turn`, `V2Questions`, `V2Help`, `V2Offline`, `V2Done` | `V2Laptop`, `DeskTurn`, `DeskQuestions`, `DeskHelp`, `DeskOffline`, `DeskDone` | `/learn/[slug]/[lesson]` (check how lessons/days are routed now) |
 | Quiz / review | `V2Quiz`, `V2Review` | `DeskQuiz`, `DeskReview` | in lesson / `/review` |
 | DSA language switch | `V2Dsa` | `DeskDsa` | component in lessons |
-| Step types (any roadmap) | `UniChoose`, `UniFind`, `UniFormula`, `UniNumber`, `UniWrite`, `UniToday` | `UniSteps`, `UniDeskStep`, `UniCourse` | lesson step components |
+| Step types (any roadmap) | `UniChoose`, `UniFind`, `UniFormula`, `UniNumber`, `UniWrite` | `DeskUniChoose`, `DeskUniFind`, `DeskUniFormula`, `UniDeskStep` (number), `DeskUniWrite`; overview `UniSteps`, `UniCourse` | lesson step components; desktop adds the right-hand "your work" panel per roadmap |
 | Roles | `V2Roles`, `V2Role`, `V2Compare` | `DeskRoles`, `DeskRole`, `DeskCompare` | `/roles`, `/roles/[slug]` (existing), `/roles/compare` (new) |
-| Profile | `V2Profile` | `DeskProfile` | `/profile` (existing; the design's public link `/u/<name>` is new — ask) |
+| Profile | `V2Profile`, `V2ProfileNew` (day one, empty) | `DeskProfile` (public view), `DeskProfileNew` (your own view, day one) | `/profile` (existing; the design's public link `/u/<name>` is new — ask) |
 | Settings | `V2Settings`, `V2Delete` | `DeskSettings`, `DeskDelete` | `/settings`, `/settings/delete` (new) |
+| What you agreed to | `V2Consents` | `DeskConsents` | `/settings/consents` (new) |
+| Email and password | `V2Account` (no password yet), `V2AccountSet` (password set) | `DeskAccount`, `DeskAccountSet` | `/settings/account` (new) |
 | Saved | `V2Saved` | `DeskSaved` | `/saved` (new) |
 | Pricing | `V2Pricing` | `DeskPricing` | `/pricing` (existing) |
 | Contact | `V2Contact` | `DeskContact` | `/contact` (existing) |
 | Legal | `V2Legal` | `DeskLegal` | `/privacy`, `/terms`, `/refunds` (existing — one layout, keep their current text) |
 | 404 / error | `V2NotFound`, `V2Error` | `DeskNotFound`, `DeskError` | `not-found.tsx`, `error.tsx` |
-| Pair learning | `V2PairStart`, `V2PairHome`, `V2PairStep`, `V2PairTalk` | `DeskPair`, `DeskPairStep` | later phase |
-| Dark theme | `DarkHome`, `DarkLogin`, `DarkToday`, `DarkStep` | `DarkDesk`, `DarkLaptop` | theme toggle, all pages |
+| Pair learning | `V2PairStart`, `V2PairHome`, `V2PairStep`, `V2PairTalk` | `DeskPair`, `DeskPairWait` (waiting), `DeskPairStep` (results differ) | later phase |
+| Dark theme | `DarkHome`, `DarkLogin`, `DarkToday`, `DarkStep` | `DarkDeskHome`, `DarkDeskLogin`, `DarkDesk`, `DarkLaptop` | theme toggle, all pages |
 
 **Reference only:**
 - `Mo*` — motion specs. `MoKit` lists the eight movements with timings; the others show them in place (`MoLanding` = home-page parallax). Implement with CSS / Framer Motion and honor `prefers-reduced-motion`.

@@ -10,6 +10,18 @@ today actually does, confirmed by reading the code, not by what any doc
 This document exists so each phase in `BUILD-PLAN.md` starts from what is
 real, not from what the designs assume. Citations are `file:line`.
 
+> **Update, 2026-10-20 — progress since this was written, plus design
+> update 2.** Shipped on `redesign` since the above was written: Phase 1
+> (public pages, both parts), the hardcoded-domain fix, Phase 2 (roadmaps
+> & roles, both parts), the CI console-error fix, and Phase 3 Parts A
+> (sign-in restyle) and B (onboarding/consent restyle). Phase 3 Part C
+> (account/settings) has not been built yet — it's next, and it's exactly
+> where this update's new screens land. See §5 for what changed in the
+> design pack (`jintu-design/CHANGES.md`, merged into this folder) and how
+> it reshapes the phase plan below. **Read §5 before starting Phase 3 Part
+> C** — it corrects Decision 3 below (settings is no longer part of
+> `/profile`) and adds new schema the consents/account screens depend on.
+
 ---
 
 ## 0. Cross-cutting findings — read this part first
@@ -159,8 +171,19 @@ hard constraint on Phase 5's design, not just a recommendation** — any
 step-type component that writes a right/wrong result to the database is
 out of scope without a separate, explicit conversation first.
 
-**3. Settings canonical page → `/profile`.** `/account` retires with a 301
-to `/profile` once Phase 3 ships. Until then both stay live.
+**3. Settings canonical page → `/profile`.** ~~`/account` retires with a
+301 to `/profile` once Phase 3 ships. Until then both stay live.~~
+**Superseded 2026-10-20 by design update 2's route map
+(`HANDOFF.md`'s "Screen → route map" table): `/settings` is now its own
+route, separate from `/profile`.** `V2Settings`/`DeskSettings` (identity
+edit, handle, email & password link, reminders, privacy toggles, data/
+delete) map to `/settings` and its sub-routes `/settings/consents`,
+`/settings/account`, `/settings/delete`; `V2Profile`/`V2ProfileNew` (the
+identity header, share button, and — once Phase 6 builds the record —
+streak/points/grid) map to `/profile` alone. `/account` still retires,
+but to `/settings`, not `/profile`. This reshapes Phase 3 Part C: it now
+builds a new `/settings` route family rather than finishing `/profile`.
+See §5.
 
 **4. Domain → fix now.** Every hardcoded `jintu.in` reference (manifest,
 OG images, footer mailto, legal pages) gets replaced with the env-driven
@@ -368,6 +391,28 @@ restyle too.
 (see Decision 5), `/u/<handle>` route (see Phase 6), `/settings` as a
 single page (it's really `/profile` already — naming only).
 
+**Update 2026-10-20 (design update 2, see §5):** `/settings` is no
+longer "naming only" — it's a real new route distinct from `/profile`
+(Decision 3, revised above). Three items from `CHANGES.md` land here,
+in the part of Phase 3 not yet built (Part C):
+- `V2Settings`/`DeskSettings` gained two rows: "Email and password" →
+  `/settings/account`, and "What you agreed to" → `/settings/consents`.
+- **Consents** (`V2Consents`): needs a new append-only `consent_events`
+  log (current `consents` table does in-place `UPDATE ... withdrawn_at`,
+  not append-only inserts — see the draft migration in §5). The
+  Settings-page toggles and this page's toggles must read/write the
+  same state.
+- **Email and password** (`V2Account`/`V2AccountSet`): needs a real
+  `profiles.password_set_at` column — today `hasPassword` is read from
+  Supabase auth `user_metadata.has_password`
+  (`apps/web/src/app/(auth)/account/page.tsx:59`,
+  `apps/web/src/actions/auth.ts:351,431`), which is what `CHANGES.md`
+  item 3 says not to keep relying on.
+- Real `/profile/consents` and `/account`'s password section
+  (`PasswordForm`) already do most of this work today — this is
+  substantially a re-route + re-skin + the `consent_events` log, not
+  new logic from scratch.
+
 ### Phase 4 — First run
 
 `/onboarding` exists and is where decision 1's consent/18+ work actually
@@ -377,6 +422,21 @@ mobile, batch year, the 18+ confirmation, and the three consents. It does
 — that's genuinely new, both as UI and as whatever decides what Home opens
 on. `V2Avatar` (avatar picker) — no avatar system exists in the schema at
 all (profiles has no avatar/image column); fully new.
+
+**Update 2026-10-20 (design update 2, see §5):** onboarding's consent/18+
+screen already shipped restyled (Phase 3 Part B, done) — `V2Goal`/`V2Need`
+were deliberately **not** built as part of it; they're a separate,
+unimplemented "what do you need most" personalization step the mockups
+chain after sign-up, with no `need` concept anywhere in the schema. Still
+open, still Phase 4 scope, not reopened by this update. The avatar picker
+(`DeskAvatar` now also drawn, alongside the already-existing `V2Avatar`)
+is reachable "from Profile" per `HANDOFF.md`'s route map, not from
+onboarding itself — `CHANGES.md` item 5 explicitly allows building it in
+"Phase 4 or 6." Recommend Phase 6, alongside the rest of
+`/profile`/`/settings` work, since Phase 4's one shipped deliverable
+(onboarding) is already closed and the entry point is Profile, not
+sign-up. Needs new columns `avatar_animal`/`avatar_color` on `profiles`
+(see §5) — schema doesn't exist today.
 
 ### Phase 5 — Lesson engine (biggest phase, confirmed)
 
@@ -408,6 +468,19 @@ See §0.1 and §0.2 above for the two load-bearing findings. Summary:
 - **DSA language switch, `UniChoose`/`UniFind`/`UniFormula`/`UniNumber`/
   `UniWrite`, "Mine looks different," `help_requests`**: none of it
   exists. All net new, pending Decision 2.
+
+**Update 2026-10-20 (design update 2, see §5):** `CHANGES.md` item 6 adds
+a desktop-only "your work" panel to each `Uni*` step type
+(`DeskUniChoose`/`DeskUniFind`/`DeskUniFormula`/`UniDeskStep`/
+`DeskUniWrite`), phone unchanged. Needs an optional typed `panel` field
+on the step schema (zod) — one variant per roadmap (dot-grid for
+Thinking, claim table for Medical coding, spreadsheet for Excel, cap
+table already existed for Startup finance, "forecast log" for Thinking's
+write step). The forecast-log variant needs its own storage
+(`forecasts` table, see §5) and a due-date reminder — **open question,
+see §5: build it now or ship the panel read-only.** None of this is
+reachable before Phase 5's step-type work itself exists, so it's a
+same-phase addition, not rework.
 
 ### Phase 6 — Progress & motivation
 
@@ -450,6 +523,29 @@ modulo the two bugs in §0.3:**
   roadmaps/nodes (`opengraph-image.tsx` at three route levels); extending
   it to `/u/<handle>` is the same technique, not new infrastructure.
 
+**Update 2026-10-20 (design update 2, see §5):** two more items land here.
+- **Profile, day one** (`V2ProfileNew`/`DeskProfileNew`): the empty state
+  itself is **already built**, just not against this mockup or this
+  route split —`apps/web/src/app/(auth)/profile/page.tsx`'s
+  `!account.hasRecord` branch already renders a quiet "your record starts
+  when you finish your first day" card with an "Open a roadmap" button.
+  This phase's job is restyling that existing branch against
+  `V2ProfileNew`, keeping it on `/profile` once `/settings` takes over
+  everything else currently on that page (see Decision 3). Needs: the
+  zero-completed-lesson-days condition kept exactly as-is; answers to
+  the two "ask me" questions in `CHANGES.md` item 4 (what share does
+  with a private profile; empty-state copy for a public visitor) before
+  the share button and the public `/u/<handle>` route can be finished.
+- **Today with 2+ roadmaps** (`UniToday`/`DeskUniToday`): new —
+  `/today` is currently a `redirect("/learn")` stub (no real page yet),
+  and nothing in the schema tracks which roadmaps a user follows. Needs
+  a new `enrollments(user_id, roadmap_id, last_opened_at)` table (see
+  §5) and a streak-rule change: **a lesson in any enrolled roadmap keeps
+  the streak**, which needs a new retention unit test alongside the
+  existing ones in `retention:verify` — currently that RPC family only
+  reasons about one roadmap's progress. Open question in §5: cap how
+  many roadmaps one person can follow, or not.
+
 ### Phase 7 — Dark theme + motion
 
 Zero code exists for either (confirmed by grep — no theme context, no
@@ -462,6 +558,11 @@ exactly as `BUILD-PLAN.md` assumes.
 Zero code exists — no route, no table, no component, nothing in
 `grep`-able history either. `BUILD-PLAN.md` already suggests deferring
 this; nothing found here changes that recommendation.
+
+**Update 2026-10-20 (design update 2, see §5):** `CHANGES.md` item 8
+adds one more screen to this already-deferred phase (`DeskPairWait`, the
+desktop waiting state). No action needed now — `CHANGES.md` says so
+explicitly ("build it with the rest of pair learning, not now").
 
 ---
 
@@ -537,3 +638,87 @@ pass" as two different facts throughout this build.
 This redesign should keep every one of these green throughout — relaxing
 any of them would be a regression against what the codebase already
 enforces, not a reasonable cost of a UI rewrite.
+
+---
+
+## 5. Design update 2 (2026-10-20) — what changed, and open questions
+
+The design pack was updated: 17 new screens, 2 changed (`V2Settings`/
+`DeskSettings` gained the "Email and password" and "What you agreed to"
+rows). Nothing removed. Full behavior spec for each:
+`jintu-design/CHANGES.md` (merged into this folder alongside the updated
+`HANDOFF.md` — a duplicate copy the user dropped at the repo root,
+`Jintu_MVP/jintu-design/`, has been merged in here and removed to avoid
+two copies going out of sync).
+
+**Net effect on the phase plan:** nothing already shipped (Phase 1,
+Phase 2, Phase 3 Parts A/B) needs reopening. Every new item either lands
+in Phase 3 Part C (not yet built — see above, this is now its scope) or
+in a later phase that hasn't started (4, 5, 6, 8) and is just a same-
+phase scope addition, not rework. The one structural change is Decision
+3, revised above: **`/settings` is a new route, separate from
+`/profile`** — Phase 3 Part C now means building `/settings` (+
+`/settings/consents`, `/settings/account`, `/settings/delete`), not
+finishing out `/profile`.
+
+### 5.1 Open questions (from `CHANGES.md`, verbatim asks)
+
+These block finishing Phase 3 Part C and are tracked here until answered:
+
+1. Saving a new password on `/settings/account` — should it sign out
+   other devices? (`CHANGES.md` item 3)
+2. The profile-day-one share button, when the public profile is off —
+   hide it, or prompt to turn public-profile on? (item 4)
+3. Does the avatar (once built) replace the "AV" monogram everywhere it
+   appears (sidebar, profile header), or sit alongside it? (item 5)
+4. Build the forecast log (storage + due-date reminder) now, as part of
+   Phase 5's Write-step panel, or ship that one panel read-only for now?
+   (item 6)
+5. Cap how many roadmaps one person can enrol in via `/today`'s "Add a
+   roadmap," or leave it unlimited? (item 7)
+
+Also asked directly (not an open design question, answered below rather
+than left pending): does the hosted Supabase project need
+reauthentication for password changes?
+
+**Answer:** No — `supabase/config.toml:258` sets
+`secure_password_change = false`, with its own comment confirming why
+(`:351`: "reauthentication — only used by secure_password_change, which
+is off"). This repo already treats `config.toml` as authoritative for
+the hosted project elsewhere (e.g. the SendGrid email-provider choice,
+§1 decision 5) — same here. `auth.updateUser({ password })` can be
+called directly with no nonce/reauth step. Flagging one caveat: this is
+the *versioned* setting; if anyone has changed auth settings by hand in
+the Supabase dashboard since, it could have drifted from what's
+committed. Worth a quick look at the dashboard's Auth settings page to
+confirm before relying on it in code, since I have no API access to the
+hosted project to check directly.
+
+### 5.2 Database changes implied — draft only, nothing applied
+
+Per the standing rule, every one of these gets shown as a real migration
+and reviewed before it touches the hosted project. Two are drafted in
+full below because Phase 3 Part C needs them next; the rest are sketched
+at the shape `CHANGES.md` suggests and will be fully drafted when their
+phase starts.
+
+**Needed now, for Phase 3 Part C — drafted in the next message:**
+- `consent_events(user_id, purpose, granted bool, at timestamptz,
+  source)` — append-only log, replacing in-place `withdrawn_at` updates
+  on the existing `consents` table as the write pattern for Settings/
+  Consents. RLS: insert and select own rows only; no update, no delete
+  (except the existing account-delete cascade).
+- `profiles.password_set_at timestamptz` — replaces reading
+  `user_metadata.has_password` from Supabase auth internals.
+
+**Sketched only, full migration when that phase starts:**
+- Phase 4/6 (avatar): `profiles.avatar_animal text`, `profiles.
+  avatar_color text`, both checked against a fixed 16-animal/8-colour
+  list, defaulting to fox/teal.
+- Phase 5 (forecast log, pending question 4 above):
+  `forecasts(user_id, text, confidence, due_on, outcome)`, plus whatever
+  the due-date reminder needs (likely reuses the still-unbuilt reminder-
+  send mechanism from §1 decision 5, not a new sender).
+- Phase 6 (multi-roadmap Today): `enrollments(user_id, roadmap_id,
+  last_opened_at)`, plus a retention-RPC change so a completion in any
+  enrolled roadmap counts for the one streak.
