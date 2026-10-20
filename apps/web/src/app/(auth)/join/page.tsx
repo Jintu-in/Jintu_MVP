@@ -2,7 +2,7 @@ import type { Metadata, Route } from "next";
 import { redirect } from "next/navigation";
 import { safeNextPath } from "@jintu/contracts";
 import { JoinForm } from "@/components/join-form";
-import { createClient } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -40,11 +40,14 @@ export default async function JoinPage({
   // anything that is not a same-origin absolute path — see its tests.
   const target = safeNextPath(next) as Route;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) redirect(target);
+  // getViewer(), not a direct createClient()+getUser() call: this page is
+  // reachable signed out with no Supabase configured at all (the e2e smoke
+  // suite loads it that way on purpose — see smoke.spec.ts), and a raw
+  // getUser() call here throws uncaught in that case, 500ing the sign-in
+  // page itself. getViewer() already degrades to "signed out" for exactly
+  // this condition (see its own comment in lib/session.ts).
+  const viewer = await getViewer();
+  if (viewer) redirect(target);
 
   // Unknown codes fall back to a generic line rather than being echoed: the
   // value arrives in a URL a stranger can compose, and rendering it verbatim

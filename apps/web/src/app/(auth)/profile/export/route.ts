@@ -21,6 +21,7 @@ export const dynamic = "force-dynamic";
  */
 const TABLES = [
   ["consents", "*", "Each purpose you agreed to, when, and when withdrawn."],
+  ["consent_events", "*", "The full history of every time you granted or withdrew a consent."],
   ["activity_days", "*", "Every calendar day you completed something."],
   ["streaks", "*", "Your current, longest and total day counts."],
   ["node_progress", "*", "Every day you started or finished, and where you stopped."],
