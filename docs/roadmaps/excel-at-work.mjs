@@ -90,6 +90,22 @@ export default {
               resultHighlight: "look for this",
               note: "The rate lives in D1, not inside the formula — change it once and every row that references D1 updates. That is today's whole lesson.",
               ctaLabel: "Mine shows ₹1,180",
+              // Desktop only (CHANGES.md item 6, DeskUniFormula). Columns
+              // B/C/D, not A/B: C2 is the only formula cell, reading B2
+              // and D1, which is the point this day's lesson actually
+              // makes — ties to this step's own formula, not the
+              // mockup's unrelated weekly-sales example.
+              panel: {
+                kind: "spreadsheet",
+                title: "Your workbook after this step",
+                subtitle: "Sheet 1",
+                columnLabels: ["B", "C", "D"],
+                rows: [
+                  { rowLabel: "1", cells: ["Amount", "With GST", "Rate"] },
+                  { rowLabel: "2", cells: ["1,000", "1,180", "18%"], highlightCellIndex: 1, highlightBadge: "C2" },
+                ],
+                note: "C2 is the only formula cell — it reads B2 and D1, so raising the rate in D1 updates every row that references it.",
+              },
             },
           ],
           estMinutes: 45,

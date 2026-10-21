@@ -42,6 +42,8 @@ export interface LessonRouteProps {
   signedIn: boolean;
   initialDone: boolean;
   steps: LessonStepSeed[];
+  /** This lesson's total estimated minutes — the desktop nav's footer. */
+  estMinutes: number;
   next?: { lessonNumber: string; title: string; metaLine: string; href: string };
   /** For the done screen's stat cards. */
   streakDaysNow: number;
@@ -61,6 +63,7 @@ export default function LessonRoute({
   signedIn,
   initialDone,
   steps,
+  estMinutes,
   next,
   streakDaysNow,
   lessonsLine,
@@ -142,6 +145,14 @@ export default function LessonRoute({
     setIndex(index - 1);
   };
 
+  // Desktop nav only (mobile has no equivalent) — jumps to an
+  // already-reached step. Guarded here too, not just by the nav
+  // disabling the button: the reader stays strictly sequential either way.
+  const onJump = (i: number) => {
+    if (i > furthest || i === index) return;
+    setIndex(i);
+  };
+
   if (showDone) {
     return (
       <LessonDoneScreen
@@ -161,13 +172,16 @@ export default function LessonRoute({
     <StepReader
       roadmapTitle={roadmapTitle}
       moduleLabel={moduleLabel}
+      steps={steps}
       stepIndex={index}
       total={steps.length}
       furthest={furthest}
       step={steps[index]!}
+      estMinutes={estMinutes}
       onBack={() => router.push(`/learn/${slug}` as never)}
       onPrev={index > 0 ? onPrev : undefined}
       onContinue={onContinue}
+      onJump={onJump}
       continuing={isExecuting}
       error={failed ? (result.serverError ?? "That did not save. Your place is kept — try again.") : undefined}
     />

@@ -59,6 +59,84 @@ export const turnStepSchema = z.object({
 /** A label/value row — "What you know" (choose), "The deal" (number). */
 const fact = z.object({ label: z.string().min(1), value: z.string().min(1) });
 
+/**
+ * Desktop-only "your work" panel (CHANGES.md item 6, DeskUniChoose/Find/
+ * Formula/Write + UniDeskStep's aside) — each Uni* kind's own illustration
+ * of the scenario, not derived from the step's own fields. Phone never
+ * renders one (layout: phone below 1024px, desktop from 1024px).
+ *
+ * Four panel kinds, not five: the mockups' cap table (number) and claim
+ * line-list (find) are the same shape — a small running table with one
+ * highlighted new row — so they share `tableRows` rather than each
+ * getting a bespoke variant. Dot positions in `dotGrid` are NOT hand
+ * authored (the mockup's literal pixel layout would be fragile to type
+ * out by hand); the renderer lays out `total` dots and colours the first
+ * `dotCount` of each legend entry in order, which reproduces the same
+ * reading ("1 real positive, ~10 false positives, the rest negative")
+ * without requiring per-dot coordinates in content.
+ */
+const tableRow = z.object({
+  cells: z.array(z.string().min(1)).min(1),
+  highlight: z.boolean().optional(),
+  badge: z.string().optional(),
+});
+
+export const dotGridPanelSchema = z.object({
+  kind: z.literal("dotGrid"),
+  title: z.string().min(1),
+  subtitle: z.string().optional(),
+  total: z.number().int().min(1),
+  legend: z.array(z.object({ label: z.string().min(1), value: z.string().min(1), dotCount: z.number().int().min(0) })).min(1),
+  footnote: z.string().optional(),
+});
+
+export const tableRowsPanelSchema = z.object({
+  kind: z.literal("tableRows"),
+  title: z.string().min(1),
+  subtitle: z.string().optional(),
+  columns: z.array(z.string().min(1)).min(1),
+  rows: z.array(tableRow).min(1),
+  totalRow: z.array(z.string().min(1)).optional(),
+  note: z.string().optional(),
+});
+
+export const spreadsheetPanelSchema = z.object({
+  kind: z.literal("spreadsheet"),
+  title: z.string().min(1),
+  subtitle: z.string().optional(),
+  columnLabels: z.array(z.string().min(1)).min(1),
+  rows: z.array(
+    z.object({
+      rowLabel: z.string().min(1),
+      cells: z.array(z.string().min(1)).min(1),
+      highlightCellIndex: z.number().int().min(0).optional(),
+      highlightBadge: z.string().optional(),
+    }),
+  ).min(1),
+  note: z.string().optional(),
+});
+
+/** Read-only, per the "build now vs. read-only" decision: no forecasts
+ *  table yet, so this panel shows the one forecast just written and
+ *  nothing it would take live storage to produce (no list across visits,
+ *  no save, no due-date reminder). */
+export const forecastLogPanelSchema = z.object({
+  kind: z.literal("forecastLog"),
+  title: z.string().min(1).default("Your forecast log"),
+  subtitle: z.string().optional(),
+  confidence: z.string().min(1),
+  text: z.string().min(1),
+  dueLabel: z.string().min(1),
+  note: z.string().optional(),
+});
+
+export const panelSchema = z.discriminatedUnion("kind", [
+  dotGridPanelSchema,
+  tableRowsPanelSchema,
+  spreadsheetPanelSchema,
+  forecastLogPanelSchema,
+]);
+
 export const chooseStepSchema = z.object({
   kind: z.literal("choose"),
   title: z.string().min(1),
@@ -73,6 +151,7 @@ export const chooseStepSchema = z.object({
   explanation: z.string().min(1),
   note: z.string().optional(),
   ctaLabel: z.string().min(1),
+  panel: panelSchema.optional(),
 }).refine((v) => v.correctIndex < v.options.length, {
   message: "correctIndex must index into options",
   path: ["correctIndex"],
@@ -91,6 +170,7 @@ export const findStepSchema = z.object({
   answerText: z.string().min(1),
   note: z.string().optional(),
   ctaLabel: z.string().min(1),
+  panel: panelSchema.optional(),
 });
 
 export const formulaStepSchema = z.object({
@@ -113,6 +193,7 @@ export const formulaStepSchema = z.object({
   resultHighlight: z.string().optional(),
   note: z.string().optional(),
   ctaLabel: z.string().min(1),
+  panel: panelSchema.optional(),
 });
 
 export const numberStepSchema = z.object({
@@ -131,6 +212,7 @@ export const numberStepSchema = z.object({
   working: z.array(terminalLine).min(1),
   note: z.string().optional(),
   ctaLabel: z.string().min(1),
+  panel: panelSchema.optional(),
 });
 
 export const writeStepSchema = z.object({
@@ -145,6 +227,7 @@ export const writeStepSchema = z.object({
   parts: z.array(fact).min(1),
   note: z.string().optional(),
   ctaLabel: z.string().min(1),
+  panel: panelSchema.optional(),
 });
 
 export const authoredStepSchema = z.discriminatedUnion("kind", [
@@ -166,3 +249,9 @@ export type FormulaStep = z.infer<typeof formulaStepSchema>;
 export type NumberStep = z.infer<typeof numberStepSchema>;
 export type WriteStep = z.infer<typeof writeStepSchema>;
 export type AuthoredStep = z.infer<typeof authoredStepSchema>;
+
+export type DotGridPanel = z.infer<typeof dotGridPanelSchema>;
+export type TableRowsPanel = z.infer<typeof tableRowsPanelSchema>;
+export type SpreadsheetPanel = z.infer<typeof spreadsheetPanelSchema>;
+export type ForecastLogPanel = z.infer<typeof forecastLogPanelSchema>;
+export type Panel = z.infer<typeof panelSchema>;

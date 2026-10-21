@@ -162,6 +162,31 @@ for (const [mi, m] of spec.modules.entries()) {
       } else {
         fail(`${sat}: kind "${s.kind}" — one of command/turn/choose/find/formula/number/write`);
       }
+      // Desktop-only "your work" panel (CHANGES.md item 6) — optional on
+      // every Uni* kind, absent on command/turn (no Desk mockup for
+      // either yet).
+      if (s.panel !== undefined) {
+        const pat = `${sat} panel`;
+        if (s.panel.kind === "dotGrid") {
+          if (!s.panel.title) fail(`${pat} (dotGrid) needs a title`);
+          if (!Number.isInteger(s.panel.total) || s.panel.total < 1) fail(`${pat} (dotGrid) needs total >= 1`);
+          if (!Array.isArray(s.panel.legend) || s.panel.legend.length === 0) fail(`${pat} (dotGrid) needs legend`);
+        } else if (s.panel.kind === "tableRows") {
+          if (!s.panel.title) fail(`${pat} (tableRows) needs a title`);
+          if (!Array.isArray(s.panel.columns) || s.panel.columns.length === 0) fail(`${pat} (tableRows) needs columns`);
+          if (!Array.isArray(s.panel.rows) || s.panel.rows.length === 0) fail(`${pat} (tableRows) needs rows`);
+        } else if (s.panel.kind === "spreadsheet") {
+          if (!s.panel.title) fail(`${pat} (spreadsheet) needs a title`);
+          if (!Array.isArray(s.panel.columnLabels) || s.panel.columnLabels.length === 0)
+            fail(`${pat} (spreadsheet) needs columnLabels`);
+          if (!Array.isArray(s.panel.rows) || s.panel.rows.length === 0) fail(`${pat} (spreadsheet) needs rows`);
+        } else if (s.panel.kind === "forecastLog") {
+          if (!s.panel.confidence || !s.panel.text || !s.panel.dueLabel)
+            fail(`${pat} (forecastLog) needs confidence, text and dueLabel`);
+        } else {
+          fail(`${pat}: kind "${s.panel.kind}" — one of dotGrid/tableRows/spreadsheet/forecastLog`);
+        }
+      }
     }
     for (const [ti, t] of (n.topics ?? []).entries()) {
       if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);

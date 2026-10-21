@@ -934,6 +934,23 @@ export default [
               "Out of 10,000 people, about 10 have the condition and nearly all test positive. Of the roughly 9,990 who don't, 5% — about 500 — also test positive. So around 510 positives, of which only 10 are real: roughly one in fifty, about 2%.",
             note: "Counting out of a fixed population rather than juggling percentages is what makes this solvable in your head — today's natural-frequencies topic.",
             ctaLabel: "About 2% is right",
+            // Desktop only (CHANGES.md item 6, DeskUniChoose). Dot counts
+            // are a labelled ×100 scale-down of the real "out of 10,000"
+            // figures from the explanation above — 100 dots stays legible,
+            // 10,000 would not.
+            panel: {
+              kind: "dotGrid",
+              title: "Out of 10,000 people",
+              subtitle: "Each dot stands for about 100 people.",
+              total: 100,
+              legend: [
+                { label: "Has it, tests positive", value: "~10", dotCount: 1 },
+                { label: "Does not have it, tests positive", value: "~500", dotCount: 5 },
+                { label: "Tests negative", value: "~9,490", dotCount: 94 },
+              ],
+              footnote:
+                "Work the exact count yourself in the explanation above — this view is here to make the shape visible, not to replace the arithmetic.",
+            },
           },
         ],
         estMinutes: 90,

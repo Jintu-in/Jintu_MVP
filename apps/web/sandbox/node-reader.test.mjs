@@ -74,11 +74,11 @@ test('a challenge step swaps the step counter for a "Your turn" badge, matching 
 });
 
 test("the footer says Continue, except Finish on the last step — Part B's command/turnRich CTAs layer on top of this, not instead of it", () => {
-  // Part B inserted two more rungs ahead of this one (command -> "I see
-  // this", turnRich -> step.ctaLabel), so the literal adjacency from Part A
-  // is gone, but the base fallback for every other step kind must still be
-  // exactly this pair.
-  assert.match(reader, /: stepIndex \+ 1 === total\s*\?\s*"Finish"\s*:\s*"Continue"/);
+  // Part B inserted several rungs ahead of this one inside ctaLabelFor()
+  // (command -> "I see this", the Uni* kinds -> step.ctaLabel), so the
+  // literal adjacency from Part A is gone, but the base fallback for
+  // every other step kind must still be exactly this pair.
+  assert.match(reader, /return stepIndex \+ 1 === total\s*\?\s*"Finish"\s*:\s*"Continue"/);
 });
 
 test("no Stuck/Ask box yet — Part A and B ship the step shell and its authored content, not CHANGES.md item 6", () => {

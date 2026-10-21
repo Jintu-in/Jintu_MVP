@@ -1,4 +1,4 @@
-import type { AuthoredStep } from "@jintu/contracts";
+import type { AuthoredStep, Panel } from "@jintu/contracts";
 import { resourceMeta, text } from "@/lib/blocks";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
@@ -84,6 +84,8 @@ export type LessonStep = { id: string; railTitle: string } & (
       explanation: string;
       note?: string;
       ctaLabel: string;
+      /** Desktop-only "your work" aside (CHANGES.md item 6); absent on phone. */
+      panel?: Panel;
     }
   | {
       kind: "find";
@@ -96,6 +98,7 @@ export type LessonStep = { id: string; railTitle: string } & (
       answerText: string;
       note?: string;
       ctaLabel: string;
+      panel?: Panel;
     }
   | {
       kind: "formula";
@@ -108,6 +111,7 @@ export type LessonStep = { id: string; railTitle: string } & (
       resultHighlight?: string;
       note?: string;
       ctaLabel: string;
+      panel?: Panel;
     }
   | {
       kind: "number";
@@ -119,6 +123,7 @@ export type LessonStep = { id: string; railTitle: string } & (
       working: TerminalLine[];
       note?: string;
       ctaLabel: string;
+      panel?: Panel;
     }
   | {
       kind: "write";
@@ -127,6 +132,7 @@ export type LessonStep = { id: string; railTitle: string } & (
       parts: { label: string; value: string }[];
       note?: string;
       ctaLabel: string;
+      panel?: Panel;
     }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
@@ -178,6 +184,7 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         explanation: a.explanation,
         note: a.note,
         ctaLabel: a.ctaLabel,
+        panel: a.panel,
       };
     }
     if (a.kind === "find") {
@@ -194,6 +201,7 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         answerText: a.answerText,
         note: a.note,
         ctaLabel: a.ctaLabel,
+        panel: a.panel,
       };
     }
     if (a.kind === "formula") {
@@ -210,6 +218,7 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         resultHighlight: a.resultHighlight,
         note: a.note,
         ctaLabel: a.ctaLabel,
+        panel: a.panel,
       };
     }
     if (a.kind === "number") {
@@ -225,6 +234,7 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         working: a.working,
         note: a.note,
         ctaLabel: a.ctaLabel,
+        panel: a.panel,
       };
     }
     return {
@@ -236,6 +246,7 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
       parts: a.parts,
       note: a.note,
       ctaLabel: a.ctaLabel,
+      panel: a.panel,
     };
   });
 }

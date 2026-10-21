@@ -769,6 +769,21 @@ export default [
             ],
             note: "Post-money is pre-money plus the money that came in. This teaches the method; it is not investment advice.",
             ctaLabel: "I got ₹25 crore and 20%",
+            // Desktop only (CHANGES.md item 6, UniDeskStep). Same tableRows
+            // panel kind as medical-coding's claim list above — a cap
+            // table is the same shape once you drop the subject headers.
+            panel: {
+              kind: "tableRows",
+              title: "Your cap table after this step",
+              subtitle: "If yours looks different, go back one step.",
+              columns: ["Holder", "₹ crore", "Share"],
+              rows: [
+                { cells: ["Founders", "20.00", "80%"] },
+                { cells: ["The fund", "5.00", "20%"], highlight: true, badge: "new" },
+              ],
+              totalRow: ["Total", "25.00", "100%"],
+              note: "The same panel shape shows up in other roadmaps — Git shows your project folder, Excel shows your workbook; here it is your cap table.",
+            },
           },
         ],
         estMinutes: 50,

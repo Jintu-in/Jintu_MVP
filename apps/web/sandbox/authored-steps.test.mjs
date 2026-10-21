@@ -55,14 +55,15 @@ test("a challenge or turnRich step shows V2Turn's \"Your turn\" badge instead of
 });
 
 test("a turnRich step's eyebrow is its own time label, not \"Step N\"", () => {
-  assert.match(reader, /step\.kind === "turnRich" \? step\.timeLabel : `Step \$\{stepIndex \+ 1\}`/);
+  assert.match(reader, /step\.kind === "turnRich" \? step\.timeLabel : `Step \$\{stepIndex \+ 1\} of \$\{total\}`/);
 });
 
-test("the footer CTA uses each authored kind's own words, not generic Continue/Finish", () => {
-  const cta = reader.slice(reader.indexOf('{continuing\n'), reader.indexOf("{continuing ? null : ARROW_RIGHT}"));
-  assert.match(cta, /step\.kind === "command"\s*\?\s*"I see this"/);
-  assert.match(cta, /step\.kind === "turnRich" \|\|/);
-  assert.match(cta, /\?\s*step\.ctaLabel/);
+test("the footer CTA uses each authored kind's own words, not generic Continue/Finish — shared by both the mobile sticky footer and the desktop inline row via one ctaLabelFor() helper", () => {
+  const fn = reader.slice(reader.indexOf("function ctaLabelFor"), reader.indexOf("const STEP_GROUPS"));
+  assert.match(fn, /step\.kind === "command"/);
+  assert.match(fn, /return "I see this"/);
+  assert.match(fn, /step\.kind === "turnRich" \|\|/);
+  assert.match(fn, /return step\.ctaLabel/);
 });
 
 test("the terminal card is decorative dark chrome, not the Phase 7 dark-theme tokens", () => {
@@ -158,7 +159,7 @@ test("each Uni* kind gets its own small pill next to the eyebrow, matching its m
 });
 
 test("the footer CTA for every Uni* kind is the step's own ctaLabel, not generic Continue/Finish", () => {
-  const cta = reader.slice(reader.indexOf("{continuing\n"), reader.indexOf("{continuing ? null : ARROW_RIGHT}"));
+  const cta = reader.slice(reader.indexOf("function ctaLabelFor"), reader.indexOf("const STEP_GROUPS"));
   assert.match(
     cta,
     /step\.kind === "turnRich" \|\|\s*step\.kind === "choose" \|\|\s*step\.kind === "find" \|\|\s*step\.kind === "formula" \|\|\s*step\.kind === "number" \|\|\s*step\.kind === "write"/,

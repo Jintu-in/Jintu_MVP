@@ -80,6 +80,7 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       signedIn={signedIn}
       initialDone={done}
       steps={steps}
+      estMinutes={node.estMinutes}
       next={
         next
           ? {

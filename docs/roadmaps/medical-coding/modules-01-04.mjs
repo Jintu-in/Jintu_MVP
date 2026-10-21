@@ -902,6 +902,20 @@ export default [
             answerText: "Type 2 diabetes mellitus without complications",
             note: "The index gets you close. Confirm the code in the tabular list before you use it — that confirmation is the whole lesson today.",
             ctaLabel: "I found E11.9",
+            // Desktop only (CHANGES.md item 6, DeskUniFind). Shares the
+            // tableRows panel kind with startup-finance's cap table below —
+            // same shape (a small running table, one new highlighted row).
+            panel: {
+              kind: "tableRows",
+              title: "Your claim after this step",
+              subtitle: "If yours looks different, go back one step.",
+              columns: ["Line", "Code"],
+              rows: [
+                { cells: ["Patient visit", "read"] },
+                { cells: ["Diagnosis 1", "E11.9"], highlight: true, badge: "new" },
+              ],
+              note: "The code set opens in a new tab. Put it beside this one and come back to say what you found.",
+            },
           },
         ],
         estMinutes: 55,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Panel } from "@jintu/contracts";
 import { BackIcon, CopyIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
 import { VideoFacade } from "@/components/video-facade";
 import type { LessonStep, Rich, TerminalLine } from "@/lib/steps";
@@ -21,13 +22,27 @@ import { cn } from "@/lib/utils";
  * Still absent, on purpose: each mockup's pair of secondary buttons below
  * the main card — the "ask for help" box, and (on the five Uni* kinds)
  * the "my result differs" escape (CHANGES.md item 6). No help_requests
- * table exists yet, and a dead button is worse than a missing one.
+ * table exists yet, and a dead button is worse than a missing one. This
+ * holds on desktop too, for the same reason — the layout below omits
+ * every mockup's ask-for-help input, not just on phone.
  *
  * "Your turn" replaces the step counter in the header for a challenge OR
  * turnRich step, matching V2Turn's own header exactly. The five Uni*
  * kinds keep the ordinary step counter, each with its own small kind
  * pill next to the eyebrow (matching their mockups' "Choose"/"Find"/…
  * badge) instead.
+ *
+ * Desktop (≥1024px, CHANGES.md item 6 — DeskUniChoose/Find/Formula/Write
+ * + UniDeskStep): a three-column shell layers on top of the SAME mobile
+ * markup below rather than duplicating it — a left step-nav (every step
+ * in this lesson, done/current/upcoming) and a right "your work" panel
+ * (the five Uni* kinds' own illustration of the scenario — a dot-grid,
+ * a running table, a mini spreadsheet, a forecast log) replace the
+ * mobile header/progress-bar, which hide at lg. The content column
+ * itself keeps its mobile type sizes rather than re-deriving a full
+ * desktop scale for all thirteen step kinds: the new capability here is
+ * the nav and the panels, and mobile-sized text reads perfectly well at
+ * a 680px column width, so that's the scope line for this pass.
  */
 
 const KIND_PILL: Partial<Record<LessonStep["kind"], string>> = {
@@ -64,15 +79,25 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
 export interface StepReaderProps {
   roadmapTitle: string;
   moduleLabel: string;
+  /** Every step in this lesson, not just the current one — Part A/B's
+   *  mobile view only ever needed the one at stepIndex; the desktop nav
+   *  (below) needs the whole list to render done/current/upcoming. */
+  steps: LessonStep[];
   stepIndex: number;
   total: number;
   /** Furthest index reached so far — lights more of the bar than "current"
    *  alone when the reader is reviewing an earlier step. */
   furthest: number;
   step: LessonStep;
+  /** This lesson's total estimated minutes — the desktop nav's own footer
+   *  ("This lesson · about N min"), mobile has no equivalent. */
+  estMinutes: number;
   onBack: () => void;
   onPrev?: () => void;
   onContinue: () => void;
+  /** Desktop nav only — jump to an already-reached step. Mobile has no
+   *  equivalent control; stepping is still strictly sequential there. */
+  onJump: (index: number) => void;
   continuing?: boolean;
   /** Set only on the last step, when finishing failed — named, inline,
    *  same discipline as the old page's footer.failure (never a toast). */
@@ -82,124 +107,317 @@ export interface StepReaderProps {
 export function StepReader({
   roadmapTitle,
   moduleLabel,
+  steps,
   stepIndex,
   total,
   furthest,
   step,
+  estMinutes,
   onBack,
   onPrev,
   onContinue,
+  onJump,
   continuing,
   error,
 }: StepReaderProps) {
+  const panel = "panel" in step ? step.panel : undefined;
+
   return (
-    <div className="flex min-h-dvh flex-col bg-ink-50">
-      <div className="flex h-16 flex-none items-center gap-3 px-3 pr-5">
-        <button
-          type="button"
-          aria-label={`Back to ${roadmapTitle}`}
-          onClick={onBack}
-          className="flex size-11 flex-none items-center justify-center rounded-full bg-white text-ink-900"
-        >
-          <BackIcon />
-        </button>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[15px] leading-[20px] font-semibold text-ink-900">
-            {roadmapTitle}
-          </div>
-          <div className="truncate text-[12.5px] leading-[18px] text-ink-500">{moduleLabel}</div>
-        </div>
-        {step.kind === "challenge" || step.kind === "turnRich" ? (
-          <span className="flex h-8 flex-none items-center rounded-2xl bg-night-900 px-3 text-[12.5px] font-semibold text-on-night">
-            Your turn
-          </span>
-        ) : (
-          <span className="flex h-8 flex-none items-center rounded-2xl bg-white px-3 font-mono text-[12.5px] font-medium text-ink-900">
-            {stepIndex + 1} / {total}
-          </span>
-        )}
-      </div>
+    // min-h-dvh pins the mobile sticky footer near the bottom of a short
+    // step, same as before — but only below lg. At lg+, this already sits
+    // inside the site's own header/footer as an ordinary document (see
+    // apps/web/src/app/(learning)/layout.tsx: "the reader ... used to own
+    // the whole viewport ... they are ordinary documents now, and the
+    // page scrolls"), so forcing a SECOND full-viewport minimum there
+    // would stack two 100dvh boxes and strand the footer below the fold
+    // on a short step. lg:min-h-0 lets the three columns size to
+    // whichever is tallest instead.
+    <div className="flex min-h-dvh flex-col bg-ink-50 lg:min-h-0 lg:flex-row">
+      <LessonNav
+        roadmapTitle={roadmapTitle}
+        moduleLabel={moduleLabel}
+        steps={steps}
+        stepIndex={stepIndex}
+        furthest={furthest}
+        estMinutes={estMinutes}
+        onBack={onBack}
+        onJump={onJump}
+      />
 
-      <div
-        role="img"
-        aria-label={`Step ${stepIndex + 1} of ${total}${stepIndex + 1 === total ? ", last step" : ""}`}
-        className="flex flex-none gap-1 px-5"
-      >
-        {Array.from({ length: total }, (_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "h-[6px] flex-1 rounded-[3px]",
-              i < furthest ? "bg-night-900" : i === furthest ? "bg-brand-500" : "bg-ink-300",
-            )}
-          />
-        ))}
-      </div>
-
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 pt-6 pb-4">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <div className="text-[13px] leading-[18px] font-semibold text-link">
-              {step.kind === "turnRich" ? step.timeLabel : `Step ${stepIndex + 1}`}
-            </div>
-            {KIND_PILL[step.kind] ? (
-              <span className="flex h-[22px] flex-none items-center rounded-[11px] bg-ink-100 px-[9px] text-[11.5px] font-semibold text-ink-600">
-                {KIND_PILL[step.kind]}
-              </span>
-            ) : null}
-          </div>
-          <h1 className="font-heading text-[28px] leading-[32px] font-semibold tracking-[-0.015em] text-ink-900 text-pretty">
-            {step.railTitle}
-          </h1>
-        </div>
-
-        <StepBody step={step} />
-      </div>
-
-      <div className="flex-none border-t border-ink-100 bg-white px-5 pt-3 pb-5">
-        {error ? (
-          <p role="alert" className="mb-2.5 text-[14px] leading-[1.5] text-risk-600">
-            {error}
-          </p>
-        ) : null}
-        <div className="flex gap-2.5">
-          {onPrev ? (
-            <button
-              type="button"
-              onClick={onPrev}
-              aria-label="Previous step"
-              className="flex h-14 flex-none items-center justify-center rounded-2xl border border-ink-200 px-5 text-ink-900"
-            >
-              <BackIcon />
-            </button>
-          ) : null}
+      <div className="flex min-w-0 flex-1 flex-col lg:items-center">
+        <div className="flex h-16 flex-none items-center gap-3 px-3 pr-5 lg:hidden">
           <button
             type="button"
-            disabled={continuing}
-            onClick={onContinue}
-            className="flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600"
+            aria-label={`Back to ${roadmapTitle}`}
+            onClick={onBack}
+            className="flex size-11 flex-none items-center justify-center rounded-full bg-white text-ink-900"
           >
-            <span>
-              {continuing
-                ? "Saving…"
-                : step.kind === "command"
-                  ? "I see this"
-                  : step.kind === "turnRich" ||
-                      step.kind === "choose" ||
-                      step.kind === "find" ||
-                      step.kind === "formula" ||
-                      step.kind === "number" ||
-                      step.kind === "write"
-                    ? step.ctaLabel
-                    : stepIndex + 1 === total
-                      ? "Finish"
-                      : "Continue"}
-            </span>
-            {continuing ? null : ARROW_RIGHT}
+            <BackIcon />
           </button>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[15px] leading-[20px] font-semibold text-ink-900">
+              {roadmapTitle}
+            </div>
+            <div className="truncate text-[12.5px] leading-[18px] text-ink-500">{moduleLabel}</div>
+          </div>
+          {step.kind === "challenge" || step.kind === "turnRich" ? (
+            <span className="flex h-8 flex-none items-center rounded-2xl bg-night-900 px-3 text-[12.5px] font-semibold text-on-night">
+              Your turn
+            </span>
+          ) : (
+            <span className="flex h-8 flex-none items-center rounded-2xl bg-white px-3 font-mono text-[12.5px] font-medium text-ink-900">
+              {stepIndex + 1} / {total}
+            </span>
+          )}
+        </div>
+
+        <div
+          role="img"
+          aria-label={`Step ${stepIndex + 1} of ${total}${stepIndex + 1 === total ? ", last step" : ""}`}
+          className="flex flex-none gap-1 px-5 lg:hidden"
+        >
+          {Array.from({ length: total }, (_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-[6px] flex-1 rounded-[3px]",
+                i < furthest ? "bg-night-900" : i === furthest ? "bg-brand-500" : "bg-ink-300",
+              )}
+            />
+          ))}
+        </div>
+
+        <div className="flex w-full min-w-0 max-w-[680px] flex-1 flex-col gap-4 overflow-y-auto px-5 pt-6 pb-4 lg:px-0 lg:pt-12">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <div className="text-[13px] leading-[18px] font-semibold text-link">
+                {step.kind === "turnRich" ? step.timeLabel : `Step ${stepIndex + 1} of ${total}`}
+              </div>
+              {KIND_PILL[step.kind] ? (
+                <span className="flex h-[22px] flex-none items-center rounded-[11px] bg-ink-100 px-[9px] text-[11.5px] font-semibold text-ink-600">
+                  {KIND_PILL[step.kind]}
+                </span>
+              ) : null}
+            </div>
+            <h1 className="font-heading text-[28px] leading-[32px] font-semibold tracking-[-0.015em] text-ink-900 text-pretty">
+              {step.railTitle}
+            </h1>
+          </div>
+
+          <StepBody step={step} />
+
+          <div className="flex gap-2.5 lg:mt-1">
+            {onPrev ? (
+              <button
+                type="button"
+                onClick={onPrev}
+                aria-label="Previous step"
+                className="hidden h-14 flex-none items-center justify-center rounded-2xl border border-ink-200 px-5 text-ink-900 lg:flex"
+              >
+                <BackIcon />
+              </button>
+            ) : null}
+            <button
+              type="button"
+              disabled={continuing}
+              onClick={onContinue}
+              className="hidden h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600 lg:flex"
+            >
+              <span>{continuing ? "Saving…" : ctaLabelFor(step, stepIndex, total)}</span>
+              {continuing ? null : ARROW_RIGHT}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-none border-t border-ink-100 bg-white px-5 pt-3 pb-5 lg:hidden">
+          {error ? (
+            <p role="alert" className="mb-2.5 text-[14px] leading-[1.5] text-risk-600">
+              {error}
+            </p>
+          ) : null}
+          <div className="flex gap-2.5">
+            {onPrev ? (
+              <button
+                type="button"
+                onClick={onPrev}
+                aria-label="Previous step"
+                className="flex h-14 flex-none items-center justify-center rounded-2xl border border-ink-200 px-5 text-ink-900"
+              >
+                <BackIcon />
+              </button>
+            ) : null}
+            <button
+              type="button"
+              disabled={continuing}
+              onClick={onContinue}
+              className="flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600"
+            >
+              <span>{continuing ? "Saving…" : ctaLabelFor(step, stepIndex, total)}</span>
+              {continuing ? null : ARROW_RIGHT}
+            </button>
+          </div>
         </div>
       </div>
+
+      {panel ? <WorkPanel panel={panel} /> : null}
     </div>
+  );
+}
+
+function ctaLabelFor(step: LessonStep, stepIndex: number, total: number): string {
+  if (step.kind === "command") return "I see this";
+  if (
+    step.kind === "turnRich" ||
+    step.kind === "choose" ||
+    step.kind === "find" ||
+    step.kind === "formula" ||
+    step.kind === "number" ||
+    step.kind === "write"
+  ) {
+    return step.ctaLabel;
+  }
+  return stepIndex + 1 === total ? "Finish" : "Continue";
+}
+
+const STEP_GROUPS: { label: string; match: (kind: LessonStep["kind"]) => boolean }[] = [
+  {
+    label: "Your turn",
+    match: (k) => k === "challenge" || k === "turnRich" || k === "choose" || k === "find" || k === "formula" || k === "number" || k === "write",
+  },
+  { label: "Questions", match: (k) => k === "check" },
+  { label: "Go deeper", match: (k) => k === "gotcha" },
+];
+
+/**
+ * The lesson-specific left nav (not the site's AppShell sidebar — this
+ * lesson has its own, matching DeskUniChoose/Find/Formula/Write +
+ * UniDeskStep exactly). Every step in the lesson, a done/current/upcoming
+ * marker each, and three jump links at the bottom for the first step of
+ * each rough category, when this lesson has one. Jumping only ever goes
+ * to an already-reached step (index <= furthest) — the reader is still
+ * strictly sequential; the nav is a map of where you've been, not a way
+ * to skip ahead.
+ */
+function LessonNav({
+  roadmapTitle,
+  moduleLabel,
+  steps,
+  stepIndex,
+  furthest,
+  estMinutes,
+  onBack,
+  onJump,
+}: {
+  roadmapTitle: string;
+  moduleLabel: string;
+  steps: LessonStep[];
+  stepIndex: number;
+  furthest: number;
+  estMinutes: number;
+  onBack: () => void;
+  onJump: (index: number) => void;
+}) {
+  return (
+    <nav
+      aria-label="Steps in this lesson"
+      className="hidden w-72 flex-none flex-col gap-1 bg-night-900 p-4 text-white lg:flex"
+    >
+      {/* No second "jintu" wordmark here — the site's own SiteNav already
+          renders one above this (apps/web/src/app/(learning)/layout.tsx:
+          every learning page, this one included, keeps the global header;
+          the old fully chromeless reader was retired). This is a back
+          control, not a second logo. */}
+      <button
+        type="button"
+        aria-label={`Back to ${roadmapTitle}`}
+        onClick={onBack}
+        className="mb-1 flex h-10 w-10 flex-none items-center justify-center rounded-14 bg-white/8 text-white"
+      >
+        <BackIcon />
+      </button>
+      <div className="flex flex-col gap-0.5 px-2 pt-2 pb-3">
+        <div className="truncate text-[13px] leading-[18px] font-medium text-on-night-muted-2">{roadmapTitle}</div>
+        <div className="truncate text-[15px] leading-6 font-semibold text-white">{moduleLabel}</div>
+      </div>
+
+      <ol className="flex flex-col gap-0.5">
+        {steps.map((s, i) => {
+          const reached = i <= furthest;
+          const isCurrent = i === stepIndex;
+          return (
+            <li key={s.id}>
+              <button
+                type="button"
+                disabled={!reached}
+                aria-current={isCurrent ? "step" : undefined}
+                onClick={() => onJump(i)}
+                className={cn(
+                  "flex min-h-10 w-full items-center gap-3 rounded-14 px-2 text-left text-[14.5px]",
+                  isCurrent ? "bg-white/12 font-semibold text-white" : "text-on-night",
+                  !reached && "cursor-default",
+                )}
+              >
+                {i < furthest ? (
+                  <span
+                    role="img"
+                    aria-label="Done"
+                    className="flex size-5 flex-none items-center justify-center rounded-full bg-brand-500"
+                  >
+                    <svg aria-hidden width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="#06262C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      "flex size-5 flex-none items-center justify-center rounded-full font-mono text-[11px]",
+                      isCurrent ? "bg-white text-night-900" : "border border-white/45",
+                    )}
+                  >
+                    {i + 1}
+                  </span>
+                )}
+                <span className="min-w-0 flex-1 truncate">{s.railTitle}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+
+      <div aria-hidden className="my-2.5 h-px bg-white/14" />
+      {STEP_GROUPS.map((g) => {
+        const at = steps.findIndex((s) => g.match(s.kind));
+        if (at === -1 || at > furthest) return null;
+        return (
+          <button
+            key={g.label}
+            type="button"
+            onClick={() => onJump(at)}
+            className="flex h-10 items-center rounded-14 px-2 pl-10 text-left text-[14.5px] text-on-night"
+          >
+            {g.label}
+          </button>
+        );
+      })}
+
+      <div className="mt-auto flex flex-col gap-2 rounded-2xl bg-white/8 p-3.5">
+        <div className="flex items-center justify-between text-[13px] leading-[18px] text-on-night-muted-2">
+          <span>This lesson</span>
+          <span className="font-mono text-[12px] leading-[18px]">about {estMinutes} min</span>
+        </div>
+        <div className="flex gap-1" role="img" aria-label={`${furthest} of ${steps.length} steps done`}>
+          {steps.map((s, i) => (
+            <div
+              key={s.id}
+              className={cn(
+                "h-[6px] flex-1 rounded-[3px]",
+                i < furthest ? "bg-brand-500" : i === furthest ? "bg-white" : "bg-white/20",
+              )}
+            />
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 }
 
@@ -628,6 +846,229 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
   }
+}
+
+/**
+ * The desktop-only "your work" aside (CHANGES.md item 6) — one of the
+ * four panel kinds a Uni* step can author, each illustrating that
+ * roadmap's own scenario rather than being derived generically from the
+ * step's fields. Absent on phone entirely (layout: phone below 1024px,
+ * desktop from 1024px) — StepReader only renders this when the current
+ * step actually authored a `panel`.
+ */
+function WorkPanel({ panel }: { panel: Panel }) {
+  return (
+    <aside
+      aria-label="Your work"
+      className="hidden w-[380px] flex-none flex-col gap-5 overflow-y-auto border-l border-ink-100 bg-white p-6 lg:flex"
+    >
+      {panel.kind === "dotGrid" ? (
+        <DotGridPanel panel={panel} />
+      ) : panel.kind === "tableRows" ? (
+        <TableRowsPanel panel={panel} />
+      ) : panel.kind === "spreadsheet" ? (
+        <SpreadsheetPanel panel={panel} />
+      ) : (
+        <ForecastLogPanel panel={panel} />
+      )}
+    </aside>
+  );
+}
+
+function PanelHeading({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <h2 className="m-0 font-heading text-[19px] leading-6 font-semibold tracking-[-0.01em] text-ink-900">{title}</h2>
+      {subtitle ? <div className="text-[13.5px] leading-5 text-ink-600">{subtitle}</div> : null}
+    </div>
+  );
+}
+
+function PanelNote({ note }: { note?: string }) {
+  if (!note) return null;
+  return <div className="rounded-2xl bg-ink-50 p-4 text-[14px] leading-[21px] text-ink-600">{note}</div>;
+}
+
+/**
+ * DeskUniChoose's population view (100 dots, a handful coloured). Dot
+ * positions are not hand-authored — the mockup's literal pixel layout
+ * would be fragile to type out — the first `dotCount` dots of each
+ * legend entry, in order, get that entry's colour; any dots left over
+ * after the legend is exhausted fall to the muted colour. Colour comes
+ * from legend ORDER (first = the thing being illustrated, second = the
+ * "almost" category, further entries muted), not an authored field.
+ */
+const DOT_COLORS = ["bg-night-900", "bg-warn-600", "bg-ink-200"];
+
+function DotGridPanel({ panel }: { panel: Extract<Panel, { kind: "dotGrid" }> }) {
+  const dots: number[] = [];
+  panel.legend.forEach((entry, i) => {
+    const color = Math.min(i, DOT_COLORS.length - 1);
+    for (let n = 0; n < entry.dotCount && dots.length < panel.total; n++) dots.push(color);
+  });
+  while (dots.length < panel.total) dots.push(DOT_COLORS.length - 1);
+
+  return (
+    <>
+      <PanelHeading title={panel.title} subtitle={panel.subtitle} />
+      <div className="flex flex-col gap-4 rounded-2xl bg-ink-50 p-4">
+        <div
+          role="img"
+          aria-label={panel.legend.map((l) => `${l.value} ${l.label}`).join(". ")}
+          className="grid justify-between gap-y-2.5"
+          style={{ gridTemplateColumns: "repeat(10, 18px)" }}
+        >
+          {dots.map((colorIdx, i) => (
+            <span key={i} aria-hidden className={cn("size-[18px] rounded-full", DOT_COLORS[colorIdx])} />
+          ))}
+        </div>
+        <div className="flex flex-col">
+          {panel.legend.map((l, i) => (
+            <div key={i} className="flex min-h-[30px] items-center gap-2.5 text-[14px] leading-5">
+              <span aria-hidden className={cn("size-3 flex-none rounded-full", DOT_COLORS[Math.min(i, DOT_COLORS.length - 1)])} />
+              <span className="min-w-0 flex-1 text-ink-900">{l.label}</span>
+              <span className="flex-none font-mono text-[13px] font-medium text-ink-900">{l.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      {panel.footnote ? <div className="text-[14px] leading-[21px] text-ink-600">{panel.footnote}</div> : null}
+    </>
+  );
+}
+
+/**
+ * DeskUniFind's "your claim" / UniDeskStep's "your cap table" — the same
+ * shape (a small running table, one highlighted new row) shared by both
+ * rather than two bespoke panel kinds, since the mockups are visually
+ * identical once you drop the subject-matter column headers.
+ */
+function TableRowsPanel({ panel }: { panel: Extract<Panel, { kind: "tableRows" }> }) {
+  return (
+    <>
+      <PanelHeading title={panel.title} subtitle={panel.subtitle} />
+      <div className="flex flex-col gap-0.5 rounded-2xl bg-ink-50 p-3">
+        <div className="flex gap-2.5 px-3 pb-1.5 font-mono text-[12px] font-semibold tracking-[.06em] text-ink-500 uppercase">
+          {panel.columns.map((c, i) => (
+            <span key={i} className={i === 0 ? "flex-1" : "w-14 flex-none text-right"}>
+              {c}
+            </span>
+          ))}
+        </div>
+        {panel.rows.map((r, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex min-h-10 items-center gap-2.5 rounded-xl px-3 text-[14.5px] leading-5",
+              r.highlight && "bg-brand-50",
+            )}
+          >
+            {r.cells.map((c, j) =>
+              j === 0 ? (
+                <span key={j} className="flex min-w-0 flex-1 items-center gap-2">
+                  <span className="truncate text-ink-900">{c}</span>
+                  {r.badge ? (
+                    <span className="flex-none rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-semibold text-on-brand">
+                      {r.badge}
+                    </span>
+                  ) : null}
+                </span>
+              ) : (
+                <span key={j} className="w-14 flex-none text-right font-mono text-[13.5px] text-ink-900">
+                  {c}
+                </span>
+              ),
+            )}
+          </div>
+        ))}
+        {panel.totalRow ? (
+          <>
+            <div aria-hidden className="mx-3 my-1 h-px bg-ink-200" />
+            <div className="flex min-h-10 items-center gap-2.5 px-3 text-[14.5px] leading-5">
+              {panel.totalRow.map((c, j) => (
+                <span key={j} className={j === 0 ? "flex-1 text-ink-900" : "w-14 flex-none text-right font-mono text-[13.5px] text-ink-900"}>
+                  {c}
+                </span>
+              ))}
+            </div>
+          </>
+        ) : null}
+      </div>
+      <PanelNote note={panel.note} />
+    </>
+  );
+}
+
+/** DeskUniFormula's "your workbook after this step" — a small, real grid
+ *  of column/row headers, unlike the main card's TerminalCard re-use,
+ *  because the whole point here is seeing the formula's cell in place
+ *  among its neighbours. */
+function SpreadsheetPanel({ panel }: { panel: Extract<Panel, { kind: "spreadsheet" }> }) {
+  return (
+    <>
+      <PanelHeading title={panel.title} subtitle={panel.subtitle} />
+      <div className="flex flex-col overflow-hidden rounded-xl border-t border-l border-ink-100">
+        <div className="flex">
+          <span className="h-9 w-9 flex-none border-r border-b border-ink-100 bg-ink-50" />
+          {panel.columnLabels.map((c, i) => (
+            <span
+              key={i}
+              className="flex h-9 flex-1 items-center justify-center border-r border-b border-ink-100 bg-ink-50 font-mono text-[13px] text-ink-500"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        {panel.rows.map((r, ri) => (
+          <div key={ri} className="flex">
+            <span className="flex h-9 w-9 flex-none items-center justify-center border-r border-b border-ink-100 bg-ink-50 font-mono text-[13px] text-ink-500">
+              {r.rowLabel}
+            </span>
+            {r.cells.map((c, ci) => {
+              const isHighlighted = r.highlightCellIndex === ci;
+              return (
+                <span
+                  key={ci}
+                  className={cn(
+                    "flex h-9 flex-1 items-center justify-end gap-1.5 border-r border-b border-ink-100 px-2.5 font-mono text-[13px]",
+                    isHighlighted ? "border-2 border-brand-500 bg-brand-50 text-ink-900" : "bg-white text-ink-900",
+                  )}
+                >
+                  {c}
+                  {isHighlighted && r.highlightBadge ? (
+                    <span className="flex-none rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-on-brand">
+                      {r.highlightBadge}
+                    </span>
+                  ) : null}
+                </span>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <PanelNote note={panel.note} />
+    </>
+  );
+}
+
+/** DeskUniWrite's forecast log — read-only for this pass (no forecasts
+ *  table yet): shows the one forecast just written, not a list across
+ *  visits, and nothing here saves or reminds. */
+function ForecastLogPanel({ panel }: { panel: Extract<Panel, { kind: "forecastLog" }> }) {
+  return (
+    <>
+      <PanelHeading title={panel.title} subtitle={panel.subtitle} />
+      <div className="flex flex-col gap-2 rounded-2xl border-2 border-brand-500 bg-brand-50 p-4">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-mono text-[22px] leading-7 font-medium text-ink-900">{panel.confidence}</span>
+          <span className="flex-none rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-semibold text-on-brand">new</span>
+        </div>
+        <div className="text-[15px] leading-[22px] text-ink-900">{panel.text}</div>
+        <div className="font-mono text-[12.5px] leading-[18px] text-ink-600">{panel.dueLabel}</div>
+      </div>
+      <PanelNote note={panel.note} />
+    </>
+  );
 }
 
 /**
