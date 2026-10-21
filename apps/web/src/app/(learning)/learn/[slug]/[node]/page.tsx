@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import LessonRoute from "@/components/lesson/lesson-route";
-import { buildLessonBlocks } from "@/lib/blocks";
+import { buildLessonSteps } from "@/lib/steps";
+import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap } from "@/lib/roadmaps";
 
 /**
- * The day page, rendered through the design-set LessonPage component via
- * the LessonRoute client seam. The seven-block model keeps the spec's
- * exact order: context before content, content before doing, doing before
- * self-testing, self-testing before the reward. "Check yourself" after
- * the challenge is retrieval practice; before it, it would be a quiz — a
- * different and weaker thing. Do not rearrange.
- *
- * Every block is optional — a day renders what it has, so pre-model
- * content stays valid while it grows in.
+ * The day page, rendered one step at a time through LessonRoute/StepReader
+ * (Phase 5 Part A). Steps come from lib/steps.ts, NOT lib/blocks.ts — the
+ * dashboard (lib/dashboard.ts) still counts the old six-block model, by
+ * design unchanged (see steps.ts's own header comment for why these two
+ * counts are now allowed to diverge rather than share one builder, as the
+ * six-block page used to require).
  */
 export const dynamic = "force-dynamic";
 
@@ -27,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const at = flat.findIndex((n) => n.slug === nodeParam || n.id === nodeParam);
   const node = at === -1 ? undefined : flat[at];
   if (!roadmap || !node) return { title: "Node" };
-  const description = `Day ${at + 1} of ${flat.length} · ${node.estMinutes} min · ${node.points} pts — ${node.summary ?? roadmap.summary}`;
+  const description = `Lesson ${at + 1} of ${flat.length} · ${node.estMinutes} min · ${node.points} pts — ${node.summary ?? roadmap.summary}`;
   return {
     title: `${node.title} — ${roadmap.title}`,
     description,
@@ -55,18 +53,19 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
   if (at === -1) notFound();
   const { node, module } = flat[at]!;
   const next = flat[at + 1] ?? null;
-  const prev = flat[at - 1] ?? null;
 
-  const progress = await getMyProgress([node.id]);
+  // All of this roadmap's nodes, not just the current one — the done
+  // screen's "lessons" stat counts the whole roadmap, not this day alone.
+  const [progress, momentum] = await Promise.all([
+    getMyProgress(flat.map((x) => x.node.id)),
+    getMyMomentum(),
+  ]);
   const signedIn = progress !== null;
   const done = progress?.get(node.id) === "done";
+  const doneCount = progress ? [...progress.values()].filter((s) => s === "done").length : 0;
 
-  // The seven-block model, built by the one shared builder so the
-  // dashboard's "block 12 of 16" counts the same blocks this page renders.
-  const seeds = buildLessonBlocks(node);
-
-  const dayNumber = String(at + 1);
-  const metaLine = `${node.estMinutes} min · ${node.points} pts${node.isOptional ? " · optional" : ""}`;
+  const steps = buildLessonSteps(node);
+  const lessonNumber = String(at + 1);
 
   return (
     <LessonRoute
@@ -76,27 +75,28 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       roadmapId={roadmap.id}
       roadmapTitle={roadmap.title}
       moduleLabel={`Module ${String(module.position).padStart(2, "0")} · ${module.title}`}
-      title={node.title}
-      dayLabel={`Day ${dayNumber} of ${flat.length}`}
-      metaLine={metaLine}
-      principle={node.principle ?? undefined}
-      dayNumber={dayNumber}
+      lessonNumber={lessonNumber}
       points={node.points}
       signedIn={signedIn}
       initialDone={done}
-      seeds={seeds}
-      // The done card names the next day in full; the nav link is terse.
-      nextDayNumber={next ? String(at + 2) : undefined}
-      nextTitle={next?.node.title}
-      nextMeta={next ? `${next.node.estMinutes} min · ${next.node.points} pts` : undefined}
-      stopLine={`or stop here — day ${at + 1} of ${flat.length} done`}
-      prev={prev ? { label: `← Day ${at} · ${prev.node.title}`, href: `/learn/${slug}/${prev.node.slug}` } : undefined}
+      steps={steps}
       next={
         next
-          ? { label: `Day ${at + 2} · ${next.node.title} →`, href: `/learn/${slug}/${next.node.slug}` }
+          ? {
+              lessonNumber: String(at + 2),
+              title: next.node.title,
+              metaLine: `${next.node.estMinutes} min · ${next.node.points} pts`,
+              href: `/learn/${slug}/${next.node.slug}`,
+            }
           : undefined
       }
-      railFooter={[metaLine, `day ${dayNumber} of ${flat.length}`]}
+      // Pre-completion counts for the done screen — correct at the only
+      // moment they are shown (after completion settles, see
+      // lesson-route.tsx), and the right fallback for a revisit to an
+      // already-done lesson, which never calls setNodeDone again.
+      streakDaysNow={momentum?.streakDays ?? 0}
+      lessonsLine={`${Math.min(doneCount + (done ? 0 : 1), flat.length)} of ${flat.length}`}
+      accomplishmentLine={`You finished ${node.title}.`}
     />
   );
 }
