@@ -73,20 +73,26 @@ test('a challenge step swaps the step counter for a "Your turn" badge, matching 
   assert.match(reader, />\s*Your turn\s*</);
 });
 
-test("the footer says Continue, except Finish on the last step", () => {
-  assert.match(reader, /stepIndex \+ 1 === total \? "Finish" : "Continue"/);
+test("the footer says Continue, except Finish on the last step — Part B's command/turnRich CTAs layer on top of this, not instead of it", () => {
+  // Part B inserted two more rungs ahead of this one (command -> "I see
+  // this", turnRich -> step.ctaLabel), so the literal adjacency from Part A
+  // is gone, but the base fallback for every other step kind must still be
+  // exactly this pair.
+  assert.match(reader, /: stepIndex \+ 1 === total\s*\?\s*"Finish"\s*:\s*"Continue"/);
 });
 
-test("no Stuck/Ask box and no run-a-command card yet — Part A ships the shell, not Part B's content", () => {
+test("no Stuck/Ask box yet — Part A and B ship the step shell and its authored content, not CHANGES.md item 6", () => {
   // CHANGES.md item 6: a step with no richer panel shows only the Stuck
-  // box. Part A has no real destination for it yet (no help_requests
-  // table, no "Mine looks different" flow) — a dead button is worse than
-  // a missing one, same reasoning as the old page's bookmark button. The
-  // file's own header comment is allowed to say "Stuck" while explaining
-  // the omission — this checks for no actual rendered button, not the word.
+  // box. No real destination exists for it yet (no help_requests table, no
+  // "Mine looks different" flow) — a dead button is worse than a missing
+  // one, same reasoning as the old page's bookmark button.
   assert.doesNotMatch(reader, />\s*Stuck\s*</);
   assert.doesNotMatch(reader, /Mine looks different/);
-  assert.doesNotMatch(reader, /Type this|You should see/);
+});
+
+test("Part B's command/turnRich content (Type this / You should see) is real now, not a placeholder", () => {
+  assert.match(reader, /promptLabel/);
+  assert.match(reader, /outputLabel/);
 });
 
 test("finishing the last step is the one progress event, and it is idempotent on a revisit", () => {

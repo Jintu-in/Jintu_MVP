@@ -1,3 +1,4 @@
+import type { AuthoredStep } from "@jintu/contracts";
 import { resourceMeta, text } from "@/lib/blocks";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
@@ -14,15 +15,22 @@ import type { RoadmapNode } from "@/lib/roadmaps";
  * new authoring, no schema change: this is a different grouping of the
  * same data, computed fresh every render.
  *
- * The five rich step types (UniChoose/UniFind/UniFormula/UniNumber/
- * UniWrite) and the Git-&-GitHub-specific "run a command" type (V2Step's
- * own terminal card) are Part B — real new authored content that cannot be
- * derived from these six fields. Every step here is one of the generic
- * kinds the old Block renderer already draws (concept/topics/resource/
- * challenge/check/gotcha); no new per-kind renderer exists yet, so nothing
- * here is Git-specific.
+ * Phase 5 Part B: when node.authoredSteps (nodes.steps, migration 0030) is
+ * present and non-empty, it REPLACES the single generic "challenge" step
+ * with one or more richer steps — a terminal command (V2Step), a fuller
+ * "your turn" with its own terminal setup (V2Turn) — spliced at the exact
+ * same position, after the resources and before the checks. Everything
+ * else about the day (why-today, today, resources, checks, mistake) stays
+ * exactly as Part A built it; only the "doing" step gets the upgrade, and
+ * only for days that have been hand-authored for it. The five Uni* types
+ * (choose/find/formula/number/write) extend this same union later.
  */
 export type Rich = { kind: "text" | "code" | "mono"; text: string }[];
+
+/** A terminal line, carried through from @jintu/contracts' AuthoredStep —
+ *  a plain string, or `{ text, highlight }` for the one line that gets
+ *  V2Step's "look for this" pill. */
+export type TerminalLine = string | { text: string; highlight?: string };
 
 export type LessonStep = { id: string; railTitle: string } & (
   | { kind: "concept"; heading?: string; paragraphs: Rich[] }
@@ -38,9 +46,62 @@ export type LessonStep = { id: string; railTitle: string } & (
       video?: { videoId: string; durationSec: number | null; estSizeMb: number | null };
     }
   | { kind: "challenge"; label: string; text: Rich }
+  | {
+      kind: "command";
+      promptLabel: string;
+      command: string;
+      outputLabel: string;
+      output: TerminalLine[];
+      note?: string;
+    }
+  | {
+      kind: "turnRich";
+      timeLabel: string;
+      body?: string;
+      startCommands?: TerminalLine[];
+      thenText?: string;
+      doneWhenText: string;
+      doneWhenExample?: TerminalLine[];
+      doneWhenNote?: string;
+      ctaLabel: string;
+    }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
 );
+
+/** The authored step's own title becomes the step's railTitle/id; command
+ *  and turn steps don't share lib/blocks.ts's Rich-text shape, so they are
+ *  passed through close to verbatim rather than wrapped in text(). */
+function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): LessonStep[] {
+  return authored.map((a, i) => {
+    const id = `authored-${nodeSlug}-${i}`;
+    if (a.kind === "command") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "command",
+        promptLabel: a.promptLabel,
+        command: a.command,
+        outputLabel: a.outputLabel,
+        output: a.output,
+        note: a.note,
+      };
+    }
+    return {
+      id,
+      railTitle: a.title,
+      kind: "turnRich",
+      timeLabel: a.timeLabel,
+      body: a.body,
+      startCommands: a.startCommands,
+      thenText: a.thenText,
+      doneWhenText: a.doneWhenText,
+      doneWhenExample: a.doneWhenExample,
+      doneWhenNote: a.doneWhenNote,
+      ctaLabel: a.ctaLabel,
+    };
+  });
+}
 
 export function buildLessonSteps(node: RoadmapNode): LessonStep[] {
   const steps: LessonStep[] = [];
@@ -81,7 +142,9 @@ export function buildLessonSteps(node: RoadmapNode): LessonStep[] {
     });
   }
 
-  if (node.challenge) {
+  if (node.authoredSteps && node.authoredSteps.length > 0) {
+    steps.push(...authoredToLessonSteps(node.authoredSteps, node.slug));
+  } else if (node.challenge) {
     steps.push({
       id: "challenge",
       railTitle: "Today's challenge",

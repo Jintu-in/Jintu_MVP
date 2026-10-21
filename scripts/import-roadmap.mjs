@@ -110,6 +110,30 @@ for (const [mi, m] of spec.modules.entries()) {
     if (n.challengeMinutes !== undefined &&
         (!Number.isInteger(n.challengeMinutes) || n.challengeMinutes < 5 || n.challengeMinutes > 120))
       fail(`${at} challengeMinutes ${n.challengeMinutes} — 5–120`);
+    // Phase 5 Part B (0030): hand-validated here, not against
+    // @jintu/contracts' authoredStepsSchema — that package exports TS
+    // source (packages/contracts/package.json: "exports": "./src/index.ts"),
+    // which plain `node` cannot import without a loader, and this script
+    // already validates everything else by hand. The schema the app
+    // actually trusts at render time is lib/roadmaps.ts's own
+    // authoredStepsSchema.safeParse() on the way out of the database; this
+    // is a friendly early check for whoever is authoring the content, not
+    // the real safety net.
+    for (const [si, s] of (n.steps ?? []).entries()) {
+      const sat = `${at} step ${si + 1}`;
+      if (s.kind === "command") {
+        if (!s.title) fail(`${sat} (command) needs a title`);
+        if (!s.command) fail(`${sat} (command) needs a command`);
+        if (!Array.isArray(s.output) || s.output.length === 0) fail(`${sat} (command) needs output`);
+      } else if (s.kind === "turn") {
+        if (!s.timeLabel) fail(`${sat} (turn) needs a timeLabel`);
+        if (!s.title) fail(`${sat} (turn) needs a title`);
+        if (!s.doneWhenText) fail(`${sat} (turn) needs doneWhenText`);
+        if (!s.ctaLabel) fail(`${sat} (turn) needs a ctaLabel`);
+      } else {
+        fail(`${sat}: kind "${s.kind}" — "command" or "turn" (the five Uni* types are not authored here yet)`);
+      }
+    }
     for (const [ti, t] of (n.topics ?? []).entries()) {
       if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);
     }
@@ -237,6 +261,14 @@ const q = (v) => (v === null || v === undefined ? "null" : `'${String(v).replace
 const qn = (v) => (v === null || v === undefined ? "null" : Number(v));
 const qarr = (a) =>
   a && a.length ? `array[${a.map(q).join(", ")}]::text[]` : "'{}'::text[]";
+/** nodes.steps (0030) — a jsonb literal, or null for a day with none
+ *  authored yet. Escaping follows q()'s own rule (single quotes doubled);
+ *  JSON.stringify already escapes everything else PostgREST/SQL cares
+ *  about inside the string. */
+const qjsonb = (v) =>
+  v === null || v === undefined || v.length === 0
+    ? "null"
+    : `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
 
 const lines = [];
 const push = (s) => lines.push(s);
@@ -271,8 +303,8 @@ for (const [mi, m] of spec.modules.entries()) {
   push(`  values (rm, ${mi + 1}, ${q(m.title)}, ${q(m.weekRange ?? null)}, ${q(m.objective ?? null)}, ${q(m.deliverable ?? null)}, ${qn(m.estHours)})`);
   push(`  returning id into m;`);
   for (const [ni, n] of m.nodes.entries()) {
-    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, est_minutes, difficulty, is_optional, points)`);
-    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
+    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, steps, est_minutes, difficulty, is_optional, points)`);
+    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${qjsonb(n.steps)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
     push(`  returning id into n;`);
     for (const [ti, t] of (n.topics ?? []).entries()) {
       push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);

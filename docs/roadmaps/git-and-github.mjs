@@ -148,6 +148,48 @@ export default {
           challenge:
             "Make a repository, create two files, and produce a commit that contains only one of them while the other stays uncommitted. Then run `git status` and write down, in your own words, what each of the three sections is telling you.",
           challengeMinutes: 25,
+          // Phase 5 Part B pilot (migration 0030): the same challenge as
+          // above, as two authored steps instead of one prose paragraph —
+          // a real `git status` to read, then the task itself with its
+          // own terminal setup. `challenge`/`challengeMinutes` above stay
+          // as written: lib/blocks.ts (the dashboard's own builder) still
+          // reads them, and this field is additive, not a replacement.
+          steps: [
+            {
+              kind: "command",
+              title: "See what Git sees",
+              promptLabel: "Type this",
+              command: "git status",
+              outputLabel: "You should see",
+              output: [
+                "On branch main",
+                "No commits yet",
+                "Untracked files:",
+                '  (use "git add <file>..." to include in what will be committed)',
+                { text: "    README.md", highlight: "look for this" },
+                "",
+                'nothing added to commit but untracked files present (use "git add" to track)',
+              ],
+              note: '"Untracked" means Git can see the file but is not recording it yet.',
+            },
+            {
+              kind: "turn",
+              timeLabel: "About 10 minutes",
+              title: "Stage one file, leave the other out",
+              body: "Create two files. Commit only one of them. The other should stay listed as untracked.",
+              startCommands: [
+                "git init",
+                'echo "# My project" > README.md',
+                'echo "draft" > notes.txt',
+              ],
+              thenText: "Stage and commit just the README, then run `git status` again.",
+              doneWhenText: "Status shows the README committed and notes.txt still untracked:",
+              doneWhenExample: ["On branch main", "Untracked files:", "  notes.txt"],
+              doneWhenNote:
+                "Your own filenames may differ — the shape is what counts: one file committed, one still sitting outside.",
+              ctaLabel: "My status looks like that",
+            },
+          ],
           estMinutes: 50,
           points: 30,
           difficulty: "core",

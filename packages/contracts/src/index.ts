@@ -44,3 +44,13 @@ export {
 } from "./auth";
 
 export { profileUpdateInput, type ProfileUpdateInput } from "./profile";
+
+export {
+  authoredStepSchema,
+  authoredStepsSchema,
+  commandStepSchema,
+  turnStepSchema,
+  type AuthoredStep,
+  type CommandStep,
+  type TurnStep,
+} from "./steps";

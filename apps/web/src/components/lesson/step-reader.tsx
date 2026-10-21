@@ -1,22 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { BackIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
+import { BackIcon, CopyIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
 import { VideoFacade } from "@/components/video-facade";
-import type { LessonStep, Rich } from "@/lib/steps";
+import type { LessonStep, Rich, TerminalLine } from "@/lib/steps";
 import { cn } from "@/lib/utils";
 
 /**
  * One step at a time (V2Step/V2Turn), replacing the old six-section
- * scrolling page. Renders the six generic step kinds buildLessonSteps()
- * produces (lib/steps.ts) — concept/topics/resource/challenge/check/
- * gotcha. The Git-&-GitHub-specific "run a command" card V2Step itself
- * draws, the five Uni* types, and the "Stuck? Ask about this step" box
- * (CHANGES.md item 6) are Part B: none of them exist yet, on purpose — a
- * dead Stuck button that goes nowhere is worse than no button at all.
+ * scrolling page. Renders the six generic step kinds Part A's
+ * buildLessonSteps() produces (concept/topics/resource/challenge/check/
+ * gotcha) plus Part B's two authored kinds (command, turnRich) — V2Step's
+ * terminal "run a command" card and V2Turn's fuller "your turn" with its
+ * own terminal setup, both Git-&-GitHub-specific, hand-authored
+ * (nodes.steps, migration 0030), not derived from the six generic fields.
  *
- * "Your turn" replaces the step counter in the header for a challenge
- * step, matching V2Turn's own header exactly.
+ * Still absent, on purpose: the five Uni* types (choose/find/formula/
+ * number/write — a later part) and the "Stuck? Ask about this step" box
+ * (CHANGES.md item 6) — no help_requests table exists yet, and a dead
+ * button is worse than a missing one.
+ *
+ * "Your turn" replaces the step counter in the header for a challenge OR
+ * turnRich step, matching V2Turn's own header exactly.
  */
 
 const ARROW_RIGHT = (
@@ -90,7 +95,7 @@ export function StepReader({
           </div>
           <div className="truncate text-[12.5px] leading-[18px] text-ink-500">{moduleLabel}</div>
         </div>
-        {step.kind === "challenge" ? (
+        {step.kind === "challenge" || step.kind === "turnRich" ? (
           <span className="flex h-8 flex-none items-center rounded-2xl bg-night-900 px-3 text-[12.5px] font-semibold text-on-night">
             Your turn
           </span>
@@ -120,9 +125,9 @@ export function StepReader({
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 pt-6 pb-4">
         <div className="flex flex-col gap-1.5">
           <div className="text-[13px] leading-[18px] font-semibold text-link">
-            Step {stepIndex + 1}
+            {step.kind === "turnRich" ? step.timeLabel : `Step ${stepIndex + 1}`}
           </div>
-          <h1 className="font-heading text-[28px] leading-[32px] font-semibold tracking-[-0.015em] text-ink-900">
+          <h1 className="font-heading text-[28px] leading-[32px] font-semibold tracking-[-0.015em] text-ink-900 text-pretty">
             {step.railTitle}
           </h1>
         </div>
@@ -153,7 +158,17 @@ export function StepReader({
             onClick={onContinue}
             className="flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600"
           >
-            <span>{continuing ? "Saving…" : stepIndex + 1 === total ? "Finish" : "Continue"}</span>
+            <span>
+              {continuing
+                ? "Saving…"
+                : step.kind === "command"
+                  ? "I see this"
+                  : step.kind === "turnRich"
+                    ? step.ctaLabel
+                    : stepIndex + 1 === total
+                      ? "Finish"
+                      : "Continue"}
+            </span>
             {continuing ? null : ARROW_RIGHT}
           </button>
         </div>
@@ -285,6 +300,52 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
 
+    case "command":
+      return (
+        <div className="flex flex-col gap-3.5">
+          <TerminalCard
+            promptLabel={step.promptLabel}
+            lines={[step.command]}
+            outputLabel={step.outputLabel}
+            output={step.output}
+          />
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "turnRich":
+      return (
+        <div className="flex flex-col gap-3.5">
+          {step.body ? (
+            <p className="m-0 text-pretty text-[15px] leading-[1.6] text-ink-600">{step.body}</p>
+          ) : null}
+          {step.startCommands?.length ? (
+            <TerminalCard promptLabel="Start with this" lines={step.startCommands} />
+          ) : null}
+          {step.thenText ? (
+            <p className="m-0 text-pretty text-[15px] leading-[1.6] text-ink-900">{step.thenText}</p>
+          ) : null}
+          <div className="flex flex-col gap-2 rounded-3xl bg-white p-4">
+            <div className="text-[13px] leading-[18px] font-semibold text-link">You are done when</div>
+            <div className="text-[15px] leading-[1.6] text-ink-900">{step.doneWhenText}</div>
+            {step.doneWhenExample?.length ? (
+              <div className="flex flex-col gap-0.5 rounded-xl bg-night-950 p-3.5 font-mono text-[12.5px] leading-[20px] text-on-night-muted" style={{ overflowWrap: "anywhere" }}>
+                {step.doneWhenExample.map((line, i) => (
+                  <div key={i}>{typeof line === "string" ? line : line.text}</div>
+                ))}
+              </div>
+            ) : null}
+            {step.doneWhenNote ? (
+              <div className="text-[13px] leading-[18px] text-ink-500">{step.doneWhenNote}</div>
+            ) : null}
+          </div>
+        </div>
+      );
+
     case "check":
       return <CheckStep step={step} />;
 
@@ -302,6 +363,101 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
   }
+}
+
+/**
+ * The dark terminal card both authored kinds share — V2Step's "Type this"
+ * / V2Turn's "Start with this", one or more command lines, Copy, and
+ * (command steps only) the "You should see" output with the one line
+ * that gets V2Step's "look for this" pill.
+ *
+ * night-950, not the dark-theme tokens (dark-bg/dark-text/…): those are
+ * reserved for Phase 7's theme toggle, and this card is decorative inside
+ * an ordinary light-mode screen, not a theme state. on-night is measured
+ * against night-900, one step lighter than night-950 — safe to reuse here
+ * since a darker surface only raises the same text's contrast, never
+ * lowers it.
+ */
+function TerminalCard({
+  promptLabel,
+  lines,
+  outputLabel,
+  output,
+}: {
+  promptLabel: string;
+  lines: TerminalLine[];
+  outputLabel?: string;
+  output?: TerminalLine[];
+}) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    const joined = lines.map((l) => (typeof l === "string" ? l : l.text)).join("\n");
+    if (navigator.clipboard) navigator.clipboard.writeText(joined).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div className="rounded-3xl bg-night-950 p-4">
+      <div className="flex h-11 items-center justify-between gap-3">
+        <span className="font-mono text-[11px] font-medium tracking-[.08em] text-on-night-muted-2 uppercase">
+          {promptLabel}
+        </span>
+        <button
+          type="button"
+          onClick={copy}
+          className="flex h-11 flex-none items-center gap-2 rounded-xl bg-white/10 px-3.5 text-[13.5px] font-semibold text-on-night"
+        >
+          <CopyIcon />
+          <span>{copied ? "Copied" : "Copy"}</span>
+        </button>
+      </div>
+      <div className="mt-1.5 flex flex-col gap-0.5">
+        {lines.map((line, i) => (
+          <div
+            key={i}
+            className="flex gap-2.5 font-mono text-[14px] leading-[22px] text-on-night"
+            style={{ overflowWrap: "anywhere" }}
+          >
+            <span aria-hidden>$</span>
+            <span>{typeof line === "string" ? line : line.text}</span>
+          </div>
+        ))}
+      </div>
+      {output?.length ? (
+        <>
+          <div aria-hidden className="my-3.5 h-px bg-white/12" />
+          {outputLabel ? (
+            <div className="font-mono text-[11px] font-medium tracking-[.08em] text-on-night-muted-2 uppercase">
+              {outputLabel}
+            </div>
+          ) : null}
+          <div
+            className="mt-2 flex flex-col font-mono text-[12px] leading-[19px] text-on-night-muted"
+            style={{ overflowWrap: "anywhere" }}
+          >
+            {output.map((line, i) =>
+              typeof line === "string" ? (
+                <div key={i}>{line}</div>
+              ) : (
+                <div
+                  key={i}
+                  className="my-[1px] flex items-center justify-between gap-2 rounded-lg bg-brand-500/25 px-2 py-0.5 text-on-night"
+                >
+                  <span>{line.text}</span>
+                  {line.highlight ? (
+                    <span className="flex-none rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-semibold text-on-brand">
+                      {line.highlight}
+                    </span>
+                  ) : null}
+                </div>
+              ),
+            )}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
 }
 
 function CheckStep({ step }: { step: Extract<LessonStep, { kind: "check" }> }) {

@@ -1,7 +1,21 @@
 import "server-only";
+import { authoredStepsSchema, type AuthoredStep } from "@jintu/contracts";
 import { createPublicClient } from "@/lib/supabase/public";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
+
+/** nodes.steps (0030) is unvalidated jsonb at the database — a malformed
+ *  or still-in-progress row degrades to null (the generic auto-converted
+ *  steps) rather than taking the whole day down. */
+function parseAuthoredSteps(raw: unknown, nodeSlug: string): AuthoredStep[] | null {
+  if (raw === null || raw === undefined) return null;
+  const parsed = authoredStepsSchema.safeParse(raw);
+  if (!parsed.success) {
+    console.error(`[roadmaps] ${nodeSlug}: malformed nodes.steps, falling back to generic steps`, parsed.error.message);
+    return null;
+  }
+  return parsed.data;
+}
 
 /**
  * Read layer for the catalogue: roadmaps → modules → nodes → resources.
@@ -51,6 +65,10 @@ export type RoadmapNode = {
   principle: string | null;
   challenge: string | null;
   challengeMinutes: number | null;
+  /** Phase 5 Part B, migration 0030 — null for every day until it is hand-
+   *  authored. Validated on read; a malformed row degrades to null rather
+   *  than throwing, same posture as a missing field. */
+  authoredSteps: AuthoredStep[] | null;
   topics: NodeTopic[];
   checks: NodeCheck[];
   estMinutes: number;
@@ -248,6 +266,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
            nodes (
              id, slug, position, title, summary, learning_objectives,
              why_today, common_mistake, principle, challenge, challenge_minutes,
+             steps,
              est_minutes, points, difficulty, is_optional,
              node_topics ( position, title, detail ),
              node_checks ( position, question, answer ),
@@ -296,6 +315,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
             principle: n.principle,
             challenge: n.challenge,
             challengeMinutes: n.challenge_minutes,
+            authoredSteps: parseAuthoredSteps(n.steps, n.slug),
             topics: ((n.node_topics ?? []) as NodeTopic[]).slice().sort(byPosition),
             checks: ((n.node_checks ?? []) as NodeCheck[]).slice().sort(byPosition),
             estMinutes: n.est_minutes,
