@@ -51,7 +51,7 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 // Every table the pivot specifies, nothing the old product left behind.
 const expected = [
   "activity_days", "audit_log", "auth_attempts", "colleges", "consent_events",
-  "consents", "link_checks", "modules", "nodes", "node_checks", "node_progress",
+  "consents", "help_requests", "link_checks", "modules", "nodes", "node_checks", "node_progress",
   "node_topics", "notifications", "point_events", "profiles",
   "review_cards", "roadmap_enrollments", "roadmap_prerequisites", "roadmaps",
   "resources", "public_profiles", "reminder_prefs", "saved_resources",
@@ -63,7 +63,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the twenty-five baseline tables exist`,
+  `exactly the twenty-six baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
@@ -280,6 +280,29 @@ check(
   await deniedOrNoop(ua, `delete from public.consent_events where user_id = '${ua}' returning id`),
   "a consent event cannot be deleted by its own owner — append-only means append-only",
 );
+
+console.log("\n── a help request is insert-and-read-your-own, never edited ─");
+await as(ua, `insert into public.help_requests (user_id, node_id, step_context, message)
+              values ('${ua}', '${node.id}', 'Step 5 · Ask Git what it sees', 'My terminal says nothing happened') returning id`);
+check(
+  (await as(ub, "select * from public.help_requests")).length === 0,
+  "RLS stops user A reading user B's help requests",
+);
+check(
+  await deniedOrNoop(ua, `update public.help_requests set status = 'reviewed' where user_id = '${ua}' returning id`),
+  "a help request cannot be edited after the fact, even by its own owner",
+);
+check(
+  await deniedOrNoop(ua, `delete from public.help_requests where user_id = '${ua}' returning id`),
+  "a help request cannot be deleted by its own owner",
+);
+let emptyHelpMessage = false;
+try {
+  await as(ua, `insert into public.help_requests (user_id, node_id, step_context, message)
+                values ('${ua}', '${node.id}', 'Step 1', '')`);
+  emptyHelpMessage = true;
+} catch { /* help_requests message length CHECK */ }
+check(!emptyHelpMessage, "a help request cannot be empty");
 
 console.log("\n── service-side tables are unreachable from clients ────────");
 // With no grant at all, the select is DENIED outright — stronger than an

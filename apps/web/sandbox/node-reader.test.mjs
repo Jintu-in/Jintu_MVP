@@ -81,13 +81,15 @@ test("the footer says Continue, except Finish on the last step — Part B's comm
   assert.match(reader, /return stepIndex \+ 1 === total\s*\?\s*"Finish"\s*:\s*"Continue"/);
 });
 
-test("no Stuck/Ask box yet — Part A and B ship the step shell and its authored content, not CHANGES.md item 6", () => {
-  // CHANGES.md item 6: a step with no richer panel shows only the Stuck
-  // box. No real destination exists for it yet (no help_requests table, no
-  // "Mine looks different" flow) — a dead button is worse than a missing
-  // one, same reasoning as the old page's bookmark button.
-  assert.doesNotMatch(reader, />\s*Stuck\s*</);
+test("the richer \"pick the closest wrong output\" list stays absent — Part C's HelpBox is free-text only, not the mockup's canned-fix list", () => {
+  // That list needs its own authored content (known-wrong outputs and
+  // fixes) that doesn't exist on any step yet — a dead/empty list is
+  // worse than a missing one, same reasoning as the old page's bookmark
+  // button. The free-text "Stuck?" box itself shipped in Part C
+  // (sandbox/help-requests.test.mjs covers it) — this guard is narrower
+  // now: only the canned-fix list stays out.
   assert.doesNotMatch(reader, /Mine looks different/);
+  assert.doesNotMatch(reader, /pick the closest/i);
 });
 
 test("Part B's command/turnRich content (Type this / You should see) is real now, not a placeholder", () => {

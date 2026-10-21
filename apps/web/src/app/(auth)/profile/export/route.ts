@@ -33,6 +33,7 @@ const TABLES = [
   ["reminder_prefs", "*", "Your reminder settings."],
   ["public_profiles", "*", "Your public handle and whether the page is on."],
   ["topic_requests", "*", "Subjects you asked us to write, and when."],
+  ["help_requests", "*", "Help requests you sent from a lesson step, and what you wrote."],
 ] as const;
 
 export async function GET() {

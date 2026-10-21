@@ -1,11 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useAction } from "next-safe-action/hooks";
 import type { Panel } from "@jintu/contracts";
+import { submitHelpRequest } from "@/actions/help";
 import { BackIcon, CopyIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
 import { VideoFacade } from "@/components/video-facade";
 import type { LessonStep, Rich, TerminalLine } from "@/lib/steps";
 import { cn } from "@/lib/utils";
+
+/** The seven authored kinds (V2Step/V2Turn + the five Uni* kinds) are the
+ *  ones whose mockups draw a "Stuck? Tell us what you see" box — the six
+ *  generic kinds (concept/topics/resource/challenge/check/gotcha) keep
+ *  their existing look, unchanged. */
+const HELP_ELIGIBLE: ReadonlySet<LessonStep["kind"]> = new Set([
+  "command",
+  "turnRich",
+  "choose",
+  "find",
+  "formula",
+  "number",
+  "write",
+]);
 
 /**
  * One step at a time (V2Step/V2Turn), replacing the old six-section
@@ -19,12 +35,16 @@ import { cn } from "@/lib/utils";
  * worked examples shown up front, not a deferred reveal like `check`:
  * self-report only, nothing stored or scored (CLAUDE.md: no grading).
  *
- * Still absent, on purpose: each mockup's pair of secondary buttons below
- * the main card — the "ask for help" box, and (on the five Uni* kinds)
- * the "my result differs" escape (CHANGES.md item 6). No help_requests
- * table exists yet, and a dead button is worse than a missing one. This
- * holds on desktop too, for the same reason — the layout below omits
- * every mockup's ask-for-help input, not just on phone.
+ * Phase 5 Part C adds the first of each mockup's pair of secondary
+ * buttons — "Stuck? Tell us what you see" (HelpBox, below), free text
+ * only, saved to help_requests (migration 0031) for someone to read
+ * later. Still absent, on purpose: each Uni* kind's "my result differs"
+ * escape and the mockups' richer list matching a wrong output to its own
+ * canned fix — that list needs its own authored content (known-wrong
+ * outputs + fixes) that doesn't exist on any step yet, and a dead
+ * button/empty list is worse than a missing one. One shared HelpBox
+ * render site serves both the mobile and desktop layouts below, since
+ * they share the same content column.
  *
  * "Your turn" replaces the step counter in the header for a challenge OR
  * turnRich step, matching V2Turn's own header exactly. The five Uni*
@@ -79,6 +99,9 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
 export interface StepReaderProps {
   roadmapTitle: string;
   moduleLabel: string;
+  /** For the help box's submission only — which lesson this step belongs
+   *  to. Not used for anything else here. */
+  nodeId: string;
   /** Every step in this lesson, not just the current one — Part A/B's
    *  mobile view only ever needed the one at stepIndex; the desktop nav
    *  (below) needs the whole list to render done/current/upcoming. */
@@ -107,6 +130,7 @@ export interface StepReaderProps {
 export function StepReader({
   roadmapTitle,
   moduleLabel,
+  nodeId,
   steps,
   stepIndex,
   total,
@@ -205,6 +229,10 @@ export function StepReader({
           </div>
 
           <StepBody step={step} />
+
+          {HELP_ELIGIBLE.has(step.kind) ? (
+            <HelpBox key={step.id} nodeId={nodeId} stepContext={step.railTitle} />
+          ) : null}
 
           <div className="flex gap-2.5 lg:mt-1">
             {onPrev ? (
@@ -846,6 +874,84 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
   }
+}
+
+/**
+ * "Stuck? Tell us what you see" (V2Help/DeskHelp) — a free-text report,
+ * saved to help_requests for someone to read later. Not the mockup's
+ * richer list that matches a wrong output to its own canned fix: that
+ * needs its own authored content (known-wrong outputs + fixes) that does
+ * not exist on any step yet, and shipping it empty would be a dead UI.
+ * The free-text fallback alone is a complete, honest feature on its own;
+ * the canned list is additive later, not a breaking change to this box.
+ *
+ * `key={step.id}` at the call site remounts this fresh on every step, so
+ * open/sent/draft-text never leak from one step's box into the next.
+ */
+function HelpBox({ nodeId, stepContext }: { nodeId: string; stepContext: string }) {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
+  const { execute, status } = useAction(submitHelpRequest, {
+    onSuccess: () => setSent(true),
+  });
+  const isExecuting = status === "executing";
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="self-start text-[14.5px] font-semibold text-link"
+      >
+        Stuck? Tell us what you see
+      </button>
+    );
+  }
+
+  if (sent) {
+    return (
+      <div className="flex flex-col gap-1 rounded-2xl bg-brand-50 p-4">
+        <div className="text-[15px] leading-[1.5] font-semibold text-brand-700">Thanks — we'll look into it.</div>
+        <div className="text-[13.5px] leading-[1.5] text-brand-700">
+          This doesn't answer right away; someone reads these by hand.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl bg-brand-50 p-4">
+      <label htmlFor="help-message" className="text-[15px] leading-[1.4] font-semibold text-brand-700">
+        What does your screen show?
+      </label>
+      <textarea
+        id="help-message"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        rows={3}
+        placeholder="Paste what you see, or describe it"
+        className="min-h-[76px] rounded-xl border border-ink-100 bg-white p-3 text-[15px] leading-[1.5] text-ink-900"
+      />
+      <div className="flex justify-end gap-2.5">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="flex h-11 items-center rounded-xl px-3.5 text-[14px] font-medium text-brand-700"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          disabled={isExecuting || !message.trim()}
+          onClick={() => execute({ nodeId, stepContext, message: message.trim() })}
+          className="flex h-11 items-center rounded-xl bg-night-900 px-4 text-[14px] font-semibold text-on-night disabled:bg-ink-100 disabled:text-ink-600"
+        >
+          {isExecuting ? "Sending…" : "Send"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 /**

@@ -172,6 +172,7 @@ export default function LessonRoute({
     <StepReader
       roadmapTitle={roadmapTitle}
       moduleLabel={moduleLabel}
+      nodeId={nodeId}
       steps={steps}
       stepIndex={index}
       total={steps.length}

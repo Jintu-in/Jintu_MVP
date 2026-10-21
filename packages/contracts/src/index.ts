@@ -45,6 +45,8 @@ export {
 
 export { profileUpdateInput, type ProfileUpdateInput } from "./profile";
 
+export { helpRequestInput, type HelpRequestInput } from "./help-requests";
+
 export {
   authoredStepSchema,
   authoredStepsSchema,
