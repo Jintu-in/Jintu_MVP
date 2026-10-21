@@ -912,6 +912,30 @@ export default [
         challenge:
           "Work the medical-test example by hand: 1-in-1000 prevalence, 99% sensitivity, 5% false positive rate. Compute the probability of having the condition given a positive result. Then explain the answer to somebody in one sentence.",
         challengeMinutes: 50,
+        // Phase 5 Part B pilot (migration 0030): the same medical-test
+        // example as a worked multiple-choice step instead of an open
+        // challenge prompt. challenge/challengeMinutes above stay as
+        // written — lib/blocks.ts (the dashboard's own builder) still
+        // reads them — this field is additive, not a replacement.
+        steps: [
+          {
+            kind: "choose",
+            title: "You test positive. How likely is it that you actually have it?",
+            factsLabel: "What you know",
+            facts: [
+              { label: "People who have the condition", value: "1 in 1,000" },
+              { label: "Test sensitivity", value: "99%" },
+              { label: "False positive rate", value: "5%" },
+            ],
+            promptLabel: "Pick one",
+            options: ["Very likely. About 95%", "About even. 50%", "Unlikely. About 2%"],
+            correctIndex: 2,
+            explanation:
+              "Out of 10,000 people, about 10 have the condition and nearly all test positive. Of the roughly 9,990 who don't, 5% — about 500 — also test positive. So around 510 positives, of which only 10 are real: roughly one in fifty, about 2%.",
+            note: "Counting out of a fixed population rather than juggling percentages is what makes this solvable in your head — today's natural-frequencies topic.",
+            ctaLabel: "About 2% is right",
+          },
+        ],
         estMinutes: 90,
         points: 35,
         difficulty: "stretch",

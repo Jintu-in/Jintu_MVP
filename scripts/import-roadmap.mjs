@@ -130,8 +130,37 @@ for (const [mi, m] of spec.modules.entries()) {
         if (!s.title) fail(`${sat} (turn) needs a title`);
         if (!s.doneWhenText) fail(`${sat} (turn) needs doneWhenText`);
         if (!s.ctaLabel) fail(`${sat} (turn) needs a ctaLabel`);
+      } else if (s.kind === "choose") {
+        if (!s.title) fail(`${sat} (choose) needs a title`);
+        if (!Array.isArray(s.facts) || s.facts.length === 0) fail(`${sat} (choose) needs facts`);
+        if (!Array.isArray(s.options) || s.options.length < 2) fail(`${sat} (choose) needs at least two options`);
+        if (!Number.isInteger(s.correctIndex) || s.correctIndex < 0 || s.correctIndex >= (s.options ?? []).length)
+          fail(`${sat} (choose) correctIndex must index into options`);
+        if (!s.explanation) fail(`${sat} (choose) needs an explanation`);
+        if (!s.ctaLabel) fail(`${sat} (choose) needs a ctaLabel`);
+      } else if (s.kind === "find") {
+        if (!s.title) fail(`${sat} (find) needs a title`);
+        if (!s.sourceTitle || !s.sourceUrl) fail(`${sat} (find) needs sourceTitle and sourceUrl`);
+        if (!s.answerCode || !s.answerText) fail(`${sat} (find) needs answerCode and answerText`);
+        if (!s.ctaLabel) fail(`${sat} (find) needs a ctaLabel`);
+      } else if (s.kind === "formula") {
+        if (!s.title) fail(`${sat} (formula) needs a title`);
+        if (!s.cellLabel || !s.formula) fail(`${sat} (formula) needs cellLabel and formula`);
+        if (!s.resultValue) fail(`${sat} (formula) needs resultValue`);
+        if (!s.ctaLabel) fail(`${sat} (formula) needs a ctaLabel`);
+      } else if (s.kind === "number") {
+        if (!s.title) fail(`${sat} (number) needs a title`);
+        if (!Array.isArray(s.facts) || s.facts.length === 0) fail(`${sat} (number) needs facts`);
+        if (!Array.isArray(s.answers) || s.answers.length === 0) fail(`${sat} (number) needs answers`);
+        if (!Array.isArray(s.working) || s.working.length === 0) fail(`${sat} (number) needs working`);
+        if (!s.ctaLabel) fail(`${sat} (number) needs a ctaLabel`);
+      } else if (s.kind === "write") {
+        if (!s.title) fail(`${sat} (write) needs a title`);
+        if (!s.template || !s.example) fail(`${sat} (write) needs template and example`);
+        if (!Array.isArray(s.parts) || s.parts.length === 0) fail(`${sat} (write) needs parts`);
+        if (!s.ctaLabel) fail(`${sat} (write) needs a ctaLabel`);
       } else {
-        fail(`${sat}: kind "${s.kind}" — "command" or "turn" (the five Uni* types are not authored here yet)`);
+        fail(`${sat}: kind "${s.kind}" — one of command/turn/choose/find/formula/number/write`);
       }
     }
     for (const [ti, t] of (n.topics ?? []).entries()) {

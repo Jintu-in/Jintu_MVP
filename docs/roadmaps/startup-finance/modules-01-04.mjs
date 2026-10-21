@@ -744,6 +744,33 @@ export default [
         challenge:
           "A company has 10,00,000 shares outstanding and raises ₹5 crore at ₹20 crore pre-money. Calculate: post-money, price per share, new shares issued, investor percentage, and the founders' percentage before and after. Do all of it by formula. Then change the raise to ₹8 crore and confirm every figure updates.",
         challengeMinutes: 25,
+        // Phase 5 Part B pilot (migration 0030): the same ₹5cr/₹20cr deal
+        // as a worked numeric step ahead of the fuller challenge above,
+        // which stays as written — this field is additive, not a
+        // replacement. Figures match that challenge and check 1 exactly.
+        steps: [
+          {
+            kind: "number",
+            title: "Work out the post-money valuation",
+            factsLabel: "The deal",
+            facts: [
+              { label: "A fund invests", value: "₹5 crore" },
+              { label: "Pre-money valuation", value: "₹20 crore" },
+            ],
+            answersLabel: "The answer",
+            answers: [
+              { label: "Post-money", value: "₹25 crore" },
+              { label: "The fund owns", value: "20%" },
+            ],
+            workingLabel: "Check your working",
+            working: [
+              { text: "20 + 5 = 25", highlight: "post-money" },
+              { text: "5 ÷ 25 = 20%", highlight: "the fund's share" },
+            ],
+            note: "Post-money is pre-money plus the money that came in. This teaches the method; it is not investment advice.",
+            ctaLabel: "I got ₹25 crore and 20%",
+          },
+        ],
         estMinutes: 50,
         points: 30,
         difficulty: "core",

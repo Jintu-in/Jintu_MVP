@@ -10,19 +10,33 @@ import { cn } from "@/lib/utils";
  * One step at a time (V2Step/V2Turn), replacing the old six-section
  * scrolling page. Renders the six generic step kinds Part A's
  * buildLessonSteps() produces (concept/topics/resource/challenge/check/
- * gotcha) plus Part B's two authored kinds (command, turnRich) — V2Step's
- * terminal "run a command" card and V2Turn's fuller "your turn" with its
- * own terminal setup, both Git-&-GitHub-specific, hand-authored
- * (nodes.steps, migration 0030), not derived from the six generic fields.
+ * gotcha) plus Part B's seven authored kinds (nodes.steps, migration
+ * 0030), not derived from the six generic fields: command and turnRich
+ * (V2Step/V2Turn, Git-&-GitHub-specific), and the five Uni* kinds that
+ * generalise the pattern — choose (UniChoose), find (UniFind), formula
+ * (UniFormula), number (UniNumber), write (UniWrite). All seven are
+ * worked examples shown up front, not a deferred reveal like `check`:
+ * self-report only, nothing stored or scored (CLAUDE.md: no grading).
  *
- * Still absent, on purpose: the five Uni* types (choose/find/formula/
- * number/write — a later part) and the "Stuck? Ask about this step" box
- * (CHANGES.md item 6) — no help_requests table exists yet, and a dead
- * button is worse than a missing one.
+ * Still absent, on purpose: each mockup's pair of secondary buttons below
+ * the main card — the "ask for help" box, and (on the five Uni* kinds)
+ * the "my result differs" escape (CHANGES.md item 6). No help_requests
+ * table exists yet, and a dead button is worse than a missing one.
  *
  * "Your turn" replaces the step counter in the header for a challenge OR
- * turnRich step, matching V2Turn's own header exactly.
+ * turnRich step, matching V2Turn's own header exactly. The five Uni*
+ * kinds keep the ordinary step counter, each with its own small kind
+ * pill next to the eyebrow (matching their mockups' "Choose"/"Find"/…
+ * badge) instead.
  */
+
+const KIND_PILL: Partial<Record<LessonStep["kind"], string>> = {
+  choose: "Choose",
+  find: "Find",
+  formula: "Formula",
+  number: "Number",
+  write: "Write",
+};
 
 const ARROW_RIGHT = (
   <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -124,8 +138,15 @@ export function StepReader({
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 pt-6 pb-4">
         <div className="flex flex-col gap-1.5">
-          <div className="text-[13px] leading-[18px] font-semibold text-link">
-            {step.kind === "turnRich" ? step.timeLabel : `Step ${stepIndex + 1}`}
+          <div className="flex items-center gap-2">
+            <div className="text-[13px] leading-[18px] font-semibold text-link">
+              {step.kind === "turnRich" ? step.timeLabel : `Step ${stepIndex + 1}`}
+            </div>
+            {KIND_PILL[step.kind] ? (
+              <span className="flex h-[22px] flex-none items-center rounded-[11px] bg-ink-100 px-[9px] text-[11.5px] font-semibold text-ink-600">
+                {KIND_PILL[step.kind]}
+              </span>
+            ) : null}
           </div>
           <h1 className="font-heading text-[28px] leading-[32px] font-semibold tracking-[-0.015em] text-ink-900 text-pretty">
             {step.railTitle}
@@ -163,7 +184,12 @@ export function StepReader({
                 ? "Saving…"
                 : step.kind === "command"
                   ? "I see this"
-                  : step.kind === "turnRich"
+                  : step.kind === "turnRich" ||
+                      step.kind === "choose" ||
+                      step.kind === "find" ||
+                      step.kind === "formula" ||
+                      step.kind === "number" ||
+                      step.kind === "write"
                     ? step.ctaLabel
                     : stepIndex + 1 === total
                       ? "Finish"
@@ -346,6 +372,245 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
 
+    case "choose":
+      return (
+        <div className="flex flex-col gap-3.5">
+          <div className="rounded-3xl bg-white p-4">
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.factsLabel}
+            </div>
+            <div className="mt-2 flex flex-col">
+              {step.facts.map((f, i) => (
+                <div key={i} className="flex min-h-7 items-baseline justify-between gap-3 text-[15px] leading-[22px]">
+                  <span className="text-ink-600">{f.label}</span>
+                  <span className="font-mono text-[15px] font-medium text-ink-900">{f.value}</span>
+                </div>
+              ))}
+            </div>
+            <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.promptLabel}
+            </div>
+            <div role="radiogroup" aria-label={step.railTitle} className="mt-2.5 flex flex-col gap-2">
+              {step.options.map((opt, i) => {
+                const isCorrect = i === step.correctIndex;
+                return (
+                  <div
+                    key={i}
+                    role="radio"
+                    aria-checked={isCorrect}
+                    className={cn(
+                      "flex min-h-[52px] items-center justify-between gap-2.5 rounded-2xl border-2 px-3.5 py-2 text-[15px] leading-[21px] font-medium",
+                      isCorrect ? "border-ok-600 bg-ok-bg text-ok-700" : "border-ink-50 bg-ink-50 text-ink-900",
+                    )}
+                  >
+                    <span>{opt}</span>
+                    {isCorrect ? <span className="flex-none text-[13px] font-semibold">Right</span> : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+            {step.explanation}
+          </div>
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-600">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "find":
+      return (
+        <div className="flex flex-col gap-3.5">
+          <div className="rounded-3xl bg-white p-4">
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              Open the source
+            </div>
+            <a
+              href={step.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex min-h-[60px] items-center gap-3 rounded-2xl bg-ink-50 px-3.5 py-2 no-underline"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[12.5px] leading-[17px] text-ink-500">{step.sourceLabel}</span>
+                <span className="block text-[15.5px] leading-[21px] font-semibold text-link">{step.sourceTitle}</span>
+              </span>
+              <ExternalIcon className="flex-none text-link" />
+            </a>
+            {step.lookUnder?.length ? (
+              <>
+                <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+                <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+                  Look under
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[14.5px] leading-[21px] text-ink-900">
+                  {step.lookUnder.map((crumb, i) => (
+                    <span key={i} className="flex items-center gap-1.5">
+                      {i > 0 ? <span aria-hidden className="text-ink-500">{"→"}</span> : null}
+                      <span className="rounded-[10px] bg-ink-50 px-2.5 py-1">{crumb}</span>
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : null}
+            <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.answerLabel}
+            </div>
+            <div className="mt-2.5 flex items-center gap-3 rounded-xl bg-brand-50 px-3 py-2.5">
+              <span className="flex-none font-mono text-[17px] leading-6 font-semibold text-brand-700">
+                {step.answerCode}
+              </span>
+              <span className="min-w-0 flex-1 text-[14px] leading-5 text-brand-700">{step.answerText}</span>
+            </div>
+          </div>
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "formula":
+      return (
+        <div className="flex flex-col gap-3.5">
+          {step.inputs?.length ? (
+            <div className="rounded-3xl bg-white p-4">
+              <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+                {step.inputsLabel}
+              </div>
+              <div className="mt-2 flex flex-col">
+                {step.inputs.map((f, i) => (
+                  <div key={i} className="flex min-h-7 items-baseline justify-between gap-3 text-[15px] leading-[22px]">
+                    <span className="text-ink-600">{f.label}</span>
+                    <span className="font-mono text-[15px] font-medium text-ink-900">{f.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <TerminalCard
+            promptLabel={step.cellLabel}
+            promptGlyph="fx"
+            lines={[step.formula]}
+            outputLabel={step.resultLabel}
+            output={[
+              step.resultHighlight
+                ? { text: step.resultValue, highlight: step.resultHighlight }
+                : step.resultValue,
+            ]}
+          />
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "number":
+      return (
+        <div className="flex flex-col gap-3.5">
+          <div className="rounded-3xl bg-white p-4">
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.factsLabel}
+            </div>
+            <div className="mt-2 flex flex-col">
+              {step.facts.map((f, i) => (
+                <div key={i} className="flex min-h-7 items-baseline justify-between gap-3 text-[15px] leading-[22px]">
+                  <span className="text-ink-600">{f.label}</span>
+                  <span className="font-mono text-[15px] font-medium text-ink-900">{f.value}</span>
+                </div>
+              ))}
+            </div>
+            <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.answersLabel}
+            </div>
+            <div className="mt-2.5 flex flex-wrap gap-2.5">
+              {step.answers.map((a, i) => (
+                <div
+                  key={i}
+                  className="flex min-w-[120px] flex-1 flex-col gap-1 rounded-2xl border-2 border-night-900 bg-white px-3 py-2"
+                >
+                  <span className="text-[13px] leading-[18px] font-semibold text-ink-900">{a.label}</span>
+                  <span className="font-mono text-[17px] leading-6 font-medium text-ink-900">{a.value}</span>
+                </div>
+              ))}
+            </div>
+            <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              {step.workingLabel}
+            </div>
+            <div className="mt-2.5 flex flex-col gap-1.5 font-mono text-[14px] leading-[22px]">
+              {step.working.map((line, i) =>
+                typeof line === "string" ? (
+                  <div key={i} className="text-ink-900">
+                    {line}
+                  </div>
+                ) : (
+                  <div key={i} className="flex items-center justify-between gap-2 rounded-lg bg-brand-50 px-2.5 py-1">
+                    <span className="text-brand-700">{line.text}</span>
+                    {line.highlight ? (
+                      <span className="flex-none rounded-full bg-brand-500 px-2 py-0.5 text-[11px] font-semibold text-on-brand">
+                        {line.highlight}
+                      </span>
+                    ) : null}
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "write":
+      return (
+        <div className="flex flex-col gap-3.5">
+          <div className="rounded-3xl bg-white p-4">
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              Fill the blanks, in your own words
+            </div>
+            <div className="mt-2 font-mono text-[14.5px] leading-[22px] text-ink-600">{step.template}</div>
+            <div className="mt-2.5 rounded-2xl border-2 border-night-900 bg-white p-3.5 text-pretty text-[16px] leading-[1.5] text-ink-900">
+              {step.example}
+            </div>
+            <div aria-hidden className="my-3.5 h-px bg-ink-100" />
+            <div className="font-mono text-[11px] leading-none font-medium tracking-[.08em] text-ink-500 uppercase">
+              A forecast you can check has these parts
+            </div>
+            <div className="mt-2 flex flex-col gap-1">
+              {step.parts.map((p, i) => (
+                <div key={i} className="flex min-h-[30px] items-center gap-2.5 text-[14.5px] leading-[21px]">
+                  <span aria-hidden className="flex size-[22px] flex-none items-center justify-center rounded-full bg-ok-600">
+                    <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#0B4A32" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                  </span>
+                  <span className="min-w-0 flex-1 text-ink-900">{p.label}</span>
+                  <span className="flex-none font-mono text-[13px] leading-5 font-medium text-link">{p.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {step.note ? (
+            <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+              {step.note}
+            </div>
+          ) : null}
+        </div>
+      );
+
     case "check":
       return <CheckStep step={step} />;
 
@@ -380,11 +645,16 @@ function StepBody({ step }: { step: LessonStep }) {
  */
 function TerminalCard({
   promptLabel,
+  promptGlyph = "$",
   lines,
   outputLabel,
   output,
 }: {
   promptLabel: string;
+  /** The per-line glyph — "$" for a shell command, "fx" for a spreadsheet
+   *  formula (UniFormula's own italic prefix). Always aria-hidden: it is
+   *  decorative, the line's own text is what a screen reader announces. */
+  promptGlyph?: string;
   lines: TerminalLine[];
   outputLabel?: string;
   output?: TerminalLine[];
@@ -419,7 +689,7 @@ function TerminalCard({
             className="flex gap-2.5 font-mono text-[14px] leading-[22px] text-on-night"
             style={{ overflowWrap: "anywhere" }}
           >
-            <span aria-hidden>$</span>
+            <span aria-hidden className={promptGlyph === "fx" ? "italic" : undefined}>{promptGlyph}</span>
             <span>{typeof line === "string" ? line : line.text}</span>
           </div>
         ))}

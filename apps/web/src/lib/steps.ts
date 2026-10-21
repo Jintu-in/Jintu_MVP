@@ -17,13 +17,22 @@ import type { RoadmapNode } from "@/lib/roadmaps";
  *
  * Phase 5 Part B: when node.authoredSteps (nodes.steps, migration 0030) is
  * present and non-empty, it REPLACES the single generic "challenge" step
- * with one or more richer steps — a terminal command (V2Step), a fuller
- * "your turn" with its own terminal setup (V2Turn) — spliced at the exact
- * same position, after the resources and before the checks. Everything
- * else about the day (why-today, today, resources, checks, mistake) stays
- * exactly as Part A built it; only the "doing" step gets the upgrade, and
- * only for days that have been hand-authored for it. The five Uni* types
- * (choose/find/formula/number/write) extend this same union later.
+ * with one or more richer steps, spliced at the exact same position, after
+ * the resources and before the checks. Everything else about the day
+ * (why-today, today, resources, checks, mistake) stays exactly as Part A
+ * built it; only the "doing" step gets the upgrade, and only for days that
+ * have been hand-authored for it.
+ *
+ * Seven authored kinds in total: a terminal command (V2Step) and a fuller
+ * "your turn" with its own terminal setup (V2Turn) — both Git & GitHub's —
+ * plus the five Uni* kinds that generalise the pattern to other subjects: a
+ * multiple-choice worked example (choose), a find-it-in-a-source task
+ * (find), a spreadsheet formula (formula), a worked numeric answer
+ * (number), and a fill-in-the-template calibrated sentence (write). All
+ * five share the project's self-check-only posture (Decision 2, also how
+ * `check` steps work below): a worked example to compare your own
+ * attempt against, never a graded input — nothing here stores or scores
+ * what a learner typed or picked.
  */
 export type Rich = { kind: "text" | "code" | "mono"; text: string }[];
 
@@ -65,6 +74,60 @@ export type LessonStep = { id: string; railTitle: string } & (
       doneWhenNote?: string;
       ctaLabel: string;
     }
+  | {
+      kind: "choose";
+      factsLabel: string;
+      facts: { label: string; value: string }[];
+      promptLabel: string;
+      options: string[];
+      correctIndex: number;
+      explanation: string;
+      note?: string;
+      ctaLabel: string;
+    }
+  | {
+      kind: "find";
+      sourceLabel: string;
+      sourceTitle: string;
+      sourceUrl: string;
+      lookUnder?: string[];
+      answerLabel: string;
+      answerCode: string;
+      answerText: string;
+      note?: string;
+      ctaLabel: string;
+    }
+  | {
+      kind: "formula";
+      inputsLabel: string;
+      inputs?: { label: string; value: string }[];
+      cellLabel: string;
+      formula: string;
+      resultLabel: string;
+      resultValue: string;
+      resultHighlight?: string;
+      note?: string;
+      ctaLabel: string;
+    }
+  | {
+      kind: "number";
+      factsLabel: string;
+      facts: { label: string; value: string }[];
+      answersLabel: string;
+      answers: { label: string; value: string }[];
+      workingLabel: string;
+      working: TerminalLine[];
+      note?: string;
+      ctaLabel: string;
+    }
+  | {
+      kind: "write";
+      template: string;
+      example: string;
+      parts: { label: string; value: string }[];
+      note?: string;
+      ctaLabel: string;
+    }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
 );
@@ -87,17 +150,91 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         note: a.note,
       };
     }
+    if (a.kind === "turn") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "turnRich",
+        timeLabel: a.timeLabel,
+        body: a.body,
+        startCommands: a.startCommands,
+        thenText: a.thenText,
+        doneWhenText: a.doneWhenText,
+        doneWhenExample: a.doneWhenExample,
+        doneWhenNote: a.doneWhenNote,
+        ctaLabel: a.ctaLabel,
+      };
+    }
+    if (a.kind === "choose") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "choose",
+        factsLabel: a.factsLabel,
+        facts: a.facts,
+        promptLabel: a.promptLabel,
+        options: a.options,
+        correctIndex: a.correctIndex,
+        explanation: a.explanation,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+      };
+    }
+    if (a.kind === "find") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "find",
+        sourceLabel: a.sourceLabel,
+        sourceTitle: a.sourceTitle,
+        sourceUrl: a.sourceUrl,
+        lookUnder: a.lookUnder,
+        answerLabel: a.answerLabel,
+        answerCode: a.answerCode,
+        answerText: a.answerText,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+      };
+    }
+    if (a.kind === "formula") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "formula",
+        inputsLabel: a.inputsLabel,
+        inputs: a.inputs,
+        cellLabel: a.cellLabel,
+        formula: a.formula,
+        resultLabel: a.resultLabel,
+        resultValue: a.resultValue,
+        resultHighlight: a.resultHighlight,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+      };
+    }
+    if (a.kind === "number") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "number",
+        factsLabel: a.factsLabel,
+        facts: a.facts,
+        answersLabel: a.answersLabel,
+        answers: a.answers,
+        workingLabel: a.workingLabel,
+        working: a.working,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+      };
+    }
     return {
       id,
       railTitle: a.title,
-      kind: "turnRich",
-      timeLabel: a.timeLabel,
-      body: a.body,
-      startCommands: a.startCommands,
-      thenText: a.thenText,
-      doneWhenText: a.doneWhenText,
-      doneWhenExample: a.doneWhenExample,
-      doneWhenNote: a.doneWhenNote,
+      kind: "write",
+      template: a.template,
+      example: a.example,
+      parts: a.parts,
+      note: a.note,
       ctaLabel: a.ctaLabel,
     };
   });

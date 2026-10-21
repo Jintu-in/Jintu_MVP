@@ -668,6 +668,24 @@ export default [
         challenge:
           "Register and enter five real forecasts with written rationales. Then set a weekly slot to review them. The capstone's fifty predictions can live here.",
         challengeMinutes: 40,
+        // Phase 5 Part B pilot (migration 0030): a worked example of the
+        // checkable-forecast format, ahead of the open challenge above —
+        // which stays as written; this field is additive, not a replacement.
+        steps: [
+          {
+            kind: "write",
+            title: "Write one forecast you can check later",
+            template: "I am __% sure that __ by __.",
+            example: "I am 70% sure that I will finish Git & GitHub by 30 November.",
+            parts: [
+              { label: "A number", value: "70%" },
+              { label: "Something you can see happen", value: "finish Git & GitHub" },
+              { label: "A date", value: "30 November" },
+            ],
+            note: 'Words like "probably" or "likely" cannot be checked later. A number and a date can.',
+            ctaLabel: "Mine has all three parts",
+          },
+        ],
         estMinutes: 60,
         points: 30,
         difficulty: "core",
