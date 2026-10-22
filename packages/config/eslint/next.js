@@ -28,7 +28,17 @@ export default [
   },
   {
     // The validated env module and next.config are the sanctioned readers.
-    files: ["**/src/lib/env.ts", "**/next.config.ts", "**/src/lib/supabase/**"],
+    // vitest.config.ts/playwright.config.ts join them for the same reason as
+    // next.config.ts: build/test tooling that runs in Node only and is never
+    // part of the client bundle `no-restricted-properties` is guarding.
+    files: [
+      "**/src/lib/env.ts",
+      "**/next.config.ts",
+      "**/src/lib/supabase/**",
+      "**/vitest.config.ts",
+      "**/playwright.config.ts",
+      "**/playwright.auth.config.ts",
+    ],
     rules: { "no-restricted-properties": "off" },
   },
 ];

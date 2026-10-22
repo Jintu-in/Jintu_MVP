@@ -668,6 +668,38 @@ export default [
         challenge:
           "Register and enter five real forecasts with written rationales. Then set a weekly slot to review them. The capstone's fifty predictions can live here.",
         challengeMinutes: 40,
+        // Phase 5 Part B pilot (migration 0030): a worked example of the
+        // checkable-forecast format, ahead of the open challenge above —
+        // which stays as written; this field is additive, not a replacement.
+        steps: [
+          {
+            kind: "write",
+            title: "Write one forecast you can check later",
+            template: "I am __% sure that __ by __.",
+            example: "I am 70% sure that I will finish Git & GitHub by 30 November.",
+            parts: [
+              { label: "A number", value: "70%" },
+              { label: "Something you can see happen", value: "finish Git & GitHub" },
+              { label: "A date", value: "30 November" },
+            ],
+            note: 'Words like "probably" or "likely" cannot be checked later. A number and a date can.',
+            ctaLabel: "Mine has all three parts",
+            // Desktop only (CHANGES.md item 6, DeskUniWrite). Read-only for
+            // this pass — no forecasts table yet, so this shows the one
+            // forecast just written, not a list across visits, and nothing
+            // here saves or reminds (that is a later, separately-scoped
+            // phase, per the explicit "ask me" in CHANGES.md item 6).
+            panel: {
+              kind: "forecastLog",
+              title: "Your forecast log",
+              subtitle: "Every forecast you write in this roadmap, waiting to be checked.",
+              confidence: "70%",
+              text: "I will finish Git & GitHub by 30 November.",
+              dueLabel: "Check on 30 Nov · right or wrong",
+              note: "On the due date this card asks one thing: did it happen? Over time the log shows how well your stated confidence matches reality.",
+            },
+          },
+        ],
         estMinutes: 60,
         points: 30,
         difficulty: "core",

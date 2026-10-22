@@ -1,0 +1,79 @@
+import { ANIMALS, COLORS, colorHex, type AnimalKey, type ColorKey } from "@jintu/contracts";
+
+export { ANIMALS, COLORS, DEFAULT_ANIMAL, DEFAULT_COLOR, colorHex } from "@jintu/contracts";
+export type { AnimalKey, ColorKey } from "@jintu/contracts";
+
+/**
+ * The 16 animals' artwork, lifted from AvatarKit.dc.html / V2Avatar.dc.html
+ * exactly as drawn (HANDOFF.md rule 1: "exact values... copy colors... from
+ * the source"). The names and colours themselves live in @jintu/contracts
+ * (avatarInput validates against the same lists) — this file holds only
+ * what's UI: the SVG bodies and the component that draws them.
+ *
+ * Each body is kept as the exact SVG markup string from the source and
+ * rendered via a `<g dangerouslySetInnerHTML>` rather than hand-converted to
+ * JSX props. Deliberate: 16 creatures × ~12 shapes each is enough manual
+ * kebab-case-to-camelCase transcription that a single missed `stroke-width`
+ * would silently misrender a stroke, and there is no dynamic or user-supplied
+ * content here to make that unsafe — it is the same fixed set of strings on
+ * every load, sourced from this file alone.
+ */
+function isAnimalKey(v: string): v is AnimalKey {
+  return (ANIMALS as readonly string[]).includes(v);
+}
+function isColorKey(v: string): v is ColorKey {
+  return COLORS.some((c) => c.key === v);
+}
+export { isAnimalKey, isColorKey };
+
+const ANIMAL_BODY: Record<AnimalKey, string> = {
+  bear: `<circle cx="24" cy="30" r="12" fill="#9B6A45"/><circle cx="76" cy="30" r="12" fill="#9B6A45"/><circle cx="24" cy="30" r="6" fill="#E7C6A2"/><circle cx="76" cy="30" r="6" fill="#E7C6A2"/><circle cx="50" cy="56" r="31" fill="#9B6A45"/><ellipse cx="50" cy="67" rx="15" ry="12" fill="#E7C6A2"/><ellipse cx="50" cy="60" rx="6" ry="4.4" fill="#33261F"/><circle cx="36" cy="50" r="3.8" fill="#33261F"/><circle cx="37.2" cy="48.7" r="1.2" fill="#FFFFFF"/><circle cx="64" cy="50" r="3.8" fill="#33261F"/><circle cx="65.2" cy="48.7" r="1.2" fill="#FFFFFF"/><path d="M50 65v4M42 68q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  lion: `<circle cx="80.0" cy="55.0" r="11" fill="#C56A24"/><circle cx="76.0" cy="70.0" r="11" fill="#C56A24"/><circle cx="65.0" cy="81.0" r="11" fill="#C56A24"/><circle cx="50.0" cy="85.0" r="11" fill="#C56A24"/><circle cx="35.0" cy="81.0" r="11" fill="#C56A24"/><circle cx="24.0" cy="70.0" r="11" fill="#C56A24"/><circle cx="20.0" cy="55.0" r="11" fill="#C56A24"/><circle cx="24.0" cy="40.0" r="11" fill="#C56A24"/><circle cx="35.0" cy="29.0" r="11" fill="#C56A24"/><circle cx="50.0" cy="25.0" r="11" fill="#C56A24"/><circle cx="65.0" cy="29.0" r="11" fill="#C56A24"/><circle cx="76.0" cy="40.0" r="11" fill="#C56A24"/><circle cx="50" cy="55" r="30" fill="#C56A24"/><circle cx="50" cy="56" r="24" fill="#F6C453"/><ellipse cx="50" cy="65" rx="11" ry="9" fill="#FBE7B4"/><path d="M45 59h10l-5 5z" fill="#33261F"/><circle cx="39" cy="51" r="3.8" fill="#33261F"/><circle cx="40.2" cy="49.7" r="1.2" fill="#FFFFFF"/><circle cx="61" cy="51" r="3.8" fill="#33261F"/><circle cx="62.2" cy="49.7" r="1.2" fill="#FFFFFF"/><path d="M50 65v4M42 68q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  elephant: `<ellipse cx="18" cy="52" rx="17" ry="23" fill="#A7B3BD"/><ellipse cx="82" cy="52" rx="17" ry="23" fill="#A7B3BD"/><ellipse cx="19" cy="53" rx="9" ry="14" fill="#F2B7C4"/><ellipse cx="81" cy="53" rx="9" ry="14" fill="#F2B7C4"/><circle cx="50" cy="48" r="27" fill="#A7B3BD"/><path d="M42 58c0 16 2 26 4 32a6 6 0 0 0 12 -2c-3 -8 -2 -18 0 -30z" fill="#A7B3BD"/><path d="M44 70h10M45 78h10" stroke="#8D9AA5" stroke-width="2" stroke-linecap="round"/><path d="M36 62q-2 8 2 12" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><path d="M64 62q2 8 -2 12" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><circle cx="37" cy="46" r="3.8" fill="#33261F"/><circle cx="38.2" cy="44.7" r="1.2" fill="#FFFFFF"/><circle cx="63" cy="46" r="3.8" fill="#33261F"/><circle cx="64.2" cy="44.7" r="1.2" fill="#FFFFFF"/>`,
+  hippo: `<circle cx="28" cy="26" r="8" fill="#9C7FA8"/><circle cx="72" cy="26" r="8" fill="#9C7FA8"/><circle cx="28" cy="26" r="4" fill="#F2B7C4"/><circle cx="72" cy="26" r="4" fill="#F2B7C4"/><ellipse cx="50" cy="46" rx="27" ry="24" fill="#9C7FA8"/><ellipse cx="50" cy="68" rx="31" ry="20" fill="#C4AECB"/><ellipse cx="40" cy="60" rx="3" ry="4" fill="#9C7FA8"/><ellipse cx="60" cy="60" rx="3" ry="4" fill="#9C7FA8"/><rect x="38" y="76" width="7" height="8" rx="2" fill="#FFFFFF"/><rect x="55" y="76" width="7" height="8" rx="2" fill="#FFFFFF"/><path d="M34 76q16 8 32 0" fill="none" stroke="#33261F" stroke-width="2.4" stroke-linecap="round"/><circle cx="38" cy="42" r="3.8" fill="#33261F"/><circle cx="39.2" cy="40.7" r="1.2" fill="#FFFFFF"/><circle cx="62" cy="42" r="3.8" fill="#33261F"/><circle cx="63.2" cy="40.7" r="1.2" fill="#FFFFFF"/>`,
+  koala: `<circle cx="20" cy="38" r="17" fill="#9AA4AB"/><circle cx="80" cy="38" r="17" fill="#9AA4AB"/><circle cx="20" cy="38" r="10" fill="#E3E7EA"/><circle cx="80" cy="38" r="10" fill="#E3E7EA"/><circle cx="50" cy="56" r="29" fill="#9AA4AB"/><ellipse cx="50" cy="60" rx="7.500" ry="10.500" fill="#33261F"/><ellipse cx="48" cy="56" rx="2" ry="3" fill="#6B5A50"/><circle cx="34" cy="51" r="3.8" fill="#33261F"/><circle cx="35.2" cy="49.7" r="1.2" fill="#FFFFFF"/><circle cx="66" cy="51" r="3.8" fill="#33261F"/><circle cx="67.2" cy="49.7" r="1.2" fill="#FFFFFF"/><path d="M45 76q5 4.8 10 0" fill="none" stroke="#33261F" stroke-width="2.4" stroke-linecap="round"/>`,
+  panda: `<circle cx="24" cy="30" r="12" fill="#33261F"/><circle cx="76" cy="30" r="12" fill="#33261F"/><circle cx="50" cy="56" r="31" fill="#FFFFFF"/><ellipse cx="36" cy="52" rx="9" ry="11" fill="#33261F" transform="rotate(18 36 52)"/><ellipse cx="64" cy="52" rx="9" ry="11" fill="#33261F" transform="rotate(-18 64 52)"/><circle cx="37" cy="51" r="3.6" fill="#FFFFFF"/><circle cx="63" cy="51" r="3.6" fill="#FFFFFF"/><circle cx="37.500" cy="51.500" r="1.800" fill="#33261F"/><circle cx="62.500" cy="51.500" r="1.800" fill="#33261F"/><ellipse cx="50" cy="64" rx="5" ry="3.6" fill="#33261F"/><path d="M50 68v4M42 71q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="68" r="5" fill="#F29AB8" opacity="0.5"/><circle cx="70" cy="68" r="5" fill="#F29AB8" opacity="0.5"/>`,
+  monkey: `<circle cx="17" cy="54" r="12" fill="#8A5A3B"/><circle cx="83" cy="54" r="12" fill="#8A5A3B"/><circle cx="17" cy="54" r="6.500" fill="#EFCBA6"/><circle cx="83" cy="54" r="6.500" fill="#EFCBA6"/><circle cx="50" cy="54" r="31" fill="#8A5A3B"/><circle cx="39" cy="48" r="13" fill="#EFCBA6"/><circle cx="61" cy="48" r="13" fill="#EFCBA6"/><ellipse cx="50" cy="65" rx="20" ry="15" fill="#EFCBA6"/><circle cx="47" cy="61" r="1.600" fill="#33261F"/><circle cx="53" cy="61" r="1.600" fill="#33261F"/><circle cx="39" cy="48" r="3.8" fill="#33261F"/><circle cx="40.2" cy="46.7" r="1.2" fill="#FFFFFF"/><circle cx="61" cy="48" r="3.8" fill="#33261F"/><circle cx="62.2" cy="46.7" r="1.2" fill="#FFFFFF"/><path d="M42 69q8 7.6 16 0" fill="none" stroke="#33261F" stroke-width="2.4" stroke-linecap="round"/>`,
+  pig: `<path d="M20 34l4 -18l18 10z" fill="#EC8AA0"/><path d="M80 34l-4 -18l-18 10z" fill="#EC8AA0"/><circle cx="50" cy="56" r="31" fill="#F6A9B8"/><ellipse cx="50" cy="64" rx="14" ry="10" fill="#EC8AA0"/><ellipse cx="45" cy="64" rx="2.600" ry="3.600" fill="#B85A72"/><ellipse cx="55" cy="64" rx="2.600" ry="3.600" fill="#B85A72"/><circle cx="36" cy="48" r="3.8" fill="#33261F"/><circle cx="37.2" cy="46.7" r="1.2" fill="#FFFFFF"/><circle cx="64" cy="48" r="3.8" fill="#33261F"/><circle cx="65.2" cy="46.7" r="1.2" fill="#FFFFFF"/><path d="M45 77q5 4.8 10 0" fill="none" stroke="#33261F" stroke-width="2.4" stroke-linecap="round"/>`,
+  penguin: `<circle cx="50" cy="54" r="33" fill="#263C5A"/><circle cx="38" cy="52" r="15" fill="#FFFFFF"/><circle cx="62" cy="52" r="15" fill="#FFFFFF"/><ellipse cx="50" cy="68" rx="22" ry="17" fill="#FFFFFF"/><path d="M42 59h16l-8 10z" fill="#FFB627"/><path d="M42 59h16" stroke="#F29D00" stroke-width="2" stroke-linecap="round"/><circle cx="38" cy="50" r="3.8" fill="#33261F"/><circle cx="39.2" cy="48.7" r="1.2" fill="#FFFFFF"/><circle cx="62" cy="50" r="3.8" fill="#33261F"/><circle cx="63.2" cy="48.7" r="1.2" fill="#FFFFFF"/><circle cx="31" cy="64" r="5" fill="#F29AB8" opacity="0.55"/><circle cx="69" cy="64" r="5" fill="#F29AB8" opacity="0.55"/>`,
+  rabbit: `<ellipse cx="36" cy="22" rx="9" ry="24" fill="#F1EAE4" transform="rotate(-8 36 22)"/><ellipse cx="64" cy="22" rx="9" ry="24" fill="#F1EAE4" transform="rotate(8 64 22)"/><ellipse cx="36" cy="24" rx="4.500" ry="16" fill="#F5B5C4" transform="rotate(-8 36 24)"/><ellipse cx="64" cy="24" rx="4.500" ry="16" fill="#F5B5C4" transform="rotate(8 64 24)"/><circle cx="50" cy="62" r="28" fill="#F1EAE4"/><path d="M46 64h8l-4 4.500z" fill="#E77F99"/><path d="M50 69v4M42 72q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="46.500" y="74" width="7" height="7" rx="1.500" fill="#FFFFFF" stroke="#D9CFC6" stroke-width="1"/><circle cx="37" cy="57" r="3.8" fill="#33261F"/><circle cx="38.2" cy="55.7" r="1.2" fill="#FFFFFF"/><circle cx="63" cy="57" r="3.8" fill="#33261F"/><circle cx="64.2" cy="55.7" r="1.2" fill="#FFFFFF"/><circle cx="30" cy="68" r="5" fill="#F29AB8" opacity="0.5"/><circle cx="70" cy="68" r="5" fill="#F29AB8" opacity="0.5"/>`,
+  fox: `<path d="M16 46l2 -34l26 20z" fill="#EE7B35"/><path d="M84 46l-2 -34l-26 20z" fill="#EE7B35"/><path d="M21 38l1 -17l13 10z" fill="#33261F"/><path d="M79 38l-1 -17l-13 10z" fill="#33261F"/><path d="M50 26c22 0 36 14 36 30c-8 14 -22 30 -36 34c-14 -4 -28 -20 -36 -34c0 -16 14 -30 36 -30z" fill="#EE7B35"/><path d="M14 56c8 14 22 30 36 34c14 -4 28 -20 36 -34c-12 0 -24 6 -36 18c-12 -12 -24 -18 -36 -18z" fill="#FFF4E8"/><ellipse cx="50" cy="80" rx="5.500" ry="4" fill="#33261F"/><circle cx="35" cy="52" r="3.8" fill="#33261F"/><circle cx="36.2" cy="50.7" r="1.2" fill="#FFFFFF"/><circle cx="65" cy="52" r="3.8" fill="#33261F"/><circle cx="66.2" cy="50.7" r="1.2" fill="#FFFFFF"/>`,
+  sheep: `<circle cx="30" cy="34" r="15" fill="#FFFFFF"/><circle cx="50" cy="26" r="17" fill="#FFFFFF"/><circle cx="70" cy="34" r="15" fill="#FFFFFF"/><circle cx="22" cy="54" r="14" fill="#FFFFFF"/><circle cx="78" cy="54" r="14" fill="#FFFFFF"/><circle cx="28" cy="72" r="13" fill="#FFFFFF"/><circle cx="72" cy="72" r="13" fill="#FFFFFF"/><circle cx="50" cy="80" r="14" fill="#FFFFFF"/><ellipse cx="18" cy="52" rx="11" ry="6" fill="#5A5560" transform="rotate(-24 18 52)"/><ellipse cx="82" cy="52" rx="11" ry="6" fill="#5A5560" transform="rotate(24 82 52)"/><ellipse cx="50" cy="58" rx="22" ry="25" fill="#5A5560"/><circle cx="38" cy="36" r="10" fill="#FFFFFF"/><circle cx="50" cy="32" r="11" fill="#FFFFFF"/><circle cx="62" cy="36" r="10" fill="#FFFFFF"/><circle cx="40" cy="54" r="3.6" fill="#FFFFFF"/><circle cx="41.2" cy="52.7" r="1.2" fill="#FFFFFF"/><circle cx="60" cy="54" r="3.6" fill="#FFFFFF"/><circle cx="61.2" cy="52.7" r="1.2" fill="#FFFFFF"/><circle cx="40" cy="54.500" r="1.900" fill="#33261F"/><circle cx="60" cy="54.500" r="1.900" fill="#33261F"/><path d="M50 68v4M42 71q4 6 8 1q4 5 8 -1" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  tiger: `<circle cx="24" cy="30" r="12" fill="#F6A12B"/><circle cx="76" cy="30" r="12" fill="#F6A12B"/><circle cx="24" cy="30" r="6" fill="#33261F"/><circle cx="76" cy="30" r="6" fill="#33261F"/><circle cx="50" cy="56" r="31" fill="#F6A12B"/><ellipse cx="50" cy="68" rx="17" ry="13" fill="#FFF4E0"/><path d="M50 27v10" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M39 29l3 8" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M61 29l-3 8" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M20 52h9" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M21 62h8" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M80 52h-9" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M79 62h-8" fill="none" stroke="#33261F" stroke-width="4" stroke-linecap="round"/><path d="M45 61h10l-5 5z" fill="#E77F99"/><circle cx="37" cy="50" r="3.8" fill="#33261F"/><circle cx="38.2" cy="48.7" r="1.2" fill="#FFFFFF"/><circle cx="63" cy="50" r="3.8" fill="#33261F"/><circle cx="64.2" cy="48.7" r="1.2" fill="#FFFFFF"/><path d="M50 67v4M42 70q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  cat: `<path d="M18 46l2 -32l24 18z" fill="#7FAFAE"/><path d="M82 46l-2 -32l-24 18z" fill="#7FAFAE"/><path d="M24 36l1 -14l11 9z" fill="#F5B5C4"/><path d="M76 36l-1 -14l-11 9z" fill="#F5B5C4"/><circle cx="50" cy="56" r="31" fill="#7FAFAE"/><ellipse cx="50" cy="67" rx="14" ry="10" fill="#EAF4F3"/><path d="M46 61h8l-4 4.500z" fill="#E77F99"/><path d="M50 66v4M42 69q4 6 8 1q4 5 8 -1" fill="none" stroke="#33261F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 60h12M21 68l11 -3M80 60h-12M79 68l-11 -3" stroke="#33261F" stroke-width="1.800" stroke-linecap="round" opacity="0.6"/><circle cx="37" cy="50" r="3.8" fill="#33261F"/><circle cx="38.2" cy="48.7" r="1.2" fill="#FFFFFF"/><circle cx="63" cy="50" r="3.8" fill="#33261F"/><circle cx="64.2" cy="48.7" r="1.2" fill="#FFFFFF"/>`,
+  owl: `<path d="M20 30l4 -18l18 14z" fill="#8B6B4E"/><path d="M80 30l-4 -18l-18 14z" fill="#8B6B4E"/><ellipse cx="50" cy="56" rx="32" ry="32" fill="#8B6B4E"/><ellipse cx="50" cy="72" rx="20" ry="14" fill="#F3E3C8"/><circle cx="36" cy="48" r="14" fill="#FFFFFF"/><circle cx="64" cy="48" r="14" fill="#FFFFFF"/><circle cx="37" cy="49" r="6.500" fill="#33261F"/><circle cx="63" cy="49" r="6.500" fill="#33261F"/><circle cx="39" cy="46.500" r="2.200" fill="#FFFFFF"/><circle cx="65" cy="46.500" r="2.200" fill="#FFFFFF"/><path d="M44 58h12l-6 9z" fill="#FFB627"/><path d="M40 74q3 3 6 0M54 74q3 3 6 0M47 81q3 3 6 0" fill="none" stroke="#8B6B4E" stroke-width="2" stroke-linecap="round"/>`,
+  frog: `<circle cx="31" cy="32" r="15" fill="#6FBF73"/><circle cx="69" cy="32" r="15" fill="#6FBF73"/><ellipse cx="50" cy="60" rx="34" ry="28" fill="#6FBF73"/><ellipse cx="50" cy="72" rx="24" ry="14" fill="#D9F0C4"/><circle cx="31" cy="31" r="9.500" fill="#FFFFFF"/><circle cx="69" cy="31" r="9.500" fill="#FFFFFF"/><circle cx="32" cy="32" r="4.600" fill="#33261F"/><circle cx="68" cy="32" r="4.600" fill="#33261F"/><circle cx="33.500" cy="30.500" r="1.500" fill="#FFFFFF"/><circle cx="69.500" cy="30.500" r="1.500" fill="#FFFFFF"/><path d="M30 62q20 16 40 0" fill="none" stroke="#33261F" stroke-width="2.600" stroke-linecap="round"/><circle cx="45" cy="54" r="1.500" fill="#3F8F4A"/><circle cx="55" cy="54" r="1.500" fill="#3F8F4A"/><circle cx="24" cy="64" r="5" fill="#F4795B" opacity="0.4"/><circle cx="76" cy="64" r="5" fill="#F4795B" opacity="0.4"/>`,
+};
+
+/**
+ * One animal, on a circular background of the chosen colour. `size` is CSS
+ * pixels; the artwork itself is a fixed 100x100 viewBox, same as the source.
+ */
+export function AvatarGlyph({
+  animal,
+  color,
+  size = 64,
+  className,
+}: {
+  animal: AnimalKey;
+  color: ColorKey;
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      style={{ display: "block" }}
+      className={className}
+    >
+      <rect width={100} height={100} fill={colorHex(color)} />
+      <g
+        transform="translate(50 52) scale(0.86) translate(-50 -52)"
+        dangerouslySetInnerHTML={{ __html: ANIMAL_BODY[animal] }}
+      />
+    </svg>
+  );
+}

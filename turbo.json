@@ -18,6 +18,9 @@
     "test": {
       "dependsOn": ["^build"]
     },
+    "e2e": {
+      "cache": false
+    },
     "db:types": {
       "cache": false
     }

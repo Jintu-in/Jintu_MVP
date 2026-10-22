@@ -253,7 +253,12 @@ export function PrimaryLink({
     <Link
       href={href}
       className={cn(
-        "flex min-h-12 items-center justify-center rounded-lg bg-brand-700 px-5 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
+        // rounded-2xl (16px), not the old rounded-lg (8px): confirmed
+        // against the redesign's own primary CTAs at this height — both
+        // DeskToday.dc.html's and V2Login.dc.html's "Continue" buttons are
+        // `border-radius: 16px`. (The homepage's hero CTA is taller, 60px,
+        // and uses 18px there — a different button, not this one.)
+        "flex min-h-12 items-center justify-center rounded-2xl bg-brand-700 px-5 text-[15px] font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700",
         className,
       )}
     >

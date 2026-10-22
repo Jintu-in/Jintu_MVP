@@ -24,22 +24,20 @@ export default async function ResetPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <main className="mx-auto max-w-md px-5 py-10">
+    <main className="mx-auto max-w-md px-5 py-10 sm:py-14">
       {user ? (
         <ResetPasswordForm />
       ) : (
         <>
-          <h1 className="text-2xl font-medium tracking-tight text-ink-900">
-            That link has expired
-          </h1>
-          <p className="mt-2 text-pretty text-ink-600">
+          <h1 className="t-page text-ink-900">That link has expired</h1>
+          <p className="mt-2 text-[16px] leading-[1.5] text-pretty text-ink-600">
             Reset links work once and last an hour — and some mail apps open
             them before you do. Ask for a new one from the sign-in screen and
             use the freshest email.
           </p>
           <a
             href="/join"
-            className="mt-6 inline-flex h-12 items-center rounded-lg bg-brand-700 px-6 font-medium text-white hover:bg-brand-800"
+            className="mt-6 inline-flex h-14 items-center rounded-2xl bg-brand-500 px-6 text-[16px] font-semibold text-on-brand hover:bg-brand-400"
           >
             Back to sign in
           </a>

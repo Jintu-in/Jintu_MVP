@@ -34,13 +34,14 @@ const NAV_LINKS: { href: Route; label: string }[] = [
   { href: "/learn" as Route, label: "Roadmaps" },
   { href: "/roles" as Route, label: "Roles" },
   { href: "/#how-it-works" as Route, label: "How it works" },
+  { href: "/pricing" as Route, label: "Pricing" },
 ];
 
 const ACCOUNT_LINKS: { href: Route; label: string }[] = [
   { href: "/dashboard" as Route, label: "Dashboard" },
   { href: "/profile" as Route, label: "Your record" },
   { href: "/profile/saved" as Route, label: "Saved" },
-  { href: "/account" as Route, label: "Account" },
+  { href: "/settings" as Route, label: "Settings" },
 ];
 
 export function SiteNavMenu({ signedIn, initials, displayName, overlay }: SiteNavMenuProps) {

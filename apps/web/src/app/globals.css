@@ -2,12 +2,25 @@
 @import "@jintu/config/tailwind/preset.css";
 @import "@jintu/config/tailwind/type-scale.css";
 
+/* Phase 0 of the redesign: the `dark:` variant is keyed to a `data-theme`
+   attribute on the root element, not `prefers-color-scheme` (Tailwind v4's
+   own default). Nothing sets that attribute yet — no toggle exists, no page
+   renders dark — this just means `dark:bg-dark-bg` etc. will do the right
+   thing the moment Phase 7 adds one, rather than silently following the
+   OS setting in the meantime. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* The loaded faces (next/font in the root layout) take over from the
    preset's fallback stacks. Mono is semantic here — measured numbers are
-   mono, prose is sans — so the real faces matter, not just the look. */
+   mono, prose is sans — so the real faces matter, not just the look.
+   --font-sans carries body copy (Figtree); --font-heading is new and
+   carries h1-h3 plus the .t-* display classes (Bricolage Grotesque) — see
+   the base-layer heading rule below for where it actually gets applied. */
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", Roboto,
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, "Segoe UI", Roboto,
     "Noto Sans", "Noto Sans Devanagari", sans-serif;
+  --font-heading: var(--font-bricolage), ui-sans-serif, system-ui, "Segoe UI",
+    Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif;
   --font-mono: var(--font-jbmono), ui-monospace, "Cascadia Code",
     "Source Code Pro", Menlo, monospace;
 }
@@ -48,11 +61,15 @@
      manual one is only ever right at the width it was chosen for.
 
      h1–h3 rather than a class, because the rule should hold for headings
-     nobody has got round to yet — including any added after this. */
+     nobody has got round to yet — including any added after this. The
+     heading face lives here for the same reason — font-heading on bare
+     h1-h3 means a heading is never accidentally left in body copy's face
+     just because nobody added a .t-* class to it. */
   h1,
   h2,
   h3 {
     text-wrap: balance;
+    font-family: var(--font-heading);
   }
   p {
     text-wrap: pretty;
@@ -94,51 +111,24 @@
 }
 
 /* ── Marketing homepage only ──────────────────────────────────────────────
-   From the design project's "Marketing homepage v2". Every rule is scoped
-   under .jhome so none of it can reach the app: the reading surfaces stay
-   plain, which is the whole reason the effect budget is spent in one place.
+   Scoped under .jhome so none of it can reach the app: the reading surfaces
+   stay plain, which is the whole reason the effect budget is spent in one
+   place. The hero's own decoration (the two ring circles, the wavy close
+   section) is plain markup in homepage.tsx now rather than a blurred-glow
+   CSS treatment — the redesign's hero is a flat colour, not a gradient, and
+   has nothing for a blur filter to soften.
 
    Motion is gated twice — a reduced-motion query that removes animation
    outright rather than freezing it mid-frame, and in-view classes applied
-   by a one-shot IntersectionObserver so nothing animates off-screen.
-   ------------------------------------------------------------------------ */
-@keyframes jdrift { 0%, 100% { transform: translate(0, 0) } 50% { transform: translate(30px, -20px) } }
-
-.jhome .jglow1,
-.jhome .jglow2 { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none }
-.jhome .jglow1 {
-  width: 600px; height: 600px; top: -150px; left: -100px;
-  background: radial-gradient(circle, rgba(255, 255, 255, .35), transparent 70%);
-  animation: jdrift 24s ease-in-out infinite;
-}
-.jhome .jglow2 {
-  width: 500px; height: 500px; bottom: -100px; right: -80px;
-  background: radial-gradient(circle, rgba(211, 240, 246, .4), transparent 70%);
-  animation: jdrift 24s ease-in-out infinite reverse;
-}
-
-.jhome .jgrain {
-  position: absolute; inset: 0; opacity: .035; mix-blend-mode: overlay; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+   by a one-shot IntersectionObserver so nothing animates off-screen. */
 
 /* Reveals are transition-driven and one-shot: the observer adds .jrevealed
    and stops watching, so scrolling back never replays a section. */
 .jhome .jreveal { opacity: 0; transform: translateY(22px); transition: opacity 560ms ease-out, transform 560ms ease-out }
 .jhome .jreveal.jrevealed { opacity: 1; transform: translateY(0) }
 
-.jhome .jgrid91 > span { opacity: 0; transform: scale(.6); transition: opacity 420ms ease-out, transform 420ms ease-out }
-.jhome .jgrid91.jgrid-in > span { opacity: 1; transform: scale(1) }
-
-.jhome .jwordmark { filter: grayscale(1); opacity: .55; transition: opacity 160ms, filter 160ms }
-.jhome .jwordmark:hover { filter: grayscale(0); opacity: 1 }
-
 .jhome .jcard-hover { transition: transform 200ms ease-out, border-color 200ms ease-out }
 .jhome .jcard-hover:hover { transform: translateY(-4px) }
-
-.jhome .jsearch { transition: box-shadow 160ms ease-out }
-.jhome .jsearch:hover,
-.jhome .jsearch:focus-within { box-shadow: 0 0 0 3px rgba(23, 117, 138, .16) }
 
 /* The nav rides over the dark end of the hero, so it starts transparent
    with white text. Once the hero has scrolled past, it takes a solid
@@ -155,7 +145,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .jhome .jglow1, .jhome .jglow2 { animation: none }
   .jhome .jreveal { opacity: 1; transform: none; transition: none }
-  .jhome .jgrid91 > span { opacity: 1; transform: none; transition: none }
 }

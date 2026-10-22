@@ -86,11 +86,129 @@ export function ExternalIcon({ size = 11, className }: IconProps) {
   );
 }
 
+export function ChevronRightIcon({ size = 18, className }: IconProps) {
+  return (
+    <svg aria-hidden width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+export function LockIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg aria-hidden width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+export function SettingsNavIcon({ size = 22, className }: IconProps) {
+  return (
+    <svg aria-hidden width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 7h10" />
+      <path d="M18 7h2" />
+      <circle cx="16" cy="7" r="2" />
+      <path d="M4 17h2" />
+      <path d="M10 17h10" />
+      <circle cx="8" cy="17" r="2" />
+    </svg>
+  );
+}
+
 export function CcPersonIcon({ size = 15, className }: IconProps) {
   return (
     <svg aria-hidden width={size} height={size} viewBox="0 0 16 16" fill="none" className={className}>
       <circle cx="8" cy="8" r="6.3" stroke="currentColor" />
       <path d="M5.6 9.4a2.6 2.6 0 1 0 0-2.9M10.4 9.4a2.6 2.6 0 1 0 0-2.9" stroke="currentColor" strokeWidth=".9" />
+    </svg>
+  );
+}
+
+/* ── Nav icons ─────────────────────────────────────────────────────────────
+ * The four shell nav items (Today/Roadmaps/Roles/Profile), geometry copied
+ * verbatim from design/jintu-design/screens/DeskToday.dc.html and
+ * V2Today.dc.html — both screens draw the same four paths at 24×24, stroke
+ * width 2, round caps/joins. Sized at 22 by default (the desktop sidebar's
+ * size); the phone tab bar asks for 24 explicitly. */
+
+export function TodayNavIcon({ size = 22, className }: IconProps) {
+  return (
+    <svg
+      aria-hidden
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 11l8-7 8 7" />
+      <path d="M6 10v9h12v-9" />
+    </svg>
+  );
+}
+
+export function RoadmapsNavIcon({ size = 22, className }: IconProps) {
+  return (
+    <svg
+      aria-hidden
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="6" cy="18" r="2" />
+      <circle cx="18" cy="6" r="2" />
+      <path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" />
+    </svg>
+  );
+}
+
+export function RolesNavIcon({ size = 22, className }: IconProps) {
+  return (
+    <svg
+      aria-hidden
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="4" y="8" width="16" height="11" rx="2" />
+      <path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  );
+}
+
+export function ProfileNavIcon({ size = 22, className }: IconProps) {
+  return (
+    <svg
+      aria-hidden
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="9" r="3.5" />
+      <path d="M5 19c1.2-3 4-4.5 7-4.5s5.8 1.5 7 4.5" />
     </svg>
   );
 }

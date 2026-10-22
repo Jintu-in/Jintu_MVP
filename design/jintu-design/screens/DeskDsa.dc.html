@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DSA step with language buttons, on desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; box-sizing: border-box; display: flex; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif; ">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="height: 80px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 40px">
+<a href="DeskRoadmaps.dc.html" aria-label="Back" style="width: 48px; height: 48px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 17px; line-height: 24px; font-weight: 600">DSA starter</div>
+<div style="font-size: 14px; line-height: 20px; color: #5E777D">Sample step, not a written lesson yet</div>
+</div>
+
+</div>
+<div style="flex: 1; min-height: 0; display: flex; gap: 48px; padding: 24px 136px 0; overflow: hidden">
+
+<div style="width: 440px; flex: none; display: flex; flex-direction: column; gap: 20px; padding-top: 8px">
+<h1 style="margin: 0; font: 700 40px/46px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em; text-wrap: balance">Find the largest number in a list</h1>
+<p style="margin: 0; font-size: 17px; line-height: 27px; color: #45626A">The idea never changes: keep the biggest value seen so far, and replace it when a bigger one comes.</p>
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px 16px 16px 20px; border-radius: 20px; background: #FFFFFF">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 14px; line-height: 20px; font-weight: 600; color: #0B5567">Run it. It should print</div>
+<div style="font-size: 15px; line-height: 22px; color: #45626A">The same answer in every language</div>
+</div>
+<div style="height: 52px; min-width: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 18px; border-radius: 14px; background: #0A1F24; color: #FFFFFF; font: 500 22px/1 'JetBrains Mono', ui-monospace, monospace">9</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px 20px; border-radius: 20px; background: #DDF3F7; color: #0A3B46">
+<div style="font-size: 13px; line-height: 18px; font-weight: 600; color: #0B5567">Look for this line</div>
+<div style="font-size: 15.5px; line-height: 23px">It is lit up in the code. It is the same step in all five languages.</div>
+</div>
+<div style="display: flex; gap: 10px">
+<button type="button" style="height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 28px; border-radius: 16px; background: #43B4C8; color: #06262C; border: 0; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer; "><span>Mine prints 9</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+<button type="button" style="height: 56px; flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 20px; border-radius: 16px; background: #FFFFFF; color: #0C2A30; border: 1px solid #C5D5D8; font: 600 15px/1 Figtree, system-ui, sans-serif; cursor: pointer; "><span>Mine prints something else</span></button>
+</div>
+</div>
+
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div role="radiogroup" aria-label="Language" style="display: flex; gap: 8px">
+<sc-for list="{{ langs }}" as="lang" hint-placeholder-count="5">
+<button role="radio" aria-checked="{{lang.on}}" onClick="{{ lang.pick }}" style="height: 48px; flex: none; padding: 0 20px; border: 1px solid {{lang.ring}}; border-radius: 24px; background: {{lang.bg}}; color: {{lang.fg}}; font: {{lang.w}} 15px/1 Figtree, system-ui, sans-serif; cursor: pointer; transition: background 160ms ease-out, color 160ms ease-out">{{lang.name}}</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; padding: 14px 16px 22px 22px; border-radius: 22px; background: #0A1F24; box-shadow: 0 1px 2px rgba(12,42,48,0.12), 0 14px 32px rgba(12,42,48,0.18)">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="font: 500 13px/18px 'JetBrains Mono', ui-monospace, monospace; color: #7FA9B2">{{file}}</div>
+<button onClick="{{ copy }}" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border: 0; border-radius: 12px; background: {{copyBg}}; color: {{copyFg}}; font: 600 13.5px/1 Figtree, system-ui, sans-serif; cursor: pointer; transition: background 160ms ease-out, color 160ms ease-out">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+<span>{{copyLabel}}</span>
+</button>
+</div>
+<div style="margin-top: 10px; min-height: 364px; display: flex; flex-direction: column; font: 400 15px/26px 'JetBrains Mono', ui-monospace, monospace; color: #E3F0F2; overflow-wrap: anywhere">
+<sc-for list="{{ lines }}" as="ln" hint-placeholder-count="8">
+<div style="display: flex; gap: 18px; min-height: 26px"><span aria-hidden="true" style="flex: none; width: 20px; text-align: right; color: #55777F">{{ln.n}}</span><span style="min-width: 0; padding-left: {{ln.pad2}}px; color: {{ln.fg}}">{{ln.text}}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+componentWillUnmount() {
+clearTimeout(this._c);
+}
+renderVals() {
+var self = this;
+var st = this.state || {};
+var cur = st.lang || 'py';
+var copied = !!st.copied;
+var code = {
+py: { name: 'Python', file: 'main.py', lines: [
+[0, 'nums = [4, 9, 2, 7]'],
+[0, 'largest = nums[0]'],
+[0, 'for n in nums:'],
+[1, 'if n > largest:'],
+[2, 'largest = n'],
+[0, 'print(largest)']
+] },
+java: { name: 'Java', file: 'Main.java', lines: [
+[0, 'public class Main {'],
+[1, 'public static void main(String[] args) {'],
+[2, 'int[] nums = {4, 9, 2, 7};'],
+[2, 'int largest = nums[0];'],
+[2, 'for (int n : nums) {'],
+[3, 'if (n > largest) {'],
+[4, 'largest = n;'],
+[3, '}'],
+[2, '}'],
+[2, 'System.out.println(largest);'],
+[1, '}'],
+[0, '}']
+] },
+cpp: { name: 'C++', file: 'main.cpp', lines: [
+[0, '#include <iostream>'],
+[0, '#include <vector>'],
+[0, 'using namespace std;'],
+[0, ''],
+[0, 'int main() {'],
+[1, 'vector<int> nums = {4, 9, 2, 7};'],
+[1, 'int largest = nums[0];'],
+[1, 'for (int n : nums) {'],
+[2, 'if (n > largest) {'],
+[3, 'largest = n;'],
+[2, '}'],
+[1, '}'],
+[1, 'cout << largest << endl;'],
+[0, '}']
+] },
+js: { name: 'JavaScript', file: 'main.js', lines: [
+[0, 'const nums = [4, 9, 2, 7];'],
+[0, 'let largest = nums[0];'],
+[0, 'for (const n of nums) {'],
+[1, 'if (n > largest) {'],
+[2, 'largest = n;'],
+[1, '}'],
+[0, '}'],
+[0, 'console.log(largest);']
+] },
+c: { name: 'C', file: 'main.c', lines: [
+[0, '#include <stdio.h>'],
+[0, ''],
+[0, 'int main(void) {'],
+[1, 'int nums[] = {4, 9, 2, 7};'],
+[1, 'int largest = nums[0];'],
+[1, 'for (int i = 0; i < 4; i++) {'],
+[2, 'if (nums[i] > largest) {'],
+[3, 'largest = nums[i];'],
+[2, '}'],
+[1, '}'],
+[1, 'printf("%d\\n", largest);'],
+[1, 'return 0;'],
+[0, '}']
+] }
+};
+var order = ['py', 'java', 'cpp', 'js', 'c'];
+var now = code[cur];
+function isKey(text) { return text === 'largest = n' || text === 'largest = n;' || text === 'largest = nums[i];'; }
+return {
+file: now.file,
+langs: order.map(function (k) {
+var on = k === cur;
+return {
+name: code[k].name,
+on: on ? 'true' : 'false',
+bg: on ? '#0A3B46' : '#FFFFFF',
+fg: on ? '#FFFFFF' : '#0C2A30',
+ring: on ? '#0A3B46' : '#DCE6E7',
+w: on ? 600 : 500,
+pick: function () { clearTimeout(self._c); self.setState({ lang: k, copied: false }); }
+};
+}),
+lines: now.lines.map(function (l, i) {
+return { n: String(i + 1), pad: l[0] * 14, pad2: l[0] * 22, text: l[1], fg: isKey(l[1]) ? '#7FD6E6' : '#E3F0F2' };
+}),
+copyLabel: copied ? 'Copied' : 'Copy',
+copyBg: copied ? '#43B4C8' : 'rgba(255,255,255,0.1)',
+copyFg: copied ? '#06262C' : '#FFFFFF',
+copy: function () {
+var indent = cur === 'js' ? '  ' : '    ';
+var text = now.lines.map(function (l) { return new Array(l[0] + 1).join(indent) + l[1]; }).join('\n');
+try {
+var p = navigator.clipboard.writeText(text);
+if (p && p.catch) { p.catch(function () {}); }
+} catch (e) {}
+self.setState({ copied: true });
+clearTimeout(self._c);
+self._c = setTimeout(function () { self.setState({ copied: false }); }, 1400);
+}
+};
+}
+}
+</script>
+</body>
+</html>

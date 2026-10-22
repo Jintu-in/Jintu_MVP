@@ -55,9 +55,15 @@
    * for and wrong everywhere else, and it cannot know how long the copy will
    * be after the next edit.
    */
+  /* font-family is redundant on an actual h1-h3 (globals.css's base layer
+     already sets --font-heading there) but every .t-* rule states it
+     anyway: these classes exist to be put on a card title or a label that
+     isn't semantically a heading, and that usage should not silently fall
+     back to body copy's face just because it skipped the h-tag. */
   .t-hero {
     max-inline-size: 20ch;
     overflow-wrap: break-word;
+    font-family: var(--font-heading);
     font-size: var(--text-fluid-5xl);
     line-height: 1.02;
     letter-spacing: -0.035em;
@@ -67,6 +73,7 @@
   .t-page {
     max-inline-size: 20ch;
     overflow-wrap: break-word;
+    font-family: var(--font-heading);
     font-size: var(--text-fluid-4xl);
     line-height: 1.06;
     letter-spacing: -0.03em;
@@ -76,6 +83,7 @@
   .t-sect {
     max-inline-size: 20ch;
     overflow-wrap: break-word;
+    font-family: var(--font-heading);
     font-size: var(--text-fluid-3xl);
     line-height: 1.12;
     letter-spacing: -0.025em;
@@ -85,6 +93,7 @@
   .t-sub {
     max-inline-size: 20ch;
     overflow-wrap: break-word;
+    font-family: var(--font-heading);
     font-size: var(--text-fluid-2xl);
     line-height: 1.2;
     letter-spacing: -0.02em;
@@ -95,6 +104,7 @@
      already the constraint. */
   .t-card {
     overflow-wrap: break-word;
+    font-family: var(--font-heading);
     font-size: var(--text-fluid-xl);
     line-height: 1.3;
     letter-spacing: -0.01em;

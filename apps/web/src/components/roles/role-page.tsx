@@ -13,6 +13,17 @@ import type { Comparison, Role } from "@/content/roles";
  * "What is hard" is deliberately near the end and deliberately blunt. A
  * careers page that only sells is the genre; the sentence about who should
  * not do this job is the reason to trust the rest of the page.
+ *
+ * Restyled against V2Role.dc.html / DeskRole.dc.html, section order and
+ * content unchanged (asked and answered 2026-10-19 — see this page's
+ * route file for why the design's 4-tab layout was not built). Two real
+ * visual upgrades taken from that design: checkmark bullets for "must
+ * have" skills, and a dark "Your path on Jintu" card for where to start.
+ * No new data dependency: "Start here" still renders from role.startHere
+ * alone, same as before — not the design's live open/"being rebuilt"
+ * status per pick, which would mean this page reading the database for
+ * the first time ever, breaking the exact thing its own route file calls
+ * out as deliberate ("no database read here").
  */
 
 function Section({
@@ -40,6 +51,27 @@ const Bullets = ({ items }: { items: string[] }) => (
     {items.map((t) => (
       <li key={t} className="flex gap-3.5">
         <span aria-hidden className="mt-[13px] h-px w-4 flex-none bg-ink-200" />
+        <span className="text-[15px] leading-[1.7] text-pretty text-ink-900">{t}</span>
+      </li>
+    ))}
+  </ul>
+);
+
+const CHECK = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
+
+/** The "must have" skills list, specifically — V2Role draws this one with
+ *  a checkmark rather than the plain tick-line every other list uses. */
+const CheckBullets = ({ items }: { items: string[] }) => (
+  <ul className="flex max-w-[62ch] list-none flex-col gap-3 p-0">
+    {items.map((t) => (
+      <li key={t} className="flex gap-3">
+        <span aria-hidden className="mt-0.5 flex-none text-link">
+          {CHECK}
+        </span>
         <span className="text-[15px] leading-[1.7] text-pretty text-ink-900">{t}</span>
       </li>
     ))}
@@ -117,7 +149,7 @@ export function RolePage({ role, comparisons }: { role: Role; comparisons: Compa
             <div>
               <h3 className="text-[15px] font-medium text-ink-900">Must have</h3>
               <div className="mt-3">
-                <Bullets items={role.skills.must} />
+                <CheckBullets items={role.skills.must} />
               </div>
             </div>
             <div>
@@ -179,57 +211,65 @@ export function RolePage({ role, comparisons }: { role: Role; comparisons: Compa
           </Section>
         ) : null}
 
-        {/* Everything ends in the catalogue, or says plainly that it cannot. */}
-        <section className="rounded-card border border-ink-100 bg-white p-6 sm:p-8">
-          <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-            Where to start
-          </div>
-          {role.startHere.kind === "roadmaps" ? (
-            <>
-              <h2 className="t-sub mt-3 text-ink-900">Start here on Jintu</h2>
-              <ul className="mt-5 flex list-none flex-col gap-4 p-0">
-                {role.startHere.picks.map((p) => (
-                  <li key={p.slug}>
+        {/* Everything ends in the catalogue, or says plainly that it cannot.
+            Dark card per V2Role's "Your path on Jintu" — numbered picks,
+            each with its own note, no live open/"being rebuilt" status
+            (that would mean a database read; see this file's header comment). */}
+        {role.startHere.kind === "roadmaps" ? (
+          <section className="flex flex-col gap-4 rounded-[24px] bg-night-900 p-5 text-white sm:p-7">
+            <div className="font-mono text-[12.5px] leading-none font-semibold text-dark-link">
+              Your path on Jintu
+            </div>
+            <ul className="m-0 flex list-none flex-col gap-4 p-0">
+              {role.startHere.picks.map((p, i) => (
+                <li key={p.slug} className="flex items-start gap-3.5">
+                  <span className="mt-0.5 flex size-[22px] flex-none items-center justify-center rounded-full border border-white/45 font-mono text-[11px] text-white">
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/learn/${p.slug}` as Route}
-                      className="text-[16px] leading-[1.4] font-medium text-brand-700 hover:text-brand-800"
+                      className="text-[16px] leading-[1.4] font-semibold text-white hover:text-on-night-muted"
                     >
                       {p.slug.replace(/-/g, " ")} →
                     </Link>
-                    <p className="mt-1.5 max-w-[62ch] text-[14.5px] leading-[1.65] text-pretty text-ink-600">
+                    <p className="mt-1 max-w-[62ch] text-[14.5px] leading-[1.6] text-pretty text-on-night-muted">
                       {p.note}
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <>
-              <h2 className="t-sub mt-3 text-ink-900">We have not built this one yet</h2>
-              <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-900">
-                {role.startHere.note}
-              </p>
-              <ul className="mt-5 flex list-none flex-col gap-3 p-0">
-                {role.startHere.readInstead.map((r) => (
-                  <li key={r.url}>
-                    <Link
-                      href={r.url as Route}
-                      className="text-[15px] leading-[1.6] font-medium text-brand-700 hover:text-brand-800"
-                    >
-                      {r.label} →
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={"/learn" as Route}
-                className="mt-6 inline-flex h-12 items-center rounded-lg border border-ink-200 px-5 text-[15px] font-medium text-ink-900 hover:border-brand-700"
-              >
-                Ask us to build it
-              </Link>
-            </>
-          )}
-        </section>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <section className="rounded-[24px] border border-ink-100 bg-white p-6 sm:p-8">
+            <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
+              Where to start
+            </div>
+            <h2 className="t-sub mt-3 text-ink-900">We have not built this one yet</h2>
+            <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-900">
+              {role.startHere.note}
+            </p>
+            <ul className="mt-5 flex list-none flex-col gap-3 p-0">
+              {role.startHere.readInstead.map((r) => (
+                <li key={r.url}>
+                  <Link
+                    href={r.url as Route}
+                    className="text-[15px] leading-[1.6] font-medium text-brand-700 hover:text-brand-800"
+                  >
+                    {r.label} →
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={"/learn" as Route}
+              className="mt-6 inline-flex h-12 items-center rounded-2xl border border-ink-200 px-5 text-[15px] font-medium text-ink-900 hover:border-brand-700"
+            >
+              Ask us to build it
+            </Link>
+          </section>
+        )}
       </div>
     </main>
   );

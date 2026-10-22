@@ -1,19 +1,34 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Figtree, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AnalyticsProvider } from "@/components/analytics-provider";
 import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
 
 /*
-  Mono is semantic on this site, not cosmetic: anything MEASURED — points,
-  percentages, durations, data sizes, unit numbers — is set in mono, and
-  prose is set in sans; the typeface tells you whether a number was counted
-  or written. A fallback stack silently breaks that intent, which is why the
-  faces load here (audit bug d) instead of being named in CSS and never
-  fetched. next/font self-hosts both: zero external requests, no CLS.
+  Three faces, two axes of meaning. Mono is semantic, not cosmetic: anything
+  MEASURED — points, percentages, durations, data sizes, unit numbers — is
+  set in mono, and prose is set in sans; the typeface tells you whether a
+  number was counted or written. That split is unchanged from the Inter-era
+  setup (audit bug d) and still why the faces load here instead of being
+  named in CSS and never fetched.
+
+  What's new is a split WITHIN sans: Bricolage Grotesque for headings,
+  Figtree for body copy, per the redesign handoff
+  (design/jintu-design/HANDOFF.md). They are both variable fonts; `axes:
+  ["opsz"]` on Bricolage Grotesque pulls in its optical-size axis (12-96 per
+  the handoff) rather than only the default weight axis next/font/google
+  loads for a variable font — headings at display sizes should pick up the
+  face's display-optical cut, not its text-optical cut stretched larger.
+  next/font self-hosts all three: zero external requests, no CLS.
 */
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const bricolageGrotesque = Bricolage_Grotesque({
+  subsets: ["latin"],
+  axes: ["opsz"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono", display: "swap" });
 
 const DESCRIPTION =
@@ -71,7 +86,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-IN" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en-IN"
+      className={`${bricolageGrotesque.variable} ${figtree.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="min-h-dvh antialiased">
         {/*
           Hard-coded false until auth exists to read consents.analytics.

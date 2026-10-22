@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your project after this step, animated</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+@keyframes slideA { 0% { transform: translateX(20px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@keyframes slideB { 0% { transform: translateX(20px); opacity: 0 } 100% { transform: translateX(0); opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px">
+<a href="MoType.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 15px; line-height: 20px; font-weight: 600">Lesson 1</div>
+<div style="font-size: 12.5px; line-height: 18px; color: #5E777D">Git &amp; GitHub</div>
+</div>
+<div style="height: 32px; display: flex; align-items: center; padding: 0 12px; border-radius: 16px; background: #FFFFFF; font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace; color: #0C2A30">{{count}}</div>
+</div>
+
+<div style="flex: none; display: flex; gap: 4px; padding: 0 20px" role="img" aria-label="{{progressLabel}}">
+<sc-for list="{{ pills }}" as="pill" hint-placeholder-count="8">
+<div style="flex: 1; height: 6px; border-radius: 3px; background: {{pill.bg}}; transition: background 320ms ease-out"></div>
+</sc-for>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 24px 20px 0">
+
+<div style="display: flex; flex-direction: column; gap: 14px; animation: slide{{v}} 340ms ease-out both">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 13px; line-height: 18px; font-weight: 600; color: #0B5567">{{stepLabel}}</div>
+<h1 style="margin: 0; min-height: 56px; font: 600 24px/28px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">{{title}}</h1>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 20px; background: #0A1F24">
+<div style="font: 500 11px/16px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #7FA9B2">Type this</div>
+<div style="min-height: 44px; display: flex; gap: 10px; font: 500 14px/22px 'JetBrains Mono', ui-monospace, monospace; color: #FFFFFF; overflow-wrap: anywhere"><span aria-hidden="true" style="flex: none; color: #43B4C8">$</span><span style="min-width: 0">{{cmd}}</span></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 24px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(12,42,48,0.06), 0 10px 28px rgba(12,42,48,0.08)">
+<h2 style="margin: 0; font: 600 18px/24px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em">Your project after this step</h2>
+<div style="margin-top: -10px; font-size: 13.5px; line-height: 20px; color: #45626A">If yours looks different, go back one step.</div>
+
+<div style="position: relative; display: flex; gap: 12px" role="img" aria-label="{{where}}">
+<sc-for list="{{ zones }}" as="zone" hint-placeholder-count="3">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; line-height: 16px; font-weight: 600; color: {{zone.fg}}; transition: color 240ms ease-out">{{zone.name}}</div>
+<div style="height: 64px; box-sizing: border-box; border: 2px solid {{zone.ring}}; border-radius: 14px; background: #EEF3F3; transition: border-color 240ms ease-out"></div>
+</div>
+</sc-for>
+<div aria-hidden="true" style="position: absolute; left: 6px; top: 38px; width: calc((100% - 24px) / 3 - 12px); height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: {{fileBg}}; color: {{fileFg}}; font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace; box-shadow: 0 4px 12px rgba(12,42,48,0.18); transform: {{fileT}}; transition: transform 520ms cubic-bezier(0.3, 1.2, 0.4, 1), background 320ms ease-out, color 320ms ease-out">README.md</div>
+</div>
+
+<div style="min-height: 40px; display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 20px; color: #45626A">
+<span style="flex: none; height: 20px; display: flex; align-items: center; padding: 0 10px; border-radius: 10px; background: {{chipBg}}; color: {{chipFg}}; font-size: 12px; font-weight: 600; transition: background 320ms ease-out, color 320ms ease-out">{{chip}}</span>
+<span style="min-width: 0">{{caption}}</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: #EEF3F3">
+<div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5E777D">History</div>
+<div style="display: grid; min-height: 44px; align-items: center">
+<div style="grid-area: 1 / 1; font: 400 13.5px/22px 'JetBrains Mono', ui-monospace, monospace; color: #45626A; opacity: {{emptyO}}; transition: opacity 240ms ease-out">No commits yet</div>
+<div style="grid-area: 1 / 1; display: flex; align-items: center; gap: 12px; opacity: {{commitO}}; transition: opacity 320ms ease-out 380ms">
+<span aria-hidden="true" style="width: 16px; height: 16px; flex: none; border-radius: 50%; background: #0A3B46; box-shadow: 0 0 0 4px rgba(10,59,70,0.16); transform: {{dotT}}; transition: transform 420ms cubic-bezier(0.2, 1.5, 0.4, 1) 380ms"></span>
+<span style="min-width: 0; display: flex; flex-direction: column">
+<span style="font: 500 13px/20px 'JetBrains Mono', ui-monospace, monospace">4e230e0</span>
+<span style="font-size: 14px; line-height: 20px">Add README with project title</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<button onClick="{{ next }}" style="width: 100%; height: 56px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 16px; background: #43B4C8; color: #06262C; font: 600 16.5px/1 Figtree, system-ui, sans-serif; cursor: pointer">
+<span>{{btn}}</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+var self = this;
+var st = this.state || {};
+var i = st.i || 0;
+var steps = [
+{ n: 5, title: 'Ask Git what it sees', cmd: 'git status', chip: 'untracked', chipBg: '#FFF1D1', chipFg: '#6B4200', fileBg: '#FFB627', fileFg: '#3D2600', caption: 'Git can see the file but is not recording it yet.', where: 'README.md is in your folder' },
+{ n: 6, title: 'Choose the file for the next commit', cmd: 'git add README.md', chip: 'staged', chipBg: '#DDF3F7', chipFg: '#0B5567', fileBg: '#43B4C8', fileFg: '#06262C', caption: 'git add chose it. Nothing is saved yet.', where: 'README.md is chosen for the next commit' },
+{ n: 7, title: 'Save the version with a message', cmd: 'git commit -m "Add README with project title"', chip: 'committed', chipBg: '#DDF4EA', chipFg: '#0F6A48', fileBg: '#0A3B46', fileFg: '#FFFFFF', caption: 'git commit saved it. It now has an ID in history.', where: 'README.md is saved in history' }
+];
+var cur = steps[i];
+var names = ['Your folder', 'Chosen', 'History'];
+var pills = [];
+for (var k = 1; k <= 8; k += 1) {
+pills.push({ bg: k < cur.n ? '#0A3B46' : (k === cur.n ? '#43B4C8' : '#D3DFE1') });
+}
+return {
+v: i % 2 === 0 ? 'A' : 'B',
+count: cur.n + ' / 8',
+progressLabel: (cur.n - 1) + ' of 8 steps done',
+stepLabel: 'Step ' + cur.n,
+title: cur.title,
+cmd: cur.cmd,
+pills: pills,
+where: cur.where,
+zones: names.map(function (name, z) {
+return { name: name, fg: z === i ? '#0C2A30' : '#5E777D', ring: z === i ? '#43B4C8' : '#EEF3F3' };
+}),
+fileT: 'translateX(calc(' + i + ' * (100% + 24px)))',
+fileBg: cur.fileBg,
+fileFg: cur.fileFg,
+chip: cur.chip,
+chipBg: cur.chipBg,
+chipFg: cur.chipFg,
+caption: cur.caption,
+emptyO: i === 2 ? 0 : 1,
+commitO: i === 2 ? 1 : 0,
+dotT: i === 2 ? 'scale(1)' : 'scale(0)',
+btn: i === 2 ? 'I see this. Play again' : 'I see this',
+next: function () { self.setState({ i: (i + 1) % 3 }); }
+};
+}
+}
+</script>
+</body>
+</html>

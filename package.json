@@ -12,6 +12,7 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
+    "e2e": "turbo e2e",
     "icons": "node assets/brand/generate-icons.mjs",
     "db:new": "supabase migration new",
     "db:start": "supabase start",

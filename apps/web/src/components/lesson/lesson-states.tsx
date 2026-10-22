@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { BackIcon, BookmarkIcon, TickIcon } from "@/components/ui/icons";
+import { BackIcon, BookmarkIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 /**
@@ -426,102 +426,127 @@ export function DeadLinkNotice({
   );
 }
 
-/* ── 04 · end of day ────────────────────────────────────────────────── */
+/* ── 04 · lesson done (Phase 5 Part A, V2Done) ───────────────────────── */
 
-export interface EndOfDayCardProps {
-  /** The day just finished, e.g. "45". */
-  dayNumber: string;
-  /** Yesterday's streak, struck through, e.g. "11". */
-  streakFrom: string;
-  /** Today's streak, e.g. "12 days". */
-  streakTo: string;
-  /** e.g. "+35 · 1,275". */
+const CLOSE_X_ICON = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+    <path d="M6 6l12 12" />
+    <path d="M18 6L6 18" />
+  </svg>
+);
+
+const BIG_CHECK_ICON = (
+  <svg aria-hidden width={38} height={38} viewBox="0 0 24 24" fill="none" stroke="#3D2600" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
+
+const ARROW_RIGHT_ICON = (
+  <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </svg>
+);
+
+export interface LessonDoneScreenProps {
+  /** "1" in "Lesson 1 done". */
+  lessonNumber: string;
+  /** What this lesson covered, one honest sentence — "You finished Git
+   *  basics." rather than a Git-specific accomplishment claim (that needs
+   *  real per-roadmap authoring, Part B). */
+  accomplishmentLine: string;
   pointsLine: string;
-  /** e.g. "3 cards added". */
-  reviewLine: string;
-  next: {
-    /** e.g. "46". */
-    dayNumber: string;
-    /** e.g. "LAG and LEAD". */
+  streakDays: number;
+  /** e.g. "1 of 12". */
+  lessonsLine: string;
+  next?: {
+    lessonNumber: string;
     title: string;
-    /** Mono line, e.g. "55 min · 15 blocks · 35 pts". */
     metaLine: string;
+    href: string;
   };
-  /** The honest alternative, e.g. "or stop here — 46 of 91 days done". */
-  stopLine: string;
+  onClose?: () => void;
   onOpenNext?: () => void;
 }
 
 /**
- * Replaces the mark-done button in place after it is pressed — no modal,
- * no confetti. Evidence rows first, then the one next action.
+ * The step sequence's capstone (V2Step/V2Turn's "Finish" leads here, not
+ * back to the scrolling page) — a full screen, not an inline card, matching
+ * V2Done exactly. The share card ("Share your progress") is out of scope
+ * for Part A; this is the stats + next-lesson half only.
  */
-export function EndOfDayCard({
-  dayNumber,
-  streakFrom,
-  streakTo,
+export function LessonDoneScreen({
+  lessonNumber,
+  accomplishmentLine,
   pointsLine,
-  reviewLine,
+  streakDays,
+  lessonsLine,
   next,
-  stopLine,
+  onClose,
   onOpenNext,
-}: EndOfDayCardProps) {
+}: LessonDoneScreenProps) {
   return (
-    <div>
-      <div className="flex items-center gap-2.5">
-        <span className="flex size-6 items-center justify-center rounded-full bg-check-machine text-white">
-          <TickIcon size={13} />
+    <div className="flex min-h-dvh flex-col bg-ink-50">
+      <div className="flex flex-none flex-col items-center rounded-b-[32px] bg-night-900 px-5 pt-2 pb-16 text-center">
+        <div className="flex h-14 w-full items-center justify-end">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="flex size-11 items-center justify-center rounded-full bg-white/12 text-white"
+          >
+            {CLOSE_X_ICON}
+          </button>
+        </div>
+        <span aria-hidden className="mt-1 flex size-19 items-center justify-center rounded-full bg-amber-500">
+          {BIG_CHECK_ICON}
         </span>
-        <span className="text-[17px] leading-[1.4] text-ink-900">
-          Day <span className="font-mono">{dayNumber}</span> done
-        </span>
+        <h1 className="mt-4 font-heading text-[36px] leading-[40px] font-bold tracking-[-0.02em] text-white">
+          Lesson {lessonNumber} done
+        </h1>
+        <p className="mt-2 text-[16px] leading-[24px] text-on-night-muted">{accomplishmentLine}</p>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-card border border-ink-100">
-        <div className="flex items-center justify-between gap-3 border-b border-ink-100 px-3.5 py-3">
-          <span className="text-[14px] leading-[1.4] text-ink-600">Streak</span>
-          <span className="flex items-baseline gap-2">
-            <span className="font-mono text-[13px] leading-none text-ink-500 line-through">
-              {streakFrom}
-            </span>
-            <span className="font-mono text-[15px] leading-none font-medium text-ink-900">
-              {streakTo}
-            </span>
-          </span>
-        </div>
-        <div className="flex items-center justify-between gap-3 border-b border-ink-100 px-3.5 py-3">
-          <span className="text-[14px] leading-[1.4] text-ink-600">Points</span>
-          <span className="font-mono text-[15px] leading-none font-medium text-ink-900">
-            {pointsLine}
-          </span>
-        </div>
-        <div className="flex items-center justify-between gap-3 px-3.5 py-3">
-          <span className="text-[14px] leading-[1.4] text-ink-600">Review</span>
-          <span className="font-mono text-[15px] leading-none font-medium text-ink-900">
-            {reviewLine}
-          </span>
-        </div>
+      <div className="-mt-10 flex flex-none gap-2.5 px-5">
+        <StatCard value={pointsLine} label="points" />
+        <StatCard value={String(streakDays)} label="day streak" flame />
+        <StatCard value={lessonsLine} label="lessons" />
       </div>
 
-      <div className="mt-4 rounded-card border border-brand-700 p-4">
-        <div className="font-mono text-[11.5px] leading-none tracking-[.06em] text-brand-700 uppercase">
-          Next
+      <div className="flex-1" />
+
+      {next ? (
+        <div className="flex-none border-t border-ink-100 bg-white px-5 pt-3 pb-5">
+          <p className="mb-2 text-[13.5px] leading-[20px] text-ink-600">Next: {next.title}</p>
+          <a
+            href={next.href}
+            onClick={onOpenNext}
+            className="flex h-14 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand no-underline"
+          >
+            <span>Start lesson {next.lessonNumber}</span>
+            {ARROW_RIGHT_ICON}
+          </a>
         </div>
-        <div className="mt-2.5 text-[17px] leading-[1.35] font-medium text-ink-900">
-          Day <span className="font-mono">{next.dayNumber}</span> · {next.title}
-        </div>
-        <div className="mt-2 font-mono text-[12.5px] leading-[1.5] text-ink-600">{next.metaLine}</div>
-        <button
-          type="button"
-          onClick={onOpenNext}
-          className="mt-3.5 min-h-12 w-full rounded-lg border border-brand-700 bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
-        >
-          Open day {next.dayNumber} →
-        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function StatCard({ value, label, flame }: { value: string; label: string; flame?: boolean }) {
+  return (
+    <div className="flex flex-1 flex-col gap-0.5 rounded-20 bg-white p-3.5 shadow-[0_1px_2px_rgba(12,42,48,0.06),0_10px_28px_rgba(12,42,48,0.1)]">
+      <div className="flex items-center gap-1.5 font-heading text-[24px] leading-[28px] font-bold tracking-[-0.02em] text-ink-900">
+        {flame ? (
+          <svg aria-hidden width={20} height={20} viewBox="0 0 24 24">
+            <path
+              d="M12 2c1 3.6 5 5.6 5 10.2a5 5 0 0 1-10 0c0-1.7.6-3 1.6-4 .3 1.5 1 2.4 2 2.7C10.4 8.4 10.8 5 12 2z"
+              fill="var(--color-amber-600)"
+            />
+          </svg>
+        ) : null}
+        <span>{value}</span>
       </div>
-      <div className="mt-3 text-center font-mono text-[12.5px] leading-[1.6] text-ink-500">
-        {stopLine}
-      </div>
+      <div className="text-[12.5px] leading-[18px] text-ink-600">{label}</div>
     </div>
   );
 }

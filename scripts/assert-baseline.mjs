@@ -50,8 +50,8 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 
 // Every table the pivot specifies, nothing the old product left behind.
 const expected = [
-  "activity_days", "audit_log", "auth_attempts", "colleges", "consents",
-  "link_checks", "modules", "nodes", "node_checks", "node_progress",
+  "activity_days", "audit_log", "auth_attempts", "colleges", "consent_events",
+  "consents", "help_requests", "link_checks", "modules", "nodes", "node_checks", "node_progress",
   "node_topics", "notifications", "point_events", "profiles",
   "review_cards", "roadmap_enrollments", "roadmap_prerequisites", "roadmaps",
   "resources", "public_profiles", "reminder_prefs", "saved_resources",
@@ -63,7 +63,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the twenty-four baseline tables exist`,
+  `exactly the twenty-six baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
@@ -238,6 +238,84 @@ try {
   bundled = true;
 } catch { /* purpose CHECK */ }
 check(!bundled, "consent purposes are a closed list — no bundled catch-all");
+
+let fakeAnimal = false;
+try {
+  await as(ua, `update public.profiles set avatar_animal = 'dragon' where id = '${ua}'`);
+  fakeAnimal = true;
+} catch { /* avatar_animal CHECK */ }
+check(!fakeAnimal, "the avatar is one of the 16 fixed animals — no made-up value");
+
+// The DSA language switch (0033) — infrastructure only, no real roadmap
+// uses it yet, but the CHECK itself is real and worth guarding.
+let fakeLanguage = false;
+try {
+  await as(ua, `update public.profiles set code_language = 'cobol' where id = '${ua}'`);
+  fakeLanguage = true;
+} catch { /* code_language CHECK */ }
+check(!fakeLanguage, "the DSA language switch is one of the five fixed languages — no made-up value");
+check(
+  (await as(ua, `select code_language from public.profiles where id = '${ua}'`))[0].code_language === null,
+  "code_language starts null — no preference set yet, not a default silently baked in",
+);
+
+console.log("\n── the consent log is append-only, and user-scoped ─────────");
+await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
+              values ('${ua}', 'reminders', true, 'v1') returning id`);
+check(
+  (await as(ub, "select * from public.consent_events")).length === 0,
+  "RLS stops user A reading user B's consent events",
+);
+let falseCoreService = false;
+try {
+  await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
+                values ('${ua}', 'core_service', false, 'v1')`);
+  falseCoreService = true;
+} catch { /* consent_events_core_service_never_withdrawn */ }
+check(!falseCoreService, "core_service can never be logged as withdrawn");
+// No USING policy for update/delete, on purpose (append-only). Depending on
+// whether the role's table-level grant even extends to UPDATE/DELETE, a
+// missing policy surfaces either as a thrown permission error or as an
+// affected-rows count of zero (RLS's implicit "no rows visible" filter) —
+// same two-shaped hedge as deniedOrEmpty above, just for the owner's own
+// row instead of anon's.
+const deniedOrNoop = async (uid, sql) => {
+  await db.exec(`begin; set local role authenticated; set local jintu.uid = '${uid}';`);
+  try { return (await rows(sql)).length === 0; }
+  catch { return true; }
+  finally { await db.exec("rollback;"); }
+};
+check(
+  await deniedOrNoop(ua, `update public.consent_events set granted = false where user_id = '${ua}' returning id`),
+  "a consent event cannot be edited after the fact, even by its own owner",
+);
+check(
+  await deniedOrNoop(ua, `delete from public.consent_events where user_id = '${ua}' returning id`),
+  "a consent event cannot be deleted by its own owner — append-only means append-only",
+);
+
+console.log("\n── a help request is insert-and-read-your-own, never edited ─");
+await as(ua, `insert into public.help_requests (user_id, node_id, step_context, message)
+              values ('${ua}', '${node.id}', 'Step 5 · Ask Git what it sees', 'My terminal says nothing happened') returning id`);
+check(
+  (await as(ub, "select * from public.help_requests")).length === 0,
+  "RLS stops user A reading user B's help requests",
+);
+check(
+  await deniedOrNoop(ua, `update public.help_requests set status = 'reviewed' where user_id = '${ua}' returning id`),
+  "a help request cannot be edited after the fact, even by its own owner",
+);
+check(
+  await deniedOrNoop(ua, `delete from public.help_requests where user_id = '${ua}' returning id`),
+  "a help request cannot be deleted by its own owner",
+);
+let emptyHelpMessage = false;
+try {
+  await as(ua, `insert into public.help_requests (user_id, node_id, step_context, message)
+                values ('${ua}', '${node.id}', 'Step 1', '')`);
+  emptyHelpMessage = true;
+} catch { /* help_requests message length CHECK */ }
+check(!emptyHelpMessage, "a help request cannot be empty");
 
 console.log("\n── service-side tables are unreachable from clients ────────");
 // With no grant at all, the select is DENIED outright — stronger than an

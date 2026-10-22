@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getSiteUrl } from "@/lib/env";
 
 /**
  * The default social preview for every route that does not generate its own.
@@ -36,7 +37,7 @@ export default async function Image() {
         }}
       >
         <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: "#17758a" }}>
-          jintu.in
+          {getSiteUrl().host}
         </div>
         <div
           style={{

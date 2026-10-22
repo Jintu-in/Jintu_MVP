@@ -6,6 +6,8 @@ import {
   NOTICE_VERSION,
   OPTIONAL_PURPOSES,
   consentToggleInput,
+  goalInput,
+  needInput,
   onboardingInput,
   otpRequestInput,
   otpVerifyInput,
@@ -19,6 +21,7 @@ import {
   passwordBackoffMinutes,
   record,
 } from "@/lib/auth-limits";
+import { recordConsentEvent, recordConsentEventBestEffort } from "@/lib/consent-events";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -218,17 +221,93 @@ export const completeOnboarding = actionClient
       if (consentError && consentError.code !== "23505") {
         throw new Error(`Could not record your choices: ${consentError.message}`);
       }
+
+      // consents (above) stays exactly as it was — the 18+ gate and its
+      // guards are built on that table's shape and this is not the place to
+      // touch it. consent_events is the new, parallel append-only log the
+      // Settings/Consents screens read from (migration 0026); every purpose
+      // granted at sign-up gets its first entry here too, so a brand-new
+      // account's ledger is complete from day one rather than empty until
+      // the first later toggle.
+      await Promise.all(
+        granted.map((c) => recordConsentEventBestEffort(supabase, user.id, c.purpose, true, "onboarding")),
+      );
     }
 
     return { onboarded: true };
   });
 
 /**
+ * Phase 4 Part A, step 1 (V2Goal). A custom-typed goal also becomes a
+ * topic_requests row (0015/0017) — the same table the catalogue's "not here
+ * yet?" box writes to, and the mockup's own copy ("No path for it yet? We
+ * note the request") only appears in the typed state, never the preset list.
+ *
+ * No separate rate limit here, unlike requestTopic (actions/requests.ts):
+ * that guards an anonymous, public surface; this one is already behind a
+ * session and a completed sign-up, a much higher bar than an IP address.
+ */
+export const setGoal = actionClient
+  .inputSchema(goalInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ goal: parsedInput.goal })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save that: ${error.message}`);
+
+    if (parsedInput.custom) {
+      const { error: requestError } = await supabase.from("topic_requests").insert({
+        wanted: parsedInput.goal,
+        source: "sidebar",
+        user_id: user.id,
+      });
+      // Best-effort: the goal itself is already saved above, and a person's
+      // first-run flow should not stall over a secondary demand-signal row.
+      if (requestError) console.error("[auth] topic_requests write failed", requestError.message);
+    }
+
+    return { goal: parsedInput.goal };
+  });
+
+/** Phase 4 Part A, step 2 (V2Need). Decides what /today opens on, once
+ *  Phase 6 builds it — see migration 0028's comment on the column. */
+export const setNeed = actionClient
+  .inputSchema(needInput)
+  .action(async ({ parsedInput }) => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new UserFacingError("Your session expired. Sign in again.");
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ need: parsedInput.need })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save that: ${error.message}`);
+
+    return { need: parsedInput.need };
+  });
+
+/**
  * Withdrawal must be as easy as granting (docs/LEGAL.md §2.2), which is why
  * this is one action behind one toggle rather than an email to support.
  *
- * Withdrawing sets withdrawn_at; it never deletes. The row is the evidence
- * that consent existed for the period it covered.
+ * Used directly for analytics, the one optional purpose with no operational
+ * table of its own — reminders and public_profile instead go through
+ * updateReminders/updatePublicProfile (actions/account.ts), which write the
+ * same consent_events log alongside the setting they each actually operate.
+ *
+ * Writes consent_events (migration 0026), not the older consents table:
+ * append-only, never an update. "Not agreed" is simply the latest event for
+ * that purpose having granted = false — there is no withdrawn_at to set.
  */
 export const toggleConsent = actionClient
   .inputSchema(consentToggleInput)
@@ -239,24 +318,7 @@ export const toggleConsent = actionClient
     } = await supabase.auth.getUser();
     if (!user) throw new Error("Your session expired. Sign in again.");
 
-    if (parsedInput.granted) {
-      const { error } = await supabase.from("consents").insert({
-        user_id: user.id,
-        purpose: parsedInput.purpose,
-        notice_version: NOTICE_VERSION,
-      });
-      if (error && error.code !== "23505") {
-        throw new Error(`Could not record that: ${error.message}`);
-      }
-    } else {
-      const { error } = await supabase
-        .from("consents")
-        .update({ withdrawn_at: new Date().toISOString() })
-        .eq("user_id", user.id)
-        .eq("purpose", parsedInput.purpose)
-        .is("withdrawn_at", null);
-      if (error) throw new Error(`Could not withdraw that: ${error.message}`);
-    }
+    await recordConsentEvent(supabase, user.id, parsedInput.purpose, parsedInput.granted);
 
     return { purpose: parsedInput.purpose, granted: parsedInput.granted };
   });
@@ -320,10 +382,11 @@ export const signInWithPassword = actionClient
 /**
  * Set or change your password. Requires a session.
  *
- * Reachable only from the account page, so the person doing it has already
- * proved they hold the address — either by code or by knowing the current
- * password. secure_password_change is off in config.toml, which means Supabase
- * does not demand a fresh re-authentication here; the session is the proof.
+ * Reachable from the sign-up flow's "create password" step and from
+ * /settings/account — either way, the person doing it has already proved
+ * they hold the address (by code, or by knowing the current password).
+ * secure_password_change is off in config.toml, which means Supabase does
+ * not demand a fresh re-authentication here; the session is the proof.
  *
  * Worth knowing if that setting is ever turned on: this call starts failing
  * with a reauthentication error, and this action is where that would surface.
@@ -363,10 +426,33 @@ export const setPassword = actionClient
       );
     }
 
+    // password_set_at (migration 0026) is the real source of truth for
+    // /settings/account's "set [date]" copy — not the user_metadata flag
+    // above, which carries no date and is being kept only because setPassword
+    // runs both here and at sign-up and nothing else reads it anymore.
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ password_set_at: new Date().toISOString() })
+      .eq("id", user.id);
+    if (profileError) {
+      console.error("[auth] password_set_at write failed", profileError.message);
+    }
+
     // The session cookies were written at OTP verification, before the
     // stay-signed-in choice existed. If the choice was "no", re-issue them
     // through the session-cookie client so the browser drops them on close.
     if (!remember) await supabase.auth.refreshSession();
+
+    // Sign out every other session, same as the emailed reset link already
+    // does just above — the user's own answer to "should this sign out
+    // other devices": yes. Harmless at sign-up, where there are no other
+    // sessions yet; real at /settings/account, where there may be, and the
+    // premise for changing a password is often "something else might have
+    // it".
+    const { error: revokeError } = await supabase.auth.signOut({ scope: "others" });
+    if (revokeError) {
+      console.error("[auth] revoking other sessions failed", revokeError.message);
+    }
 
     return { set: true };
   });
@@ -434,6 +520,14 @@ export const completePasswordReset = actionClient
       throw new UserFacingError(
         error.message || "We could not set that password. Try a different one.",
       );
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ password_set_at: new Date().toISOString() })
+      .eq("id", user.id);
+    if (profileError) {
+      console.error("[auth] password_set_at write failed", profileError.message);
     }
 
     const { error: revokeError } = await supabase.auth.signOut({ scope: "others" });

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First run, pick a goal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 20px">
+<div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">1 of 2</div>
+<a href="V2New.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 14.5px; font-weight: 600; text-decoration: none">Skip</a>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 18px; padding: 4px 20px 0">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font: 700 30px/34px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em; text-wrap: balance">What do you want to become?</h1>
+<p style="margin: 0; font-size: 15.5px; line-height: 23px; color: #45626A">Pick the closest one. You can change it any time.</p>
+</div>
+
+<div role="radiogroup" aria-label="Where you are now" style="flex: none; display: flex; gap: 2px; padding: 4px; border-radius: 26px; background: #FFFFFF">
+<sc-for list="{{ segs }}" as="seg" hint-placeholder-count="3">
+<button role="radio" aria-checked="{{seg.on}}" onClick="{{ seg.pick }}" style="flex: {{seg.flex}}; height: 44px; border: 0; border-radius: 22px; background: {{seg.bg}}; color: {{seg.fg}}; font: {{seg.w}} 13.5px/1 Figtree, system-ui, sans-serif; cursor: pointer; transition: background 160ms ease-out, color 160ms ease-out">{{seg.name}}</button>
+</sc-for>
+</div>
+
+<div role="radiogroup" aria-label="Goal" style="flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{ roles }}" as="role" hint-placeholder-count="6">
+<button role="radio" aria-checked="{{role.on}}" onClick="{{ role.pick }}" style="min-height: 64px; box-sizing: border-box; padding: 8px 14px; border: 1.5px solid {{role.ring}}; border-radius: 22px; background: {{role.bg}}; color: {{role.fg}}; font: {{role.w}} 14.5px/19px Figtree, system-ui, sans-serif; text-align: center; cursor: pointer; transition: background 160ms ease-out, color 160ms ease-out, border-color 160ms ease-out">{{role.name}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 22px; background: #FFFFFF">
+<label for="goal-own" style="font-size: 13.5px; line-height: 18px; font-weight: 600">Your goal, in your words</label>
+<input id="goal-own" type="text" placeholder="Journalist, IAS officer, history teacher" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 2px solid #0B5567; border-radius: 14px; background: #FFFFFF; color: #0C2A30; font: 400 16px/1 Figtree, system-ui, sans-serif">
+<div style="font-size: 13px; line-height: 19px; color: #45626A">No path for it yet? We note the request and tell you when one opens.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ notTyping }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ own }}" style="flex: none; min-height: 60px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1.5px dashed #9FB6BA; border-radius: 22px; background: transparent; color: #0C2A30; font: 600 15px/1 Figtree, system-ui, sans-serif; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1z"></path><path d="M14 7l3 3"></path></svg>
+<span>Type in my own</span>
+</button>
+</sc-if>
+
+</div>
+
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<a href="V2Need.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 16px; background: {{ctaBg}}; color: {{ctaFg}}; font-size: 16.5px; font-weight: 600; text-decoration: none; transition: background 160ms ease-out, color 160ms ease-out">
+<span>{{cta}}</span>
+</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+var self = this;
+var st = this.state || {};
+var seg = st.seg || 'study';
+var picked = st.picked === undefined ? 'Associate software engineer' : st.picked;
+var typing = !!st.typing;
+var groups = {
+study: { name: 'Studying', flex: 1, roles: ['Associate software engineer', 'Data analyst', 'Business analyst', 'Financial analyst', 'Associate product manager', 'UX designer'] },
+work: { name: 'Working', flex: 1, roles: ['Backend engineer', 'Product manager', 'Data engineer', 'Engineering manager', 'Growth marketer', 'FP&A analyst'] },
+build: { name: 'Building something', flex: 1.6, roles: ['Founder', 'Performance marketer', 'Startup finance lead / CFO', 'Brand manager', 'Revenue operations', 'Content marketer'] }
+};
+var ready = typing || !!picked;
+return {
+typing: typing,
+notTyping: !typing,
+segs: ['study', 'work', 'build'].map(function (k) {
+var on = k === seg;
+return {
+name: groups[k].name,
+flex: groups[k].flex,
+on: on ? 'true' : 'false',
+bg: on ? '#0A3B46' : 'transparent',
+fg: on ? '#FFFFFF' : '#45626A',
+w: on ? 600 : 500,
+pick: function () { self.setState({ seg: k, picked: '', typing: false }); }
+};
+}),
+roles: groups[seg].roles.map(function (r) {
+var on = !typing && r === picked;
+return {
+name: r,
+on: on ? 'true' : 'false',
+bg: on ? '#0A3B46' : '#FFFFFF',
+fg: on ? '#FFFFFF' : '#0C2A30',
+ring: on ? '#0A3B46' : '#C5D5D8',
+w: on ? 600 : 500,
+pick: function () { self.setState({ picked: r, typing: false }); }
+};
+}),
+own: function () { self.setState({ typing: true, picked: '' }); },
+cta: ready ? 'Continue' : 'Pick one to continue',
+ctaBg: ready ? '#43B4C8' : '#D3DFE1',
+ctaFg: ready ? '#06262C' : '#45626A'
+};
+}
+}
+</script>
+</body>
+</html>

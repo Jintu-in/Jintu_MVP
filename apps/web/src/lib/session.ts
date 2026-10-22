@@ -25,6 +25,9 @@ export type Viewer = {
    * the UI must not offer them the account it implies.
    */
   hasProfile: boolean;
+  /** Phase 4 Part B — null until chosen; IdentityMark applies the default. */
+  avatarAnimal: string | null;
+  avatarColor: string | null;
 };
 
 export async function getViewer(): Promise<Viewer | null> {
@@ -41,7 +44,7 @@ export async function getViewer(): Promise<Viewer | null> {
     // single() would throw on it.
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, avatar_animal, avatar_color")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -50,6 +53,8 @@ export async function getViewer(): Promise<Viewer | null> {
       email: user.email ?? null,
       fullName: profile?.full_name ?? null,
       hasProfile: Boolean(profile),
+      avatarAnimal: profile?.avatar_animal ?? null,
+      avatarColor: profile?.avatar_color ?? null,
     };
   } catch (error) {
     /*
@@ -70,8 +75,20 @@ export async function getViewer(): Promise<Viewer | null> {
       Logged rather than swallowed, because the failure mode otherwise is
       silent: signed-in people would see "Sign in" everywhere with nothing
       anywhere saying why.
+
+      warn, not error: this is the one branch of this function that is a
+      DOCUMENTED, anticipated condition rather than an unexpected failure —
+      the comment above names the exact case ("Supabase is not configured")
+      as one these routes are supposed to survive. The e2e smoke suite
+      (e2e/smoke/smoke.spec.ts) asserts zero console errors on every
+      marketing page specifically so a real regression doesn't hide among
+      expected noise, and it runs with no Supabase configured at all by
+      design (its own header comment: "needs nothing running except the
+      app itself"). A console.error here failed that suite in exactly the
+      environment it was built to pass in — CI, no Supabase secrets — which
+      is the bug, not the suite's strictness.
     */
-    console.error("[session] could not resolve the viewer, rendering as signed out:", error);
+    console.warn("[session] could not resolve the viewer, rendering as signed out:", error);
     return null;
   }
 }

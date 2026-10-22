@@ -117,6 +117,42 @@ jobs:
       - name: Guards are wired
         run: pnpm guards
 
+  e2e:
+    name: e2e smoke (390px · 1440px)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright's browser
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      # No database needed — these are the anonymous, DB-independent
+      # journeys only (apps/web/e2e/smoke). playwright.config.ts starts
+      # `pnpm dev` itself and waits for it; nothing else to stand up here.
+      # The signed-in journeys (apps/web/e2e/auth) need local Supabase and
+      # run as their own job once that fixture is built — see
+      # design/jintu-design/CURRENT-STATE.md.
+      - name: Run smoke e2e (390px and 1440px)
+        run: pnpm e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 14
+
   database:
     name: migrations · schema guarantees
     runs-on: ubuntu-latest

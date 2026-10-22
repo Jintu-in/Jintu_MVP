@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { NOTICE_VERSION } from "@jintu/contracts";
+import { LegalHeader, LegalSection, LegalToc } from "@/components/marketing/legal";
 
 export const metadata: Metadata = {
   title: "Privacy notice",
@@ -16,18 +17,34 @@ export const metadata: Metadata = {
  * exact text the person read. If you change anything material on this page,
  * bump NOTICE_VERSION in @jintu/contracts. Do not edit a published version
  * in place.
+ *
+ * TOC is just the IDs below handed to LegalToc — see that component for why
+ * there is no second, hand-typed list of section titles to drift from it.
  */
+const SECTIONS = [
+  { id: "who-we-are", label: "Who we are" },
+  { id: "18-or-older", label: "You must be 18 or older" },
+  { id: "what-we-collect", label: "What we collect, and why" },
+  { id: "your-choices", label: "What you choose separately" },
+  { id: "never-do", label: "What we never do" },
+  { id: "where-stored", label: "Where it is stored" },
+  { id: "how-long", label: "How long we keep it" },
+  { id: "your-rights", label: "Your rights" },
+  { id: "changes", label: "Changes to this notice" },
+];
+
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
-      <h1 className="text-3xl font-medium text-ink-900">Privacy notice</h1>
-      <p className="mt-2 text-sm text-ink-500">
-        Version {NOTICE_VERSION}. This is the notice in force for consents
-        recorded under that version.
-      </p>
+    <main className="mx-auto flex max-w-[1060px] flex-col gap-8 px-5 py-12 sm:py-16 lg:flex-row lg:items-start lg:gap-18 lg:px-12">
+      <LegalToc entries={SECTIONS} />
 
-      <div className="mt-10 space-y-8 text-pretty text-ink-700">
-        <Section title="Who we are">
+      <article className="flex min-w-0 max-w-[700px] flex-1 flex-col gap-7">
+        <LegalHeader
+          title="Privacy notice"
+          version={`Version ${NOTICE_VERSION}. This is the notice in force for consents recorded under that version.`}
+        />
+
+        <LegalSection id="who-we-are" title="Who we are">
           <p>
             Jintu is a free, self-paced roadmap platform for learning from
             curated free content. We are the data
@@ -38,9 +55,9 @@ export default function PrivacyPage() {
             </a>
             .
           </p>
-        </Section>
+        </LegalSection>
 
-        <Section title="You must be 18 or older">
+        <LegalSection id="18-or-older" title="You must be 18 or older">
           <p>
             Jintu is not open to anyone under 18, and we do not knowingly
             collect information about children. Our product tracks your
@@ -48,10 +65,10 @@ export default function PrivacyPage() {
             profiling, and we are not permitted to do that to a minor. If you
             tell us you are under 18, we will not sign you up.
           </p>
-        </Section>
+        </LegalSection>
 
-        <Section title="What we collect, and why">
-          <dl className="space-y-4">
+        <LegalSection id="what-we-collect" title="What we collect, and why">
+          <dl className="flex flex-col gap-4">
             <Item term="Your email address">
               To sign you in. We send a six-digit code to that address, and
               holding it is how we know it is you. You can add a password
@@ -73,14 +90,14 @@ export default function PrivacyPage() {
               It is private to you by default.
             </Item>
           </dl>
-        </Section>
+        </LegalSection>
 
-        <Section title="What you choose separately">
+        <LegalSection id="your-choices" title="What you choose separately">
           <p>
             Each of these is a separate tick box. None of them is pre-ticked,
             and declining any of them does not affect the service you get.
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
+          <ul className="list-disc space-y-2 pl-5">
             <li>
               <strong className="font-medium">Reminders</strong> — one
               well-timed daily nudge, on the channel and at the time you pick.
@@ -95,9 +112,9 @@ export default function PrivacyPage() {
               we ever build one. Off unless you turn it on.
             </li>
           </ul>
-        </Section>
+        </LegalSection>
 
-        <Section title="What we never do">
+        <LegalSection id="never-do" title="What we never do">
           <ul className="list-disc space-y-2 pl-5">
             <li>Sell your data, or share it with advertisers.</li>
             <li>
@@ -106,26 +123,26 @@ export default function PrivacyPage() {
             </li>
             <li>Give your contact details to a college without telling you.</li>
           </ul>
-        </Section>
+        </LegalSection>
 
-        <Section title="Where it is stored">
+        <LegalSection id="where-stored" title="Where it is stored">
           <p>
             In a database hosted in Mumbai. Some of the services we rely on
             to send messages and watch for errors operate outside India; we
             send them only what they need to do that job.
           </p>
-        </Section>
+        </LegalSection>
 
-        <Section title="How long we keep it">
+        <LegalSection id="how-long" title="How long we keep it">
           <p>
             Your progress, streaks, points and review cards: while your
             account exists. Consent records: kept after withdrawal, because
             the record that consent existed is exactly what the law asks us
             to be able to show.
           </p>
-        </Section>
+        </LegalSection>
 
-        <Section title="Your rights">
+        <LegalSection id="your-rights" title="Your rights">
           <p>
             You can ask us for a copy of what we hold, ask us to correct it,
             ask us to delete it, and withdraw any consent you gave. Withdrawing
@@ -133,30 +150,21 @@ export default function PrivacyPage() {
             controls in your account. Withdrawal does not undo what was already
             done while the consent was live.
           </p>
-          <p className="mt-3">
+          <p>
             If we get something wrong and you are not satisfied with our
             answer, you can complain to the Data Protection Board of India.
           </p>
-        </Section>
+        </LegalSection>
 
-        <Section title="Changes to this notice">
+        <LegalSection id="changes" title="Changes to this notice">
           <p>
             When this notice changes materially we publish it under a new
             version number rather than editing this one, so it is always
             possible to see which text you agreed to.
           </p>
-        </Section>
-      </div>
+        </LegalSection>
+      </article>
     </main>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <h2 className="text-lg font-medium text-ink-900">{title}</h2>
-      <div className="mt-2">{children}</div>
-    </section>
   );
 }
 

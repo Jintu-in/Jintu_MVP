@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign up, set a password</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 12px">
+<a href="V2Code.dc.html" aria-label="Back" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</a>
+<div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">step 2 of 3</div>
+</div>
+
+<form style="flex: 1; min-height: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; padding: 12px 20px 0">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="align-self: flex-start; height: 28px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 14px; background: #DDF4EA; color: #0F6A48; font-size: 12.5px; font-weight: 600">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+<span>Email confirmed</span>
+</div>
+<h1 style="margin: 0; font: 700 32px/36px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">Set a password</h1>
+<p style="margin: 0; font-size: 16px; line-height: 24px; color: #45626A">For next time you sign in as asha@example.com.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="newpw" style="font-size: 13.5px; line-height: 18px; font-weight: 600">New password</label>
+<div style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 6px 0 16px; border: 2px solid #0B5567; border-radius: 16px; background: #FFFFFF">
+<input id="newpw" type="text" value="quiet-river-42" style="flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; padding: 0; background: transparent; color: #0C2A30; font: 400 16px/1 'JetBrains Mono', ui-monospace, monospace">
+<button type="button" aria-label="Hide password" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 12px; background: transparent; color: #45626A; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M6.500 7C4 8.800 2.500 12 2.500 12S6 18.500 12 18.500c1.600 0 3-.400 4.300-1.100"></path><path d="M10 5.800c.600-.200 1.300-.300 2-.300 6 0 9.500 6.500 9.500 6.500s-.800 1.500-2.300 3"></path></svg>
+</button>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: #0F6A48">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+<span>At least 8 characters</span>
+</div>
+</div>
+
+<a href="V2Join.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 16px; background: #43B4C8; color: #06262C; font-size: 16.5px; font-weight: 600; text-decoration: none">
+<span>Save and continue</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+</a>
+
+</form>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

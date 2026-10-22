@@ -1,5 +1,6 @@
 import type { Metadata, Route } from "next";
 import { notFound } from "next/navigation";
+import { AppShell } from "@/components/shell/app-shell";
 import RoadmapRoute from "@/components/roadmap/roadmap-route";
 import type {
   RoadmapDay,
@@ -9,12 +10,13 @@ import type {
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap, type RoadmapNode } from "@/lib/roadmaps";
+import { getViewer, initialsFor } from "@/lib/session";
 
 /**
- * The roadmap page, rendered through the design-set RoadmapPage component
- * (docs/design/Roadmap page + Roadmap body). This file's whole job is
- * shaping data into the component's strings — every number below is
- * computed from real rows, never typed in.
+ * The roadmap ("block") page, rendered through RoadmapPage — see that
+ * component's own header for the V2Block/DeskBlock rebuild. This file's
+ * whole job is shaping data into the component's strings — every number
+ * below is computed from real rows, never typed in.
  *
  * Rendered on demand: CI builds with no Supabase configured, and a public
  * page this deep changes whenever curation does.
@@ -71,9 +73,10 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
   if (!roadmap) notFound();
 
   const allNodes = roadmap.modules.flatMap((m) => m.nodes);
-  const [progress, momentum] = await Promise.all([
+  const [progress, momentum, viewer] = await Promise.all([
     getMyProgress(allNodes.map((n) => n.id)),
     getMyMomentum(),
+    getViewer().catch(() => null),
   ]);
   const signedIn = progress !== null;
   const isDone = (id: string) => progress?.get(id) === "done";
@@ -174,23 +177,38 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
     .join(" ");
 
   return (
-    <RoadmapRoute
-      continueHref={`/learn/${slug}/${nextNode.slug}` as Route}
-      breadcrumb={{ list: "Roadmaps", category: roadmap.subjectTags[0] ?? roadmap.difficulty }}
-      title={roadmap.title}
-      description={roadmap.summary}
-      statChips={statChips}
-      progress={{
-        daysCount: `${doneTotal} of ${allNodes.length}`,
-        statLine: momentum ? `${pct}% · ${momentum.totalPoints} pts` : `${pct}%`,
-        pct,
-        continueDayNumber: String(nextIndex + 1),
-        continueTitle: nextNode.title,
-        lastOpenedLine,
-      }}
-      filter={{ question: "On metered data?", options: filterOptions }}
-      modules={modules}
-      footnote={footnote}
-    />
+    <AppShell
+      active="roadmaps"
+      user={
+        viewer
+          ? {
+              displayName: viewer.fullName ?? viewer.email ?? "You",
+              initials: initialsFor(viewer),
+              points: momentum?.totalPoints ?? 0,
+              avatarAnimal: viewer.avatarAnimal,
+              avatarColor: viewer.avatarColor,
+            }
+          : null
+      }
+    >
+      <RoadmapRoute
+        continueHref={`/learn/${slug}/${nextNode.slug}` as Route}
+        breadcrumb={{ list: "Roadmaps", category: roadmap.subjectTags[0] ?? roadmap.difficulty }}
+        title={roadmap.title}
+        description={roadmap.summary}
+        statChips={statChips}
+        progress={{
+          daysCount: `${doneTotal} of ${allNodes.length}`,
+          statLine: momentum ? `${pct}% · ${momentum.totalPoints} pts` : `${pct}%`,
+          pct,
+          continueDayNumber: String(nextIndex + 1),
+          continueTitle: nextNode.title,
+          lastOpenedLine,
+        }}
+        filter={{ question: "On metered data?", options: filterOptions }}
+        modules={modules}
+        footnote={footnote}
+      />
+    </AppShell>
   );
 }

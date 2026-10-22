@@ -3,12 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import {
+  avatarInput,
+  codeLanguageInput,
   deleteAccountInput,
   displayNameInput,
   publicProfileInput,
   reminderPrefsInput,
   timezoneUpdateInput,
 } from "@jintu/contracts";
+import { recordConsentEventBestEffort } from "@/lib/consent-events";
 import { getServiceEnv } from "@/lib/env";
 import { UserFacingError, actionClient } from "@/lib/safe-action";
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +61,7 @@ export const updateTimezone = actionClient
     }
 
     revalidatePath("/profile");
+    revalidatePath("/settings");
     revalidatePath("/dashboard");
     return { timezone: parsedInput.timezone };
   });
@@ -74,10 +78,60 @@ export const updateDisplayName = actionClient
     if (error) throw new UserFacingError(`Could not save that name: ${error.message}`);
 
     revalidatePath("/profile");
+    revalidatePath("/settings");
     revalidatePath("/", "layout");
     return { displayName: parsedInput.displayName ?? null };
   });
 
+/**
+ * Phase 4 Part B (V2Avatar). "Surprise me" picks locally and does not call
+ * this — only Save does, matching the mockup's own distinction ("not saved
+ * until Save" per CHANGES.md item 5).
+ */
+export const setAvatar = actionClient
+  .inputSchema(avatarInput)
+  .action(async ({ parsedInput }) => {
+    const { supabase, user } = await requireUser();
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_animal: parsedInput.avatarAnimal, avatar_color: parsedInput.avatarColor })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save your avatar: ${error.message}`);
+
+    revalidatePath("/profile");
+    revalidatePath("/settings");
+    revalidatePath("/", "layout");
+    return { avatarAnimal: parsedInput.avatarAnimal, avatarColor: parsedInput.avatarColor };
+  });
+
+/**
+ * The DSA language switch (V2Dsa/DeskDsa) — "one choice remembered per
+ * user, applies to every code block." No revalidatePath: the lesson
+ * reader already updates its own shared language state optimistically
+ * (lesson-route.tsx), this call only persists it for next time.
+ */
+export const setCodeLanguage = actionClient
+  .inputSchema(codeLanguageInput)
+  .action(async ({ parsedInput }) => {
+    const { supabase, user } = await requireUser();
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ code_language: parsedInput.codeLanguage })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save your language: ${error.message}`);
+
+    return { codeLanguage: parsedInput.codeLanguage };
+  });
+
+/**
+ * The one place "One reminder a day" (Settings) and "Daily reminders"
+ * (Settings/Consents) both write — CHANGES.md item 2's "one source of
+ * truth". `dailyEnabled` is both the operational switch and, logged
+ * alongside it, the `reminders` consent: whichever row the person touched,
+ * the other reads the same state next render.
+ */
 export const updateReminders = actionClient
   .inputSchema(reminderPrefsInput)
   .action(async ({ parsedInput }) => {
@@ -95,7 +149,11 @@ export const updateReminders = actionClient
     );
     if (error) throw new UserFacingError(`Could not save your reminders: ${error.message}`);
 
+    await recordConsentEventBestEffort(supabase, user.id, "reminders", parsedInput.dailyEnabled);
+
     revalidatePath("/profile");
+    revalidatePath("/settings");
+    revalidatePath("/settings/consents");
     return { saved: true };
   });
 
@@ -103,6 +161,12 @@ export const updateReminders = actionClient
  * The public page. The row survives being switched off so the handle stays
  * reserved for the person who chose it — turning the page back on should not
  * be a race against whoever noticed it went free.
+ *
+ * The one place the Settings "Public profile" toggle and the Settings/
+ * Consents "Public profile" row both write — CHANGES.md item 2's "one
+ * source of truth". `isPublic` is both the operational switch (what gates
+ * anonymous reads via RLS) and, logged alongside it, the `public_profile`
+ * consent.
  */
 export const updatePublicProfile = actionClient
   .inputSchema(publicProfileInput)
@@ -131,7 +195,11 @@ export const updatePublicProfile = actionClient
       throw new UserFacingError(`Could not save your public profile: ${error.message}`);
     }
 
+    await recordConsentEventBestEffort(supabase, user.id, "public_profile", parsedInput.isPublic);
+
     revalidatePath("/profile");
+    revalidatePath("/settings");
+    revalidatePath("/settings/consents");
     revalidatePath(`/u/${parsedInput.handle}`);
     return { handle: parsedInput.handle, isPublic: parsedInput.isPublic };
   });

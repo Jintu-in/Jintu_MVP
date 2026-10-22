@@ -110,6 +110,102 @@ for (const [mi, m] of spec.modules.entries()) {
     if (n.challengeMinutes !== undefined &&
         (!Number.isInteger(n.challengeMinutes) || n.challengeMinutes < 5 || n.challengeMinutes > 120))
       fail(`${at} challengeMinutes ${n.challengeMinutes} — 5–120`);
+    // Phase 5 Part B (0030): hand-validated here, not against
+    // @jintu/contracts' authoredStepsSchema — that package exports TS
+    // source (packages/contracts/package.json: "exports": "./src/index.ts"),
+    // which plain `node` cannot import without a loader, and this script
+    // already validates everything else by hand. The schema the app
+    // actually trusts at render time is lib/roadmaps.ts's own
+    // authoredStepsSchema.safeParse() on the way out of the database; this
+    // is a friendly early check for whoever is authoring the content, not
+    // the real safety net.
+    for (const [si, s] of (n.steps ?? []).entries()) {
+      const sat = `${at} step ${si + 1}`;
+      if (s.kind === "command") {
+        if (!s.title) fail(`${sat} (command) needs a title`);
+        if (!s.command) fail(`${sat} (command) needs a command`);
+        if (!Array.isArray(s.output) || s.output.length === 0) fail(`${sat} (command) needs output`);
+      } else if (s.kind === "turn") {
+        if (!s.timeLabel) fail(`${sat} (turn) needs a timeLabel`);
+        if (!s.title) fail(`${sat} (turn) needs a title`);
+        if (!s.doneWhenText) fail(`${sat} (turn) needs doneWhenText`);
+        if (!s.ctaLabel) fail(`${sat} (turn) needs a ctaLabel`);
+      } else if (s.kind === "choose") {
+        if (!s.title) fail(`${sat} (choose) needs a title`);
+        if (!Array.isArray(s.facts) || s.facts.length === 0) fail(`${sat} (choose) needs facts`);
+        if (!Array.isArray(s.options) || s.options.length < 2) fail(`${sat} (choose) needs at least two options`);
+        if (!Number.isInteger(s.correctIndex) || s.correctIndex < 0 || s.correctIndex >= (s.options ?? []).length)
+          fail(`${sat} (choose) correctIndex must index into options`);
+        if (!s.explanation) fail(`${sat} (choose) needs an explanation`);
+        if (!s.ctaLabel) fail(`${sat} (choose) needs a ctaLabel`);
+      } else if (s.kind === "find") {
+        if (!s.title) fail(`${sat} (find) needs a title`);
+        if (!s.sourceTitle || !s.sourceUrl) fail(`${sat} (find) needs sourceTitle and sourceUrl`);
+        if (!s.answerCode || !s.answerText) fail(`${sat} (find) needs answerCode and answerText`);
+        if (!s.ctaLabel) fail(`${sat} (find) needs a ctaLabel`);
+      } else if (s.kind === "formula") {
+        if (!s.title) fail(`${sat} (formula) needs a title`);
+        if (!s.cellLabel || !s.formula) fail(`${sat} (formula) needs cellLabel and formula`);
+        if (!s.resultValue) fail(`${sat} (formula) needs resultValue`);
+        if (!s.ctaLabel) fail(`${sat} (formula) needs a ctaLabel`);
+      } else if (s.kind === "number") {
+        if (!s.title) fail(`${sat} (number) needs a title`);
+        if (!Array.isArray(s.facts) || s.facts.length === 0) fail(`${sat} (number) needs facts`);
+        if (!Array.isArray(s.answers) || s.answers.length === 0) fail(`${sat} (number) needs answers`);
+        if (!Array.isArray(s.working) || s.working.length === 0) fail(`${sat} (number) needs working`);
+        if (!s.ctaLabel) fail(`${sat} (number) needs a ctaLabel`);
+      } else if (s.kind === "write") {
+        if (!s.title) fail(`${sat} (write) needs a title`);
+        if (!s.template || !s.example) fail(`${sat} (write) needs template and example`);
+        if (!Array.isArray(s.parts) || s.parts.length === 0) fail(`${sat} (write) needs parts`);
+        if (!s.ctaLabel) fail(`${sat} (write) needs a ctaLabel`);
+      } else if (s.kind === "codeMulti") {
+        // The DSA language switch (0033) — infrastructure only, no real
+        // roadmap authors this yet, but validated the same as every other
+        // kind so a future author gets a sentence, not a surprise.
+        if (!s.title) fail(`${sat} (codeMulti) needs a title`);
+        if (!Array.isArray(s.variants) || s.variants.length < 2)
+          fail(`${sat} (codeMulti) needs at least two language variants`);
+        const CODE_LANGS = ["py", "java", "cpp", "js", "c"];
+        const seenLangs = new Set();
+        for (const [vi, v] of (s.variants ?? []).entries()) {
+          const vat = `${sat} variant ${vi + 1}`;
+          if (!CODE_LANGS.includes(v.language)) fail(`${vat}: language "${v.language}" — one of ${CODE_LANGS.join("/")}`);
+          if (seenLangs.has(v.language)) fail(`${vat}: language "${v.language}" repeated — each may appear once`);
+          seenLangs.add(v.language);
+          if (!v.fileLabel || !v.code) fail(`${vat} needs fileLabel and code`);
+        }
+        if (!s.output) fail(`${sat} (codeMulti) needs output`);
+        if (!s.ctaLabel) fail(`${sat} (codeMulti) needs a ctaLabel`);
+      } else {
+        fail(`${sat}: kind "${s.kind}" — one of command/turn/choose/find/formula/number/write/codeMulti`);
+      }
+      // Desktop-only "your work" panel (CHANGES.md item 6) — optional on
+      // every Uni* kind, absent on command/turn (no Desk mockup for
+      // either yet).
+      if (s.panel !== undefined) {
+        const pat = `${sat} panel`;
+        if (s.panel.kind === "dotGrid") {
+          if (!s.panel.title) fail(`${pat} (dotGrid) needs a title`);
+          if (!Number.isInteger(s.panel.total) || s.panel.total < 1) fail(`${pat} (dotGrid) needs total >= 1`);
+          if (!Array.isArray(s.panel.legend) || s.panel.legend.length === 0) fail(`${pat} (dotGrid) needs legend`);
+        } else if (s.panel.kind === "tableRows") {
+          if (!s.panel.title) fail(`${pat} (tableRows) needs a title`);
+          if (!Array.isArray(s.panel.columns) || s.panel.columns.length === 0) fail(`${pat} (tableRows) needs columns`);
+          if (!Array.isArray(s.panel.rows) || s.panel.rows.length === 0) fail(`${pat} (tableRows) needs rows`);
+        } else if (s.panel.kind === "spreadsheet") {
+          if (!s.panel.title) fail(`${pat} (spreadsheet) needs a title`);
+          if (!Array.isArray(s.panel.columnLabels) || s.panel.columnLabels.length === 0)
+            fail(`${pat} (spreadsheet) needs columnLabels`);
+          if (!Array.isArray(s.panel.rows) || s.panel.rows.length === 0) fail(`${pat} (spreadsheet) needs rows`);
+        } else if (s.panel.kind === "forecastLog") {
+          if (!s.panel.confidence || !s.panel.text || !s.panel.dueLabel)
+            fail(`${pat} (forecastLog) needs confidence, text and dueLabel`);
+        } else {
+          fail(`${pat}: kind "${s.panel.kind}" — one of dotGrid/tableRows/spreadsheet/forecastLog`);
+        }
+      }
+    }
     for (const [ti, t] of (n.topics ?? []).entries()) {
       if (!t.title || !t.detail) fail(`${at} topic ${ti + 1} needs title AND detail — the detail line is the point`);
     }
@@ -127,6 +223,20 @@ for (const [mi, m] of spec.modules.entries()) {
     const comprehension = (n.checks ?? []).filter((c) => (c.kind ?? "comprehension") === "comprehension");
     if (comprehension.length > 5)
       fail(`${at}: ${comprehension.length} comprehension checks — three is the model, five the ceiling`);
+    // "Questions you might have" (0032) — separate from node_checks above:
+    // real FAQ questions, not comprehension checks.
+    for (const [fi, f] of (n.faq ?? []).entries()) {
+      if (!f.question || !f.answer) fail(`${at} faq ${fi + 1} needs question and answer`);
+    }
+    // The no-score quiz (0032).
+    for (const [qi, qz] of (n.quiz ?? []).entries()) {
+      const qat = `${at} quiz ${qi + 1}`;
+      if (!qz.question) fail(`${qat} needs a question`);
+      if (!Array.isArray(qz.options) || qz.options.length < 2) fail(`${qat} needs at least two options`);
+      if (!Number.isInteger(qz.correctIndex) || qz.correctIndex < 0 || qz.correctIndex >= (qz.options ?? []).length)
+        fail(`${qat} correctIndex must index into options`);
+      if (!qz.explanation) fail(`${qat} needs an explanation`);
+    }
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -237,6 +347,14 @@ const q = (v) => (v === null || v === undefined ? "null" : `'${String(v).replace
 const qn = (v) => (v === null || v === undefined ? "null" : Number(v));
 const qarr = (a) =>
   a && a.length ? `array[${a.map(q).join(", ")}]::text[]` : "'{}'::text[]";
+/** nodes.steps (0030) — a jsonb literal, or null for a day with none
+ *  authored yet. Escaping follows q()'s own rule (single quotes doubled);
+ *  JSON.stringify already escapes everything else PostgREST/SQL cares
+ *  about inside the string. */
+const qjsonb = (v) =>
+  v === null || v === undefined || v.length === 0
+    ? "null"
+    : `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
 
 const lines = [];
 const push = (s) => lines.push(s);
@@ -271,8 +389,8 @@ for (const [mi, m] of spec.modules.entries()) {
   push(`  values (rm, ${mi + 1}, ${q(m.title)}, ${q(m.weekRange ?? null)}, ${q(m.objective ?? null)}, ${q(m.deliverable ?? null)}, ${qn(m.estHours)})`);
   push(`  returning id into m;`);
   for (const [ni, n] of m.nodes.entries()) {
-    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, est_minutes, difficulty, is_optional, points)`);
-    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
+    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, steps, faq, quiz, est_minutes, difficulty, is_optional, points)`);
+    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${qjsonb(n.steps)}, ${qjsonb(n.faq)}, ${qjsonb(n.quiz)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
     push(`  returning id into n;`);
     for (const [ti, t] of (n.topics ?? []).entries()) {
       push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);

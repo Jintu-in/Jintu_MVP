@@ -1,4 +1,3 @@
-import type { LessonBlockSeed } from "@/components/lesson/lesson-route";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
 /**
@@ -20,12 +19,70 @@ import type { RoadmapNode } from "@/lib/roadmaps";
  * heading. So "3 of 6" on a full day may honestly be "2 of 4" on a sparse
  * one, and the rail counts what exists.
  *
- * Two screens depend on this list agreeing with itself: the reader renders
- * it, and the dashboard says "block 12 of 16" against its length.
+ * Phase 5 Part A gave the lesson reader itself a different, finer-grained
+ * builder (lib/steps.ts, one step per resource/check instead of one
+ * section for all of them) — so this file's "block 12 of 16" no longer
+ * matches what the reader shows. It still matches what lib/dashboard.ts
+ * counts, which is this file's only remaining consumer; see lib/steps.ts's
+ * header comment for the full reasoning.
  */
-const text = (t: string) => [{ kind: "text" as const, text: t }];
 
-const TYPE_LABEL: Record<RoadmapNode["resources"][number]["type"], string> = {
+/** What the dashboard's "block 12 of 16" is built from — kept here (not
+ *  imported from the reader, which no longer uses this shape at all) since
+ *  this file is now its only producer and consumer. */
+export type LessonBlockSeed = { id: string; railTitle: string } & (
+  | { kind: "brief"; text: { kind: "text" | "code" | "mono"; text: string }[] }
+  | {
+      kind: "concept";
+      heading?: string;
+      paragraphs: { kind: "text" | "code" | "mono"; text: string }[][];
+    }
+  | {
+      kind: "resource";
+      resType: "doc" | "video";
+      title: string;
+      href?: string;
+      meta: string;
+      why: string;
+      /** Present on YouTube resources — becomes the nocookie facade. */
+      video?: { videoId: string; durationSec: number | null; estSizeMb: number | null };
+    }
+  | { kind: "challenge"; label: string; text: { kind: "text" | "code" | "mono"; text: string }[] }
+  | {
+      kind: "check";
+      number: string;
+      question: { kind: "text" | "code" | "mono"; text: string }[];
+      answer: { kind: "text" | "code" | "mono"; text: string }[][];
+    }
+  | {
+      kind: "gotcha";
+      heading?: string;
+      text: { kind: "text" | "code" | "mono"; text: string }[];
+    }
+  | { kind: "topics"; heading: string; items: { title: string; detail: string }[] }
+  | {
+      kind: "resources";
+      heading: string;
+      items: {
+        id: string;
+        typeLabel: string;
+        resType: "doc" | "video";
+        title: string;
+        href: string;
+        meta: string;
+        why: string;
+        dead: boolean;
+        video?: { videoId: string; durationSec: number | null; estSizeMb: number | null };
+      }[];
+    }
+  | { kind: "checks"; heading: string; items: { question: string; answer: string }[] }
+  | { kind: "summary"; lead: string; bullets: string[] }
+);
+/** Also used by lib/steps.ts (the one-step-at-a-time reader) — same rich-text
+ *  shape, same resource meta line, one definition. */
+export const text = (t: string) => [{ kind: "text" as const, text: t }];
+
+export const TYPE_LABEL: Record<RoadmapNode["resources"][number]["type"], string> = {
   read: "Read",
   video: "Video",
   doc: "Docs",
@@ -35,7 +92,7 @@ const TYPE_LABEL: Record<RoadmapNode["resources"][number]["type"], string> = {
 };
 
 /** "Quartz · github.com · 30 min · ~98 MB" — the design's mono meta line. */
-function resourceMeta(r: RoadmapNode["resources"][number]): string {
+export function resourceMeta(r: RoadmapNode["resources"][number]): string {
   let host: string;
   try {
     host = new URL(r.url).hostname.replace(/^www\./, "");

@@ -1,5 +1,6 @@
 "use client";
 
+import { GhostNumeral } from "@/components/marketing/ghost-numeral";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
 import Link from "next/link";
@@ -13,6 +14,9 @@ import { useEffect } from "react";
  * exactly the ones a database blip turns into React error #441 and a blank
  * screen. Someone who just ticked a node and sees white has no way to know
  * whether the tick survived. Saying so is the whole job here.
+ *
+ * Restyled against V2Error.dc.html / DeskError.dc.html — same ghost-numeral
+ * treatment as not-found.tsx, with "!" in place of "404".
  */
 export default function RootError({
   error,
@@ -30,42 +34,42 @@ export default function RootError({
   return (
     <div className="flex min-h-dvh flex-col bg-ink-50">
       <SiteNav />
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-5 py-16">
-      <h1 className="text-2xl font-medium tracking-tight text-balance text-ink-900">
-        This page could not load
-      </h1>
-      <p className="mt-3 text-pretty text-ink-600">
-        Something on our end failed while building this page. It is not
-        something you did.
-      </p>
-      <p className="mt-3 text-pretty text-ink-600">
-        Your progress is saved — it is written before this page is drawn, so
-        a failure here cannot lose it.
-      </p>
-
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <button
-          type="button"
-          onClick={reset}
-          className="flex h-12 items-center justify-center rounded-lg bg-brand-700 px-5 font-medium text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
-        >
-          Try again
-        </button>
-        <Link
-          href="/"
-          className="flex h-12 items-center justify-center rounded-lg px-5 font-medium text-brand-700 hover:text-brand-800"
-        >
-          Go to the home page
-        </Link>
-      </div>
-
-      {error.digest ? (
-        <p className="mt-8 text-sm text-ink-500">
-          If you report this, quote{" "}
-          <code className="font-mono text-ink-700">{error.digest}</code> — it
-          identifies this exact failure in our logs.
+      <main className="relative mx-auto flex w-full max-w-[1060px] flex-1 flex-col justify-center overflow-hidden px-5 py-16 sm:px-12">
+        <GhostNumeral glyph="!" />
+        <div className="relative font-mono text-[14px] leading-none text-link">Something failed</div>
+        <h1 className="t-page relative mt-2 max-w-[18ch] text-ink-900">This page could not load</h1>
+        <p className="relative mt-3 max-w-[560px] text-[16.5px] leading-[1.6] text-pretty text-ink-600 lg:text-[19px]">
+          Something on our end failed while building this page. It is not
+          something you did.
         </p>
-      ) : null}
+        <p className="relative mt-1 max-w-[560px] text-[16.5px] leading-[1.6] text-pretty text-ink-600 lg:text-[19px]">
+          Your progress is saved. It is written before this page is drawn, so
+          a failure here cannot lose it.
+        </p>
+
+        {error.digest ? (
+          <div className="relative mt-4 max-w-[560px] rounded-2xl bg-white px-4.5 py-3.5 text-[14.5px] leading-[1.55] text-ink-600">
+            If you report this, quote{" "}
+            <code className="font-mono text-[13.5px] text-ink-900">{error.digest}</code>. It
+            identifies this exact failure in our logs.
+          </div>
+        ) : null}
+
+        <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3.5">
+          <button
+            type="button"
+            onClick={reset}
+            className="flex h-14 items-center justify-center rounded-2xl bg-brand-500 px-7 text-[16.5px] font-semibold text-on-brand hover:bg-brand-400"
+          >
+            Try again
+          </button>
+          <Link
+            href="/"
+            className="flex h-14 items-center justify-center rounded-2xl border border-ink-200 bg-white px-7 text-[16.5px] font-semibold text-ink-900"
+          >
+            Go to the home page
+          </Link>
+        </div>
       </main>
       <SiteFooter />
     </div>

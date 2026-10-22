@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>After sign-up, details and consent</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+
+<div style="height: 64px; flex: none; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px">
+<div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">step 3 of 3</div>
+</div>
+
+<form style="flex: 1; min-height: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 0">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font: 700 30px/34px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">One last step</h1>
+<p style="margin: 0; font-size: 15px; line-height: 22px; color: #45626A">Two things we need, three you can choose.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ob-name" style="font-size: 13.5px; line-height: 18px; font-weight: 600">Full name <span style="font-weight: 400; color: #5E777D">(optional)</span></label>
+<input id="ob-name" type="text" value="Asha Verma" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 1px solid #C5D5D8; border-radius: 14px; background: #FFFFFF; color: #0C2A30; font: 400 16px/1 Figtree, system-ui, sans-serif">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ob-phone" style="font-size: 13.5px; line-height: 18px; font-weight: 600">Mobile number</label>
+<div style="height: 52px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 16px; border: 1px solid #C5D5D8; border-radius: 14px; background: #FFFFFF">
+<span style="font: 500 15px/1 'JetBrains Mono', ui-monospace, monospace; color: #45626A">+91</span>
+<span aria-hidden="true" style="width: 1px; height: 22px; background: #DCE6E7"></span>
+<input id="ob-phone" type="tel" placeholder="98765 43210" style="flex: 1; min-width: 0; height: 44px; border: 0; outline: 0; padding: 0; background: transparent; color: #0C2A30; font: 400 16px/1 Figtree, system-ui, sans-serif">
+</div>
+</div>
+</div>
+
+<label for="ob-age" style="min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 16px; border: 2px solid #0B5567; border-radius: 16px; background: #FFFFFF; font-size: 15.5px; line-height: 20px; font-weight: 600; cursor: pointer">
+<input id="ob-age" type="checkbox" checked="{{ yes }}" onChange="{{ noop }}" style="width: 22px; height: 22px; flex: none; margin: 0; accent-color: #0A3B46">
+<span>I am 18 years old or older</span>
+</label>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13.5px; line-height: 18px; font-weight: 600">Your choice. Nothing is ticked for you</div>
+<div style="display: flex; flex-direction: column; border-radius: 20px; background: #FFFFFF; overflow: hidden">
+<label for="ob-remind" style="min-height: 60px; display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #EEF3F3; cursor: pointer">
+<input id="ob-remind" type="checkbox" checked="{{ yes }}" onChange="{{ noop }}" style="width: 22px; height: 22px; flex: none; margin: 0; accent-color: #0A3B46">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; line-height: 20px; font-weight: 500">A daily reminder</span><span style="font-size: 13px; line-height: 18px; color: #5E777D">One message a day, at a time you pick</span></span>
+</label>
+<label for="ob-analytics" style="min-height: 60px; display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #EEF3F3; cursor: pointer">
+<input id="ob-analytics" type="checkbox" style="width: 22px; height: 22px; flex: none; margin: 0; accent-color: #0A3B46">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; line-height: 20px; font-weight: 500">Product analytics</span><span style="font-size: 13px; line-height: 18px; color: #5E777D">Helps us see where lessons lose people</span></span>
+</label>
+<label for="ob-public" style="min-height: 60px; display: flex; align-items: center; gap: 12px; padding: 8px 16px; cursor: pointer">
+<input id="ob-public" type="checkbox" style="width: 22px; height: 22px; flex: none; margin: 0; accent-color: #0A3B46">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; line-height: 20px; font-weight: 500">A public profile</span><span style="font-size: 13px; line-height: 18px; color: #5E777D">A page you can share with your streak on it</span></span>
+</label>
+</div>
+</div>
+
+</form>
+
+<div style="flex: none; padding: 12px 20px 20px; background: #FFFFFF; border-top: 1px solid #DCE6E7">
+<a href="V2New.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: #43B4C8; color: #06262C; font-size: 16.5px; font-weight: 600; text-decoration: none">Finish and start lesson 1</a>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return { yes: true, noop: function () {} };
+}
+}
+</script>
+</body>
+</html>

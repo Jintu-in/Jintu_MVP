@@ -68,6 +68,46 @@ export default {
           challenge:
             "Take any calculation you do at work — a commission, a discount, a tax — and build it three times: once with the numbers typed into the formulas, once with them in labelled input cells, and once more after changing one assumption. Time how long the change takes in each version.",
           challengeMinutes: 25,
+          // Phase 5 Part B pilot (migration 0030): a worked formula ahead
+          // of the three-way build above, which stays as written — this
+          // field is additive, not a replacement. Deliberately not a bare
+          // SUM example: today's actual lesson is referencing a labelled
+          // input rather than hard-coding a rate, so the pilot formula
+          // demonstrates exactly that instead of an unrelated scenario.
+          steps: [
+            {
+              kind: "formula",
+              title: "Add GST without typing the rate twice",
+              inputsLabel: "Inputs",
+              inputs: [
+                { label: "B2 — sale amount", value: "₹1,000" },
+                { label: "D1 — GST rate", value: "18%" },
+              ],
+              cellLabel: "Type this in cell C2",
+              formula: "=B2*(1+$D$1)",
+              resultLabel: "The cell should show",
+              resultValue: "₹1,180",
+              resultHighlight: "look for this",
+              note: "The rate lives in D1, not inside the formula — change it once and every row that references D1 updates. That is today's whole lesson.",
+              ctaLabel: "Mine shows ₹1,180",
+              // Desktop only (CHANGES.md item 6, DeskUniFormula). Columns
+              // B/C/D, not A/B: C2 is the only formula cell, reading B2
+              // and D1, which is the point this day's lesson actually
+              // makes — ties to this step's own formula, not the
+              // mockup's unrelated weekly-sales example.
+              panel: {
+                kind: "spreadsheet",
+                title: "Your workbook after this step",
+                subtitle: "Sheet 1",
+                columnLabels: ["B", "C", "D"],
+                rows: [
+                  { rowLabel: "1", cells: ["Amount", "With GST", "Rate"] },
+                  { rowLabel: "2", cells: ["1,000", "1,180", "18%"], highlightCellIndex: 1, highlightBadge: "C2" },
+                ],
+                note: "C2 is the only formula cell — it reads B2 and D1, so raising the rate in D1 updates every row that references it.",
+              },
+            },
+          ],
           estMinutes: 45,
           points: 25,
           difficulty: "intro",

@@ -1,56 +1,43 @@
 import type { Metadata } from "next";
-import Homepage from "@/components/marketing/homepage";
+import Homepage, {
+  type HomepageCategoryGroup,
+  type HomepageFieldTile,
+  type HomepageRoadmapRow,
+} from "@/components/marketing/homepage";
 import { CATEGORIES } from "@/lib/catalogue-filters";
-import {
-  countPublishedResources,
-  listModules,
-  listPublishedRoadmaps,
-  sampleDay,
-  sampleResources,
-  topSourceNames,
-  type RoadmapSummary,
-} from "@/lib/roadmaps";
+import { listPublishedRoadmaps } from "@/lib/roadmaps";
+import { buildCatalogue } from "@/lib/planned-roadmaps";
+import { ROLES, populatedDomains, rolesInDomain } from "@/content/roles";
 import { getViewer, initialsFor } from "@/lib/session";
 
 /**
- * The homepage: hero question, one flagship roadmap, three plain sections.
+ * The homepage: the job-first redesign's entry point.
  *
- * The "Start today" card is read from the database and every number on it is
- * real — module, node and hour counts grow as the curriculum is imported,
- * and a page that invented "52 nodes" while the catalogue held twelve would
- * be the exact kind of claim this site exists to never make. If the read
- * fails or nothing is published, the card disappears rather than lying.
- *
- * The hero input is a plain GET form into /learn, where the filtering
- * happens server-side. No JS, works on the cheapest phone, and the search
- * screen proper (phase-3 screen 4) can replace the target without touching
- * this form.
+ * Every count handed to the component is read here, never guessed in it —
+ * the design's own mockup shows one illustrative roadmap list ("Ten
+ * roadmaps... one is open today"); this reads the real catalogue instead, so
+ * the page stays true automatically as roadmaps actually go live rather than
+ * needing a copy edit each time one does.
  */
 export const metadata: Metadata = {
-  // absolute: the layout's "%s · Jintu" template would otherwise double the
-  // brand — "Jintu — learn anything, properly · Jintu" shipped once already.
-  title: { absolute: "Jintu — learn anything, properly" },
+  title: { absolute: "Jintu — learn the skills for the job you want" },
   description:
-    "Deep, free roadmaps built from the best free material on the internet. " +
-    "Reads, videos and docs in the order that teaches, with your progress tracked.",
+    "A free, step-by-step way to learn job skills. Pick a goal, follow its roadmap, and do one " +
+    "short lesson a day.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Jintu — learn anything, properly",
-    description: "Deep, free roadmaps built from the best free material on the internet.",
+    title: "Jintu — learn the skills for the job you want",
+    description: "Pick a goal, follow its roadmap, and do one short lesson a day.",
     url: "/",
     siteName: "Jintu",
     locale: "en_IN",
     type: "website",
-    // Explicit, because a page-level openGraph block replaces the layout's
-    // wholesale — shipping this object without images is what made the
-    // homepage preview imageless in WhatsApp. The URL is the file-based
-    // card at app/opengraph-image.tsx; metadataBase absolutizes it.
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Jintu — one place to learn anything, properly. Free roadmaps, curated links, your progress tracked.",
+        alt: "Jintu — learn the skills for the job you want. Free roadmaps, one short lesson a day.",
       },
     ],
   },
@@ -59,86 +46,51 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-/**
- * Whose modules the homepage's spine shows. The longest roadmap, because
- * twenty bars makes the point that four would not — and named here rather
- * than inlined so it is one edit when a longer one lands.
- */
-const FLAGSHIP = "data-analyst";
-
 export default async function LandingPage() {
-  const roadmaps: RoadmapSummary[] = await listPublishedRoadmaps().catch(() => []);
+  const published = await listPublishedRoadmaps().catch(() => []);
   const viewer = await getViewer().catch(() => null);
+  const catalogue = buildCatalogue(published);
 
-  // Every figure in the numbers band is derived, never typed in. The design
-  // said "500+ curated links"; there are 228, and a marketing page that
-  // rounds up is the one that gets quoted back at you.
-  const days = roadmaps.reduce((a, r) => a + r.nodeCount, 0);
-  // Summed across all four, not one of them. The design's pill said
-  // "~340 hours", which is the data analyst alone.
-  const hours = roadmaps.reduce((a, r) => a + (r.estimatedHours ?? 0), 0);
-  // Chips above the roadmap cards: the four categories, in the catalogue's
-  // order, and only the ones something is actually filed under. subject_tags
-  // used to feed this, which is how "java" ended up presented as a subject
-  // next to "marketing" — one is a technology, the other is a field.
-  const present = new Set(roadmaps.map((r) => r.category));
-  const subjects = CATEGORIES.filter((c) => present.has(c.key)).map((c) => ({
-    key: c.key,
-    label: c.label,
-  }));
-  // The hero card and "Here is one day" render two DIFFERENT days — they
-  // used to share one row, which put the same day on the page twice and
-  // read as a bug. The hero's comes from another roadmap where the
-  // catalogue has one, a third of the way in so it lands mid-material
-  // rather than on an intro or a capstone; with a one-roadmap catalogue it
-  // falls back to a second day of the flagship. Day numbers are derived
-  // from nodeCount, so the pick cannot point past the end of a roadmap.
-  const heroSource = roadmaps.find((r) => r.slug !== FLAGSHIP && r.nodeCount > 0) ?? null;
-  const heroPick = heroSource
-    ? { slug: heroSource.slug, dayNumber: Math.max(1, Math.ceil(heroSource.nodeCount / 3)) }
-    : { slug: FLAGSHIP, dayNumber: 12 };
+  const categoryGroups: HomepageCategoryGroup[] = CATEGORIES.map((c) => {
+    const roadmaps: HomepageRoadmapRow[] = catalogue
+      .filter((r) => r.category === c.key)
+      .sort((a, b) => Number(b.open) - Number(a.open) || a.title.localeCompare(b.title))
+      .map((r) => ({ slug: r.slug, title: r.title, open: r.open }));
+    return { key: c.key, label: c.label, roadmaps };
+  }).filter((g) => g.roadmaps.length > 0);
 
-  // The flagship's modules and three annotated links: the homepage shows
-  // the product rather than describing it, and both of those are the real
-  // rows. Failures degrade to an empty array, and every section that uses
-  // them renders without them.
-  const [links, sources, samples, day, heroDay, spine] = await Promise.all([
-    countPublishedResources().catch(() => 0),
-    topSourceNames(8).catch(() => []),
-    sampleResources(5).catch(() => []),
-    sampleDay(FLAGSHIP, 45).catch(() => null),
-    sampleDay(heroPick.slug, heroPick.dayNumber).catch(() => null),
-    listModules(FLAGSHIP).catch(() => []),
-  ]);
+  // One representative role per field, in the design's own field order, for
+  // the hero's chip row — never the first N roles in file order, which
+  // would cluster them inside whichever domain's file happens to sort first.
+  const domains = populatedDomains();
+  const heroChips = domains
+    .map((d) => rolesInDomain(d.key)[0]?.title)
+    .filter((t): t is string => Boolean(t))
+    .slice(0, 7);
+  const heroMoreCount = Math.max(0, ROLES.length - heroChips.length);
+
+  const fieldTiles: HomepageFieldTile[] = domains.map((d) => {
+    const roles = rolesInDomain(d.key);
+    return {
+      domain: d.key,
+      label: d.label,
+      blurb: d.blurb,
+      roleTitles: roles.slice(0, 2).map((r) => r.title),
+      moreCount: Math.max(0, roles.length - 2),
+    };
+  });
 
   return (
     <Homepage
-      samples={samples}
-      day={day}
-      heroDay={heroDay}
-      spine={spine}
+      heroChips={heroChips}
+      heroMoreCount={heroMoreCount}
+      fieldTiles={fieldTiles}
+      categoryGroups={categoryGroups}
+      openRoadmapCount={published.length}
+      totalRoadmapCount={catalogue.length}
       signedIn={Boolean(viewer?.hasProfile)}
       initials={viewer ? initialsFor(viewer) : null}
       displayName={viewer?.fullName ?? viewer?.email ?? null}
-      counts={{ roadmaps: roadmaps.length, days, hours, links }}
-      sources={sources}
-      subjects={subjects}
-      roadmaps={roadmaps.map((r) => ({
-        slug: r.slug,
-        category: r.category,
-        title: r.title,
-        kicker: [CATEGORIES.find((c) => c.key === r.category)?.label, r.difficulty]
-          .filter(Boolean)
-          .join(" · "),
-        summary: r.summary,
-        sizeLine: [
-          `${r.moduleCount} modules`,
-          `${r.nodeCount} days`,
-          r.estimatedHours ? `~${r.estimatedHours} hrs` : null,
-        ]
-          .filter(Boolean)
-          .join(" · "),
-      }))}
     />
   );
 }

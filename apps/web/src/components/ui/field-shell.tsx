@@ -27,7 +27,10 @@ export function FieldShell({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-lg border border-ink-100 bg-white",
+        // rounded-2xl (16px), not the old rounded-lg (8px): confirmed
+        // against the redesign's own input fields — V2Login.dc.html's
+        // email field is literally `border-radius: 16px`.
+        "flex items-center gap-2 rounded-2xl border border-ink-100 bg-white",
         scale === "compact" ? "h-9 pr-1 pl-2.5" : "h-12 pr-1.5 pl-3.5",
         focused && "border-ink-900 ring-1 ring-ink-900",
         className,

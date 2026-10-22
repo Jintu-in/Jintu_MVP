@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BrokenLinkIcon, ContactCard, MailIcon, PersonIcon } from "@/components/marketing/contact-card";
 
 /**
  * Contact — the third page a payment gateway requires.
@@ -13,6 +14,12 @@ import Link from "next/link";
  *
  * The grievance section is a DPDP requirement, not decoration: a data
  * principal must have a named way to complain that is not a support queue.
+ *
+ * Restyled against V2Contact.dc.html / DeskContact.dc.html's three-card
+ * layout. The design's third card ("Something broken or out of date?") is a
+ * mailto there; here it routes to /report instead, which already carries
+ * that exact content and a real link-health pipeline behind it — see
+ * contact-card.tsx for why.
  */
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,66 +29,40 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto max-w-2xl px-5 py-12 sm:py-16">
-      <h1 className="t-sect text-ink-900">
-        Contact
-      </h1>
-      <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-        Email works best. A person reads everything sent to either address —
-        there is no bot triaging this, which also means replies take hours,
-        not seconds.
+    <main className="mx-auto max-w-[1060px] px-5 py-12 sm:py-16 lg:px-12">
+      <h1 className="t-page text-ink-900">Contact</h1>
+      <p className="mt-3 max-w-[640px] text-[16px] leading-[1.6] text-pretty text-ink-600 lg:text-[19px]">
+        Two addresses. Pick the one that fits.
       </p>
 
-      <div className="mt-8 divide-y divide-ink-100 border-y border-ink-100">
-        <Row
-          label="Anything about the product"
+      <div className="mt-8 flex flex-col gap-4 lg:mt-10 lg:flex-row">
+        <ContactCard
+          icon={MailIcon}
+          title="Anything about the product"
           detail="Roadmaps, points, your account, a dead link, a resource that misleads."
-        >
-          <a className="underline hover:text-brand-800" href="mailto:hello@jintu.in">
-            hello@jintu.in
-          </a>
-        </Row>
-        <Row
-          label="Your data, and grievances"
+          action={{ label: "hello@jintu.in", href: "mailto:hello@jintu.in" }}
+        />
+        <ContactCard
+          icon={PersonIcon}
+          title="Your data, and grievances"
           detail="Copies, corrections, deletion, consent withdrawal, or a complaint about how your data was handled. This is the grievance contact under India's data protection law."
-        >
-          <a className="underline hover:text-brand-800" href="mailto:privacy@jintu.in">
-            privacy@jintu.in
-          </a>
-        </Row>
+          action={{ label: "privacy@jintu.in", href: "mailto:privacy@jintu.in" }}
+        />
+        <ContactCard
+          icon={BrokenLinkIcon}
+          title="Something broken or out of date?"
+          detail="A dead link, a video that moved, a claim that aged badly. Send the page link and one line on what is wrong."
+          action={{ label: "Report a problem", href: "/report" }}
+        />
       </div>
 
-      <p className="mt-6 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
+      <p className="mt-8 max-w-[62ch] text-[15px] leading-[1.6] text-pretty text-ink-600">
         For refunds, the whole process is one email — the{" "}
-        <Link href="/refunds" className="underline hover:text-brand-800">
+        <Link className="underline hover:text-brand-800" href="/refunds">
           refund policy
         </Link>{" "}
         says exactly what to send and what happens next.
       </p>
-
-      <p className="mt-10 border-t border-ink-100 pt-6 text-[13px] text-ink-500">
-        Jintu · Made in India
-      </p>
     </main>
-  );
-}
-
-function Row({
-  label,
-  detail,
-  children,
-}: {
-  label: string;
-  detail: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="py-5">
-      <p className="text-[15px] font-medium text-ink-900">{label}</p>
-      <p className="mt-1 max-w-[62ch] text-[13px] leading-relaxed text-pretty text-ink-500">
-        {detail}
-      </p>
-      <p className="mt-2 text-[15px]">{children}</p>
-    </div>
   );
 }

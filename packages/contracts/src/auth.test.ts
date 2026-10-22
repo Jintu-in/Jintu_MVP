@@ -144,7 +144,7 @@ describe("onboardingInput", () => {
 
 describe("safeNextPath", () => {
   it.each([
-    ["/account", "/account"],
+    ["/settings", "/settings"],
     ["/dashboard/week/3", "/dashboard/week/3"],
     ["/learn?x=1", "/learn?x=1"],
   ])("keeps the same-origin path %s", (input, expected) => {
@@ -163,11 +163,11 @@ describe("safeNextPath", () => {
     ["evil.com"],
     [""],
   ])("refuses %s", (input) => {
-    expect(safeNextPath(input)).toBe("/account");
+    expect(safeNextPath(input)).toBe("/profile");
   });
 
   it("falls back when nothing is supplied", () => {
-    expect(safeNextPath(undefined)).toBe("/account");
+    expect(safeNextPath(undefined)).toBe("/profile");
     expect(safeNextPath(undefined, "/onboarding")).toBe("/onboarding");
   });
 });

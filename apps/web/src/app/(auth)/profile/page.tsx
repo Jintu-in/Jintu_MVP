@@ -1,24 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { IdentityCard } from "@/components/account/identity-card";
-import { PublicProfileCard } from "@/components/account/public-profile-card";
-import { RemindersCard } from "@/components/account/reminders-card";
-import { TimezoneCard } from "@/components/account/timezone-card";
+import { AppShell } from "@/components/shell/app-shell";
+import { ProfileHeader } from "@/components/profile/profile-header";
 import { getAccount } from "@/lib/account";
+import { getMyMomentum } from "@/lib/momentum";
 import { getSiteUrl } from "@/lib/env";
 
+const ARROW_RIGHT = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </svg>
+);
+
 /**
- * /profile — the account half: identity, how the day is counted, reminders,
- * the public page, and the data controls.
+ * /profile — the identity half: who this is, the public link, and (once a
+ * day is finished) the record. Settings moved out entirely (Decision 3,
+ * design/jintu-design/CURRENT-STATE.md §5) — this page no longer edits
+ * anything but what ProfileHeader itself does (sharing).
  *
- * The record half (stats, contribution grid, roadmaps) is session P2. Where
- * it will go, a new account sees one quiet card rather than a row of zeros:
- * "0 days · 0 streak · 0 points" on day one is a product telling somebody
- * they have failed before they started.
- *
- * Nine hairline-separated sections, no sidebar — delete and download sit in
- * plain outline buttons, findable and not styled as danger.
+ * The record half (stats, contribution grid, roadmaps) is session P2.
+ * Until this account has finished a day, V2ProfileNew's quiet card replaces
+ * it — "0 days · 0 streak · 0 points" on day one is a product telling
+ * somebody they have failed before they started.
  */
 export const metadata: Metadata = {
   title: "Profile",
@@ -28,129 +33,68 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
-  const account = await getAccount();
+  const [account, momentum] = await Promise.all([getAccount(), getMyMomentum()]);
   if (!account) redirect("/join?next=/profile");
 
   const name = account.displayName ?? account.fullName ?? "Your account";
-  const host = getSiteUrl().host;
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-[720px] bg-white px-5 pt-6 pb-12">
-      <h1 className="sr-only">Profile</h1>
+    <AppShell
+      active="profile"
+      user={{
+        displayName: name,
+        initials: account.initials,
+        points: momentum?.totalPoints ?? 0,
+        avatarAnimal: account.avatarAnimal,
+        avatarColor: account.avatarColor,
+      }}
+    >
+      <main className="mx-auto min-h-dvh w-full max-w-[720px] bg-ink-50 px-5 pt-6 pb-12">
+        <ProfileHeader
+          avatarAnimal={account.avatarAnimal}
+          avatarColor={account.avatarColor}
+          name={name}
+          handle={account.publicProfile.handle}
+          suggestedHandle={account.suggestedHandle}
+          isPublic={account.publicProfile.isPublic}
+          siteHost={getSiteUrl().host}
+        />
 
-      <IdentityCard
-        initials={account.initials}
-        name={name}
-        email={account.email}
-        displayName={account.displayName}
-      />
-
-      {/* Where the record goes in P2. Until this account has finished a day,
-          it says so in a sentence instead of drawing an empty grid. */}
-      {!account.hasRecord ? (
-        <section className="border-t border-ink-100 py-6">
-          <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Your record</h2>
-          <div className="mt-3 rounded-card bg-ink-50 p-4">
-            <p className="text-[15px] leading-[1.65] text-pretty text-ink-600">
-              Your record starts when you finish your first day.
+        {/* Where the record goes in P2 — V2ProfileNew's quiet card. */}
+        {!account.hasRecord ? (
+          <section className="mt-4 flex flex-none flex-col gap-4 rounded-[20px] bg-white p-5">
+            <p className="text-[16px] leading-[24px] text-pretty text-ink-600">
+              Your record starts after you finish your first day.
             </p>
             <Link
               href="/learn"
-              className="mt-3 inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
+              className="flex h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-night-900 text-[15.5px] font-semibold text-on-night hover:bg-night-950"
             >
-              Open a roadmap
+              <span>Open a roadmap</span>
+              {ARROW_RIGHT}
             </Link>
-          </div>
+          </section>
+        ) : null}
+
+        <section className="mt-4 rounded-[20px] bg-white p-5">
+          <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Saved</h2>
+          <Link
+            href="/profile/saved"
+            className="mt-3 inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
+          >
+            {account.counts.saved > 0 ? `${account.counts.saved} saved to read` : "Saved to read"}
+          </Link>
         </section>
-      ) : null}
 
-      {/* Notes and saved. Notes are S7 — the user_notes table does not exist
-          yet, so this links only what is real rather than showing a count of
-          nothing behind a dead link. */}
-      <section className="border-t border-ink-100 py-6">
-        <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Saved</h2>
-        <Link
-          href="/profile/saved"
-          className="mt-3 inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
-        >
-          {account.counts.saved > 0
-            ? `${account.counts.saved} saved to read`
-            : "Saved to read"}
-        </Link>
-      </section>
-
-      {/* How your day is counted */}
-      <TimezoneCard current={account.timezone} />
-
-      <RemindersCard
-        dailyEnabled={account.reminders.dailyEnabled}
-        dailyAt={account.reminders.dailyAt}
-        streakWarning={account.reminders.streakWarning}
-      />
-
-      <PublicProfileCard
-        initials={account.initials}
-        initialHandle={account.publicProfile.handle}
-        initialIsPublic={account.publicProfile.isPublic}
-        suggestedHandle={account.suggestedHandle}
-        siteHost={host}
-        // Zero-state placeholders until P2 builds the record. Honest shape,
-        // honest numbers — the component takes them as props.
-        stats={{ daysLearned: account.counts.days, currentStreak: 0, longestStreak: 0, points: 0 }}
-      />
-
-      {/* Your data */}
-      <section className="border-t border-ink-100 py-6">
-        <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Your data</h2>
-
-        <div className="mt-3 flex flex-col gap-3">
-          <div>
-            <a
-              href="/profile/export"
-              className="inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
-            >
-              Download everything
-            </a>
-            <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.7] text-ink-500">
-              Every day, setting and saved link, as JSON.
-            </p>
-          </div>
-
-          <div>
-            <Link
-              href="/profile/consents"
-              className="inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
-            >
-              Manage what you agreed to
-            </Link>
-            <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.7] text-ink-500">
-              Opens the consent list, each purpose with its date and a withdraw control.
-            </p>
-          </div>
-
-          <div>
-            <Link
-              href="/profile/delete"
-              className="inline-flex h-12 items-center rounded-lg border border-ink-100 bg-white px-4 text-[15px] font-medium text-brand-700 hover:border-brand-700"
-            >
-              Delete account
-            </Link>
-            <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.7] text-ink-500">
-              Removes your account, progress and notes permanently. Your public
-              profile disappears immediately.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-ink-100 pt-5">
-        <p className="text-[13px] leading-[1.7] text-ink-500">Jintu does not certify skills.</p>
-        <nav className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-          <Link href="/privacy" className="text-brand-700 hover:text-brand-800">Privacy</Link>
-          <Link href="/terms" className="text-brand-700 hover:text-brand-800">Terms</Link>
-          <Link href="/contact" className="text-brand-700 hover:text-brand-800">Contact</Link>
-        </nav>
-      </footer>
-    </main>
+        <footer className="mt-6 border-t border-ink-100 pt-5">
+          <p className="text-[13px] leading-[1.7] text-ink-500">Jintu does not certify skills.</p>
+          <nav className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+            <Link href="/privacy" className="text-brand-700 hover:text-brand-800">Privacy</Link>
+            <Link href="/terms" className="text-brand-700 hover:text-brand-800">Terms</Link>
+            <Link href="/contact" className="text-brand-700 hover:text-brand-800">Contact</Link>
+          </nav>
+        </footer>
+      </main>
+    </AppShell>
   );
 }

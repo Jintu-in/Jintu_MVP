@@ -886,6 +886,38 @@ export default [
         challenge:
           "Look up five conditions in the index, then verify each in the tabular list. Record every case where the tabular changed your answer or added a requirement. On five attempts it will usually be at least two.",
         challengeMinutes: 40,
+        // Phase 5 Part B pilot (migration 0030): one worked index-to-tabular
+        // lookup ahead of the five-condition challenge above, which stays
+        // as written — this field is additive, not a replacement.
+        steps: [
+          {
+            kind: "find",
+            title: "Find the code for type 2 diabetes with no complications",
+            sourceLabel: "CMS · free government source",
+            sourceTitle: "ICD-10-CM code files — index and tabular",
+            sourceUrl: "https://www.cms.gov/medicare/coding-billing/icd-10-codes",
+            lookUnder: ["Index", "Diabetes, diabetic", "type 2"],
+            answerLabel: "You should land on",
+            answerCode: "E11.9",
+            answerText: "Type 2 diabetes mellitus without complications",
+            note: "The index gets you close. Confirm the code in the tabular list before you use it — that confirmation is the whole lesson today.",
+            ctaLabel: "I found E11.9",
+            // Desktop only (CHANGES.md item 6, DeskUniFind). Shares the
+            // tableRows panel kind with startup-finance's cap table below —
+            // same shape (a small running table, one new highlighted row).
+            panel: {
+              kind: "tableRows",
+              title: "Your claim after this step",
+              subtitle: "If yours looks different, go back one step.",
+              columns: ["Line", "Code"],
+              rows: [
+                { cells: ["Patient visit", "read"] },
+                { cells: ["Diagnosis 1", "E11.9"], highlight: true, badge: "new" },
+              ],
+              note: "The code set opens in a new tab. Put it beside this one and come back to say what you found.",
+            },
+          },
+        ],
         estMinutes: 55,
         points: 35,
         difficulty: "core",

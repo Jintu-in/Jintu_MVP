@@ -22,21 +22,23 @@ export default async function OnboardingPage() {
   // profile cannot exist without the 18+ confirmation having been given.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id")
+    .select("goal, need")
     .eq("id", user.id)
     .maybeSingle();
-  if (profile) redirect("/account");
+  if (profile) {
+    // goal/need (Phase 4 Part A, migration 0028) are a short first-run flow
+    // of their own, after consent and before anywhere real — resume there if
+    // it was never finished, same as this page's own next-step link.
+    redirect(profile.goal && profile.need ? "/profile" : "/onboarding/goal");
+  }
 
   return (
-    <main className="mx-auto max-w-md px-5 py-10">
+    <main className="mx-auto max-w-md px-5 py-10 sm:py-14">
       <Steps current={3} label="Your profile" />
 
-      <h1 className="mt-8 text-2xl font-medium tracking-tight text-ink-900">
-        Two things before we start
-      </h1>
-      <p className="mt-2 text-pretty text-ink-600">
-        One is required by law. The rest are yours to choose, and you can change
-        them whenever you like.
+      <h1 className="t-page mt-6 text-ink-900">One last step</h1>
+      <p className="mt-2 text-[16px] leading-[1.5] text-pretty text-ink-600">
+        Two things we need, three you can choose.
       </p>
 
       <div className="mt-8">

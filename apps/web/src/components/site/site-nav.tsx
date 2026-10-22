@@ -25,10 +25,11 @@ import { cn } from "@/lib/utils";
  * Below sm the links move inside the avatar menu, because a wordmark plus
  * links plus an account control in 390px leaves nothing tappable.
  *
- * There is no "Free" item. It read as a claim rather than a destination —
- * nobody clicks it expecting a pricing page — and the same word is already
- * in the hero's eyebrow pill, in the pricing section on that page, and in
- * the footer, which is where the pricing page stays linked from.
+ * Pricing IS on the bar now (per DeskHome.dc.html's own header), alongside
+ * a filled "Start free" action next to Sign in — a deliberate reversal of
+ * this component's earlier "no Free item" rule, made for the redesign,
+ * where the bar carries a real conversion action rather than only a
+ * destination list.
  */
 export interface SiteNavProps {
   variant?: "overlay" | "solid";
@@ -69,21 +70,33 @@ export function SiteNav({
       )}
     >
       <Link href="/" aria-label="Jintu — home" className={cn("flex items-center gap-2", strong)}>
-        {/* The mark is decorative; the wordmark beside it carries the name. */}
-        <svg aria-hidden width={20} height={20} viewBox="0 0 20 20" fill="none">
-          <rect
-            width="20"
-            height="20"
-            rx="5"
-            className={overlay ? "fill-white/90 [.jscrolled_&]:fill-brand-700" : "fill-brand-700"}
-          />
-          <path
-            d="M10 5.5v6a2.5 2.5 0 0 1-2.5 2.5H6.5"
-            className={overlay ? "stroke-brand-700 [.jscrolled_&]:stroke-white" : "stroke-white"}
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
+        {/* The redesign's header mark is a literal "j" glyph. Drawn here
+            rather than left as real text: axe's label-content-name-mismatch
+            check (WCAG 2.5.3) treats text inside an aria-hidden node as part
+            of the link's VISIBLE label even though it is excluded from the
+            computed accessible NAME — so a literal "j" character here would
+            read as "jjintu" against the "jintu — home" aria-label and fail,
+            on every single page, since this nav is global. A drawn mark has
+            no text node for that check to catch, same colour treatment. */}
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-[26px] items-center justify-center rounded-[9px]",
+            overlay
+              ? "bg-white/90 [.jscrolled_&]:bg-brand-500"
+              : "bg-brand-500",
+          )}
+        >
+          <svg width={13} height={15} viewBox="0 0 13 15" fill="none">
+            <path
+              d="M9.5 1v8.5a4 4 0 0 1-4 4H2.5"
+              className={overlay ? "stroke-night-900 [.jscrolled_&]:stroke-on-brand" : "stroke-on-brand"}
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <circle cx="9.5" cy="1" r="0.2" className={overlay ? "fill-night-900 [.jscrolled_&]:fill-on-brand" : "fill-on-brand"} />
+          </svg>
+        </span>
         jintu
       </Link>
 
@@ -103,11 +116,25 @@ export function SiteNav({
         <Link href={"/#how-it-works" as Route} className={link}>
           How it works
         </Link>
+        <Link href={"/pricing" as Route} className={link}>
+          Pricing
+        </Link>
       </div>
 
       {children ? <div className="ml-6 flex items-center sm:ml-7">{children}</div> : null}
 
-      <div className="ml-4 flex items-center sm:ml-7">
+      <div className="ml-4 flex items-center gap-3 sm:ml-7">
+        {/* The redesign's one filled bar action, beside Sign in — a real
+            conversion target, not just a destination list. Signed-in visitors
+            already have an account, so it goes with Sign in, not past it. */}
+        {!signedIn ? (
+          <Link
+            href={"/join" as Route}
+            className="hidden h-11 items-center rounded-2xl bg-brand-500 px-4.5 text-[14.5px] font-semibold text-on-brand hover:bg-brand-400 sm:flex"
+          >
+            Start free
+          </Link>
+        ) : null}
         <SiteNavMenu
           signedIn={signedIn}
           initials={initials}

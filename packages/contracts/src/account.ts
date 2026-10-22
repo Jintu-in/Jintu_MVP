@@ -96,3 +96,68 @@ export const deleteAccountInput = z.object({
 
 export type ReminderPrefsInput = z.infer<typeof reminderPrefsInput>;
 export type PublicProfileInput = z.infer<typeof publicProfileInput>;
+
+/**
+ * Phase 4 Part B: the avatar (V2Avatar/AvatarKit). The 16 animals and 8
+ * colours are the mockup's own fixed lists, transcribed verbatim — kept
+ * here as the one place both the validation and the UI (avatar-kit.tsx,
+ * apps/web) read them from, and the shape the 0029 migration's CHECK
+ * constraints mirror.
+ */
+export const ANIMALS = [
+  "bear", "lion", "elephant", "hippo", "koala", "panda", "monkey", "pig",
+  "penguin", "rabbit", "fox", "sheep", "tiger", "cat", "owl", "frog",
+] as const;
+export type AnimalKey = (typeof ANIMALS)[number];
+
+export const COLORS = [
+  { key: "teal", hex: "#43B4C8" },
+  { key: "amber", hex: "#FFB627" },
+  { key: "green", hex: "#7CCB8F" },
+  { key: "coral", hex: "#F4795B" },
+  { key: "pink", hex: "#F29AB8" },
+  { key: "violet", hex: "#A99AE0" },
+  { key: "sky", hex: "#8EC5F0" },
+  { key: "sand", hex: "#F2D9A6" },
+] as const;
+export type ColorKey = (typeof COLORS)[number]["key"];
+
+export const DEFAULT_ANIMAL: AnimalKey = "fox";
+export const DEFAULT_COLOR: ColorKey = "teal";
+
+export function colorHex(key: ColorKey): string {
+  return COLORS.find((c) => c.key === key)?.hex ?? COLORS[0].hex;
+}
+
+export const avatarInput = z.object({
+  avatarAnimal: z.enum(ANIMALS),
+  avatarColor: z.enum(COLORS.map((c) => c.key) as [ColorKey, ...ColorKey[]]),
+});
+export type AvatarInput = z.infer<typeof avatarInput>;
+
+/**
+ * Phase 5 Part C: the DSA language switch (V2Dsa/DeskDsa) — "one choice
+ * remembered per user, applies to every code block" (BUILD-PLAN.md §3.4).
+ * Infrastructure only: no DSA roadmap exists yet to author a codeMulti
+ * step for (see steps.ts's own note), so this list has no real content
+ * behind it — it mirrors the mockup's own five sample languages, which is
+ * the only real anchor that exists right now.
+ */
+export const CODE_LANGUAGES = [
+  { key: "py", name: "Python" },
+  { key: "java", name: "Java" },
+  { key: "cpp", name: "C++" },
+  { key: "js", name: "JavaScript" },
+  { key: "c", name: "C" },
+] as const;
+export type CodeLanguageKey = (typeof CODE_LANGUAGES)[number]["key"];
+export const DEFAULT_CODE_LANGUAGE: CodeLanguageKey = "py";
+
+export function codeLanguageName(key: CodeLanguageKey): string {
+  return CODE_LANGUAGES.find((l) => l.key === key)?.name ?? CODE_LANGUAGES[0].name;
+}
+
+export const codeLanguageInput = z.object({
+  codeLanguage: z.enum(CODE_LANGUAGES.map((l) => l.key) as [CodeLanguageKey, ...CodeLanguageKey[]]),
+});
+export type CodeLanguageInput = z.infer<typeof codeLanguageInput>;

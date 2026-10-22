@@ -52,7 +52,7 @@ export function DeleteForm({ email }: { email: string }) {
       {/* Cancel first and filled: the dominant action on the page. */}
       <div className="mt-5 flex flex-col gap-2.5">
         <Link
-          href="/profile"
+          href="/settings"
           className="flex h-12 w-full items-center justify-center rounded-lg bg-brand-700 text-[16px] font-medium text-white hover:bg-brand-800"
         >
           Cancel, keep my account

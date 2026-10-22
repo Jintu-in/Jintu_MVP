@@ -1,0 +1,1502 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "ArtKit.dc.html": {
+      "h": 1480,
+      "page": "landing",
+      "title": "Picture set · fields, roadmaps and scenes",
+      "w": 1440,
+      "x": 2030,
+      "y": 0
+    },
+    "AvatarKit.dc.html": {
+      "h": 1070,
+      "page": "pair",
+      "title": "Avatar set · 16 animals, team version, rules",
+      "w": 1440,
+      "x": 0,
+      "y": 2584
+    },
+    "Block.dc.html": {
+      "h": 1860,
+      "page": "v1",
+      "title": "Block page · Git & GitHub",
+      "w": 390,
+      "x": 0,
+      "y": 1300
+    },
+    "Catalogue.dc.html": {
+      "h": 844,
+      "page": "v1",
+      "title": "Catalogue at relaunch",
+      "w": 390,
+      "x": 470,
+      "y": 1300
+    },
+    "DarkDesk.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Today on desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 964
+    },
+    "DarkDeskHome.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Home on desktop · the first screen",
+      "w": 1440,
+      "x": 3040,
+      "y": 964
+    },
+    "DarkDeskLogin.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Sign in on desktop",
+      "w": 1440,
+      "x": 4560,
+      "y": 964
+    },
+    "DarkHome.dc.html": {
+      "h": 844,
+      "page": "dark",
+      "title": "Home · the first screen",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "DarkLaptop.dc.html": {
+      "h": 900,
+      "page": "dark",
+      "title": "Lesson on desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 964
+    },
+    "DarkLogin.dc.html": {
+      "h": 844,
+      "page": "dark",
+      "title": "Sign in",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "DarkStep.dc.html": {
+      "h": 844,
+      "page": "dark",
+      "title": "Lesson · a step",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "DarkToday.dc.html": {
+      "h": 844,
+      "page": "dark",
+      "title": "Today",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "DeskAccount.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Email and password · no password yet",
+      "w": 1440,
+      "x": 1520,
+      "y": 12745
+    },
+    "DeskAccountSet.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Email and password · password set",
+      "w": 1440,
+      "x": 3040,
+      "y": 12745
+    },
+    "DeskAvatar.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "Pick your avatar · desktop (press Play)",
+      "w": 1440,
+      "x": 1520,
+      "y": 2584
+    },
+    "DeskBlock.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Block page",
+      "w": 1440,
+      "x": 1520,
+      "y": 1020
+    },
+    "DeskCode.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Sign up · email code",
+      "w": 1440,
+      "x": 3200,
+      "y": 4380
+    },
+    "DeskCompare.dc.html": {
+      "h": 1953,
+      "page": "desk",
+      "title": "Often confused roles · comparison",
+      "w": 1440,
+      "x": 0,
+      "y": 10252
+    },
+    "DeskConsents.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "What you agreed to",
+      "w": 1440,
+      "x": 0,
+      "y": 12745
+    },
+    "DeskContact.dc.html": {
+      "h": 1015,
+      "page": "desk",
+      "title": "Contact and report a problem",
+      "w": 1440,
+      "x": 1520,
+      "y": 8680
+    },
+    "DeskDelete.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Delete account",
+      "w": 1440,
+      "x": 1520,
+      "y": 6640
+    },
+    "DeskDone.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson done · share",
+      "w": 1440,
+      "x": 4720,
+      "y": 1020
+    },
+    "DeskDsa.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "DSA · language buttons (press Play)",
+      "w": 1440,
+      "x": 4720,
+      "y": 3060
+    },
+    "DeskError.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Page could not load",
+      "w": 1440,
+      "x": 1520,
+      "y": 7660
+    },
+    "DeskGoal.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "First run · pick a goal (press Play)",
+      "w": 1440,
+      "x": 4720,
+      "y": 6420
+    },
+    "DeskHelp.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson · mine looks different",
+      "w": 1440,
+      "x": 4720,
+      "y": 0
+    },
+    "DeskHome.dc.html": {
+      "h": 7121,
+      "page": "landing",
+      "title": "Home page · desktop, complete",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "DeskJoin.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "After sign-up · details and consent",
+      "w": 1440,
+      "x": 3200,
+      "y": 5400
+    },
+    "DeskLegal.dc.html": {
+      "h": 1046,
+      "page": "desk",
+      "title": "Text page · privacy notice",
+      "w": 1440,
+      "x": 1520,
+      "y": 10252
+    },
+    "DeskLogin.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Sign in",
+      "w": 1440,
+      "x": 1520,
+      "y": 2160
+    },
+    "DeskNeed.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "First run · what you need most (press Play)",
+      "w": 1440,
+      "x": 3200,
+      "y": 7440
+    },
+    "DeskNew.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Today · brand new",
+      "w": 1440,
+      "x": 1520,
+      "y": 4200
+    },
+    "DeskNotFound.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Page not found",
+      "w": 1440,
+      "x": 0,
+      "y": 7660
+    },
+    "DeskOffline.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson · offline",
+      "w": 1440,
+      "x": 3200,
+      "y": 3060
+    },
+    "DeskPair.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "Pair learning · desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 1264
+    },
+    "DeskPairStep.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "A step with a partner · desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 1264
+    },
+    "DeskPairWait.dc.html": {
+      "h": 900,
+      "page": "pair",
+      "title": "A step · waiting for your partner · desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 1264
+    },
+    "DeskPassword.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Sign in · welcome back",
+      "w": 1440,
+      "x": 4720,
+      "y": 5400
+    },
+    "DeskPricing.dc.html": {
+      "h": 1452,
+      "page": "desk",
+      "title": "Pricing",
+      "w": 1440,
+      "x": 0,
+      "y": 8680
+    },
+    "DeskProfile.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Public profile",
+      "w": 1440,
+      "x": 0,
+      "y": 4200
+    },
+    "DeskProfileNew.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Profile · day one",
+      "w": 1440,
+      "x": 4560,
+      "y": 12745
+    },
+    "DeskQuestions.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson · questions",
+      "w": 1440,
+      "x": 3200,
+      "y": 1020
+    },
+    "DeskQuiz.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "Quick check (press Play)",
+      "w": 1440,
+      "x": 3200,
+      "y": 2040
+    },
+    "DeskReset.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Reset password",
+      "w": 1440,
+      "x": 3200,
+      "y": 6420
+    },
+    "DeskRestart.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Today · streak restarted",
+      "w": 1440,
+      "x": 0,
+      "y": 5220
+    },
+    "DeskReview.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "Review cards (press Play)",
+      "w": 1440,
+      "x": 4720,
+      "y": 2040
+    },
+    "DeskRoadmaps.dc.html": {
+      "h": 1020,
+      "is_interactive": true,
+      "page": "desk",
+      "title": "Roadmaps · all ten, filter by group (press Play)",
+      "w": 1440,
+      "x": 0,
+      "y": 1020
+    },
+    "DeskRole.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Role page · data analyst",
+      "w": 1440,
+      "x": 0,
+      "y": 2160
+    },
+    "DeskRoles.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Roles list",
+      "w": 1440,
+      "x": 0,
+      "y": 3180
+    },
+    "DeskSaved.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Saved to read",
+      "w": 1440,
+      "x": 0,
+      "y": 6640
+    },
+    "DeskSetPass.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Sign up · set a password",
+      "w": 1440,
+      "x": 4720,
+      "y": 4380
+    },
+    "DeskSettings.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Settings",
+      "w": 1440,
+      "x": 1520,
+      "y": 3180
+    },
+    "DeskToday.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Today",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "DeskTurn.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson · your turn",
+      "w": 1440,
+      "x": 3200,
+      "y": 0
+    },
+    "DeskUniChoose.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · choosing on desktop (Thinking sample)",
+      "w": 1440,
+      "x": 1520,
+      "y": 2584
+    },
+    "DeskUniFind.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · finding it in a source on desktop (Medical coding sample)",
+      "w": 1440,
+      "x": 3040,
+      "y": 2584
+    },
+    "DeskUniFormula.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · a formula on desktop (Excel sample)",
+      "w": 1440,
+      "x": 4560,
+      "y": 2584
+    },
+    "DeskUniToday.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Today on desktop · two roadmaps at once",
+      "w": 1440,
+      "x": 7600,
+      "y": 2584
+    },
+    "DeskUniWrite.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Step · writing on desktop (Thinking sample)",
+      "w": 1440,
+      "x": 6080,
+      "y": 2584
+    },
+    "LessonDesktop.dc.html": {
+      "h": 800,
+      "page": "v1",
+      "title": "Lesson 1 on a laptop",
+      "w": 1280,
+      "x": 940,
+      "y": 1300
+    },
+    "LessonEnd.dc.html": {
+      "h": 844,
+      "page": "v1",
+      "title": "Lesson 1 · finish",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "LessonStep.dc.html": {
+      "h": 844,
+      "page": "v1",
+      "title": "Lesson 1 · a step",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "LessonTurn.dc.html": {
+      "h": 844,
+      "page": "v1",
+      "title": "Lesson 1 · your turn",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "page": "v1",
+      "title": "Lesson 1 · start",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "MoDone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Lesson done · animated",
+      "w": 390,
+      "x": 1520,
+      "y": 0
+    },
+    "MoKit.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Motion kit · eight small movements with timings",
+      "w": 1440,
+      "x": 0,
+      "y": 2584
+    },
+    "MoLanding.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Home on desktop · scroll for parallax (now the complete page)",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "MoPath.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Block path · draws itself, scroll for more",
+      "w": 390,
+      "x": 470,
+      "y": 1320
+    },
+    "MoRepo.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Your project after each step · tap the button",
+      "w": 390,
+      "x": 1410,
+      "y": 1320
+    },
+    "MoSteps.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Step to step · tap the button",
+      "w": 390,
+      "x": 1990,
+      "y": 0
+    },
+    "MoTabs.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Tabs · sliding marker and loading shapes",
+      "w": 390,
+      "x": 1880,
+      "y": 1320
+    },
+    "MoToday.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Today · loads in",
+      "w": 390,
+      "x": 0,
+      "y": 1320
+    },
+    "MoType.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "motion",
+      "title": "Lesson step · watch it run first",
+      "w": 390,
+      "x": 940,
+      "y": 1320
+    },
+    "ScribDeskA.dc.html": {
+      "h": 2462,
+      "page": "scrib",
+      "title": "A · desktop · Comic Neue everywhere",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "ScribDeskB.dc.html": {
+      "h": 2462,
+      "page": "scrib",
+      "title": "B · desktop · handwriting for headings only",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "ScribPhoneA.dc.html": {
+      "h": 3400,
+      "page": "scrib",
+      "title": "A · phone",
+      "w": 390,
+      "x": 3040,
+      "y": 0
+    },
+    "ScribPhoneB.dc.html": {
+      "h": 3581,
+      "page": "scrib",
+      "title": "B · phone",
+      "w": 390,
+      "x": 3510,
+      "y": 0
+    },
+    "UniChoose.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Step · choosing (Thinking sample)",
+      "w": 390,
+      "x": 1880,
+      "y": 1320
+    },
+    "UniCourse.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "What every roadmap supplies · all ten roadmaps",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "UniDeskStep.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "A non-coding lesson on desktop (Startup finance sample)",
+      "w": 1440,
+      "x": 0,
+      "y": 2584
+    },
+    "UniFind.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Step · finding it in a source (Medical coding sample)",
+      "w": 390,
+      "x": 1410,
+      "y": 1320
+    },
+    "UniFormula.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Step · a formula (Excel sample)",
+      "w": 390,
+      "x": 0,
+      "y": 1320
+    },
+    "UniNumber.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Step · a number (Startup finance sample)",
+      "w": 390,
+      "x": 470,
+      "y": 1320
+    },
+    "UniSteps.dc.html": {
+      "h": 900,
+      "page": "uni",
+      "title": "Six kinds of step, one frame",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "UniToday.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Today · two roadmaps at once",
+      "w": 390,
+      "x": 2350,
+      "y": 1320
+    },
+    "UniWrite.dc.html": {
+      "h": 844,
+      "page": "uni",
+      "title": "Step · writing (Thinking sample)",
+      "w": 390,
+      "x": 940,
+      "y": 1320
+    },
+    "V2Account.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Email and password · no password yet",
+      "w": 390,
+      "x": 470,
+      "y": 11120
+    },
+    "V2AccountSet.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Email and password · password set",
+      "w": 390,
+      "x": 940,
+      "y": 11120
+    },
+    "V2Avatar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "pair",
+      "title": "Pick your avatar (press Play)",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "V2Block.dc.html": {
+      "h": 1300,
+      "page": "v2",
+      "title": "Block as a path",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "V2Code.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Sign in · email code",
+      "w": 390,
+      "x": 470,
+      "y": 2984
+    },
+    "V2Compare.dc.html": {
+      "h": 3556,
+      "page": "v2",
+      "title": "Often confused roles · comparison",
+      "w": 390,
+      "x": 3290,
+      "y": 7042
+    },
+    "V2Consents.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "What you agreed to",
+      "w": 390,
+      "x": 0,
+      "y": 11120
+    },
+    "V2Contact.dc.html": {
+      "h": 1740,
+      "page": "v2",
+      "title": "Contact and report a problem",
+      "w": 390,
+      "x": 2350,
+      "y": 7042
+    },
+    "V2Delete.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Delete account",
+      "w": 390,
+      "x": 470,
+      "y": 7042
+    },
+    "V2Done.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson done · share",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "V2Dsa.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "DSA · language buttons (press Play)",
+      "w": 390,
+      "x": 2350,
+      "y": 4514
+    },
+    "V2Error.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Page could not load",
+      "w": 390,
+      "x": 1410,
+      "y": 7042
+    },
+    "V2Goal.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "First run · pick a goal (press Play)",
+      "w": 390,
+      "x": 0,
+      "y": 5778
+    },
+    "V2Help.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson · mine looks different",
+      "w": 390,
+      "x": 470,
+      "y": 1720
+    },
+    "V2Home.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Home · the first screen",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "V2Join.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "After sign-up · details and consent",
+      "w": 390,
+      "x": 1410,
+      "y": 2984
+    },
+    "V2Landing.dc.html": {
+      "h": 8000,
+      "page": "landing",
+      "title": "Home page · phone, complete",
+      "w": 390,
+      "x": 1520,
+      "y": 0
+    },
+    "V2Laptop.dc.html": {
+      "h": 900,
+      "page": "desk",
+      "title": "Lesson",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "V2Legal.dc.html": {
+      "h": 1420,
+      "page": "v2",
+      "title": "Text page · privacy notice",
+      "w": 390,
+      "x": 2820,
+      "y": 7042
+    },
+    "V2Login.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Sign in · start",
+      "w": 390,
+      "x": 0,
+      "y": 2984
+    },
+    "V2Need.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "First run · what you need most (press Play)",
+      "w": 390,
+      "x": 470,
+      "y": 5778
+    },
+    "V2New.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Today · brand new",
+      "w": 390,
+      "x": 940,
+      "y": 4514
+    },
+    "V2NotFound.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Page not found",
+      "w": 390,
+      "x": 940,
+      "y": 7042
+    },
+    "V2Offline.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson · offline",
+      "w": 390,
+      "x": 1880,
+      "y": 4514
+    },
+    "V2PairHome.dc.html": {
+      "h": 844,
+      "page": "pair",
+      "title": "Today with a partner",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "V2PairStart.dc.html": {
+      "h": 844,
+      "page": "pair",
+      "title": "Pair learning · start",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "V2PairStep.dc.html": {
+      "h": 844,
+      "page": "pair",
+      "title": "A step · waiting for your partner",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "V2PairTalk.dc.html": {
+      "h": 844,
+      "page": "pair",
+      "title": "A step · results differ, talk it through",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "V2Password.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Sign in · welcome back",
+      "w": 390,
+      "x": 1880,
+      "y": 2984
+    },
+    "V2Pricing.dc.html": {
+      "h": 2228,
+      "page": "v2",
+      "title": "Pricing",
+      "w": 390,
+      "x": 1880,
+      "y": 7042
+    },
+    "V2Profile.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Profile",
+      "w": 390,
+      "x": 1880,
+      "y": 1720
+    },
+    "V2ProfileNew.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Profile · day one",
+      "w": 390,
+      "x": 1410,
+      "y": 11120
+    },
+    "V2Questions.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson · questions",
+      "w": 390,
+      "x": 470,
+      "y": 4514
+    },
+    "V2Quiz.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "Quick check · shake and pop (press Play)",
+      "w": 390,
+      "x": 940,
+      "y": 5778
+    },
+    "V2Reset.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Reset password",
+      "w": 390,
+      "x": 2350,
+      "y": 2984
+    },
+    "V2Restart.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Today · streak restarted",
+      "w": 390,
+      "x": 1410,
+      "y": 4514
+    },
+    "V2Review.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "Review cards · card flips (press Play)",
+      "w": 390,
+      "x": 1410,
+      "y": 5778
+    },
+    "V2Roadmaps.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "v2",
+      "title": "Roadmaps · all ten, filter by group (press Play)",
+      "w": 390,
+      "x": 940,
+      "y": 1720
+    },
+    "V2Role.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Role page · data analyst",
+      "w": 390,
+      "x": 1410,
+      "y": 1720
+    },
+    "V2Roles.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Roles list",
+      "w": 390,
+      "x": 0,
+      "y": 4514
+    },
+    "V2Saved.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Saved to read",
+      "w": 390,
+      "x": 0,
+      "y": 7042
+    },
+    "V2SetPass.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Sign up · set a password",
+      "w": 390,
+      "x": 940,
+      "y": 2984
+    },
+    "V2Settings.dc.html": {
+      "h": 1110,
+      "page": "v2",
+      "title": "Settings",
+      "w": 390,
+      "x": 2820,
+      "y": 2984
+    },
+    "V2Step.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson · a step",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "V2Today.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Today · streak and next lesson",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "V2Turn.dc.html": {
+      "h": 844,
+      "page": "v2",
+      "title": "Lesson · your turn",
+      "w": 390,
+      "x": 0,
+      "y": 1720
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-10T02:10:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "pair",
+    "view": "canvas"
+  },
+  "notes": {
+    "dark1": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "dark",
+      "text": "Dark theme",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "desk1": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desk",
+      "text": "Desktop screens",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "desk2": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desk",
+      "text": "Lesson, every state",
+      "w": 240,
+      "x": 3200,
+      "y": -300
+    },
+    "desk3": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desk",
+      "text": "Sign-up steps and first run",
+      "w": 240,
+      "x": 3200,
+      "y": 4080
+    },
+    "desk4": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "desk",
+      "text": "Pages every site needs",
+      "w": 240,
+      "x": 0,
+      "y": 6340
+    },
+    "desk5": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "desk",
+      "text": "Account: consents, password, day-one profile",
+      "w": 240,
+      "x": 0,
+      "y": 12445
+    },
+    "landing1": {
+      "kind": "title1",
+      "maxW": 1910,
+      "page": "landing",
+      "text": "The complete home page, desktop and phone",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "motion1": {
+      "kind": "title1",
+      "maxW": 2380,
+      "page": "motion",
+      "text": "Motion: press Play on a screen",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "motion2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "motion",
+      "text": "Motion inside the app: press Play",
+      "w": 240,
+      "x": 0,
+      "y": 1020
+    },
+    "motion3": {
+      "kind": "title1",
+      "maxW": 1440,
+      "page": "motion",
+      "text": "Motion kit for developers",
+      "w": 240,
+      "x": 0,
+      "y": 2284
+    },
+    "pair1": {
+      "kind": "title1",
+      "maxW": 2300,
+      "page": "pair",
+      "text": "Pair learning: two people, one lesson",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "pair2": {
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "pair",
+      "text": "On desktop",
+      "w": 240,
+      "x": 0,
+      "y": 964
+    },
+    "pair3": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "pair",
+      "text": "Avatars for everyone, a crown for the team",
+      "w": 240,
+      "x": 0,
+      "y": 2284
+    },
+    "row1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "v1",
+      "text": "The lesson page on a phone",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "row2": {
+      "kind": "title1",
+      "maxW": 2220,
+      "page": "v1",
+      "text": "Block page, catalogue, and the lesson on a laptop",
+      "w": 240,
+      "x": 0,
+      "y": 1000
+    },
+    "scrib1": {
+      "kind": "title1",
+      "maxW": 3000,
+      "page": "scrib",
+      "text": "Scribble demo: hand-drawn pictures, two font choices",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "uni1": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "uni",
+      "text": "One frame for any roadmap",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "uni2": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "uni",
+      "text": "The other five kinds of step, and Today with two roadmaps",
+      "w": 240,
+      "x": 0,
+      "y": 1020
+    },
+    "uni3": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "uni",
+      "text": "Every kind of step on desktop, and Today with two roadmaps",
+      "w": 240,
+      "x": 0,
+      "y": 2284
+    },
+    "v2row1": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "v2",
+      "text": "New look on a phone",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "v2row2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "page": "v2",
+      "text": "More phone screens",
+      "w": 240,
+      "x": 0,
+      "y": 1420
+    },
+    "v2row3": {
+      "kind": "title1",
+      "maxW": 3210,
+      "page": "v2",
+      "text": "Sign in and account",
+      "w": 240,
+      "x": 0,
+      "y": 2684
+    },
+    "v2row4": {
+      "kind": "title1",
+      "maxW": 2740,
+      "page": "v2",
+      "text": "Roles, lesson extras, states, DSA",
+      "w": 240,
+      "x": 0,
+      "y": 4214
+    },
+    "v2row5": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "v2",
+      "text": "First run and revision",
+      "w": 240,
+      "x": 0,
+      "y": 5478
+    },
+    "v2row6": {
+      "kind": "title1",
+      "maxW": 3680,
+      "page": "v2",
+      "text": "Pages every site needs",
+      "w": 240,
+      "x": 0,
+      "y": 6742
+    },
+    "v2row7": {
+      "kind": "title1",
+      "maxW": 1800,
+      "page": "v2",
+      "text": "Account: consents, password, day-one profile",
+      "w": 240,
+      "x": 0,
+      "y": 10820
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "LessonStep.dc.html",
+    "LessonTurn.dc.html",
+    "LessonEnd.dc.html",
+    "Block.dc.html",
+    "Catalogue.dc.html",
+    "LessonDesktop.dc.html",
+    "V2Home.dc.html",
+    "V2Today.dc.html",
+    "V2Step.dc.html",
+    "V2Done.dc.html",
+    "V2Block.dc.html",
+    "V2Turn.dc.html",
+    "V2Help.dc.html",
+    "V2Roadmaps.dc.html",
+    "V2Role.dc.html",
+    "V2Join.dc.html",
+    "V2Profile.dc.html",
+    "V2Laptop.dc.html",
+    "DeskToday.dc.html",
+    "DeskRoadmaps.dc.html",
+    "DeskBlock.dc.html",
+    "DeskRole.dc.html",
+    "DarkHome.dc.html",
+    "DarkToday.dc.html",
+    "DarkStep.dc.html",
+    "DarkLaptop.dc.html",
+    "DarkDesk.dc.html",
+    "MoLanding.dc.html",
+    "MoDone.dc.html",
+    "MoSteps.dc.html",
+    "V2Login.dc.html",
+    "V2Code.dc.html",
+    "V2Password.dc.html",
+    "V2Reset.dc.html",
+    "V2Settings.dc.html",
+    "V2Roles.dc.html",
+    "V2Questions.dc.html",
+    "V2New.dc.html",
+    "V2Restart.dc.html",
+    "V2Offline.dc.html",
+    "V2Dsa.dc.html",
+    "DeskLogin.dc.html",
+    "DeskRoles.dc.html",
+    "DeskSettings.dc.html",
+    "DeskProfile.dc.html",
+    "DarkLogin.dc.html",
+    "V2SetPass.dc.html",
+    "V2Goal.dc.html",
+    "V2Need.dc.html",
+    "V2Quiz.dc.html",
+    "V2Review.dc.html",
+    "MoToday.dc.html",
+    "MoPath.dc.html",
+    "MoType.dc.html",
+    "MoRepo.dc.html",
+    "MoTabs.dc.html",
+    "MoKit.dc.html",
+    "DeskHome.dc.html",
+    "V2Landing.dc.html",
+    "DeskNew.dc.html",
+    "DeskRestart.dc.html",
+    "DeskTurn.dc.html",
+    "DeskHelp.dc.html",
+    "DeskQuestions.dc.html",
+    "DeskDone.dc.html",
+    "DeskQuiz.dc.html",
+    "DeskReview.dc.html",
+    "DeskOffline.dc.html",
+    "DeskDsa.dc.html",
+    "DeskCode.dc.html",
+    "DeskSetPass.dc.html",
+    "DeskJoin.dc.html",
+    "DeskPassword.dc.html",
+    "DeskReset.dc.html",
+    "DeskGoal.dc.html",
+    "DeskNeed.dc.html",
+    "DeskSaved.dc.html",
+    "DeskDelete.dc.html",
+    "DeskNotFound.dc.html",
+    "DeskError.dc.html",
+    "DeskPricing.dc.html",
+    "DeskContact.dc.html",
+    "DeskCompare.dc.html",
+    "DeskLegal.dc.html",
+    "V2Saved.dc.html",
+    "V2Delete.dc.html",
+    "V2NotFound.dc.html",
+    "V2Error.dc.html",
+    "V2Pricing.dc.html",
+    "V2Contact.dc.html",
+    "V2Legal.dc.html",
+    "V2Compare.dc.html",
+    "UniSteps.dc.html",
+    "UniCourse.dc.html",
+    "UniFormula.dc.html",
+    "UniNumber.dc.html",
+    "UniWrite.dc.html",
+    "UniFind.dc.html",
+    "UniChoose.dc.html",
+    "UniToday.dc.html",
+    "UniDeskStep.dc.html",
+    "ArtKit.dc.html",
+    "ScribDeskA.dc.html",
+    "ScribDeskB.dc.html",
+    "ScribPhoneA.dc.html",
+    "ScribPhoneB.dc.html",
+    "V2PairStart.dc.html",
+    "V2PairHome.dc.html",
+    "V2PairStep.dc.html",
+    "V2PairTalk.dc.html",
+    "V2Avatar.dc.html",
+    "DeskPair.dc.html",
+    "DeskPairStep.dc.html",
+    "AvatarKit.dc.html",
+    "V2Consents.dc.html",
+    "V2Account.dc.html",
+    "V2AccountSet.dc.html",
+    "V2ProfileNew.dc.html",
+    "DeskConsents.dc.html",
+    "DeskAccount.dc.html",
+    "DeskAccountSet.dc.html",
+    "DeskProfileNew.dc.html",
+    "DeskUniChoose.dc.html",
+    "DeskUniFind.dc.html",
+    "DeskUniFormula.dc.html",
+    "DeskUniWrite.dc.html",
+    "DeskUniToday.dc.html",
+    "DeskPairWait.dc.html",
+    "DeskAvatar.dc.html",
+    "DarkDeskHome.dc.html",
+    "DarkDeskLogin.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "landing",
+      "name": "Landing page"
+    },
+    {
+      "id": "pair",
+      "name": "Pair learning and avatars"
+    },
+    {
+      "id": "scrib",
+      "name": "Scribble demo"
+    },
+    {
+      "id": "uni",
+      "name": "Any roadmap"
+    },
+    {
+      "id": "v2",
+      "name": "Phone"
+    },
+    {
+      "id": "desk",
+      "name": "Desktop"
+    },
+    {
+      "id": "dark",
+      "name": "Dark theme"
+    },
+    {
+      "id": "motion",
+      "name": "Motion (press Play)"
+    },
+    {
+      "id": "v1",
+      "name": "First draft (old rules)"
+    }
+  ],
+  "title": "Jintu redesign"
+}

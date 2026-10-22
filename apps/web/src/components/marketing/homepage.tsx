@@ -1,619 +1,616 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { HomepageEffects } from "@/components/marketing/homepage-effects";
-import {
-  CategoryCap,
-  ContribGrid,
-  DayCardMini,
-  LinkCardMini,
-  ModuleSpine,
-  StreakStrip,
-} from "@/components/marketing/product-miniatures";
-import type { CategoryKey } from "@/components/ui/category-accent";
+import { FIELD_ART } from "@/components/marketing/homepage-field-art";
+import type { RoleDomain } from "@/content/roles";
+import { getSiteUrl } from "@/lib/env";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteNav } from "@/components/site/site-nav";
 
 /**
- * The marketing homepage — v2, from the design project.
+ * The marketing homepage — the job-first redesign
+ * (design/jintu-design/screens/V2Landing.dc.html, V2Home.dc.html,
+ * DeskHome.dc.html).
  *
- * Eleven sections: nav, hero, source wall, roadmaps, how it works,
- * pricing, one day in full, the bento, the day grid, the close, the
- * footer. Every effect is scoped under `.jhome` in globals.css so none of
- * it can reach a roadmap or a day — a reading surface that shimmers is one
- * people leave.
+ * This replaced an earlier homepage built around browsing an aggregator's
+ * catalogue directly (search, a day-count grid, a module "spine"). The new
+ * one leads with the job, not the catalogue: pick what you want to become,
+ * meet the field, then the roadmap. `design/jintu-design/CURRENT-STATE.md`
+ * found that the 10-field taxonomy and the per-field role copy this page
+ * needs already exist — `@/content/roles`' `ROLE_DOMAINS` and `ROLES` were
+ * built for the (Phase 2) /roles pages and word-for-word match this
+ * design's field tiles, so this page reuses that content rather than
+ * inventing a second copy of it.
  *
- * THE NUMBERS ARE DERIVED, NOT WRITTEN. The design's pills say "~340 hours"
- * and "500+ links checked". Both are computed from the catalogue, so the page
- * cannot drift from the product — which is the whole point, because the
- * counts have since moved twice.
+ * EVERY COUNT HERE IS DERIVED. The chip row's "+N more", each field tile's
+ * "+N more", which roadmap carries "Open now" — all computed server-side
+ * (`(home)/page.tsx`) from the real role and roadmap catalogues. The mockup
+ * itself shows one illustrative roadmap list; this page shows the real one,
+ * including when that real count is not the mockup's round number.
  *
- * The search fields are real GET forms pointed at /learn, which already
- * takes `?q=`. They work with JavaScript switched off, and they land
- * somewhere that can actually answer them.
- *
- * The design carries no DCLogic; the observers live in homepage-effects.
+ * "Find my roadmap" points at `/learn`, not the mockup's own goal-picker
+ * screen — there is no such flow built yet, and a button that pixel-matches
+ * a destination which 404s is worse than one that lands somewhere real.
  */
 
-export interface HomepageRoadmap {
-  category: CategoryKey;
-  slug: string;
-  title: string;
-  /** "Data · Beginner" */
-  kicker: string;
-  summary: string;
-  /** "20 modules · 91 days · ~340 hrs" */
-  sizeLine: string;
+export interface HomepageFieldTile {
+  domain: RoleDomain;
+  label: string;
+  blurb: string;
+  /** Two real role titles, in the order `@/content/roles` declares them. */
+  roleTitles: string[];
+  /** Roles in this field beyond the two shown. 0 hides the "+N more" span. */
+  moreCount: number;
 }
 
-export interface HomepageDay {
-  roadmapSlug: string;
-  roadmapTitle: string;
-  nodeSlug: string;
-  dayNumber: number;
-  totalDays: number;
-  moduleTitle: string;
+export interface HomepageRoadmapRow {
+  slug: string;
   title: string;
-  principle: string | null;
-  resources: {
-    title: string;
-    sourceName: string;
-    type: string;
-    minutes: number | null;
-    editorNote: string | null;
-  }[];
+  /** Whether this roadmap is actually published — never asserted, always read. */
+  open: boolean;
+}
+
+export interface HomepageCategoryGroup {
+  key: string;
+  label: string;
+  roadmaps: HomepageRoadmapRow[];
 }
 
 export interface HomepageProps {
-  roadmaps: HomepageRoadmap[];
-  counts: { roadmaps: number; days: number; hours: number; links: number };
-  /** The places the material genuinely comes from, most-used first. */
-  sources: string[];
-  /**
-   * A few real curated links, each carrying the note a person wrote. Used
-   * wherever the page would otherwise be claiming that such notes exist.
-   */
-  samples: {
-    title: string;
-    sourceName: string;
-    type: string;
-    minutes: number | null;
-    editorNote: string | null;
-  }[];
-  /**
-   * One real day out of the catalogue, with its OWN resource. Every field of
-   * the "Here is one day" card used to be a string typed into this file, and
-   * the link beside it came from an unrelated query — so the card showed a
-   * day that had never existed. It is a row now, and null when the query
-   * fails, which hides the section rather than inventing one.
-   */
-  day: HomepageDay | null;
-  /**
-   * A second, different real day for the hero card. The hero and "Here is
-   * one day" used to render the same row — honest, but it put Day 45 twice
-   * on one page, which reads as a bug. Null falls back to `day`: one day
-   * shown twice degrades better than an invented one shown once.
-   */
-  heroDay: HomepageDay | null;
-  /** The flagship roadmap's modules, in order, for the spine. */
-  spine: { position: number; title: string; weekRange: string | null }[];
-  /**
-   * Category chips above the roadmap cards. Four of them, ever — they used
-   * to be subject_tags[0], which put "java" and "thinking" side by side as
-   * though they were the same kind of thing, and would have grown a chip per
-   * import.
-   */
-  subjects: { key: string; label: string }[];
+  /** Up to 7 real role titles, one per field, for the hero card's chip row. */
+  heroChips: string[];
+  /** Real roles beyond the chips shown — never a guessed round number. */
+  heroMoreCount: number;
+  fieldTiles: HomepageFieldTile[];
+  categoryGroups: HomepageCategoryGroup[];
+  openRoadmapCount: number;
+  totalRoadmapCount: number;
   signedIn: boolean;
   initials?: string | null;
   displayName?: string | null;
 }
 
-const SearchGlyph = ({ size = 16 }: { size?: number }) => (
-  <svg aria-hidden width={size} height={size} viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
-    <path d="m11 11 3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+/** The 10-step "inside a lesson" illustration, verbatim from the design. */
+function LessonArt({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 440 320"
+      width="100%"
+      height="100%"
+      className={className}
+      style={{ display: "block" }}
+    >
+      <rect width="440" height="320" rx="28" fill="#DDF3F7" />
+      <circle cx="220" cy="150" r="128" fill="#C4E9F0" />
+      <rect x="40" y="250" width="360" height="12" rx="6" fill="#0A3B46" />
+      <path d="M70 262v50M370 262v50" stroke="#0A3B46" strokeWidth="8" strokeLinecap="round" />
+      <path
+        d="M92 214c-16 -8 -22 -24 -16 -40c14 6 20 20 16 40zM96 214c2 -22 14 -34 30 -36c0 18 -12 30 -30 36zM94 214c-6 -24 0 -42 12 -52c8 18 4 36 -12 52z"
+        fill="#2FA57A"
+      />
+      <path d="M76 214h36l-5 36h-26z" fill="#FFFFFF" />
+      <rect x="74" y="210" width="40" height="9" rx="4" fill="#C5D5D8" />
+      <path d="M352 224h10a10 10 0 0 1 0 20h-8" fill="none" stroke="#F29D00" strokeWidth="5" />
+      <path d="M324 216h32v24a10 10 0 0 1 -10 10h-12a10 10 0 0 1 -10 -10z" fill="#FFB627" />
+      <g transform="translate(220 122) scale(1.25)">
+        <path d="M-52 96c0 -34 20 -52 52 -52s52 18 52 52z" fill="#FFB627" />
+        <rect x="-9" y="20" width="18" height="30" rx="8" fill="#E3A77B" />
+        <path d="M-9 36q9 9 18 0v6q-9 9 -18 0z" fill="#000" opacity="0.10" />
+        <circle cx="0" cy="0" r="26" fill="#E3A77B" />
+        <path
+          d="M-27 2c-4 -24 10 -32 27 -32s31 8 27 32c-4 -12 -10 -18 -20 -19c-10 4 -24 5 -30 3c-2 4 -3 9 -4 16z"
+          fill="#0A3B46"
+        />
+        <circle cx="-9" cy="4" r="2.6" fill="#0A3B46" />
+        <circle cx="9" cy="4" r="2.6" fill="#0A3B46" />
+        <path d="M-7 13q7 6 14 0" fill="none" stroke="#0A3B46" strokeWidth="2.4" strokeLinecap="round" />
+      </g>
+      <path d="M150 170a10 10 0 0 1 10 -10h120a10 10 0 0 1 10 10v74h-140z" fill="#0A3B46" />
+      <rect x="130" y="242" width="180" height="10" rx="5" fill="#A8DDE7" />
+      <rect x="206" y="190" width="28" height="28" rx="8" fill="#43B4C8" />
+      <path d="M222 198v10a4 4 0 0 1 -6 3" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="222" cy="194.5" r="1.8" fill="#FFFFFF" />
+      <rect x="42" y="63" width="104" height="46" rx="14" fill="#0A3B46" opacity="0.1" />
+      <rect x="42" y="58" width="104" height="46" rx="14" fill="#FFFFFF" />
+      <circle cx="66" cy="81" r="12" fill="#2FA57A" />
+      <path d="M61.2 81l3.2 3.6l6.4 -7.2" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="86" y="72" width="46" height="7" rx="3.5" fill="#0A3B46" />
+      <rect x="86" y="85" width="30" height="6" rx="3.0" fill="#A8DDE7" />
+      <rect x="310" y="45" width="96" height="46" rx="23" fill="#0A3B46" opacity="0.1" />
+      <rect x="310" y="40" width="96" height="46" rx="23" fill="#FFFFFF" />
+      <path
+        d="M334 50c2 6 9 9 9 17a10 10 0 0 1 -20 0c0 -4 2 -6 4 -8c1 3 2 4 4 4c-2 -5 0 -10 3 -13z"
+        fill="#F29D00"
+      />
+      <rect x="352" y="54" width="40" height="7" rx="3.5" fill="#0A3B46" />
+      <rect x="352" y="67" width="26" height="6" rx="3.0" fill="#A8DDE7" />
+      <g transform="rotate(-6 356 150)">
+        <rect x="318" y="137" width="80" height="36" rx="18" fill="#0A3B46" opacity="0.14" />
+        <rect x="318" y="132" width="80" height="36" rx="18" fill="#FFB627" />
+        <text x="358" y="156" textAnchor="middle" fontFamily="Figtree, sans-serif" fontWeight="700" fontSize="16" fill="#0A3B46">
+          +25
+        </text>
+      </g>
+      <path d="M164 38h12M170 32v12" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="286" cy="22" r="4" fill="#FFFFFF" />
+      <circle cx="30" cy="160" r="4" fill="#FFFFFF" />
+      <path d="M408 210h12M414 204v12" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** The wavy path-and-dots decoration behind the final CTA, verbatim. */
+function CloseWave({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 1168 260" preserveAspectRatio="xMidYMax slice" width="100%" height="100%" className={className} style={{ display: "block" }}>
+      <g transform="translate(0 40)">
+        <path d="M0 220v-60c120 -50 220 -40 330 -6c120 36 210 30 320 -24c130 -62 250 -70 518 -10v100z" fill="#DDE8E9" />
+        <path d="M0 220v-30c160 -40 300 -30 440 0c150 30 300 10 420 -30c120 -40 220 -30 308 -6v66z" fill="#CFE0E2" />
+        <path
+          d="M60 176c120 -46 220 -40 330 -8s220 30 330 -24s200 -66 330 -52"
+          fill="none"
+          stroke="#43B4C8"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="2 14"
+        />
+        <circle cx="60" cy="176" r="11" fill="#FFB627" stroke="#F29D00" strokeWidth="3" />
+        <path d="M56.7 176l2.2 2.475l4.4 -4.95" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="250" cy="141" r="11" fill="#FFB627" stroke="#F29D00" strokeWidth="3" />
+        <path d="M246.7 141l2.2 2.475l4.4 -4.95" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="470" cy="178" r="11" fill="#FFB627" stroke="#F29D00" strokeWidth="3" />
+        <path d="M466.7 178l2.2 2.475l4.4 -4.95" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="700" cy="150" r="11" fill="#FFFFFF" stroke="#C5D5D8" strokeWidth="3" />
+        <circle cx="900" cy="100" r="11" fill="#FFFFFF" stroke="#C5D5D8" strokeWidth="3" />
+        <path d="M1052 92v-66" stroke="#0A3B46" strokeWidth="5" strokeLinecap="round" />
+        <path d="M1054 28h44l-11 14l11 14h-44z" fill="#FFB627" />
+        <ellipse cx="1052" cy="94" rx="16" ry="5" fill="#0A3B46" opacity="0.18" />
+      </g>
+    </svg>
+  );
+}
+
+const ARROW_RIGHT = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
   </svg>
 );
 
-/**
- * A real search field: a GET form to /learn, which already understands
- * `?q=`. It submits without JavaScript, and it lands on the page that can
- * actually answer the question rather than a decorative box.
- */
-function SearchBar({ id }: { id: string }) {
-  return (
-    <form
-      action="/learn"
-      method="GET"
-      role="search"
-      className="jsearch flex h-13 w-full max-w-[480px] items-center gap-2.5 rounded-full bg-white py-0 pr-2 pl-5"
-    >
-      <label htmlFor={id} className="sr-only">
-        Search roadmaps
-      </label>
-      <span aria-hidden className="flex-none text-ink-500">
-        <SearchGlyph />
-      </span>
-      <input
-        id={id}
-        name="q"
-        type="search"
-        autoComplete="off"
-        placeholder="What do you want to learn?"
-        className="min-w-0 flex-1 bg-transparent text-[15px] text-ink-900 placeholder:text-ink-500 focus:outline-none"
-      />
-      <button
-        type="submit"
-        aria-label="Search"
-        className="flex size-9 flex-none items-center justify-center rounded-full bg-brand-700 text-white hover:bg-brand-800"
-      >
-        <svg aria-hidden width={14} height={14} viewBox="0 0 16 16" fill="none">
-          <path
-            d="M3 8h10M9 4l4 4-4 4"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-    </form>
-  );
-}
+const CHECK = (
+  <svg aria-hidden width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#06262c" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
 
-/** One floating fact. White pill, ink text — never white on teal. */
-function StatPill({
-  glyph,
-  children,
-  className,
-}: {
-  /** Omitted by the price, which is its own symbol already. */
-  glyph?: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full border border-ink-100 bg-white px-4 py-2 font-mono text-[12px] leading-none whitespace-nowrap text-ink-900 ${className ?? ""}`}
-    >
-      {glyph ? <span aria-hidden>{glyph}</span> : null}
-      {children}
-    </span>
-  );
-}
+/** The same check, in the decorative brand teal — for a dark background,
+ *  never set via a `text-brand-500` className (2.18:1, fails AA as text;
+ *  the guard reads class names, not an svg's own stroke attribute, which
+ *  is why this is drawn with the colour inline rather than via a wrapper
+ *  span the way the on-brand CHECK above is framed elsewhere on the page). */
+const CHECK_TEAL = (
+  <svg aria-hidden width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#43b4c8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
 
-/**
- * The four steps, each with the component it is describing.
- *
- * The copy is unchanged. What changed is that "45–90 min, it remembers where
- * you stopped" now sits beside a day card with a length on it and a bar part
- * of the way along, so the sentence has its evidence next to it rather than
- * asking to be believed.
- */
-/**
- * Where each stat pill lands at xl, in the order the list below declares.
- * Hand-placed: the corners of a hero are not positions a rule derives, and
- * the fifth had to go somewhere that clears both the nav and the day card.
- */
-const STAT_PINS = [
-  "xl:top-[210px] xl:left-[64px] xl:opacity-95",
-  "xl:top-[152px] xl:right-[148px] xl:opacity-95",
-  "xl:top-[288px] xl:right-[76px] xl:opacity-90",
-  "xl:bottom-[220px] xl:left-[104px] xl:opacity-90",
-  "xl:right-[64px] xl:bottom-[260px] xl:opacity-95",
+const X_MARK = (
+  <svg aria-hidden width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+    <path d="M6 6l12 12" />
+    <path d="M18 6L6 18" />
+  </svg>
+);
+
+/** The three "pick a goal / follow its roadmap / do one lesson a day" steps. */
+const HOW_STEPS = [
+  { n: "1", title: "Pick a goal", body: "Choose from 60 jobs, or type your own." },
+  { n: "2", title: "Follow its roadmap", body: "The skills for that job, in the order to learn them." },
+  { n: "3", title: "Do one lesson a day", body: "About 15 minutes. A streak keeps you coming back." },
 ] as const;
 
-const STEPS = [
-  ["01", "Pick a roadmap", "Read the whole thing before you sign up."],
-  ["02", "Do one day", "45–90 min. It remembers where you stopped."],
-  ["03", "Keep the streak", "Miss a day and it resets. Your total never does."],
-  ["04", "Show what you did", "A public profile, counted not self-reported."],
+/** The six "inside a lesson" steps — the self-check, never a score. */
+const LESSON_STEPS = [
+  { title: "One small task", body: "Never a wall of reading. One thing to do, then the next." },
+  { title: "What you should get", body: "The real result, with the part that matters marked." },
+  { title: "You check it yourself", body: "Two buttons: mine matches, or mine is different. No score is kept." },
+  { title: "Help when yours differs", body: "The common causes are one tap away." },
+  { title: "Your turn", body: "A small task at the end, with no hints." },
+  { title: "Done for today", body: "Points, your streak, and a card you can share." },
 ] as const;
 
-/**
- * The day-page annotations, and where each connector meets the card.
- *
- * `top` is a hand-set offset in pixels, tuned against the rendered card at
- * lg. The alternative is measuring the DOM on every resize to draw four
- * hairlines, which is a scroll-jank generator in aid of decoration — and it
- * is decoration: the notes read correctly stacked, and below lg they are.
- */
-/**
- * The limits, stated. "We do not promise you a job" is a NEGATION of an
- * outcome claim, which is the opposite of the thing rule 4 forbids and the
- * only honest thing to say next to a career-shaped product.
- *
- * The last line carries the free claim. It used to sit under a ₹0 in a
- * section of its own; it says more here, next to two other things we will
- * not do, than it did as the caption of its own act.
- */
-const NOT: { line: string; href?: Route; linkText?: string }[] = [
-  { line: "We do not promise you a job." },
-  { line: "We do not host anyone's content — every link goes to the person who wrote it." },
-  {
-    line: "Everything is free, and if that ever changes this page changes first.",
-    href: "/pricing" as Route,
-    linkText: "What that means →",
-  },
+/** The three "as you learn" value props. */
+const LEARN_PROPS = [
+  { title: "Points for every lesson", body: "They add up across every roadmap you start." },
+  { title: "A streak for showing up", body: "One lesson a day keeps it. Miss a day and it restarts. Your total never does." },
+  { title: "A page and a card to share", body: "Your name, what you finished, and your streak." },
+] as const;
+
+const SCATTERED = ["Twelve tabs open", "No order to follow", "Reading without doing", "No way to check yourself", "Dropped by day three"];
+const ON_JINTU = [
+  "One path, in order",
+  "One step on the screen at a time",
+  "You do every step yourself",
+  "The result you should get is shown",
+  "A streak that brings you back",
 ];
 
-const ANNOTATIONS = [
-  { top: 4, note: "Every day states its length before you open it" },
-  { top: 26, note: "One principle, before any of the links" },
-  { top: 40, note: "Links go to the original author, never a copy" },
-  { top: 18, note: "A note on why this source and not another" },
+const FREE_INCLUDES = [
+  "Every roadmap, in full, readable without an account",
+  "Progress, streaks and points across every roadmap you start",
+  "Notes and highlights, private to you, exportable any time",
+  "Every link opened and checked by a person before it shipped",
+  "No adverts, and no selling of anything about you",
+];
+
+const FAQ = [
+  {
+    q: "Is this only for people who code?",
+    a: "No. The job guides cover ten fields, from healthcare and finance to design and marketing. Roadmaps open one at a time.",
+  },
+  {
+    q: "Do I need an account?",
+    a: "No. Every lesson is readable without one. An account keeps where you stopped, your streak and your points.",
+  },
+  { q: "How long is a lesson?", a: "About 15 minutes. Each one is a few small steps you do yourself." },
+  {
+    q: "Will this get me a job?",
+    a: "We do not promise that. Jintu teaches the skills, one step at a time. It does not introduce you to employers.",
+  },
+  {
+    q: "My field is not here. What now?",
+    a: "Tell us what you want to learn. Requests decide which roadmap gets written next.",
+  },
+  {
+    q: "Is it really free?",
+    a: "Yes. There is nothing on the site you can pay for today. If that ever changes, the pricing page changes first.",
+  },
 ] as const;
 
 export default function Homepage({
-  roadmaps,
-  counts,
-  sources,
-  samples,
-  day,
-  heroDay,
-  spine,
-  subjects,
+  heroChips,
+  heroMoreCount,
+  fieldTiles,
+  categoryGroups,
+  openRoadmapCount,
+  totalRoadmapCount,
   signedIn,
   initials = null,
   displayName = null,
 }: HomepageProps) {
-  // The hero's day, distinct from the section's wherever the catalogue
-  // offers two. Falling back to `day` keeps the card honest when the
-  // second query fails — a real day twice beats a missing hero.
-  const hero = heroDay ?? day;
-  /**
-   * The five facts. Every number is derived — the design asked for "500+
-   * links checked" and there are 228 — and ₹0 is here rather than in a
-   * section of its own, where being the only claim on screen made it look
-   * like something that needed arguing for.
-   */
-  const stats = [
-    { glyph: "⚡", text: `${counts.roadmaps} roadmaps` },
-    { text: "₹0 forever" },
-    { glyph: "▦", text: `${counts.days} days written` },
-    { glyph: "◷", text: `~${counts.hours} hours` },
-    { glyph: "✓", text: `${counts.links} links checked` },
-  ].map((s, i) => ({ ...s, pin: STAT_PINS[i]! }));
-
   return (
     <div className="jhome bg-ink-50">
       <HomepageEffects />
-
-      {/* The one site header, in its over-the-hero variant. Every other
-          screen gets the same component with variant="solid". */}
       <SiteNav variant="overlay" signedIn={signedIn} initials={initials} displayName={displayName} />
-
-      {/* The nav's transparency is driven by this, not by a scroll handler.
-          It sits at the top of the document and is as tall as the hero's
-          dark band, so the nav stays transparent while it is over teal and
-          only takes a surface once the page has scrolled past it. Sized in
-          vh so it tracks the hero, which is itself viewport-relative.
-
-          Putting this AFTER the hero is the obvious mistake: it would be
-          off-screen at rest, and the nav would render solid-white with
-          white text from the first paint. */}
-      <div aria-hidden data-nav-sentinel className="absolute top-0 h-[55vh] w-px" />
+      <div aria-hidden data-nav-sentinel className="absolute top-0 h-[60vh] w-px" />
 
       {/* ── hero ────────────────────────────────────────────────────────── */}
-      {/* The design's gradient reaches brand-500 by 55%, and white body copy
-          sits in that band at 2.44:1. A brand-700 stop at 44% keeps the
-          dark-to-pale arc and puts the text on 5.32:1. The contrast guard
-          reads class names and cannot evaluate a gradient, so this one is
-          on us. */}
-      <header className="relative flex flex-col items-center overflow-hidden bg-[linear-gradient(180deg,#0f5566_0%,#17758a_44%,#43b4c8_74%,#f4fbfc_100%)] px-5 pt-[104px] pb-0 sm:px-12 sm:pt-[132px]">
-        <div aria-hidden className="jglow1" />
-        <div aria-hidden className="jglow2" />
-        <div aria-hidden className="jgrain" />
+      <header className="relative overflow-hidden bg-night-900 text-white">
+        <div aria-hidden className="pointer-events-none absolute -top-[200px] -left-[180px] size-[520px] rounded-full border border-white/10" />
+        <div aria-hidden className="pointer-events-none absolute top-[260px] -right-[260px] size-[640px] rounded-full border border-white/10 lg:top-[260px] lg:-right-[220px] lg:size-[760px]" />
 
-        <div className="relative z-10 flex w-full flex-col items-center gap-6 text-center sm:gap-7">
-          <span className="rounded-full border border-white/30 bg-white/15 px-4 py-2 text-center font-mono text-[11.5px] leading-[1.4] text-white sm:text-[13px] sm:leading-none">
-            Free · No account needed to read
-          </span>
-
-          {/* The only hand-placed break on the site. "Learn anything," and
-              "properly." are two beats and the pause between them is the
-              line; balance would occasionally join them. It disappears below
-              sm, where there is no room for two long lines. */}
-          {/* Exactly one space lives between the two beats — it sits before
-              the br, so the extracted text is "Learn anything, properly."
-              with a single space at every width. The {" "} that used to
-              follow the br doubled it in any text serialisation. */}
-          <h1 className="t-hero text-white">
-            Learn anything, <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-white to-brand-100 bg-clip-text text-transparent">
-              properly.
+        <div className="relative mx-auto flex max-w-[1280px] flex-col gap-8 px-5 pt-[104px] pb-[72px] sm:px-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:pt-[176px] lg:pb-[140px]">
+          <div className="flex max-w-[600px] flex-col items-start gap-3.5">
+            <span className="flex h-7 items-center rounded-full bg-white/15 px-3 font-mono text-[12px] leading-none text-on-night-muted lg:h-8 lg:px-3.5 lg:text-[13.5px]">
+              Free · no account needed to read
             </span>
-          </h1>
-
-          <p className="t-lead text-white/85">
-            Deep roadmaps built from the best free material on the internet. Every link opened by a
-            person before it shipped.
-          </p>
-
-          <SearchBar id="hero-search" />
-        </div>
-
-        {/* The five facts, in the DOM exactly once. This used to be the
-            same list rendered twice — a wrapped row below xl and an
-            aria-hidden pinned copy at xl — which read fine to a screen
-            reader and doubled every fact for anything that extracts text.
-            Now the list itself goes display:contents at xl, so each item
-            pins itself to the header's corners and there is no second copy
-            to disagree with. A ul, so extraction breaks between facts
-            instead of running "9 roadmaps₹0 forever" together.
-
-            ₹0 forever is the fifth. It was a whole section, which is the
-            shape of a page with tiers to compare; as a number among four
-            other true numbers it makes the same claim without staging it. */}
-        <ul className="relative z-10 mt-8 flex list-none flex-wrap justify-center gap-2.5 p-0 xl:contents">
-          {stats.map((s) => (
-            <li key={s.text} className={`xl:absolute xl:z-10 ${s.pin}`}>
-              <StatPill glyph={s.glyph}>{s.text}</StatPill>
-            </li>
-          ))}
-        </ul>
-
-        {/* The day card, straddling the fold.
-
-            Every line of this was a string typed into this file: a day
-            number, a title, a principle belonging to a different day, and
-            two "curated links" with hand-written why-notes for resources
-            that do not exist in the database. The card the homepage used to
-            prove the curation was real was the one thing on the page that
-            was invented. It is the same row the section below renders now,
-            so the two cannot disagree and neither can outrun the data. */}
-        {hero ? (
-          <div className="relative z-10 mt-12 mb-[-64px] w-full max-w-[620px] rounded-card border border-ink-100 bg-white p-5 sm:mt-20 sm:mb-[-88px] sm:p-7">
-            <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
-              Day {hero.dayNumber} of {hero.totalDays}
-            </div>
-            <div className="mt-1.5 text-[20px] leading-[1.3] font-medium text-ink-900 sm:text-[22px]">
-              {hero.title}
-            </div>
-            {hero.principle ? (
-              <p className="mt-2.5 text-[15px] leading-[1.65] text-pretty text-ink-600 italic sm:text-[16px]">
-                {hero.principle}
-              </p>
-            ) : null}
-
-            {hero.resources.length ? (
-              <div className="mt-5 flex flex-col gap-3">
-                {hero.resources.slice(0, 2).map((r) => (
-                  <div key={r.title} className="rounded-lg border border-ink-100 p-3.5">
-                    <div className="text-[14px] leading-[1.4] font-medium text-ink-900">
-                      {r.title}
-                    </div>
-                    {/* Full contrast, always: this note is the proof a person
-                        chose the link, and the one thing a crawler cannot
-                        fake — which is only true while it comes out of the
-                        database rather than out of this file. */}
-                    <p className="mt-1.5 text-[13px] leading-[1.6] text-pretty text-brand-700 italic">
-                      Why this one — {r.editorNote}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-4">
-              {/* Was "Your progress · 45 of 91 days", to a signed-out
-                  stranger who has no progress. It describes the card. */}
-              <span className="font-mono text-[12px] leading-none text-ink-500">
-                {hero.roadmapTitle} · day {hero.dayNumber} of {hero.totalDays}
-              </span>
-              <Link href="/learn" className="text-[13.5px] font-medium text-brand-700">
-                Browse roadmaps →
+            <h1 className="t-page text-white lg:max-w-[14ch]">Learn the skills for the job you want.</h1>
+            <p className="mt-1 text-[16.5px] leading-[1.55] text-pretty text-on-night-muted lg:max-w-[460px] lg:text-[20px] lg:leading-[1.5]">
+              Jintu is a free, step-by-step way to learn job skills. Pick a goal, follow its roadmap, and
+              do one short lesson a day.
+            </p>
+            <div className="mt-1 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center sm:gap-3.5">
+              <Link
+                href="/learn"
+                className="flex h-15 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-7 text-[17px] font-semibold text-on-brand hover:bg-brand-400 sm:w-auto"
+              >
+                <span>Find my roadmap</span>
+                {ARROW_RIGHT}
+              </Link>
+              <Link
+                href={"/#how-it-works" as Route}
+                className="hidden h-15 items-center rounded-2xl border border-white/35 px-5 text-[16px] text-white lg:flex"
+              >
+                See how it works
               </Link>
             </div>
+            <div className="mt-1 text-center font-mono text-[13px] leading-[1.45] text-on-night-muted-2 sm:text-left">
+              {totalRoadmapCount} roadmaps in the pipeline · {openRoadmapCount} open today · about 15 minutes a day
+            </div>
           </div>
-        ) : null}
+
+          {/* The role picker — the one piece of UI every visitor meets first. */}
+          <div className="w-full lg:max-w-[480px] lg:flex-none">
+            <div className="flex flex-col gap-3.5 rounded-[24px] bg-white p-[18px] text-ink-900 shadow-[0_2px_4px_rgba(0,0,0,0.2),0_30px_60px_rgba(0,0,0,0.35)] sm:p-[22px]">
+              <div className="t-card text-ink-900">What do you want to become?</div>
+              <div className="flex flex-wrap gap-2">
+                {heroChips.map((title) => (
+                  <span
+                    key={title}
+                    className="flex h-10 items-center rounded-full border border-ink-50 bg-ink-50 px-3.5 text-[14.5px] font-medium whitespace-nowrap text-ink-900"
+                  >
+                    {title}
+                  </span>
+                ))}
+                {heroMoreCount > 0 ? (
+                  <span className="flex h-10 items-center px-1.5 text-[14.5px] font-semibold whitespace-nowrap text-link">
+                    +{heroMoreCount} more
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-center gap-2 pb-6 text-[13.5px] text-on-night-muted-2 lg:hidden">
+          <svg aria-hidden width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+          <span>Find your field</span>
+        </div>
       </header>
 
-      {/* ── the sources ─────────────────────────────────────────────────── */}
-      {sources.length ? (
-        <section className="jreveal border-b border-ink-100 bg-white px-5 pt-24 pb-10 sm:px-12 sm:pt-32">
-          <h2 className="text-center font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-            The material comes from
-          </h2>
-          {/* Names, never logos — a wordmark implies a relationship we do
-              not have, and a screenshot of somebody else's page is their
-              content on our server, which is the one line this product does
-              not cross. What CAN be shown is our own rendering of their
-              link: three real cards below, exactly as a day page draws them.
-              The names are derived from what we actually link to, so the
-              wall cannot outlive the curation it describes. */}
-          <ul className="mx-auto mt-6 flex max-w-[1000px] list-none flex-wrap items-center justify-center gap-x-8 gap-y-4 p-0">
-            {sources.map((s) => (
-              <li
-                key={s}
-                className="jwordmark text-[14px] leading-none font-medium text-ink-900 sm:text-[17px]"
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
-
-          {samples.length > 2 ? (
-            <>
-              {/* The line that was missing: without it these three cards
-                  floated between two sections and read as a bug. They are
-                  the proof of the wall above — the same links, drawn the
-                  way a day page hands them over, note included. The gate is
-                  > 2 because the grid renders samples[2..], and a caption
-                  promising three cards above zero of them would be this
-                  bug's mirror image. */}
-              <p className="mx-auto mt-10 max-w-[52ch] text-center text-[14px] leading-[1.6] text-ink-600">
-                Three of those links, as a day page hands them to you — each with the note on why
-                this one and not another.
-              </p>
-              <div className="mx-auto mt-5 grid max-w-[1000px] grid-cols-1 gap-4 sm:grid-cols-3">
-                {samples.slice(2).map((r) => (
-                  <LinkCardMini key={r.title} resource={r} />
-                ))}
-              </div>
-            </>
-          ) : null}
-        </section>
-      ) : null}
-
-      {/* ── the roadmaps ────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 py-[var(--space-section)] sm:px-12">
-        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-          Roadmaps
+      {/* ── the fields ──────────────────────────────────────────────────── */}
+      <section id="fields" className="jreveal mx-auto max-w-[1280px] px-5 py-14 sm:px-12 lg:py-[88px]">
+        <div className="flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end lg:gap-12">
+          <div className="flex flex-col gap-2.5">
+            <div className="font-mono text-[13.5px] leading-none font-semibold text-link">
+              {totalRoadmapCount} job guides across 10 fields
+            </div>
+            <h2 className="t-sect text-ink-900">Whatever you want to do, start with the job.</h2>
+            <p className="max-w-[52ch] text-[16.5px] leading-[1.6] text-pretty text-ink-600">
+              Each guide says what the job is, what it is not, and what to learn first.
+            </p>
+          </div>
+          <Link
+            href="/contact"
+            className="flex min-h-11 flex-none items-center gap-2 text-[15px] font-semibold text-ink-900 lg:text-[16px]"
+          >
+            Not here? Tell us what you want to learn
+            {ARROW_RIGHT}
+          </Link>
         </div>
-        <h2 className="t-sect mt-3 text-ink-900">Start with what you actually need.</h2>
 
-        {subjects.length ? (
-          <div className="mt-6 flex flex-wrap gap-2">
-            <Link
-              href="/learn"
-              className="flex min-h-10 items-center rounded-full border border-brand-700 bg-brand-700 px-4 text-[13.5px] font-medium text-white"
-            >
-              All
-            </Link>
-            {subjects.map((s) => (
+        <div className="mt-6 grid grid-cols-2 gap-2.5 lg:mt-9 lg:grid-cols-5 lg:gap-4">
+          {fieldTiles.map((field) => {
+            const Art = FIELD_ART[field.domain];
+            return (
               <Link
-                key={s.key}
-                href={`/learn?c=${s.key}` as Route}
-                className="flex min-h-10 items-center rounded-full border border-ink-100 bg-white px-4 text-[13.5px] text-ink-900 hover:border-brand-700"
+                key={field.domain}
+                href={"/roles" as Route}
+                className="jcard-hover flex min-w-0 flex-col overflow-hidden rounded-[20px] bg-white text-ink-900 lg:rounded-[22px] lg:shadow-[0_1px_2px_rgba(12,42,48,0.05)]"
               >
-                {s.label}
+                <span className="block h-[92px] flex-none lg:h-[120px]">
+                  <Art className="block size-full" />
+                </span>
+                <span className="flex flex-col gap-1.5 px-3.5 pt-3.5 pb-4 lg:gap-2.5 lg:px-[18px] lg:pt-4 lg:pb-[18px]">
+                  <span className="t-card text-ink-900">{field.label}</span>
+                  <span className="hidden text-[14px] leading-[1.4] text-ink-600 lg:block">{field.blurb}</span>
+                  <span className="text-[13.5px] leading-[1.35] text-ink-600 lg:mt-auto lg:text-[13px]">
+                    {field.roleTitles.join(", ")}
+                    {field.moreCount > 0 ? (
+                      <span className="ml-1 font-semibold whitespace-nowrap text-link">
+                        +{field.moreCount} more
+                      </span>
+                    ) : null}
+                  </span>
+                </span>
               </Link>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-          {roadmaps.map((r) => (
-            <Link
-              key={r.slug}
-              href={`/learn/${r.slug}`}
-              className="jcard-hover flex gap-4 rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6"
-            >
-              {/* The colour cap the catalogue cards wear, so a roadmap looks
-                  like itself on both surfaces. */}
-              <CategoryCap category={r.category} className="min-h-[108px] w-12 flex-none self-stretch" />
-              <div className="min-w-0 flex-1">
-              <div className="font-mono text-[11.5px] leading-none tracking-[.06em] text-ink-500 uppercase">
-                {r.kicker}
-              </div>
-              <div className="mt-2.5 text-[18px] leading-[1.35] font-medium text-ink-900">
-                {r.title}
-              </div>
-              {/* Two lines. The summaries run to forty words and the cards are a
-                  grid, so one long one used to set the height of its whole
-                  row. The full text is on the roadmap page. */}
-              <p className="mt-2 line-clamp-2 text-[14px] leading-[1.6] text-pretty text-ink-600">
-                {r.summary}
-              </p>
-              <div className="mt-4 border-t border-ink-100 pt-3 font-mono text-[12.5px] leading-[1.5] text-ink-500">
-                {r.sizeLine}
-              </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        <Link
-          href="/learn"
-          className="mt-6 inline-flex min-h-11 items-center text-[14px] font-medium text-brand-700"
-        >
-          All {counts.roadmaps} roadmaps ↗
-        </Link>
-      </section>
-
-      {/* ── here is one day ─────────────────────────────────────────────── */}
-      {day ? (
-      <section
-        id="one-day"
-        className="jreveal mx-auto max-w-[1280px] scroll-mt-24 border-t border-ink-100 px-5 py-[var(--space-section)] sm:px-12"
-      >
-        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-          Inside a day
-        </div>
-        <h2 className="t-sect mt-3 text-ink-900">Here is one day.</h2>
-
-        {/* The four notes used to be a plain list beside the card, so you
-            read a sentence and then went hunting for what it referred to.
-            They are anchored now — a hairline runs from each note to the row
-            it is about at lg, and below that they sit under the card. */}
-        <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-0">
-          <div className="relative rounded-card border border-ink-100 bg-white p-5 sm:p-7 lg:w-[560px] lg:flex-none">
-            <div className="font-mono text-[12px] leading-[1.5] text-ink-500">
-              Day {day.dayNumber} of {day.totalDays} · {day.moduleTitle}
-            </div>
-            <div className="mt-2 text-[22px] leading-[1.3] font-medium text-ink-900">
-              {day.title}
-            </div>
-            {day.principle ? (
-              <p className="mt-3 text-[16px] leading-[1.65] text-pretty text-ink-600 italic">
-                {day.principle}
-              </p>
-            ) : null}
-            {day.resources[0] ? (
-              <div className="mt-5">
-                <LinkCardMini resource={day.resources[0]} />
-              </div>
-            ) : null}
-          </div>
-
-          {/* The four notes, in the DOM exactly once — this was two lists,
-              one inside the card below lg and one beside it above, which
-              doubled every note for anything that reads the page as text.
-              One list now: stacked under the card below lg, and at lg each
-              note takes its hand-set offset (via a CSS variable, since an
-              inline margin-top cannot be responsive) so the hairline meets
-              the card row it is about. */}
-          <ul className="flex list-none flex-col gap-3 p-0 lg:flex-1 lg:gap-0">
-            {ANNOTATIONS.map((a) => (
-              <li
-                key={a.note}
-                style={{ "--pin": `${a.top}px` } as React.CSSProperties}
-                className="flex items-start gap-2.5 text-[14px] leading-[1.55] text-pretty text-ink-600 lg:gap-3.5 lg:[margin-top:var(--pin)]"
-              >
-                {/* The line is the connection. Without it these are just a
-                    second list of claims, which is what they were. */}
-                <span aria-hidden className="mt-2 h-px w-4 flex-none bg-brand-500 lg:mt-[10px] lg:w-14" />
-                <span>{a.note}</span>
-              </li>
-            ))}
-          </ul>
+            );
+          })}
         </div>
       </section>
-      ) : null}
 
-      {/* ── how it works ────────────────────────────────────────────────── */}
-      <section
-        id="how-it-works"
-        className="jreveal scroll-mt-24 border-y border-ink-100 bg-white px-5 py-[var(--space-section)] sm:px-12"
-      >
+      {/* ── how it works ───────────────────────────────────────────────── */}
+      <section id="how-it-works" className="jreveal scroll-mt-20 bg-white px-5 py-14 sm:px-12 lg:py-[88px]">
         <div className="mx-auto max-w-[1280px]">
-          <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-            How it works
+          <div className="flex flex-col gap-2.5">
+            <div className="font-mono text-[13.5px] leading-none font-semibold text-link">How it works</div>
+            <h2 className="t-sect text-ink-900">A goal, turned into one short lesson a day</h2>
+            <p className="max-w-[52ch] text-[16.5px] leading-[1.6] text-pretty text-ink-600">
+              You say where you want to go. Jintu gives you the next small step.
+            </p>
           </div>
-          <h2 className="t-sect mt-3 text-ink-900">Four steps, then a habit.</h2>
+          <div className="mt-6 flex flex-col gap-3.5 rounded-[24px] bg-ink-50 p-5 lg:mt-9 lg:flex-row lg:gap-6 lg:bg-transparent lg:p-0">
+            {HOW_STEPS.map((step) => (
+              <div
+                key={step.n}
+                className="flex flex-1 flex-col gap-3.5 lg:min-w-0 lg:rounded-[28px] lg:bg-white lg:p-7 lg:shadow-[0_1px_2px_rgba(12,42,48,0.06),0_10px_28px_rgba(12,42,48,0.08)]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="flex size-[26px] flex-none items-center justify-center rounded-full bg-night-900 font-mono text-[12px] text-white">
+                    {step.n}
+                  </span>
+                  <span className="text-[19px] leading-[1.25] font-medium text-ink-900">{step.title}</span>
+                </div>
+                <div className="text-[15px] leading-[1.5] text-pretty text-ink-600">{step.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Not an ol, deliberately. The mono "01" IS the numbering, and an
-              ordered list numbers itself in every surface CSS cannot reach —
-              reader modes, text extraction, some screen readers — so the
-              steps kept coming out as "1. 01 Pick a roadmap". One number,
-              the visible one; the h3s carry the structure. */}
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map(([n, head, body], i) => (
-              <div key={n} className="border-t border-ink-200 pt-4">
-                <div className="font-mono text-[12px] leading-none text-brand-700">{n}</div>
-                <h3 className="mt-3 text-[16px] leading-[1.35] font-medium text-ink-900">{head}</h3>
-                <p className="mt-1.5 text-[14px] leading-[1.6] text-pretty text-ink-600">{body}</p>
-                {/* 96px of the real thing, under the words for it. */}
-                {/* [&>*]:w-full because three of the four size themselves in percentages
-                    of their container, and a flex item is content-width by
-                    default — which would resolve those percentages against
-                    nothing. */}
-                <div className="mt-4 flex h-24 items-center [&>*]:w-full">
-                  {i === 0 ? <ModuleSpine modules={spine} mini className="h-24" /> : null}
-                  {i === 1 ? <DayCardMini className="h-24" /> : null}
-                  {i === 2 ? <StreakStrip mini className="h-24" /> : null}
-                  {i === 3 ? <ContribGrid /> : null}
+      {/* ── inside a lesson ─────────────────────────────────────────────── */}
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-14 sm:px-12 lg:py-[88px]">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-16">
+          <div className="flex flex-col items-start gap-4 lg:w-[400px] lg:flex-none">
+            <div className="font-mono text-[13.5px] leading-none font-semibold text-link">Inside a lesson</div>
+            <h2 className="t-sect text-ink-900">Every lesson is small things you do.</h2>
+            <p className="text-[16.5px] leading-[1.6] text-pretty text-ink-600">
+              No long reading before you start. You do it, you compare, you move on. It works the same
+              way in every subject.
+            </p>
+            <div className="h-[220px] w-full lg:mt-2 lg:h-[320px]">
+              <LessonArt />
+            </div>
+          </div>
+
+          <div className="relative flex flex-col lg:min-w-0 lg:flex-1">
+            <div aria-hidden className="absolute top-[18px] bottom-[18px] left-[14px] w-px bg-night-900" />
+            {LESSON_STEPS.map((step, i) => (
+              <div key={step.title} className="relative flex items-center gap-4 py-3 lg:gap-6 lg:py-6">
+                <span className="flex size-[30px] flex-none items-center justify-center rounded-full bg-night-900 font-mono text-[11.5px] text-white">
+                  {i + 1}
+                </span>
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="t-card text-ink-900">{step.title}</span>
+                  <span className="text-[15px] leading-[1.45] text-pretty text-ink-500">{step.body}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── as you learn ────────────────────────────────────────────────── */}
+      <section className="jreveal bg-night-900 px-5 py-14 text-white sm:px-12 lg:py-[88px]">
+        <div className="mx-auto flex max-w-[1280px] flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+          <div className="flex max-w-[600px] flex-col gap-5">
+            <div className="font-mono text-[13.5px] leading-none font-semibold text-dark-link">As you learn</div>
+            <h2 className="t-sect text-white">Earn points. Keep a streak. Show your progress.</h2>
+            <div className="mt-1 flex flex-col gap-4">
+              {LEARN_PROPS.map((p) => (
+                <div key={p.title} className="flex items-center gap-4">
+                  <span className="flex size-12 flex-none items-center justify-center rounded-full bg-amber-500 text-[13px] font-bold text-warn-700">
+                    {p.title === "Points for every lesson" ? "+25" : null}
+                    {p.title === "A streak for showing up" ? (
+                      <svg aria-hidden width={20} height={20} viewBox="0 0 24 24">
+                        <path
+                          d="M12 2c1 3.6 5 5.6 5 10.2a5 5 0 0 1-10 0c0-1.7.6-3 1.6-4 .3 1.5 1 2.4 2 2.7C10.4 8.4 10.8 5 12 2z"
+                          fill="#3D2600"
+                        />
+                      </svg>
+                    ) : null}
+                    {p.title === "A page and a card to share" ? (
+                      <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#3D2600" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 15V4" />
+                        <path d="M8 8l4-4 4 4" />
+                        <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+                      </svg>
+                    ) : null}
+                  </span>
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-[17px] leading-[1.4] font-semibold">{p.title}</span>
+                    <span className="text-[15px] leading-[1.45] text-pretty text-on-night-muted">{p.body}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* The streak share-card the "page and a card to share" line names,
+              shown rather than described — "Asha" is an illustration of the
+              feature's own UI, the way a product screenshot would show it,
+              not a claim about a real learner. */}
+          <div className="w-full lg:w-[440px] lg:flex-none">
+            <div className="flex min-h-[210px] flex-col justify-between gap-5 rounded-[28px] bg-brand-500 p-6 text-on-brand shadow-[0_24px_48px_rgba(0,0,0,0.35)] lg:min-h-[264px]">
+              <div className="flex flex-col gap-3">
+                <div className="t-card text-on-brand">jintu</div>
+                <div className="t-sub text-on-brand">Asha is on a 3 day streak</div>
+              </div>
+              <div className="flex items-center justify-between gap-3 text-[14.5px] font-medium">
+                <div>3 lessons done · 75 points</div>
+                <div className="font-mono text-[12.5px]">{getSiteUrl().host}/u/asha</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── scattered tutorials vs on Jintu ─────────────────────────────── */}
+      <section className="jreveal mx-auto max-w-[1280px] px-5 py-14 sm:px-12 lg:py-[88px]">
+        <h2 className="t-sect text-ink-900">From twelve open tabs to one next step</h2>
+        <div className="mt-6 flex flex-col gap-4 lg:mt-9 lg:flex-row">
+          <div className="flex flex-1 flex-col gap-4 rounded-[24px] bg-white p-[22px] lg:gap-5 lg:rounded-[28px] lg:p-8">
+            <div className="t-card text-ink-600">Scattered tutorials</div>
+            <div className="flex flex-col items-start gap-2 lg:gap-2.5">
+              {SCATTERED.map((line, i) => (
+                <div
+                  key={line}
+                  style={{ transform: `rotate(${[-2, 1.5, -1, 2, -1.5][i]}deg)` }}
+                  className="flex min-h-11 items-center gap-2.5 rounded-[22px] bg-ink-50 px-4 text-[15px] font-medium text-ink-600 lg:min-h-12 lg:gap-2.5 lg:px-[18px] lg:text-[15.5px]"
+                >
+                  <span className="text-risk-border">{X_MARK}</span>
+                  <span>{line}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col gap-4 rounded-[24px] bg-night-900 p-[22px] text-white lg:gap-5 lg:rounded-[28px] lg:p-8">
+            <div className="t-card text-white">On Jintu</div>
+            <div className="flex flex-col items-start gap-2 lg:gap-2.5">
+              {ON_JINTU.map((line) => (
+                <div
+                  key={line}
+                  className="flex min-h-11 items-center gap-2.5 rounded-[22px] bg-white/10 px-4 text-[15px] font-medium lg:min-h-12 lg:px-[18px] lg:text-[15.5px]"
+                >
+                  {CHECK_TEAL}
+                  <span>{line}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── the roadmaps ─────────────────────────────────────────────────── */}
+      <section id="all" className="jreveal bg-white px-5 py-14 sm:px-12 lg:py-[88px]">
+        <div className="mx-auto max-w-[1280px]">
+          <div className="flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end lg:gap-12">
+            <div className="flex max-w-[680px] flex-col gap-2.5">
+              <div className="font-mono text-[13.5px] leading-none font-semibold text-link">The roadmaps</div>
+              <h2 className="t-sect text-ink-900">
+                {openRoadmapCount} of {totalRoadmapCount} roadmaps are open.
+              </h2>
+              <p className="text-[16.5px] leading-[1.6] text-pretty text-ink-600">
+                The rest are being written in the same step-by-step format. Ask to be told when yours
+                opens.
+              </p>
+            </div>
+            <div className="flex flex-none gap-2.5">
+              <Link
+                href="/learn"
+                className="flex h-14 flex-none items-center gap-2.5 rounded-2xl bg-night-900 px-6 text-[16px] font-semibold text-white"
+              >
+                See all roadmaps
+                {ARROW_RIGHT}
+              </Link>
+              <Link
+                href="/contact"
+                className="hidden h-14 flex-none items-center rounded-2xl border border-ink-200 bg-white px-5 text-[15.5px] font-semibold text-ink-900 lg:flex"
+              >
+                Ask for a roadmap
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 items-start gap-2.5 lg:mt-9 lg:grid-cols-3 lg:gap-4">
+            {categoryGroups.map((group) => (
+              <div key={group.key} className="flex min-w-0 flex-col gap-2 rounded-[22px] bg-ink-50 p-[18px] lg:p-[22px]">
+                <div className="font-mono text-[12px] leading-4 font-semibold tracking-[.06em] text-ink-500 uppercase">
+                  {group.label}
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  {group.roadmaps.map((r) => (
+                    <div key={r.slug} className="flex min-h-11 items-center gap-3">
+                      <span
+                        aria-hidden
+                        className={`flex size-9 flex-none items-center justify-center rounded-xl font-mono text-[12.5px] font-semibold ${
+                          r.open ? "bg-brand-500 text-on-brand" : "bg-white text-link"
+                        }`}
+                      >
+                        {r.title.slice(0, 2)}
+                      </span>
+                      <span className={`min-w-0 flex-1 text-[15px] leading-5 ${r.open ? "font-semibold" : "font-medium"} text-ink-900`}>
+                        {r.title}
+                      </span>
+                      {r.open ? (
+                        <span className="flex h-6 flex-none items-center rounded-xl bg-ok-bg px-2.5 text-[12px] font-semibold text-ok-700">
+                          Open now
+                        </span>
+                      ) : null}
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -621,172 +618,66 @@ export default function Homepage({
         </div>
       </section>
 
-      {/* ── the bento ───────────────────────────────────────────────────── */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 pb-[var(--space-section)] sm:px-12">
-        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-          Platform
-        </div>
-        <h2 className="t-sect mt-3 text-ink-900">Built so you finish.</h2>
-        <p className="mt-3 max-w-[52ch] text-[16px] leading-[1.65] text-pretty text-ink-600">
-          The habit matters more than any single feature.
-        </p>
-
-        <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
-            <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
-              Sequenced, not searched
-            </h3>
-            {/* The sentence that used to be here said "twenty modules in one
-                order, not a search results page". These ARE the twenty
-                modules, in order, read from the roadmap. */}
-            <ModuleSpine modules={spine} className="mt-4" />
-          </div>
-
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
-            <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">
-              Checked by a person
-            </h3>
-            {/* One real curated link, rendered the way the day page renders
-                it. The note in teal is a person's own sentence out of the
-                database — the claim and its evidence are the same object. */}
-            {samples[1] ? (
-              <LinkCardMini resource={samples[1]} className="mt-4" />
-            ) : (
-              <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
-                Every link comes with a note on why it, and not another.
-              </p>
-            )}
-          </div>
-
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
-            <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">The streak</h3>
-            {/* The gap in the middle is the claim. A strip with no missed day
-                would be illustrating something nobody said. */}
-            <StreakStrip className="mt-4" />
-          </div>
-
-          <div className="jcard-hover rounded-card border border-ink-100 bg-white p-5 hover:border-brand-700 sm:p-6">
-            <h3 className="text-[17px] leading-[1.35] font-medium text-ink-900">Yours to keep</h3>
-            <p className="mt-2 text-[14.5px] leading-[1.6] text-pretty text-ink-600">
-              Every highlight and note, exportable anytime.
-            </p>
-            <blockquote className="mt-4 border-l-2 border-brand-500 pl-3.5">
-              <p className="m-0 text-[13.5px] leading-[1.65] text-pretty text-ink-900 italic">
-                A null can mean missing, unknown, or not-applicable — treating them the same
-                silently changes every average.
-              </p>
-              {/* A highlight without its source day is a quotation with no
-                  citation, which is the opposite of "yours to keep". */}
-              <cite className="mt-2 block font-mono text-[11px] leading-none text-ink-500 not-italic">
-                Day 31 · Cleaning and missing values
-              </cite>
-            </blockquote>
-            <Link
-              href="/profile"
-              className="mt-4 inline-flex min-h-11 items-center text-[13.5px] font-medium text-brand-700"
-            >
-              Download everything
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── the day grid ──────────────────────────────────────────── */}
-      <section className="jreveal border-y border-ink-100 bg-white px-5 py-[var(--space-section)] sm:px-12">
-        <h2 className="t-sub text-center text-ink-900">
-          {counts.days} days. Every one of them written.
-        </h2>
-        <div
-          role="img"
-          aria-label={`${counts.days} days, drawn as a grid of squares`}
-          className="jgrid91 mx-auto mt-8 grid max-w-[720px] grid-cols-[repeat(21,1fr)] gap-1.5"
-        >
-          {Array.from({ length: counts.days }, (_, i) => (
-            <span
-              key={i}
-              aria-hidden
-              className="aspect-square rounded-[3px] bg-brand-500"
-              // Staggered so the grid fills as a sweep rather than all at
-              // once — which is what makes the total read as a lot.
-              //
-              // The delay is a share of a fixed sweep rather than a constant
-              // per square: this grid was 91 days at 9ms and is 267 now, and
-              // a constant would have quietly turned an 0.8s sweep into 2.4s
-              // of the reader watching squares appear. It stays 0.8s at any
-              // catalogue size.
-              style={{ transitionDelay: `${Math.round((i * 800) / counts.days)}ms` }}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* ── what this is not ────────────────────────────────────────────── */}
-      {/* The three things worth saying plainly, in the place a sceptical
-          reader is already looking for them. The free claim used to have a
-          whole section to itself — which is the shape of a page with tiers
-          to compare, and this one has neither tiers nor anything to buy. A
-          product that keeps staging its own freeness invites the suspicion
-          it is trying to allay; stated once among two other limits, it
-          reads as a fact rather than a pitch. */}
-      <section className="jreveal mx-auto max-w-[1280px] px-5 py-[var(--space-section)] sm:px-12">
-        <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-          What this is not
-        </div>
-        <ul className="mt-6 flex max-w-[46ch] list-none flex-col gap-5 p-0">
-          {NOT.map((n) => (
-            <li key={n.line} className="flex gap-3.5">
-              <span aria-hidden className="mt-[13px] h-px w-5 flex-none bg-ink-200" />
-              <span className="text-[18px] leading-[1.5] text-pretty text-ink-900 sm:text-[20px]">
-                {n.line}
-                {n.href ? (
-                  <>
-                    {" "}
-                    <Link href={n.href} className="text-brand-700 underline-offset-4 hover:underline">
-                      {n.linkText}
-                    </Link>
-                  </>
-                ) : null}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* ── the close ───────────────────────────────────────────────────── */}
-      {/* The cards behind the copy are cropped by the section, which is what
-          makes them read as a stack continuing past the edge rather than as
-          four more things to look at. Hidden below lg: at 390px there is no
-          margin to crop into, and they would sit under the search field. */}
-      <section className="jreveal relative mx-auto flex max-w-[1280px] flex-col items-center overflow-hidden px-5 py-[var(--space-section)] text-center sm:px-12">
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
-          <div className="absolute top-10 -left-16 w-[300px] rotate-[-7deg] rounded-card border border-ink-100 bg-white p-4 opacity-70">
-            <DayCardMini className="h-24" />
-          </div>
-          <div className="absolute -right-20 bottom-16 w-[320px] rotate-[6deg] rounded-card border border-ink-100 bg-white p-4 opacity-70">
-            <StreakStrip />
-          </div>
-          <div className="absolute -bottom-14 left-24 w-[260px] rotate-[3deg] rounded-card border border-ink-100 bg-white p-4 opacity-60">
-            <ContribGrid />
-          </div>
-          {/* Fades them out under the copy, so the words stay the thing you
-              read first. */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-ink-50)_38%,transparent_72%)]" />
-        </div>
-        <div className="relative z-10 font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
-          Ready when you are
-        </div>
-        <h2 className="t-page relative z-10 mt-3 text-ink-900">Your first day is waiting.</h2>
-        <p className="relative z-10 mt-3 text-[16px] leading-[1.6] text-ink-600 sm:text-[18px]">
-          {counts.days} days. Start with one.
-        </p>
-        <div className="relative z-10 mt-7 flex w-full flex-col items-center gap-3">
-          <SearchBar id="cta-search" />
-          <Link
-            href="/learn"
-            className="flex min-h-12 items-center justify-center rounded-full bg-brand-700 px-7 text-[15px] font-medium text-white hover:bg-brand-800"
-          >
-            Start free
+      {/* ── free ─────────────────────────────────────────────────────────── */}
+      <section id="free" className="jreveal mx-auto max-w-[1280px] px-5 py-14 sm:px-12 lg:flex lg:items-center lg:gap-24 lg:py-[88px]">
+        <div className="flex flex-col items-start gap-4 lg:w-[440px] lg:flex-none">
+          <h2 className="t-page text-ink-900">Free. All of it.</h2>
+          <p className="text-[16.5px] leading-[1.6] text-pretty text-ink-600">
+            No subscription, no trial that expires, no card asked for. There is nothing on this site
+            you can pay for today.
+          </p>
+          <Link href="/pricing" className="flex min-h-11 items-center gap-2 text-[15.5px] font-semibold text-ink-900">
+            How this stays free
+            {ARROW_RIGHT}
           </Link>
+        </div>
+        <div className="mt-6 flex flex-1 flex-col gap-4 rounded-[24px] bg-white p-[22px] shadow-[0_1px_2px_rgba(12,42,48,0.06),0_10px_28px_rgba(12,42,48,0.08)] lg:mt-0 lg:gap-5 lg:rounded-[28px] lg:p-8">
+          <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
+            {FREE_INCLUDES.map((line) => (
+              <li key={line} className="flex items-start gap-3.5 text-[15.5px] leading-[1.6]">
+                <span aria-hidden className="flex size-[26px] flex-none items-center justify-center rounded-full bg-brand-500">
+                  {CHECK}
+                </span>
+                <span className="min-w-0 text-ink-900">{line}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="rounded-2xl bg-warn-bg px-4 py-3.5 text-[14.5px] leading-[1.55] text-warn-700">
+            What free does not mean: a job, an interview, or an introduction to any employer.
+          </div>
+        </div>
+      </section>
+
+      {/* ── faq ──────────────────────────────────────────────────────────── */}
+      <section id="faq" className="jreveal bg-white px-5 py-14 sm:px-12 lg:py-[88px]">
+        <div className="mx-auto max-w-[1280px]">
+          <h2 className="t-sect text-ink-900">Questions people ask first</h2>
+          <div className="mt-6 grid grid-cols-1 gap-2.5 lg:mt-9 lg:grid-cols-3 lg:gap-4">
+            {FAQ.map((item) => (
+              <div key={item.q} className="flex min-w-0 flex-col gap-2 rounded-[20px] bg-ink-50 p-5 lg:gap-2 lg:rounded-[22px] lg:p-6">
+                <h3 className="t-card text-ink-900">{item.q}</h3>
+                <p className="text-[15px] leading-[1.5] text-pretty text-ink-600">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── the close ────────────────────────────────────────────────────── */}
+      <section className="jreveal relative flex flex-col items-center gap-4 overflow-hidden px-5 pt-16 pb-[150px] text-center sm:px-12 lg:pt-[88px] lg:pb-[200px]">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[130px] lg:h-[260px]">
+          <CloseWave />
+        </div>
+        <h2 className="t-sect relative z-10 text-ink-900">Your first lesson takes about 15 minutes.</h2>
+        <Link
+          href="/learn"
+          className="relative z-10 flex h-15 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-7 text-[17px] font-semibold text-on-brand hover:bg-brand-400"
+        >
+          <span>Find my roadmap</span>
+          {ARROW_RIGHT}
+        </Link>
+        <div className="relative z-10 text-[14px] leading-[1.4] text-ink-600">
+          Free to read. We do not promise you a job.
         </div>
       </section>
 
