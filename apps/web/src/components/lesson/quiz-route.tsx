@@ -82,7 +82,7 @@ export default function QuizRoute({ slug, nodeSlug, nodeTitle, questions }: Quiz
 
       <div className="flex flex-1 flex-col items-center overflow-y-auto px-5 pt-7 pb-4">
         <div className="flex w-full max-w-[720px] flex-col gap-5">
-          <h1 className="font-heading text-[24px] leading-[30px] font-semibold tracking-[-0.015em] text-ink-900 text-pretty lg:text-[32px] lg:leading-[38px]">
+          <h1 className="t-sect text-ink-900">
             {q.question}
           </h1>
 
