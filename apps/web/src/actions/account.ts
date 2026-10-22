@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import {
   avatarInput,
+  codeLanguageInput,
   deleteAccountInput,
   displayNameInput,
   publicProfileInput,
@@ -102,6 +103,26 @@ export const setAvatar = actionClient
     revalidatePath("/settings");
     revalidatePath("/", "layout");
     return { avatarAnimal: parsedInput.avatarAnimal, avatarColor: parsedInput.avatarColor };
+  });
+
+/**
+ * The DSA language switch (V2Dsa/DeskDsa) — "one choice remembered per
+ * user, applies to every code block." No revalidatePath: the lesson
+ * reader already updates its own shared language state optimistically
+ * (lesson-route.tsx), this call only persists it for next time.
+ */
+export const setCodeLanguage = actionClient
+  .inputSchema(codeLanguageInput)
+  .action(async ({ parsedInput }) => {
+    const { supabase, user } = await requireUser();
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ code_language: parsedInput.codeLanguage })
+      .eq("id", user.id);
+    if (error) throw new UserFacingError(`Could not save your language: ${error.message}`);
+
+    return { codeLanguage: parsedInput.codeLanguage };
   });
 
 /**

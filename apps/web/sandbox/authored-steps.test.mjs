@@ -108,10 +108,10 @@ test("Git & GitHub's day 2 carries real authored steps, and its old challenge fi
 
 // ── the five Uni* kinds ──────────────────────────────────────────────────
 
-test("all seven authored kinds share one discriminated union in @jintu/contracts", () => {
+test("all eight authored kinds share one discriminated union in @jintu/contracts (Phase 5 Part C adds codeMulti, the DSA language switch)", () => {
   assert.match(
     contractsSteps,
-    /z\.discriminatedUnion\("kind", \[\s*commandStepSchema,\s*turnStepSchema,\s*chooseStepSchema,\s*findStepSchema,\s*formulaStepSchema,\s*numberStepSchema,\s*writeStepSchema,\s*\]\)/,
+    /z\.discriminatedUnion\("kind", \[\s*commandStepSchema,\s*turnStepSchema,\s*chooseStepSchema,\s*findStepSchema,\s*formulaStepSchema,\s*numberStepSchema,\s*writeStepSchema,\s*codeMultiStepSchema,\s*\]\)/,
   );
 });
 
@@ -135,12 +135,12 @@ test("number and write steps carry a worked example only — no live, gradeable 
 
 test("buildLessonSteps maps all five Uni* kinds through authoredToLessonSteps, railTitle from the step's own title", () => {
   const fn = steps.slice(steps.indexOf("function authoredToLessonSteps"), steps.indexOf("export function buildLessonSteps"));
-  for (const kind of ["choose", "find", "formula", "number"]) {
+  for (const kind of ["choose", "find", "formula", "number", "write"]) {
     assert.match(fn, new RegExp(`if \\(a\\.kind === "${kind}"\\) \\{`));
   }
-  // "write" is the final fallthrough (last entry in the union), not an
-  // explicit if-branch — still asserted present via its own kind literal.
-  assert.match(fn, /kind: "write"/);
+  // codeMulti (Phase 5 Part C) is the final fallthrough now — still
+  // asserted present via its own kind literal, not an explicit if-branch.
+  assert.match(fn, /kind: "codeMulti"/);
   // Every branch assigns railTitle from a.title, never a literal.
   const literalRailTitles = fn.match(/railTitle: "[^"]*"/g) ?? [];
   assert.deepEqual(literalRailTitles, []);

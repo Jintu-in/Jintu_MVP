@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import LessonRoute from "@/components/lesson/lesson-route";
 import { buildLessonSteps } from "@/lib/steps";
+import { getMyCodeLanguage } from "@/lib/code-language";
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap } from "@/lib/roadmaps";
+import { DEFAULT_CODE_LANGUAGE } from "@jintu/contracts";
 
 /**
  * The day page, rendered one step at a time through LessonRoute/StepReader
@@ -67,6 +69,13 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
   const steps = buildLessonSteps(node);
   const lessonNumber = String(at + 1);
 
+  // The DSA language switch's remembered choice — read only when this day
+  // actually has a codeMulti step, so the other ~100% of lessons (no real
+  // DSA roadmap exists yet) pay nothing for a preference they never use.
+  const codeLanguage = steps.some((s) => s.kind === "codeMulti")
+    ? await getMyCodeLanguage()
+    : DEFAULT_CODE_LANGUAGE;
+
   return (
     <LessonRoute
       slug={slug}
@@ -81,6 +90,7 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       initialDone={done}
       steps={steps}
       estMinutes={node.estMinutes}
+      initialCodeLanguage={codeLanguage}
       next={
         next
           ? {

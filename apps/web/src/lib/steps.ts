@@ -1,4 +1,4 @@
-import type { AuthoredStep, Panel } from "@jintu/contracts";
+import type { AuthoredStep, CodeLanguageKey, Panel } from "@jintu/contracts";
 import { resourceMeta, text } from "@/lib/blocks";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
@@ -134,6 +134,16 @@ export type LessonStep = { id: string; railTitle: string } & (
       ctaLabel: string;
       panel?: Panel;
     }
+  | {
+      kind: "codeMulti";
+      body?: string;
+      variants: { language: CodeLanguageKey; fileLabel: string; code: string; highlightLine?: string }[];
+      outputLabel: string;
+      outputCaption?: string;
+      output: string;
+      note?: string;
+      ctaLabel: string;
+    }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
   | {
@@ -244,16 +254,30 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         panel: a.panel,
       };
     }
+    if (a.kind === "write") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "write",
+        template: a.template,
+        example: a.example,
+        parts: a.parts,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+        panel: a.panel,
+      };
+    }
     return {
       id,
       railTitle: a.title,
-      kind: "write",
-      template: a.template,
-      example: a.example,
-      parts: a.parts,
+      kind: "codeMulti",
+      body: a.body,
+      variants: a.variants,
+      outputLabel: a.outputLabel,
+      outputCaption: a.outputCaption,
+      output: a.output,
       note: a.note,
       ctaLabel: a.ctaLabel,
-      panel: a.panel,
     };
   });
 }

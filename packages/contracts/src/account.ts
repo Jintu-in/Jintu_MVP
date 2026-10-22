@@ -134,3 +134,30 @@ export const avatarInput = z.object({
   avatarColor: z.enum(COLORS.map((c) => c.key) as [ColorKey, ...ColorKey[]]),
 });
 export type AvatarInput = z.infer<typeof avatarInput>;
+
+/**
+ * Phase 5 Part C: the DSA language switch (V2Dsa/DeskDsa) — "one choice
+ * remembered per user, applies to every code block" (BUILD-PLAN.md §3.4).
+ * Infrastructure only: no DSA roadmap exists yet to author a codeMulti
+ * step for (see steps.ts's own note), so this list has no real content
+ * behind it — it mirrors the mockup's own five sample languages, which is
+ * the only real anchor that exists right now.
+ */
+export const CODE_LANGUAGES = [
+  { key: "py", name: "Python" },
+  { key: "java", name: "Java" },
+  { key: "cpp", name: "C++" },
+  { key: "js", name: "JavaScript" },
+  { key: "c", name: "C" },
+] as const;
+export type CodeLanguageKey = (typeof CODE_LANGUAGES)[number]["key"];
+export const DEFAULT_CODE_LANGUAGE: CodeLanguageKey = "py";
+
+export function codeLanguageName(key: CodeLanguageKey): string {
+  return CODE_LANGUAGES.find((l) => l.key === key)?.name ?? CODE_LANGUAGES[0].name;
+}
+
+export const codeLanguageInput = z.object({
+  codeLanguage: z.enum(CODE_LANGUAGES.map((l) => l.key) as [CodeLanguageKey, ...CodeLanguageKey[]]),
+});
+export type CodeLanguageInput = z.infer<typeof codeLanguageInput>;

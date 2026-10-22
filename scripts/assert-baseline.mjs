@@ -246,6 +246,19 @@ try {
 } catch { /* avatar_animal CHECK */ }
 check(!fakeAnimal, "the avatar is one of the 16 fixed animals — no made-up value");
 
+// The DSA language switch (0033) — infrastructure only, no real roadmap
+// uses it yet, but the CHECK itself is real and worth guarding.
+let fakeLanguage = false;
+try {
+  await as(ua, `update public.profiles set code_language = 'cobol' where id = '${ua}'`);
+  fakeLanguage = true;
+} catch { /* code_language CHECK */ }
+check(!fakeLanguage, "the DSA language switch is one of the five fixed languages — no made-up value");
+check(
+  (await as(ua, `select code_language from public.profiles where id = '${ua}'`))[0].code_language === null,
+  "code_language starts null — no preference set yet, not a default silently baked in",
+);
+
 console.log("\n── the consent log is append-only, and user-scoped ─────────");
 await as(ua, `insert into public.consent_events (user_id, purpose, granted, notice_version)
               values ('${ua}', 'reminders', true, 'v1') returning id`);

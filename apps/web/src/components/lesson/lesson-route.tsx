@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
+import type { CodeLanguageKey } from "@jintu/contracts";
+import { setCodeLanguage } from "@/actions/account";
 import { setNodeDone, type StreakResult } from "@/actions/progress";
 import { StepReader } from "@/components/lesson/step-reader";
 import { LessonDoneScreen } from "@/components/lesson/lesson-states";
@@ -44,6 +46,10 @@ export interface LessonRouteProps {
   steps: LessonStepSeed[];
   /** This lesson's total estimated minutes — the desktop nav's footer. */
   estMinutes: number;
+  /** The DSA language switch's remembered choice (migration 0033) — "one
+   *  choice ... applies to every code block", so this lives here (shared
+   *  across every codeMulti step in the lesson), not as per-step state. */
+  initialCodeLanguage: CodeLanguageKey;
   next?: { lessonNumber: string; title: string; metaLine: string; href: string };
   /** For the done screen's stat cards. */
   streakDaysNow: number;
@@ -64,6 +70,7 @@ export default function LessonRoute({
   initialDone,
   steps,
   estMinutes,
+  initialCodeLanguage,
   next,
   streakDaysNow,
   lessonsLine,
@@ -78,6 +85,18 @@ export default function LessonRoute({
   const [streak, setStreak] = useState<StreakResult | null>(null);
   const [showDone, setShowDone] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [codeLanguage, setCodeLanguageState] = useState(initialCodeLanguage);
+  const { execute: persistCodeLanguage } = useAction(setCodeLanguage);
+
+  // Optimistic — the switch feels instant (matching the mockup's own
+  // setState-only demo) and persists in the background when signed in.
+  // Signed-out visitors still get a working switch for this visit; it
+  // just does not survive a reload, same trade-off as every other
+  // signed-out-friendly bit of local-only state in this reader.
+  const onCodeLanguageChange = (next: CodeLanguageKey) => {
+    setCodeLanguageState(next);
+    if (signedIn) persistCodeLanguage({ codeLanguage: next });
+  };
 
   // Resume at the furthest step reached, clamped to the current step count
   // (content can change between visits). A finished lesson still resumes
@@ -180,6 +199,8 @@ export default function LessonRoute({
       furthest={furthest}
       step={steps[index]!}
       estMinutes={estMinutes}
+      codeLanguage={codeLanguage}
+      onCodeLanguageChange={onCodeLanguageChange}
       onBack={() => router.push(`/learn/${slug}` as never)}
       onPrev={index > 0 ? onPrev : undefined}
       onContinue={onContinue}

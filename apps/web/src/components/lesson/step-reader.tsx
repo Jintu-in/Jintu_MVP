@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
-import type { Panel } from "@jintu/contracts";
+import { codeLanguageName, type CodeLanguageKey, type Panel } from "@jintu/contracts";
 import { submitHelpRequest } from "@/actions/help";
 import { BackIcon, CopyIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
 import { VideoFacade } from "@/components/video-facade";
@@ -119,6 +119,11 @@ export interface StepReaderProps {
   /** This lesson's total estimated minutes — the desktop nav's own footer
    *  ("This lesson · about N min"), mobile has no equivalent. */
   estMinutes: number;
+  /** The DSA language switch's shared choice (migration 0033) — lives in
+   *  lesson-route.tsx, not per-step, so every codeMulti step in one
+   *  lesson stays in sync ("applies to every code block"). */
+  codeLanguage: CodeLanguageKey;
+  onCodeLanguageChange: (language: CodeLanguageKey) => void;
   onBack: () => void;
   onPrev?: () => void;
   onContinue: () => void;
@@ -142,6 +147,8 @@ export function StepReader({
   furthest,
   step,
   estMinutes,
+  codeLanguage,
+  onCodeLanguageChange,
   onBack,
   onPrev,
   onContinue,
@@ -233,7 +240,7 @@ export function StepReader({
             </h1>
           </div>
 
-          <StepBody step={step} />
+          <StepBody step={step} codeLanguage={codeLanguage} onCodeLanguageChange={onCodeLanguageChange} />
 
           {HELP_ELIGIBLE.has(step.kind) ? (
             <HelpBox key={step.id} nodeId={nodeId} stepContext={step.railTitle} />
@@ -321,7 +328,8 @@ function ctaLabelFor(step: LessonStep, stepIndex: number, total: number): string
     step.kind === "find" ||
     step.kind === "formula" ||
     step.kind === "number" ||
-    step.kind === "write"
+    step.kind === "write" ||
+    step.kind === "codeMulti"
   ) {
     return step.ctaLabel;
   }
@@ -470,7 +478,15 @@ function LessonNav({
   );
 }
 
-function StepBody({ step }: { step: LessonStep }) {
+function StepBody({
+  step,
+  codeLanguage,
+  onCodeLanguageChange,
+}: {
+  step: LessonStep;
+  codeLanguage: CodeLanguageKey;
+  onCodeLanguageChange: (language: CodeLanguageKey) => void;
+}) {
   switch (step.kind) {
     case "concept":
       return (
@@ -878,6 +894,11 @@ function StepBody({ step }: { step: LessonStep }) {
         </div>
       );
 
+    case "codeMulti":
+      return (
+        <CodeMultiBody step={step} codeLanguage={codeLanguage} onCodeLanguageChange={onCodeLanguageChange} />
+      );
+
     case "check":
       return <CheckStep step={step} />;
 
@@ -898,6 +919,109 @@ function StepBody({ step }: { step: LessonStep }) {
     case "faq":
       return <FaqAccordion items={step.items} />;
   }
+}
+
+/**
+ * The DSA language switch (V2Dsa/DeskDsa) — a language pill row and a code
+ * block that both read from the SAME codeLanguage prop (lesson-route.tsx's
+ * shared state, not local to this step), so picking a language here would
+ * carry to any other codeMulti step in the same lesson. Infrastructure
+ * only: see steps.ts/migration 0033's own note for why no real lesson uses
+ * this yet.
+ *
+ * Falls back to the step's first variant if the shared language isn't one
+ * of the languages THIS step happens to offer — a step authored with only
+ * three of the five languages is valid, and should never render blank.
+ */
+function CodeMultiBody({
+  step,
+  codeLanguage,
+  onCodeLanguageChange,
+}: {
+  step: Extract<LessonStep, { kind: "codeMulti" }>;
+  codeLanguage: CodeLanguageKey;
+  onCodeLanguageChange: (language: CodeLanguageKey) => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const active = step.variants.find((v) => v.language === codeLanguage) ?? step.variants[0]!;
+  const lines = active.code.split("\n");
+  const isKeyLine = (line: string) =>
+    active.highlightLine !== undefined && line.trim() === active.highlightLine.trim();
+
+  const copy = () => {
+    if (navigator.clipboard) navigator.clipboard.writeText(active.code).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div className="flex flex-col gap-3.5">
+      {step.body ? <p className="m-0 text-pretty text-[15px] leading-[1.6] text-ink-600">{step.body}</p> : null}
+
+      <div role="radiogroup" aria-label="Language" className="flex flex-wrap gap-1.5">
+        {step.variants.map((v) => {
+          const on = v.language === active.language;
+          return (
+            <button
+              key={v.language}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => onCodeLanguageChange(v.language)}
+              className={cn(
+                "flex h-11 flex-none items-center rounded-2xl border px-4 text-[13.5px]",
+                on ? "border-night-900 bg-night-900 font-semibold text-on-night" : "border-ink-200 bg-white font-medium text-ink-900",
+              )}
+            >
+              {codeLanguageName(v.language)}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="rounded-3xl bg-night-950 p-4">
+        <div className="flex h-10 items-center justify-between gap-3">
+          <span className="font-mono text-[12px] font-medium text-on-night-muted-2">{active.fileLabel}</span>
+          <button
+            type="button"
+            onClick={copy}
+            className="flex h-10 flex-none items-center gap-2 rounded-xl bg-white/10 px-3 text-[13px] font-semibold text-on-night"
+          >
+            <CopyIcon />
+            <span>{copied ? "Copied" : "Copy"}</span>
+          </button>
+        </div>
+        <div className="mt-2 flex flex-col gap-[1px] font-mono text-[13px] leading-[21px]" style={{ overflowWrap: "anywhere" }}>
+          {lines.map((line, i) => (
+            <div key={i} className={cn("flex gap-3 rounded px-1", isKeyLine(line) && "bg-brand-500/25")}>
+              <span aria-hidden className="w-5 flex-none text-right text-on-night-muted-2">
+                {i + 1}
+              </span>
+              <span className="min-w-0 flex-1 text-on-night">{line}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 rounded-2xl bg-white p-3.5">
+        <div className="min-w-0 flex-1">
+          <div className="text-[13px] leading-[18px] font-semibold text-link">{step.outputLabel}</div>
+          {step.outputCaption ? (
+            <div className="text-[13.5px] leading-[19px] text-ink-600">{step.outputCaption}</div>
+          ) : null}
+        </div>
+        <div className="flex h-11 min-w-14 flex-none items-center justify-center rounded-xl bg-night-950 px-3.5 font-mono text-[16px] font-medium text-on-night">
+          {step.output}
+        </div>
+      </div>
+
+      {step.note ? (
+        <div className="rounded-2xl bg-white p-3.5 text-pretty text-[15px] leading-[1.6] text-ink-900">
+          {step.note}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 /** "Questions you might have" (V2Questions/DeskQuestions) — the first item

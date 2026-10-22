@@ -159,8 +159,26 @@ for (const [mi, m] of spec.modules.entries()) {
         if (!s.template || !s.example) fail(`${sat} (write) needs template and example`);
         if (!Array.isArray(s.parts) || s.parts.length === 0) fail(`${sat} (write) needs parts`);
         if (!s.ctaLabel) fail(`${sat} (write) needs a ctaLabel`);
+      } else if (s.kind === "codeMulti") {
+        // The DSA language switch (0033) — infrastructure only, no real
+        // roadmap authors this yet, but validated the same as every other
+        // kind so a future author gets a sentence, not a surprise.
+        if (!s.title) fail(`${sat} (codeMulti) needs a title`);
+        if (!Array.isArray(s.variants) || s.variants.length < 2)
+          fail(`${sat} (codeMulti) needs at least two language variants`);
+        const CODE_LANGS = ["py", "java", "cpp", "js", "c"];
+        const seenLangs = new Set();
+        for (const [vi, v] of (s.variants ?? []).entries()) {
+          const vat = `${sat} variant ${vi + 1}`;
+          if (!CODE_LANGS.includes(v.language)) fail(`${vat}: language "${v.language}" — one of ${CODE_LANGS.join("/")}`);
+          if (seenLangs.has(v.language)) fail(`${vat}: language "${v.language}" repeated — each may appear once`);
+          seenLangs.add(v.language);
+          if (!v.fileLabel || !v.code) fail(`${vat} needs fileLabel and code`);
+        }
+        if (!s.output) fail(`${sat} (codeMulti) needs output`);
+        if (!s.ctaLabel) fail(`${sat} (codeMulti) needs a ctaLabel`);
       } else {
-        fail(`${sat}: kind "${s.kind}" — one of command/turn/choose/find/formula/number/write`);
+        fail(`${sat}: kind "${s.kind}" — one of command/turn/choose/find/formula/number/write/codeMulti`);
       }
       // Desktop-only "your work" panel (CHANGES.md item 6) — optional on
       // every Uni* kind, absent on command/turn (no Desk mockup for

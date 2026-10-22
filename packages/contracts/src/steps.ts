@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CODE_LANGUAGES, type CodeLanguageKey } from "./account";
 
 /**
  * Phase 5 Part B: authored rich steps (nodes.steps, migration 0030), seven
@@ -230,6 +231,44 @@ export const writeStepSchema = z.object({
   panel: panelSchema.optional(),
 });
 
+/**
+ * The DSA language switch (V2Dsa/DeskDsa, migration 0033) — the same code
+ * sample in several languages, one highlighted "key line" that is the same
+ * step in all of them. Infrastructure only: no DSA roadmap exists yet to
+ * author a real one of these for (see migration 0033's own note) — the
+ * schema and renderer are built and tested against synthetic fixtures, a
+ * real pilot is a later, separate content-authoring task.
+ */
+const codeVariantSchema = z.object({
+  language: z.enum(CODE_LANGUAGES.map((l) => l.key) as [CodeLanguageKey, ...CodeLanguageKey[]]),
+  fileLabel: z.string().min(1),
+  /** The full source, newline-joined — not split into {indent, text} pairs:
+   *  that's a rendering concern (lib/steps.ts turns this into lines), and
+   *  keeping the authored shape as plain text is what makes this content
+   *  reviewable as actual code, not a markup structure. */
+  code: z.string().min(1),
+  /** A literal line of code (exact text, post-trim) highlighted in every
+   *  language's listing — "it is the same step in all five languages." */
+  highlightLine: z.string().optional(),
+});
+
+export const codeMultiStepSchema = z
+  .object({
+    kind: z.literal("codeMulti"),
+    title: z.string().min(1),
+    body: z.string().optional(),
+    variants: z.array(codeVariantSchema).min(2),
+    outputLabel: z.string().min(1).default("Run it. It should print"),
+    outputCaption: z.string().optional(),
+    output: z.string().min(1),
+    note: z.string().optional(),
+    ctaLabel: z.string().min(1),
+  })
+  .refine(
+    (v) => new Set(v.variants.map((x) => x.language)).size === v.variants.length,
+    { message: "each language may appear at most once in variants", path: ["variants"] },
+  );
+
 export const authoredStepSchema = z.discriminatedUnion("kind", [
   commandStepSchema,
   turnStepSchema,
@@ -238,6 +277,7 @@ export const authoredStepSchema = z.discriminatedUnion("kind", [
   formulaStepSchema,
   numberStepSchema,
   writeStepSchema,
+  codeMultiStepSchema,
 ]);
 export const authoredStepsSchema = z.array(authoredStepSchema);
 
@@ -248,6 +288,7 @@ export type FindStep = z.infer<typeof findStepSchema>;
 export type FormulaStep = z.infer<typeof formulaStepSchema>;
 export type NumberStep = z.infer<typeof numberStepSchema>;
 export type WriteStep = z.infer<typeof writeStepSchema>;
+export type CodeMultiStep = z.infer<typeof codeMultiStepSchema>;
 export type AuthoredStep = z.infer<typeof authoredStepSchema>;
 
 export type DotGridPanel = z.infer<typeof dotGridPanelSchema>;
