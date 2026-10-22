@@ -190,6 +190,58 @@ export default {
               ctaLabel: "My status looks like that",
             },
           ],
+          // Phase 5 Part C pilot (migration 0032): real FAQ and quiz
+          // content for this day, not the V2Questions/V2Quiz mockups'
+          // generic day-1 flavour (git init, first commit) — these are
+          // genuinely about day 2's own topic, staging.
+          faq: [
+            {
+              question: "Do I have to run `git add .` every time?",
+              answer:
+                "No, and today's common mistake is exactly why: `git add .` stages everything in the folder, including things you did not mean to commit. `git add <file>` one at a time, or `git add -p` to stage part of a file, keeps the staging area a deliberate choice rather than a reflex.",
+            },
+            {
+              question: "What does `git add -p` actually do?",
+              answer:
+                "It walks through each changed chunk (\"hunk\") in a file one at a time and asks whether to stage it, skip it, or split it further. It is how you separate a real fix from the unrelated tidying you did while you were in the file.",
+            },
+            {
+              question: "Why does the same file show up twice in `git status`?",
+              answer:
+                "Because you staged it, then edited it again. The staged version sits in the index; the newer edits are compared against that staged snapshot, not against the last commit — so the file appears once under \"changes to be committed\" and once under \"changes not staged for commit\".",
+            },
+            {
+              question: "Is the staging area the same thing as the .git folder?",
+              answer:
+                "The staging area (the index) lives inside .git, but it is one specific file in there, not the whole repository. .git also holds every commit, every branch pointer, and your config — the index is just the draft of your next commit.",
+            },
+          ],
+          quiz: [
+            {
+              question: "You edit a file, run `git add`, then edit it again. What does `git status` show?",
+              options: [
+                "Only \"changes not staged for commit\"",
+                "Only \"changes to be committed\"",
+                "The file listed under both sections",
+                "Nothing — Git only tracks the latest edit",
+              ],
+              correctIndex: 2,
+              explanation:
+                "The staged version (what you'll commit) and the newer edits since (what's still outside) are two different states of the same file, so status shows both.",
+            },
+            {
+              question: "Which command lets you stage only part of a file's changes?",
+              options: ["git add -p", "git commit -p", "git status -p", "git diff -p"],
+              correctIndex: 0,
+              explanation: "git add -p walks through each chunk of the file's changes and asks whether to stage it.",
+            },
+            {
+              question: "What moves a file from \"untracked\" to part of your next commit?",
+              options: ["git init", "git add", "git log", "git status"],
+              correctIndex: 1,
+              explanation: "git add is the only one of the four that changes what Git will commit next — the others read or set up, they don't stage.",
+            },
+          ],
           estMinutes: 50,
           points: 30,
           difficulty: "core",

@@ -173,6 +173,7 @@ export default function LessonRoute({
       roadmapTitle={roadmapTitle}
       moduleLabel={moduleLabel}
       nodeId={nodeId}
+      quizHref={`/learn/${slug}/${nodeSlug}/quiz`}
       steps={steps}
       stepIndex={index}
       total={steps.length}

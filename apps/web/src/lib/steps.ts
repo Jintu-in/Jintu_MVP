@@ -136,6 +136,13 @@ export type LessonStep = { id: string; railTitle: string } & (
     }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
+  | {
+      kind: "faq";
+      items: { question: string; answer: string }[];
+      /** Whether to show "Quiz me first" beside Finish — node.quiz may be
+       *  null even when node.faq exists; the two are authored separately. */
+      hasQuiz: boolean;
+    }
 );
 
 /** The authored step's own title becomes the step's railTitle/id; command
@@ -322,6 +329,21 @@ export function buildLessonSteps(node: RoadmapNode): LessonStep[] {
       kind: "gotcha",
       heading: "The mistake almost everyone makes",
       text: text(node.commonMistake),
+    });
+  }
+
+  // Last, not spliced in anywhere else — V2Questions/DeskQuestions sits
+  // after "your turn" and the mistake, right before Finish. Deliberately
+  // NOT repeating node.commonMistake here even though the mockup's own
+  // card does: it already rendered above as its own gotcha step, and a
+  // second copy in the same lesson would be a real duplication.
+  if (node.faq && node.faq.length > 0) {
+    steps.push({
+      id: "faq",
+      railTitle: "Questions you might have",
+      kind: "faq",
+      items: node.faq,
+      hasQuiz: Boolean(node.quiz && node.quiz.length > 0),
     });
   }
 

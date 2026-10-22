@@ -48,6 +48,17 @@ export { profileUpdateInput, type ProfileUpdateInput } from "./profile";
 export { helpRequestInput, type HelpRequestInput } from "./help-requests";
 
 export {
+  faqItemSchema,
+  faqSchema,
+  quizQuestionSchema,
+  quizSchema,
+  type FaqItem,
+  type Faq,
+  type QuizQuestion,
+  type Quiz,
+} from "./faq-quiz";
+
+export {
   authoredStepSchema,
   authoredStepsSchema,
   commandStepSchema,

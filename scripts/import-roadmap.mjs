@@ -205,6 +205,20 @@ for (const [mi, m] of spec.modules.entries()) {
     const comprehension = (n.checks ?? []).filter((c) => (c.kind ?? "comprehension") === "comprehension");
     if (comprehension.length > 5)
       fail(`${at}: ${comprehension.length} comprehension checks — three is the model, five the ceiling`);
+    // "Questions you might have" (0032) — separate from node_checks above:
+    // real FAQ questions, not comprehension checks.
+    for (const [fi, f] of (n.faq ?? []).entries()) {
+      if (!f.question || !f.answer) fail(`${at} faq ${fi + 1} needs question and answer`);
+    }
+    // The no-score quiz (0032).
+    for (const [qi, qz] of (n.quiz ?? []).entries()) {
+      const qat = `${at} quiz ${qi + 1}`;
+      if (!qz.question) fail(`${qat} needs a question`);
+      if (!Array.isArray(qz.options) || qz.options.length < 2) fail(`${qat} needs at least two options`);
+      if (!Number.isInteger(qz.correctIndex) || qz.correctIndex < 0 || qz.correctIndex >= (qz.options ?? []).length)
+        fail(`${qat} correctIndex must index into options`);
+      if (!qz.explanation) fail(`${qat} needs an explanation`);
+    }
     if (!Array.isArray(n.resources)) fail(`${at} resources`);
     for (const [ri, r] of n.resources.entries()) {
       const rat = `${at} resource ${ri + 1}`;
@@ -357,8 +371,8 @@ for (const [mi, m] of spec.modules.entries()) {
   push(`  values (rm, ${mi + 1}, ${q(m.title)}, ${q(m.weekRange ?? null)}, ${q(m.objective ?? null)}, ${q(m.deliverable ?? null)}, ${qn(m.estHours)})`);
   push(`  returning id into m;`);
   for (const [ni, n] of m.nodes.entries()) {
-    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, steps, est_minutes, difficulty, is_optional, points)`);
-    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${qjsonb(n.steps)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
+    push(`  insert into public.nodes (module_id, position, title, slug, summary, learning_objectives, why_today, common_mistake, principle, challenge, challenge_minutes, steps, faq, quiz, est_minutes, difficulty, is_optional, points)`);
+    push(`  values (m, ${ni + 1}, ${q(n.title)}, ${q(slugify(n.title))}, ${q(n.summary ?? null)}, ${qarr(n.learningObjectives)}, ${q(n.whyToday ?? null)}, ${q(n.commonMistake ?? null)}, ${q(n.principle ?? null)}, ${q(n.challenge ?? null)}, ${qn(n.challengeMinutes)}, ${qjsonb(n.steps)}, ${qjsonb(n.faq)}, ${qjsonb(n.quiz)}, ${n.estMinutes}, ${q(n.difficulty ?? null)}, ${n.isOptional ? "true" : "false"}, ${Number.isInteger(n.points) ? n.points : 25})`);
     push(`  returning id into n;`);
     for (const [ti, t] of (n.topics ?? []).entries()) {
       push(`  insert into public.node_topics (node_id, position, title, detail) values (n, ${ti}, ${q(t.title)}, ${q(t.detail)});`);

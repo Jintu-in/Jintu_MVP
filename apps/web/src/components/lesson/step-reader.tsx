@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import type { Panel } from "@jintu/contracts";
 import { submitHelpRequest } from "@/actions/help";
@@ -102,6 +103,9 @@ export interface StepReaderProps {
   /** For the help box's submission only — which lesson this step belongs
    *  to. Not used for anything else here. */
   nodeId: string;
+  /** Where "Quiz me first" goes — only ever rendered on a faq step with
+   *  hasQuiz true, but always passed down (harmless unused otherwise). */
+  quizHref: string;
   /** Every step in this lesson, not just the current one — Part A/B's
    *  mobile view only ever needed the one at stepIndex; the desktop nav
    *  (below) needs the whole list to render done/current/upcoming. */
@@ -131,6 +135,7 @@ export function StepReader({
   roadmapTitle,
   moduleLabel,
   nodeId,
+  quizHref,
   steps,
   stepIndex,
   total,
@@ -245,6 +250,14 @@ export function StepReader({
                 <BackIcon />
               </button>
             ) : null}
+            {step.kind === "faq" && step.hasQuiz ? (
+              <Link
+                href={quizHref as never}
+                className="hidden h-14 flex-none items-center justify-center rounded-2xl border border-ink-200 px-5 text-[15px] font-semibold text-ink-900 no-underline lg:flex"
+              >
+                Quiz me first
+              </Link>
+            ) : null}
             <button
               type="button"
               disabled={continuing}
@@ -273,6 +286,14 @@ export function StepReader({
               >
                 <BackIcon />
               </button>
+            ) : null}
+            {step.kind === "faq" && step.hasQuiz ? (
+              <Link
+                href={quizHref as never}
+                className="flex h-14 flex-none items-center justify-center rounded-2xl border border-ink-200 px-4 text-[14.5px] font-semibold text-ink-900 no-underline"
+              >
+                Quiz me
+              </Link>
             ) : null}
             <button
               type="button"
@@ -873,7 +894,54 @@ function StepBody({ step }: { step: LessonStep }) {
           </p>
         </div>
       );
+
+    case "faq":
+      return <FaqAccordion items={step.items} />;
   }
+}
+
+/** "Questions you might have" (V2Questions/DeskQuestions) — the first item
+ *  open by default, matching the mockup; everything else collapsed. Not
+ *  node.commonMistake's own "gotcha" step repeated — see buildLessonSteps's
+ *  own note on why that card isn't duplicated here. */
+function FaqAccordion({ items }: { items: { question: string; answer: string }[] }) {
+  const [openIndex, setOpenIndex] = useState(0);
+  return (
+    <div className="flex flex-col rounded-3xl bg-white">
+      {items.map((item, i) => {
+        const open = i === openIndex;
+        return (
+          <div key={i} className={cn(i > 0 && "border-t border-ink-100")}>
+            <button
+              type="button"
+              aria-expanded={open}
+              onClick={() => setOpenIndex(open ? -1 : i)}
+              className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 py-3 text-left text-[15.5px] font-medium text-ink-900"
+            >
+              <span>{item.question}</span>
+              <svg
+                aria-hidden
+                width={18}
+                height={18}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={cn("flex-none text-ink-600 transition-transform", open && "rotate-180")}
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            {open ? (
+              <p className="m-0 px-4 pb-4 text-pretty text-[14.5px] leading-[1.6] text-ink-600">{item.answer}</p>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 /**

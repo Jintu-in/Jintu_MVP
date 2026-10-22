@@ -1,5 +1,5 @@
 import "server-only";
-import { authoredStepsSchema, type AuthoredStep } from "@jintu/contracts";
+import { authoredStepsSchema, faqSchema, quizSchema, type AuthoredStep, type Faq, type Quiz } from "@jintu/contracts";
 import { createPublicClient } from "@/lib/supabase/public";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
@@ -15,6 +15,18 @@ function parseAuthoredSteps(raw: unknown, nodeSlug: string): AuthoredStep[] | nu
     return null;
   }
   return parsed.data;
+}
+
+/** nodes.faq / nodes.quiz (0032) — same degrade-to-null posture as steps
+ *  above: a malformed row just means no faq step / no quiz for that day. */
+function parseJsonbOrNull<T>(raw: unknown, schema: { safeParse: (v: unknown) => { success: boolean; data?: T; error?: { message: string } } }, nodeSlug: string, field: string): T | null {
+  if (raw === null || raw === undefined) return null;
+  const parsed = schema.safeParse(raw);
+  if (!parsed.success) {
+    console.error(`[roadmaps] ${nodeSlug}: malformed nodes.${field}, falling back to none`, parsed.error?.message);
+    return null;
+  }
+  return parsed.data ?? null;
 }
 
 /**
@@ -69,6 +81,10 @@ export type RoadmapNode = {
    *  authored. Validated on read; a malformed row degrades to null rather
    *  than throwing, same posture as a missing field. */
   authoredSteps: AuthoredStep[] | null;
+  /** Phase 5 Part C, migration 0032 — "Questions you might have" and the
+   *  no-score quiz. Null until a day is hand-authored for either. */
+  faq: Faq | null;
+  quiz: Quiz | null;
   topics: NodeTopic[];
   checks: NodeCheck[];
   estMinutes: number;
@@ -266,7 +282,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
            nodes (
              id, slug, position, title, summary, learning_objectives,
              why_today, common_mistake, principle, challenge, challenge_minutes,
-             steps,
+             steps, faq, quiz,
              est_minutes, points, difficulty, is_optional,
              node_topics ( position, title, detail ),
              node_checks ( position, question, answer ),
@@ -316,6 +332,8 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
             challenge: n.challenge,
             challengeMinutes: n.challenge_minutes,
             authoredSteps: parseAuthoredSteps(n.steps, n.slug),
+            faq: parseJsonbOrNull(n.faq, faqSchema, n.slug, "faq"),
+            quiz: parseJsonbOrNull(n.quiz, quizSchema, n.slug, "quiz"),
             topics: ((n.node_topics ?? []) as NodeTopic[]).slice().sort(byPosition),
             checks: ((n.node_checks ?? []) as NodeCheck[]).slice().sort(byPosition),
             estMinutes: n.est_minutes,
