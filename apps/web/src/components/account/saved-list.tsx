@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { Route } from "next";
 import { useAction } from "next-safe-action/hooks";
 import { consumeSave, removeSave } from "@/actions/saves";
+import { ExternalIcon } from "@/components/ui/icons";
 import type { SavedItem } from "@/lib/saved";
 
 /**
- * The saved queue, as a list.
+ * The saved queue, as a list (V2Saved/DeskSaved).
  *
  * "Mark as read" consumes the row rather than deleting it — the list is a
  * queue, not an archive, and the record that a save led to reading is worth
@@ -27,37 +27,37 @@ function Row({ item, onGone }: { item: SavedItem; onGone: (id: string) => void }
   const error = read.result?.serverError ?? drop.result?.serverError;
 
   return (
-    <li className="border-b border-ink-100 py-4 last:border-b-0">
-      <a
-        href={item.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block text-[15px] leading-[1.45] font-medium text-ink-900 hover:text-brand-800"
-      >
-        {item.title}
-      </a>
-      <div className="mt-1 font-mono text-[12px] leading-[1.5] text-ink-500">{item.sourceLine}</div>
-
-      {item.editorNote ? (
-        <p className="mt-2 max-w-[62ch] text-[13.5px] leading-[1.7] text-pretty text-ink-600">
-          {item.editorNote}
-        </p>
-      ) : null}
-
-      <div className="mt-2.5 flex flex-wrap items-center gap-x-1 gap-y-1">
+    <li className="flex flex-col gap-2.5 rounded-[22px] bg-white p-[18px] shadow-[0_1px_2px_rgba(12,42,48,0.06),0_10px_28px_rgba(12,42,48,0.08)] lg:p-[22px]">
+      <div className="flex flex-col gap-1">
+        <div className="font-mono text-[12.5px] leading-[18px] text-ink-500">{item.sourceLine}</div>
         <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-12 items-center pr-3 text-[14px] font-medium text-brand-700"
+          className="font-heading text-[19px] leading-[26px] font-semibold tracking-[-0.01em] text-ink-900 no-underline hover:text-brand-800 lg:text-[21px] lg:leading-7"
         >
-          Open
+          {item.title}
+        </a>
+        {item.editorNote ? (
+          <div className="text-[15px] leading-[22px] text-ink-600">{item.editorNote}</div>
+        ) : null}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-11 flex-none items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-4.5 text-[14.5px] font-semibold text-on-brand no-underline"
+        >
+          <ExternalIcon size={16} />
+          <span>Open</span>
         </a>
         <button
           type="button"
           disabled={busy}
           onClick={() => read.execute({ resourceId: item.resourceId })}
-          className="flex h-12 items-center px-3 text-[14px] font-medium text-brand-700 disabled:text-ink-500"
+          className="flex h-11 flex-none items-center justify-center rounded-2xl border border-ink-200 px-4 text-[14.5px] font-semibold text-ink-900 disabled:text-ink-500"
         >
           Mark as read
         </button>
@@ -65,22 +65,23 @@ function Row({ item, onGone }: { item: SavedItem; onGone: (id: string) => void }
           type="button"
           disabled={busy}
           onClick={() => drop.execute({ resourceId: item.resourceId })}
-          className="flex h-12 items-center px-3 text-[14px] text-ink-600 hover:text-ink-900 disabled:text-ink-500"
+          className="flex h-11 flex-none items-center justify-center rounded-2xl px-2.5 text-[14.5px] font-semibold text-link disabled:text-ink-500"
         >
           Remove
         </button>
-        {item.nodeHref ? (
-          <Link
-            href={item.nodeHref as Route}
-            className="flex h-12 items-center px-3 font-mono text-[12px] text-ink-500 hover:text-ink-900"
-          >
-            where you saved it
-          </Link>
-        ) : null}
       </div>
 
+      {item.provenance ? (
+        <a
+          href={item.nodeHref as Route}
+          className="self-start text-[13.5px] leading-5 font-semibold text-ink-900 no-underline lg:min-h-7"
+        >
+          {item.provenance}
+        </a>
+      ) : null}
+
       {error ? (
-        <p role="alert" className="mt-1 text-[13.5px] text-ink-900">
+        <p role="alert" className="text-[13.5px] text-ink-900">
           {error}
         </p>
       ) : null}
@@ -109,7 +110,7 @@ export function SavedList({ items }: { items: SavedItem[] }) {
 
   return (
     <>
-      <ul className="mt-2">
+      <ul className="mt-2 flex flex-col gap-3 pl-0 lg:gap-3.5">
         {visible.map((i) => (
           <Row key={i.resourceId} item={i} onGone={onGone} />
         ))}

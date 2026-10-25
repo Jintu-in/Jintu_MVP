@@ -51,9 +51,15 @@ test("the source line is built from real columns", () => {
 
 test("a saved item links back to the node it came from", () => {
   assert.match(lib, /nodeHref/);
-  assert.match(lib, /\/learn\/\$\{roadmap\.slug\}\/\$\{res\.nodes\.slug\}/);
+  assert.match(lib, /\/learn\/\$\{published\.slug\}\/\$\{res\.nodes!\.slug\}/);
   // Never into a draft roadmap: that link would 404 for its own owner.
   assert.match(lib, /roadmap\.status === "published"/);
+});
+
+test("the provenance line names the roadmap and the node's GLOBAL position, not its per-module one", () => {
+  assert.match(lib, /Saved in \$\{published\.title\}, lesson \$\{position\}/);
+  assert.match(lib, /positionByNodeSlug/);
+  assert.doesNotMatch(lib, /res\.nodes\.position|nodes\.position/, "nodes.position only counts within its own module");
 });
 
 test("fifty at a time, behind a button — never infinite scroll", () => {

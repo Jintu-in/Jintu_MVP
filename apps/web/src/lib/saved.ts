@@ -2,6 +2,7 @@ import "server-only";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
 import { createClient } from "@/lib/supabase/server";
+import { getRoadmap } from "@/lib/roadmaps";
 
 /**
  * The saved queue.
@@ -23,6 +24,8 @@ export type SavedItem = {
   editorNote: string | null;
   /** Back to the exact node this was saved from, when it is published. */
   nodeHref: string | null;
+  /** "Saved in Git & GitHub, lesson 4" — null wherever nodeHref is null. */
+  provenance: string | null;
   savedAt: string;
   durationSec: number | null;
 };
@@ -61,7 +64,7 @@ export async function getSavedQueue(): Promise<SavedQueue | null> {
          resource_id,
          resources (
            id, title, url, source_name, duration_sec, est_size_mb, editor_note,
-           nodes ( slug, modules ( roadmaps ( slug, status ) ) )
+           nodes ( slug, modules ( roadmaps ( slug, title, status ) ) )
          )`,
       )
       .is("consumed_at", null)
@@ -79,15 +82,39 @@ export async function getSavedQueue(): Promise<SavedQueue | null> {
       duration_sec: number | null;
       est_size_mb: number | null;
       editor_note: string | null;
-      nodes: { slug: string; modules: { roadmaps: { slug: string; status: string } | null } | null } | null;
+      nodes: { slug: string; modules: { roadmaps: { slug: string; title: string; status: string } | null } | null } | null;
     } | null;
   };
+  const rows = (data ?? []) as unknown as Row[];
 
-  const items: SavedItem[] = ((data ?? []) as unknown as Row[])
+  // "Saved in X, lesson N" needs the node's place across the WHOLE roadmap,
+  // which the nodes table itself does not carry (its own ordering column
+  // restarts at 1 in every module) — one getRoadmap() per distinct roadmap
+  // referenced, not per item.
+  const roadmapSlugs = [
+    ...new Set(
+      rows
+        .map((r) => r.resources?.nodes?.modules?.roadmaps)
+        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && rm!.status === "published")
+        .map((rm) => rm!.slug),
+    ),
+  ];
+  const trees = await Promise.all(roadmapSlugs.map((slug) => getRoadmap(slug).catch(() => null)));
+  const positionByNodeSlug = new Map<string, number>();
+  trees.forEach((tree) => {
+    if (!tree) return;
+    tree.modules.flatMap((m) => m.nodes).forEach((n, i) => positionByNodeSlug.set(`${tree.slug}/${n.slug}`, i + 1));
+  });
+
+  const items: SavedItem[] = rows
     .filter((r) => r.resources)
     .map((r) => {
       const res = r.resources!;
       const roadmap = res.nodes?.modules?.roadmaps ?? null;
+      // Only link into a roadmap that is actually published — a link to a
+      // draft would 404 for the person who saved from it.
+      const published = roadmap && roadmap.status === "published" && res.nodes?.slug ? roadmap : null;
+      const position = published ? positionByNodeSlug.get(`${published.slug}/${res.nodes!.slug}`) : undefined;
       return {
         resourceId: r.resource_id,
         title: res.title,
@@ -95,12 +122,8 @@ export async function getSavedQueue(): Promise<SavedQueue | null> {
         sourceName: res.source_name,
         sourceLine: sourceLine(res.source_name, res.duration_sec, res.est_size_mb),
         editorNote: res.editor_note,
-        // Only link into a roadmap that is actually published — a link to a
-        // draft would 404 for the person who saved from it.
-        nodeHref:
-          roadmap && roadmap.status === "published" && res.nodes?.slug
-            ? `/learn/${roadmap.slug}/${res.nodes.slug}`
-            : null,
+        nodeHref: published ? `/learn/${published.slug}/${res.nodes!.slug}` : null,
+        provenance: published && position ? `Saved in ${published.title}, lesson ${position}` : null,
         savedAt: r.saved_at,
         durationSec: res.duration_sec,
       };
