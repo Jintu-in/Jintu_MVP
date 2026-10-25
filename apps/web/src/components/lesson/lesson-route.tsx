@@ -31,6 +31,28 @@ import type { LessonStep } from "@/lib/steps";
 /** A LessonStep the server can send — no React nodes, fully serializable. */
 export type LessonStepSeed = LessonStep;
 
+/**
+ * V2Offline/DeskOffline (Phase 5 Part D): starts true (matches what the
+ * server-rendered page assumed, since it has no way to know) and corrects
+ * itself on mount from the browser's own flag, then tracks the online/
+ * offline events for the rest of the visit.
+ */
+function useOnlineStatus(): boolean {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    setOnline(window.navigator.onLine);
+    const goOnline = () => setOnline(true);
+    const goOffline = () => setOnline(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+  return online;
+}
+
 export interface LessonRouteProps {
   slug: string;
   nodeSlug: string;
@@ -78,6 +100,7 @@ export default function LessonRoute({
 }: LessonRouteProps) {
   const router = useRouter();
   const storageKey = `jintu:step:${nodeId}`;
+  const online = useOnlineStatus();
 
   const [index, setIndex] = useState(0);
   const [furthest, setFurthest] = useState(0);
@@ -137,6 +160,21 @@ export default function LessonRoute({
       setFailed(true);
     },
   });
+
+  // "Progress queues locally and syncs when back online" (BUILD-PLAN.md's
+  // offline testing checklist) — a completion attempt that failed while
+  // offline retries itself the moment the connection returns, rather than
+  // leaving the learner to notice and tap "try again". Durability is only
+  // for this visit (same trade-off as the furthest-step localStorage above):
+  // the real requirement is "finish a step, come back online, progress is
+  // saved" within one session, not surviving a closed tab while offline.
+  useEffect(() => {
+    if (online && failed) {
+      setFailed(false);
+      execute({ nodeId, roadmapId, roadmapSlug: slug, done: true });
+    }
+    // Only on the online transition — not on every `failed`/`execute` change.
+  }, [online]);
 
   const onContinue = () => {
     const isLast = index === steps.length - 1;
@@ -201,12 +239,17 @@ export default function LessonRoute({
       estMinutes={estMinutes}
       codeLanguage={codeLanguage}
       onCodeLanguageChange={onCodeLanguageChange}
+      online={online}
       onBack={() => router.push(`/learn/${slug}` as never)}
       onPrev={index > 0 ? onPrev : undefined}
       onContinue={onContinue}
       onJump={onJump}
       continuing={isExecuting}
-      error={failed ? (result.serverError ?? "That did not save. Your place is kept — try again.") : undefined}
+      error={
+        failed
+          ? result.serverError ?? (online ? "That did not save. Your place is kept — try again." : "You're offline — this will save as soon as you're back.")
+          : undefined
+      }
     />
   );
 }

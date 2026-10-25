@@ -74,6 +74,38 @@ const KIND_PILL: Partial<Record<LessonStep["kind"], string>> = {
   write: "Write",
 };
 
+/**
+ * V2Offline/DeskOffline (Phase 5 Part D) — an overlay state on whatever
+ * step is already showing, not a step kind of its own: the mockups draw
+ * the same banner on top of an ordinary `command` step. Same render site
+ * as HelpBox below, so one banner serves both the mobile and desktop
+ * layouts. Copy and icon (a crossed-out wifi mark) are the mockups' own,
+ * down to the icon's stroke colour (warn-600) sitting inside a warn-700
+ * text container — the one case in this reader where an icon and its
+ * container text intentionally use two different steps of the same scale.
+ */
+function OfflineBanner() {
+  return (
+    <div role="status" className="flex items-center gap-3 rounded-2xl bg-warn-bg p-3.5 text-warn-700">
+      <svg aria-hidden width={22} height={22} viewBox="0 0 24 24" fill="none" className="flex-none text-warn-600" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3l18 18" />
+        <path d="M5 12.5a10 10 0 0 1 3.5-2.3" />
+        <path d="M12.5 9.5a10 10 0 0 1 6.5 3" />
+        <path d="M8.5 16a5 5 0 0 1 5-1.3" />
+        <circle cx="12" cy="19" r="1" />
+      </svg>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="text-[14.5px] leading-5 font-semibold">You are offline</div>
+        <div className="text-[13.5px] leading-[19px]">
+          <span className="lg:hidden">This lesson is saved on your phone.</span>
+          <span className="hidden lg:inline">This lesson is saved on this computer.</span>
+          {" "}Your progress syncs when you are back.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const ARROW_RIGHT = (
   <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M5 12h14" />
@@ -124,6 +156,11 @@ export interface StepReaderProps {
    *  lesson stays in sync ("applies to every code block"). */
   codeLanguage: CodeLanguageKey;
   onCodeLanguageChange: (language: CodeLanguageKey) => void;
+  /** V2Offline/DeskOffline (Phase 5 Part D) — drives the "You are offline"
+   *  banner and HelpBox's disabled "Ask needs internet" state. Computed in
+   *  lesson-route.tsx (it also needs it, to retry a failed completion once
+   *  back online), not here, so there is one subscription per lesson. */
+  online: boolean;
   onBack: () => void;
   onPrev?: () => void;
   onContinue: () => void;
@@ -149,6 +186,7 @@ export function StepReader({
   estMinutes,
   codeLanguage,
   onCodeLanguageChange,
+  online,
   onBack,
   onPrev,
   onContinue,
@@ -224,6 +262,7 @@ export function StepReader({
         </div>
 
         <div className="flex w-full min-w-0 max-w-[680px] flex-1 flex-col gap-4 overflow-y-auto px-5 pt-6 pb-4 lg:px-0 lg:pt-12">
+          {online ? null : <OfflineBanner />}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
               <div className="text-[13px] leading-[18px] font-semibold text-link">
@@ -243,7 +282,7 @@ export function StepReader({
           <StepBody step={step} codeLanguage={codeLanguage} onCodeLanguageChange={onCodeLanguageChange} />
 
           {HELP_ELIGIBLE.has(step.kind) ? (
-            <HelpBox key={step.id} nodeId={nodeId} stepContext={step.railTitle} />
+            <HelpBox key={step.id} nodeId={nodeId} stepContext={step.railTitle} online={online} />
           ) : null}
 
           <div className="flex gap-2.5 lg:mt-1">
@@ -1080,7 +1119,7 @@ function FaqAccordion({ items }: { items: { question: string; answer: string }[]
  * `key={step.id}` at the call site remounts this fresh on every step, so
  * open/sent/draft-text never leak from one step's box into the next.
  */
-function HelpBox({ nodeId, stepContext }: { nodeId: string; stepContext: string }) {
+function HelpBox({ nodeId, stepContext, online }: { nodeId: string; stepContext: string; online: boolean }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
@@ -1088,6 +1127,23 @@ function HelpBox({ nodeId, stepContext }: { nodeId: string; stepContext: string 
     onSuccess: () => setSent(true),
   });
   const isExecuting = status === "executing";
+
+  // V2Offline/DeskOffline's own secondary button, disabled, drawn copy —
+  // "Ask" is submitHelpRequest, which needs the network same as any other
+  // server action; replaces whatever state this box was in (open, mid-type)
+  // the moment the connection drops, same as the mockups only ever draw
+  // the closed state here.
+  if (!online) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="flex h-11 flex-none items-center self-start rounded-xl border border-dashed border-ink-400 px-3.5 text-[14px] font-medium text-ink-500"
+      >
+        Ask needs internet
+      </button>
+    );
+  }
 
   if (!open) {
     return (

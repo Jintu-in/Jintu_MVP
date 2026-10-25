@@ -82,7 +82,7 @@ test("only the seven authored kinds are help-eligible — the six generic kinds 
 });
 
 test("HelpBox remounts fresh on every step via key={step.id} — no leaking open/sent/draft state across steps", () => {
-  assert.match(reader, /<HelpBox key=\{step\.id\} nodeId=\{nodeId\} stepContext=\{step\.railTitle\} \/>/);
+  assert.match(reader, /<HelpBox key=\{step\.id\} nodeId=\{nodeId\} stepContext=\{step\.railTitle\} online=\{online\} \/>/);
 });
 
 test("HelpBox is a three-state disclosure: closed link, open form, sent confirmation — never a live textbox left open with no way to send", () => {
