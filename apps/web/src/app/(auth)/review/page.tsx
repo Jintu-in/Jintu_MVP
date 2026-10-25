@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { Route } from "next";
 import { redirect } from "next/navigation";
-import { ReviewGrade } from "@/components/review-grade";
+import { ReviewSession } from "@/components/review/review-session";
+import { BackIcon } from "@/components/ui/icons";
 import { getDueCards } from "@/lib/dashboard";
 
 /**
- * The review queue: one card at a time, oldest due first. Grading
- * revalidates the page, so the next card simply takes this one's place —
- * the loop is press, think, press, until the queue says done.
+ * /review (V2Review/DeskReview) — a focused, chromeless task like the
+ * lesson reader's Quiz route: neither mockup draws the usual persistent
+ * nav here, just a header and the card itself. Two minutes before
+ * today's lesson, not a destination someone lives in.
  */
 export const metadata: Metadata = {
   title: "Review",
@@ -20,44 +23,34 @@ export default async function ReviewPage() {
   const cards = await getDueCards(20);
   if (cards === null) redirect("/join?next=/review");
 
-  const card = cards[0] ?? null;
+  const due = Math.max(0, cards.length);
 
   return (
-    <main className="mx-auto max-w-md px-5 py-10">
-      <p className="text-sm font-medium tracking-wide text-brand-700 uppercase">Review</p>
+    <div className="flex min-h-dvh flex-col bg-ink-50">
+      <div className="flex h-16 flex-none items-center gap-3 px-5 lg:h-20 lg:gap-4 lg:px-10">
+        <Link
+          href={"/today" as Route}
+          aria-label="Back to today"
+          className="flex size-11 flex-none items-center justify-center rounded-full bg-white text-ink-900 lg:size-12"
+        >
+          <BackIcon />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <div className="text-[15px] leading-5 font-semibold text-ink-900 lg:text-[17px] lg:leading-6">Review</div>
+          <div className="text-[12.5px] leading-[18px] text-ink-600 lg:text-[14px] lg:leading-5">
+            Two minutes, before today&apos;s lesson
+          </div>
+        </div>
+        <div className="flex h-8 flex-none items-center rounded-2xl bg-white px-3 font-mono text-[12.5px] font-medium text-ink-900 lg:h-9 lg:px-3.5 lg:text-[13.5px]">
+          {due} due
+        </div>
+      </div>
 
-      {card ? (
-        <>
-          <p className="mt-3 font-mono text-[13px] text-ink-500">
-            {cards.length} due{card.nodeTitle ? ` · from “${card.nodeTitle}”` : ""}
-          </p>
-          <h1 className="mt-4 text-xl leading-snug font-medium text-balance whitespace-pre-wrap text-ink-900">
-            {card.front}
-          </h1>
-          <ReviewGrade cardId={card.id} back={card.back} />
-          <p className="mt-6 text-sm text-pretty text-ink-500">
-            Each cleared card is a point. Honest grading is the whole game —
-            the schedule only works if “Good” means you actually recalled it.
-          </p>
-        </>
-      ) : (
-        <>
-          <h1 className="mt-3 text-2xl font-medium tracking-tight text-ink-900">
-            Nothing due.
-          </h1>
-          <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.7] text-pretty text-ink-600">
-            Cards come back when they are about to fade. Make new ones as you
-            finish nodes — your own words, one idea per card — and they will
-            queue here on their own schedule.
-          </p>
-          <Link
-            href="/today"
-            className="mt-6 inline-flex h-12 items-center rounded-lg bg-brand-700 px-6 font-medium text-white hover:bg-brand-800"
-          >
-            Back to Today
-          </Link>
-        </>
-      )}
-    </main>
+      <div className="flex flex-1 justify-center px-5 pt-7 pb-6 lg:px-10 lg:pt-11">
+        <div className="flex w-full max-w-[680px] flex-1 flex-col">
+          <ReviewSession cards={cards} />
+        </div>
+      </div>
+    </div>
   );
 }

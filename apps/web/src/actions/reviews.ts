@@ -80,6 +80,6 @@ export const gradeCard = actionClient.inputSchema(gradeInput).action(async ({ pa
   }
 
   revalidatePath("/review");
-  revalidatePath("/dashboard");
+  revalidatePath("/today");
   return { nextDue: (data as { next_due: string }[] | null)?.[0]?.next_due ?? null };
 });

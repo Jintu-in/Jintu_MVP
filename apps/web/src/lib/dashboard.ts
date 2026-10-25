@@ -24,6 +24,9 @@ export type DueCard = {
   back: string;
   nodeId: string;
   nodeTitle: string | null;
+  /** "Lesson 2 · See what changed before you save it" — null wherever the
+   *  node's roadmap isn't published, same posture as lib/saved.ts. */
+  from: string | null;
   dueOn: string;
   reps: number;
 };
@@ -166,27 +169,66 @@ export async function getDueCards(limit = 20): Promise<DueCard[] | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
+  const profileRes = await retryRead(() =>
+    supabase.from("profiles").select("timezone").eq("id", user.id).maybeSingle(),
+  );
+  if (profileRes.error) throw describeSupabaseError("reading your profile", profileRes.error);
+  const today = todayIn(profileRes.data?.timezone ?? "UTC");
+
   const { data, error } = await retryRead(() =>
     supabase
       .from("review_cards")
-      .select("id, front, back, node_id, due_on, reps, nodes ( title )")
-      .lte("due_on", new Date().toISOString().slice(0, 10))
+      .select("id, front, back, node_id, due_on, reps, nodes ( title, slug, modules ( roadmaps ( slug, title, status ) ) )")
+      .lte("due_on", today)
       .order("due_on")
       .limit(limit),
   );
   if (error) throw describeSupabaseError("reading your review queue", error);
 
-  return (data ?? []).map((c) => ({
-    id: c.id,
-    front: c.front,
-    back: c.back,
-    nodeId: c.node_id,
-    // PostgREST types a to-one embed as an array shape; runtime is object-
-    // or-null. Same bridge the other adapters use.
-    nodeTitle: (c.nodes as unknown as { title: string } | null)?.title ?? null,
-    dueOn: c.due_on,
-    reps: c.reps,
-  }));
+  type Row = {
+    id: string;
+    front: string;
+    back: string;
+    node_id: string;
+    due_on: string;
+    reps: number;
+    nodes: { title: string; slug: string; modules: { roadmaps: { slug: string; title: string; status: string } | null } | null } | null;
+  };
+  const rows = (data ?? []) as unknown as Row[];
+
+  // "Lesson N · title" needs the node's place across the WHOLE roadmap —
+  // one getRoadmap() per distinct roadmap referenced, not per card. Same
+  // pattern as lib/saved.ts's provenance line.
+  const roadmapSlugs = [
+    ...new Set(
+      rows
+        .map((r) => r.nodes?.modules?.roadmaps)
+        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && rm!.status === "published")
+        .map((rm) => rm!.slug),
+    ),
+  ];
+  const trees = await Promise.all(roadmapSlugs.map((slug) => getRoadmap(slug).catch(() => null)));
+  const positionByNodeSlug = new Map<string, number>();
+  trees.forEach((tree) => {
+    if (!tree) return;
+    tree.modules.flatMap((m) => m.nodes).forEach((n, i) => positionByNodeSlug.set(`${tree.slug}/${n.slug}`, i + 1));
+  });
+
+  return rows.map((c) => {
+    const roadmap = c.nodes?.modules?.roadmaps ?? null;
+    const published = roadmap && roadmap.status === "published" && c.nodes?.slug ? roadmap : null;
+    const position = published ? positionByNodeSlug.get(`${published.slug}/${c.nodes!.slug}`) : undefined;
+    return {
+      id: c.id,
+      front: c.front,
+      back: c.back,
+      nodeId: c.node_id,
+      nodeTitle: c.nodes?.title ?? null,
+      from: published && position && c.nodes ? `Lesson ${position} · ${c.nodes.title}` : null,
+      dueOn: c.due_on,
+      reps: c.reps,
+    };
+  });
 }
 
 export async function getDashboard(): Promise<DashboardData | null> {
