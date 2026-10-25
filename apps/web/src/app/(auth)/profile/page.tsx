@@ -3,16 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/shell/app-shell";
 import { ProfileHeader } from "@/components/profile/profile-header";
+import { FinishedLists, RecordEmptyState, WeeksGrid } from "@/components/profile/profile-record";
 import { getAccount } from "@/lib/account";
 import { getMyMomentum } from "@/lib/momentum";
+import { getMyRecord } from "@/lib/profile-record";
 import { getSiteUrl } from "@/lib/env";
-
-const ARROW_RIGHT = (
-  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14" />
-    <path d="M13 6l6 6-6 6" />
-  </svg>
-);
 
 /**
  * /profile — the identity half: who this is, the public link, and (once a
@@ -20,10 +15,9 @@ const ARROW_RIGHT = (
  * design/jintu-design/CURRENT-STATE.md §5) — this page no longer edits
  * anything but what ProfileHeader itself does (sharing).
  *
- * The record half (stats, contribution grid, roadmaps) is session P2.
- * Until this account has finished a day, V2ProfileNew's quiet card replaces
- * it — "0 days · 0 streak · 0 points" on day one is a product telling
- * somebody they have failed before they started.
+ * The record half (Phase 6 Part B, V2Profile/DeskProfile): stats, the
+ * weeks grid, and "finished in X" lists — fetched only when hasRecord is
+ * true, so day one pays nothing for a record it doesn't have yet.
  */
 export const metadata: Metadata = {
   title: "Profile",
@@ -36,7 +30,9 @@ export default async function ProfilePage() {
   const [account, momentum] = await Promise.all([getAccount(), getMyMomentum()]);
   if (!account) redirect("/join?next=/profile");
 
+  const record = account.hasRecord ? await getMyRecord() : null;
   const name = account.displayName ?? account.fullName ?? "Your account";
+  const points = momentum?.totalPoints ?? 0;
 
   return (
     <AppShell
@@ -44,12 +40,12 @@ export default async function ProfilePage() {
       user={{
         displayName: name,
         initials: account.initials,
-        points: momentum?.totalPoints ?? 0,
+        points,
         avatarAnimal: account.avatarAnimal,
         avatarColor: account.avatarColor,
       }}
     >
-      <main className="mx-auto min-h-dvh w-full max-w-[720px] bg-ink-50 px-5 pt-6 pb-12">
+      <main className="mx-auto min-h-dvh w-full max-w-[720px] bg-ink-50 px-5 pt-6 pb-12 lg:max-w-[1040px] lg:px-0 lg:pt-9">
         <ProfileHeader
           avatarAnimal={account.avatarAnimal}
           avatarColor={account.avatarColor}
@@ -58,25 +54,44 @@ export default async function ProfilePage() {
           suggestedHandle={account.suggestedHandle}
           isPublic={account.publicProfile.isPublic}
           siteHost={getSiteUrl().host}
+          stats={record ? { streakDays: momentum?.streakDays ?? 0, points, daysLearned: record.daysLearned } : undefined}
         />
 
-        {/* Where the record goes in P2 — V2ProfileNew's quiet card. */}
-        {!account.hasRecord ? (
-          <section className="mt-4 flex flex-none flex-col gap-4 rounded-[20px] bg-white p-5">
-            <p className="text-[16px] leading-[24px] text-pretty text-ink-600">
-              Your record starts after you finish your first day.
-            </p>
-            <Link
-              href="/learn"
-              className="flex h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-night-900 text-[15.5px] font-semibold text-on-night hover:bg-night-950"
-            >
-              <span>Open a roadmap</span>
-              {ARROW_RIGHT}
-            </Link>
-          </section>
-        ) : null}
+        {!record ? (
+          <RecordEmptyState />
+        ) : (
+          <>
+            <div className="mt-4 flex flex-none gap-2.5 lg:hidden">
+              <div className="flex flex-1 flex-col gap-0.5 rounded-20 bg-warn-bg p-3.5 text-warn-700">
+                <div className="font-heading text-[24px] leading-7 font-bold tracking-[-0.02em]">
+                  {momentum?.streakDays ?? 0}
+                </div>
+                <div className="text-[12.5px] leading-[18px]">day streak</div>
+              </div>
+              <div className="flex flex-1 flex-col gap-0.5 rounded-20 bg-white p-3.5">
+                <div className="font-heading text-[24px] leading-7 font-bold tracking-[-0.02em] text-ink-900">
+                  {points}
+                </div>
+                <div className="text-[12.5px] leading-[18px] text-ink-600">points</div>
+              </div>
+              <div className="flex flex-1 flex-col gap-0.5 rounded-20 bg-white p-3.5">
+                <div className="font-heading text-[24px] leading-7 font-bold tracking-[-0.02em] text-ink-900">
+                  {record.lessonsDone}
+                </div>
+                <div className="text-[12.5px] leading-[18px] text-ink-600">lessons</div>
+              </div>
+            </div>
 
-        <section className="mt-4 rounded-[20px] bg-white p-5">
+            <div className="mt-4 flex flex-col gap-4 lg:mt-6 lg:flex-row lg:items-start lg:gap-6">
+              <WeeksGrid weeks={record.weeks} />
+              <div className="flex flex-col gap-4 lg:flex-1 lg:gap-6">
+                <FinishedLists finished={record.finished} />
+              </div>
+            </div>
+          </>
+        )}
+
+        <section className="mt-4 rounded-[20px] bg-white p-5 lg:mt-6 lg:rounded-[24px] lg:p-7">
           <h2 className="text-[15px] leading-[1.4] font-medium text-ink-900">Saved</h2>
           <Link
             href="/profile/saved"
