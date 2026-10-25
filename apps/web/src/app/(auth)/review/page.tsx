@@ -51,10 +51,10 @@ export default async function ReviewPage() {
             queue here on their own schedule.
           </p>
           <Link
-            href="/dashboard"
+            href="/today"
             className="mt-6 inline-flex h-12 items-center rounded-lg bg-brand-700 px-6 font-medium text-white hover:bg-brand-800"
           >
-            Back to the dashboard
+            Back to Today
           </Link>
         </>
       )}

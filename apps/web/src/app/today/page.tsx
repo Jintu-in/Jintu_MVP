@@ -1,16 +1,38 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { TodayScreen } from "@/components/today/today-screen";
+import { getAccount } from "@/lib/account";
+import { getDashboard } from "@/lib/dashboard";
 
 /**
- * `/today` doesn't exist as a real page yet — the signed-in dashboard is
- * Phase 4/6 work (design/jintu-design/CURRENT-STATE.md), and the shell's
- * nav (nav-items.ts) has pointed at it since Phase 0 in anticipation of
- * that. Wiring the shell into real pages now (Phase 2) means that tab is
- * clickable for the first time, and a nav item that 404s is worse than one
- * that lands somewhere real — so this redirects to the catalogue rather
- * than rendering nothing or faking a dashboard that doesn't exist.
- *
- * Replace this whole file when Phase 4/6 builds the real Today.
+ * `/today` — the real dashboard (Phase 6 Part A), replacing both this
+ * file's old redirect-to-/learn stub and the pre-redesign /dashboard page.
+ * getDashboard() (lib/dashboard.ts) already did all the real work; this
+ * is the first thing to actually render it with the current design
+ * system. /dashboard itself now redirects here (same pattern as /account
+ * retiring to /profile).
  */
-export default function TodayRedirect() {
-  redirect("/learn");
+export const metadata: Metadata = {
+  title: "Today",
+  robots: { index: false },
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function TodayPage() {
+  const [data, account] = await Promise.all([getDashboard(), getAccount()]);
+  if (!data || !account) redirect("/join?next=/today");
+
+  return (
+    <TodayScreen
+      data={data}
+      user={{
+        displayName: account.displayName ?? account.fullName ?? "Your account",
+        initials: account.initials,
+        points: data.points,
+        avatarAnimal: account.avatarAnimal,
+        avatarColor: account.avatarColor,
+      }}
+    />
+  );
 }

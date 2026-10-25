@@ -32,6 +32,7 @@ export type DashboardState = "new" | "lapsed" | "habitual";
 
 export type ResumeTarget = {
   href: string;
+  roadmapSlug: string;
   roadmapTitle: string;
   nodeTitle: string;
   /** 1-based day number within the roadmap. */
@@ -51,6 +52,8 @@ export type DashboardRoadmap = {
   totalDays: number;
   /** Subject tags, at most two — the row has room for two chips. */
   tags: string[];
+  /** This roadmap's own next unfinished day — null once it's all done. */
+  next: { href: string; title: string; summary: string | null; position: number } | null;
 };
 
 export type DashboardData = {
@@ -58,18 +61,30 @@ export type DashboardData = {
   firstName: string | null;
   /** Local to the viewer's own timezone, not the server's. */
   greeting: string;
+  /** "Saturday, 10 October" — DeskToday's header date, same timezone. */
+  dateLine: string;
   streak: {
     currentDays: number;
+    /** The longest run this account has ever had — survives a restart. */
+    bestDays: number;
     totalDays: number;
     daysSince: number | null;
     doneToday: boolean;
     /** Oldest→newest, exactly 14. */
     last14: { date: string; done: boolean }[];
     missedInLast14: number;
+    /** Monday→Sunday, exactly 7 — V2Today/V2Restart's week strip. */
+    week: WeekStripDay[];
+    /** "Saturday and Sunday", or "5 days" past a 3-day gap — "" when 0. */
+    missedLabel: string;
   };
   resume: ResumeTarget | null;
   /** The day before the resume target — the lapsed state's escape hatch. */
   previousDay: { href: string; dayNumber: number; title: string } | null;
+  /** Up to 4 undone days after the resume target, in the same roadmap —
+   *  DeskToday/DeskRestart's "After that" list. Empty once there's nothing
+   *  left, or no resume target at all. */
+  upcoming: { title: string; position: number }[];
   /**
    * The lifetime points total. Momentum, never a credential — the UI that
    * shows it says so, and it is awarded server-side only (invariant 5).
@@ -82,6 +97,52 @@ export type DashboardData = {
 
 /** A review card is a recall prompt, not a lesson: ~45 seconds each. */
 const SECONDS_PER_CARD = 45;
+
+const WEEKDAY_LETTERS = ["M", "T", "W", "T", "F", "S", "S"] as const;
+const WEEKDAY_NAMES = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+] as const;
+
+export type WeekStripDay = { label: string; name: string; done: boolean; isToday: boolean };
+
+/**
+ * The Monday→Sunday strip V2Today/V2Restart draw — a real calendar week,
+ * not the rolling 14-day window `last14` is (last14 is kept as the source:
+ * it already spans comfortably past any day-of-week offset back to Monday,
+ * so no second query is needed here). A day outside today's week but
+ * before it (missed) and a day after today (not due yet) render the same
+ * way — the design does not distinguish them, only `done` and `isToday`
+ * matter.
+ */
+export function weekStrip(last14: { date: string; done: boolean }[], today: string): WeekStripDay[] {
+  const doneByDate = new Map(last14.map((d) => [d.date, d.done]));
+  const todayMs = Date.parse(`${today}T00:00:00Z`);
+  const isoDow = new Date(todayMs).getUTCDay(); // 0 = Sunday .. 6 = Saturday
+  const sinceMonday = (isoDow + 6) % 7; // Monday = 0 .. Sunday = 6
+  return WEEKDAY_LETTERS.map((label, i) => {
+    const offset = i - sinceMonday;
+    const date = new Date(todayMs + offset * 86_400_000).toISOString().slice(0, 10);
+    return { label, name: WEEKDAY_NAMES[i]!, done: doneByDate.get(date) ?? false, isToday: offset === 0 };
+  });
+}
+
+/**
+ * "You missed Saturday and Sunday" (V2Restart) — names the actual missed
+ * weekdays for a short gap, where that reads as a real sentence; falls
+ * back to a plain count for anything longer, where naming every day would
+ * just be a wall of commas.
+ */
+export function missedDaysLabel(daysSince: number, today: string): string {
+  if (daysSince <= 0) return "";
+  if (daysSince > 3) return `${daysSince} days`;
+  const todayMs = Date.parse(`${today}T00:00:00Z`);
+  const names = Array.from({ length: daysSince }, (_, i) => {
+    const dow = new Date(todayMs - (daysSince - i) * 86_400_000).getUTCDay();
+    return WEEKDAY_NAMES[(dow + 6) % 7]!;
+  });
+  if (names.length === 1) return names[0]!;
+  return `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+}
 
 function greetingFor(timezone: string): string {
   const hour = Number(
@@ -200,6 +261,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
   });
 
   const currentDays = statusRes.data?.current_days ?? 0;
+  const bestDays = statusRes.data?.longest_days ?? 0;
   const totalDays = statusRes.data?.total_days ?? 0;
   const daysSince = statusRes.data?.days_since ?? null;
   const doneToday = statusRes.data?.done_today ?? false;
@@ -222,6 +284,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
 
   let resume: ResumeTarget | null = null;
   let previousDay: DashboardData["previousDay"] = null;
+  let upcoming: DashboardData["upcoming"] = [];
   const resumeSlug = openRow?.nodes?.modules?.roadmaps?.slug ?? null;
 
   if (resumeSlug) {
@@ -245,6 +308,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
       const position = openRow!.node_id === node.id ? openRow!.last_block_position : null;
       resume = {
         href: `/learn/${roadmap.slug}/${node.slug}`,
+        roadmapSlug: roadmap.slug,
         roadmapTitle: roadmap.title,
         nodeTitle: node.title,
         dayNumber: at + 1,
@@ -261,6 +325,9 @@ export async function getDashboard(): Promise<DashboardData | null> {
           title: prev.title,
         };
       }
+      upcoming = flat
+        .slice(at + 1, at + 5)
+        .map((n, i) => ({ title: n.title, position: at + 2 + i }));
     }
   }
 
@@ -288,6 +355,8 @@ export async function getDashboard(): Promise<DashboardData | null> {
     trees.forEach((tree) => {
       if (!tree) return;
       const all = tree.modules.flatMap((m) => m.nodes);
+      const nextAt = all.findIndex((n) => !doneIds.has(n.id));
+      const nextNode = nextAt === -1 ? null : all[nextAt]!;
       roadmaps.push({
         slug: tree.slug,
         title: tree.title,
@@ -295,6 +364,14 @@ export async function getDashboard(): Promise<DashboardData | null> {
         doneDays: all.filter((n) => doneIds.has(n.id)).length,
         totalDays: all.length,
         tags: tree.subjectTags.slice(0, 2),
+        next: nextNode
+          ? {
+              href: `/learn/${tree.slug}/${nextNode.slug}`,
+              title: nextNode.title,
+              summary: nextNode.summary ?? null,
+              position: nextAt + 1,
+            }
+          : null,
       });
     });
   }
@@ -307,16 +384,26 @@ export async function getDashboard(): Promise<DashboardData | null> {
     state,
     firstName: profileRes.data.full_name?.trim().split(/\s+/)[0] ?? null,
     greeting: greetingFor(timezone),
+    dateLine: new Intl.DateTimeFormat("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone: timezone,
+    }).format(new Date()),
     streak: {
       currentDays,
+      bestDays,
       totalDays,
       daysSince,
       doneToday,
       last14,
       missedInLast14: last14.filter((d) => !d.done).length,
+      week: weekStrip(last14, today),
+      missedLabel: missedDaysLabel(daysSince ?? 0, today),
     },
     resume,
     previousDay,
+    upcoming,
     points: (pointsRes.data ?? []).reduce((a, r) => a + (r.points ?? 0), 0),
     review: {
       count: reviewCount,

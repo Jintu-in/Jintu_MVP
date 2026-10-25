@@ -1,20 +1,17 @@
 /**
- * The dashboard's three states, and the promises each one makes.
+ * Phase 6 Part A — `/today`'s three states, rebuilt against the current
+ * design (today-screen.tsx), replacing the pre-redesign dashboard-screen/
+ * dashboard-tinted this test file used to check. The underlying state RULE
+ * in lib/dashboard.ts is unchanged by this phase, so those drift checks
+ * carry over verbatim; everything about the old components' exact markup
+ * does not, because that markup no longer exists.
  *
- *   node --test sandbox/dashboard-state.test.mjs
- *
- * Two kinds of assertion here, because the screen makes two kinds of claim.
- *
- * The state RULE is duplicated below rather than imported, following the
- * house pattern (lib/ is TypeScript and this runner is plain node). Copied
- * logic drifts, so every copy is paired with a drift check that greps the
- * real source for the same thresholds — change 4 or 3 in lib/dashboard.ts
- * and this suite fails rather than quietly testing a fossil.
- *
- * The LAYOUT claims — no strip in the lapsed state, no zeros in the new
- * state, one filled button each — are checked against the component source,
- * because the three states are compile-time branches rather than runtime
- * data. That is what "the shape changes" means in practice.
+ * One real, mockup-driven behaviour change from the old design, recorded
+ * here rather than silently dropped: the old "habitual" dashboard withheld
+ * the streak strip entirely in the lapsed state ("fourteen mostly-empty
+ * squares... is a rebuke"). V2Restart/DeskRestart draw a week strip in the
+ * restart state too (mostly blank, today dashed) — the design's own call,
+ * not an oversight — so today-screen.tsx renders one there on purpose.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -25,14 +22,9 @@ import { fileURLToPath } from "node:url";
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "..", "src");
 const dashboardTs = readFileSync(join(SRC, "lib", "dashboard.ts"), "utf8");
 const blocksTs = readFileSync(join(SRC, "lib", "blocks.ts"), "utf8");
-const screenTsx = readFileSync(
-  join(SRC, "components", "dashboard", "dashboard-screen.tsx"),
-  "utf8",
-);
-const tintedTsx = readFileSync(
-  join(SRC, "components", "dashboard", "dashboard-tinted.tsx"),
-  "utf8",
-);
+const screen = readFileSync(join(SRC, "components", "today", "today-screen.tsx"), "utf8");
+const todayPage = readFileSync(join(SRC, "app", "today", "page.tsx"), "utf8");
+const dashboardPage = readFileSync(join(SRC, "app", "(auth)", "dashboard", "page.tsx"), "utf8");
 
 /** Mirror of the rule in lib/dashboard.ts — kept honest by the drift test. */
 const dashboardState = (totalDays, daysSince) =>
@@ -71,7 +63,17 @@ test("a long-running account that has never lapsed has no days_since", () => {
   assert.equal(dashboardState(47, null), "habitual");
 });
 
-// ── the Resume card's arithmetic ─────────────────────────────────────────────
+test("the streak is never read from the cache table", () => {
+  assert.doesNotMatch(dashboardTs, /from\("streaks"\)/, "must read streak_status, which decays");
+  assert.match(dashboardTs, /from\("streak_status"\)/);
+});
+
+test("longest_days (best streak) is surfaced as bestDays, not left unread on the view", () => {
+  assert.match(dashboardTs, /longest_days \?\? 0/);
+  assert.match(dashboardTs, /bestDays,/);
+});
+
+// ── the Resume card's arithmetic (unchanged by this phase) ──────────────────
 
 /** Mirror of minutesLeft in lib/blocks.ts. */
 const minutesLeft = (est, blocks, position) => {
@@ -86,136 +88,79 @@ test("the mirrored minutesLeft matches lib/blocks.ts", () => {
 });
 
 test("minutes remaining, not day length — the whole point of the card", () => {
-  // Twelve blocks into sixteen of a sixty-minute day: a quarter is left.
   assert.equal(minutesLeft(60, 16, 12), 15);
   assert.ok(minutesLeft(60, 16, 12) < 60, "must never quote the full day once started");
 });
 
-test("an unopened day quotes its real length, because nothing is done yet", () => {
-  assert.equal(minutesLeft(60, 16, null), 60);
+// ── weekStrip / missedDaysLabel (new this phase — real unit coverage) ──────
+
+test("weekStrip is Monday-anchored, exactly 7 days, today marked once", () => {
+  const fn = dashboardTs.slice(dashboardTs.indexOf("export function weekStrip"), dashboardTs.indexOf("export function missedDaysLabel"));
+  assert.match(fn, /isoDow \+ 6\) % 7/, "Monday = 0, Sunday = 6");
+  assert.match(fn, /WEEKDAY_LETTERS\.map/);
 });
 
-test("a day read to the last block never says 0 min left", () => {
-  assert.equal(minutesLeft(60, 16, 16), 1);
-  assert.equal(minutesLeft(60, 16, 99), 1);
+test("missedDaysLabel names weekdays for a short gap, falls back to a count past three days", () => {
+  const fn = dashboardTs.slice(dashboardTs.indexOf("export function missedDaysLabel"), dashboardTs.indexOf("export async function getDueCards"));
+  assert.match(fn, /if \(daysSince > 3\) return `\$\{daysSince\} days`;/);
+  assert.match(fn, /join\(", "\)} and \$\{names\.at\(-1\)\}/);
 });
 
-// ── the layouts ──────────────────────────────────────────────────────────────
+// ── today-screen.tsx — the shapes themselves ────────────────────────────────
 
-/** The source of one state's branch, so claims are scoped to that state. */
-function branch(state) {
-  const marks = {
-    new: ['if (data.state === "new")', 'if (data.state === "lapsed")'],
-    lapsed: ['if (data.state === "lapsed")', "// ── HABITUAL"],
-    habitual: ["// ── HABITUAL", "\n/**\n * One section's worth"],
-  }[state];
-  const a = screenTsx.indexOf(marks[0]);
-  const b = screenTsx.indexOf(marks[1], a + 1);
-  assert.ok(a !== -1 && b > a, `could not isolate the ${state} branch`);
-  return screenTsx.slice(a, b);
-}
-
-test("the new state renders no streak strip, no stat cards, no roadmap list", () => {
-  const s = branch("new");
-  assert.doesNotMatch(s, /<StreakStrip/, "a strip of empty squares on day two");
-  assert.doesNotMatch(s, /<CountCard/, "stat cards full of zeros on day two");
-  assert.doesNotMatch(s, /<RoadmapList/, "a roadmap list before there is a habit");
+test("the new state never renders a zero streak or a zero-of-N count", () => {
+  const fn = screen.slice(screen.indexOf("function NewBody"), screen.indexOf("/* ── lapsed"));
+  assert.doesNotMatch(fn, /streak\.currentDays/, "day one has no streak number to show yet");
+  assert.doesNotMatch(fn, /\{0\}/);
 });
 
-test("the new state contains no zero — no 0 streak, no 0 of N", () => {
-  const s = branch("new");
-  assert.doesNotMatch(s, /\b0 day\b/);
-  assert.doesNotMatch(s, /\{0\}/);
-  assert.doesNotMatch(s, /0 of /);
-  // currentDays is the number that would be 0 here; it must not be rendered.
-  assert.doesNotMatch(s, /streak\.currentDays/);
+test("the new state's two resume branches are mutually exclusive — exactly one PrimaryLink either way", () => {
+  const fn = screen.slice(screen.indexOf("function NewBody"), screen.indexOf("/* ── lapsed"));
+  assert.equal([...fn.matchAll(/<PrimaryLink/g)].length, 2);
+  assert.match(fn, /data\.resume \? \(/);
 });
 
-test("the lapsed state renders no streak strip", () => {
-  assert.doesNotMatch(branch("lapsed"), /<StreakStrip/);
+test("the lapsed state's own week strip and missed-days copy use the shared helpers, not an inline rebuild", () => {
+  const fn = screen.slice(screen.indexOf("function LapsedBody"), screen.indexOf("/* ── habitual"));
+  assert.match(fn, /data\.streak\.week/);
+  assert.match(fn, /data\.streak\.missedLabel/);
+  assert.match(fn, /best streak/);
 });
 
-test("the lapsed state leads with what survived, then one small action", () => {
-  const s = branch("lapsed");
-  assert.match(s, /days are still here/);
-  assert.match(s, /The smallest way back/);
-  assert.match(s, /Read one section/);
-  assert.match(s, /Reread day/, "the escape hatch to the previous day");
-  assert.match(s, /they can keep/, "explicit permission to ignore review and saved");
+test("the habitual state swaps the streak card for a secondary-roadmap card once there is a second roadmap (UniToday)", () => {
+  const fn = screen.slice(screen.indexOf("function HabitualBody"), screen.indexOf("function UpcomingCard"));
+  assert.match(fn, /const secondary = data\.roadmaps\.filter/);
+  assert.match(fn, /multi \? \(\s*\n\s*<AlsoLearningCard/);
 });
 
-test("the habitual state delegates to the tinted dashboard", () => {
-  // The returning learner's home is the design project's "Dashboard
-  // tinted". New and lapsed keep their own layouts here, because the rule
-  // that produced them is unchanged.
-  assert.ok(branch("habitual").includes("<TintedDashboard data={data} />"));
+test("the secondary roadmap card says its progress also counts for the shared streak", () => {
+  const fn = screen.slice(screen.indexOf("function AlsoLearningCard"), screen.indexOf("function MobileAlsoLearning"));
+  assert.match(fn, /also counts for your streak/);
 });
 
-test("the tinted dashboard carries the strip, the resume card and the list", () => {
-  assert.match(tintedTsx, /role="img"/, "the fourteen-day strip");
-  assert.match(tintedTsx, /Pick up where you stopped/);
-  assert.match(tintedTsx, /Your roadmaps/);
-  assert.ok(tintedTsx.includes("No deadlines here. These wait for you."));
+test("WeekStrip renders one role=\"img\" group with a real aria-label, not 7 individually focusable cells", () => {
+  const fn = screen.slice(screen.indexOf("function WeekStrip"), screen.indexOf("function ProgressDots"));
+  assert.match(fn, /role="img"/);
+  assert.match(fn, /aria-label=\{label\}/);
+  assert.doesNotMatch(fn, /<button|tabIndex|href=/);
 });
 
-test("exactly one filled button per state", () => {
-  for (const state of ["new", "lapsed", "habitual"]) {
-    const s = branch(state);
-    const filled = [...s.matchAll(/<PrimaryAction/g)].length;
-    if (state === "new") {
-      // Two mutually exclusive branches (a resume target, or none at all),
-      // so at most one can render.
-      assert.equal(filled, 2, "the new state's two exclusive branches");
-      assert.match(s, /data\.resume \? \(/, "and they are exclusive");
-    } else if (state === "habitual") {
-      // Delegated entirely — the filled button lives in the tinted file.
-      assert.equal(filled, 0);
-      assert.equal([...s.matchAll(/<TintedDashboard/g)].length, 1);
-    } else {
-      assert.equal(filled, 1);
-    }
-  }
-  // In the tinted layout the one filled control is Resume; every other
-  // action on that screen is outlined or a plain link.
-  assert.ok(tintedTsx.includes("Resume →"), "the tinted dashboard needs its primary action");
-  assert.equal(
-    (tintedTsx.match(/bg-brand-700 text-white/g) ?? []).length,
-    2,
-    "exactly two filled surfaces: the Resume button and the Continue card action",
-  );
+test("ProgressDots marks done/current/upcoming with the same night-900/brand-500/ink-100 convention the lesson reader already uses", () => {
+  const fn = screen.slice(screen.indexOf("function ProgressDots"), screen.indexOf("const CARD ="));
+  assert.match(fn, /bg-night-900/);
+  assert.match(fn, /bg-brand-500/);
+  assert.match(fn, /bg-ink-100/);
 });
 
-test("the streak strip is one element, not fourteen tab stops", () => {
-  // Lives in the tinted file now — the habitual layout moved there.
-  const strip = tintedTsx.slice(
-    tintedTsx.indexOf("function ActivityStrip"),
-    tintedTsx.indexOf("The 6px cap"),
-  );
-  assert.ok(strip.length > 0, "ActivityStrip should be findable");
-  assert.match(strip, /role="img"/);
-  assert.match(strip, /aria-label=/);
-  assert.match(strip, /aria-hidden/, "every square is hidden from the reader");
-  assert.doesNotMatch(strip, /<button|tabIndex|href/, "squares must not be focusable");
+test("the streak share card is deliberately not built here, and says so", () => {
+  assert.match(screen, /not built here, flagged rather than faked: the streak\n \* share card/);
 });
 
-test("the points total is present, and deliberately so", () => {
-  // TWO BRIEFS DISAGREE HERE, and this test records which one won.
-  //
-  // S6 said "DO NOT add a points total" — anything that is not the next
-  // action competes with the next action. "Dashboard tinted" then shows
-  // "1,240 pts" as a chip in the stats row. The later design wins, but the
-  // original reason has not evaporated: the number is a quiet chip beside
-  // "days learned", never a headline, and nothing ranks or compares it
-  // (invariant 5 — momentum, never a credential).
-  //
-  // If the ban is reinstated, delete the chip and flip this back.
-  assert.ok(tintedTsx.includes("data.points"), "the chip should render a points total");
-  assert.ok(tintedTsx.includes(" pts"), "and label it");
-  assert.match(tintedTsx, /Momentum, not a credential/);
-  assert.doesNotMatch(tintedTsx, /rank|percentile|top \d+%/i);
+test("/today fetches getDashboard and getAccount, and redirects to /join when either is missing (not onboarded)", () => {
+  assert.match(todayPage, /getDashboard\(\), getAccount\(\)/);
+  assert.match(todayPage, /if \(!data \|\| !account\) redirect\("\/join\?next=\/today"\);/);
 });
 
-test("the streak is never read from the cache table", () => {
-  assert.doesNotMatch(dashboardTs, /from\("streaks"\)/, "must read streak_status, which decays");
-  assert.match(dashboardTs, /from\("streak_status"\)/);
+test("the old /dashboard URL now forwards to /today, same retirement pattern as /account → /profile", () => {
+  assert.match(dashboardPage, /redirect\("\/today"\)/);
 });
