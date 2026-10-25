@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import LessonRoute from "@/components/lesson/lesson-route";
 import { buildLessonSteps } from "@/lib/steps";
 import { getMyCodeLanguage } from "@/lib/code-language";
+import { getSiteUrl } from "@/lib/env";
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap } from "@/lib/roadmaps";
+import { getMyFirstName, shareHeadline, shareLessonLine } from "@/lib/share-card";
 import { DEFAULT_CODE_LANGUAGE } from "@jintu/contracts";
 
 /**
@@ -58,9 +60,10 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
 
   // All of this roadmap's nodes, not just the current one — the done
   // screen's "lessons" stat counts the whole roadmap, not this day alone.
-  const [progress, momentum] = await Promise.all([
+  const [progress, momentum, firstName] = await Promise.all([
     getMyProgress(flat.map((x) => x.node.id)),
     getMyMomentum(),
+    getMyFirstName(),
   ]);
   const signedIn = progress !== null;
   const done = progress?.get(node.id) === "done";
@@ -108,6 +111,14 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       streakDaysNow={momentum?.streakDays ?? 0}
       lessonsLine={`${Math.min(doneCount + (done ? 0 : 1), flat.length)} of ${flat.length}`}
       accomplishmentLine={`You finished ${node.title}.`}
+      // "Share your progress" (Phase 5 Part D, 2/2) — the same strings the
+      // downloadable card (api/share-card/[slug]/[node]) renders, built
+      // from the same lib/share-card.ts helpers, so the on-screen preview
+      // never says something different from what gets shared or saved.
+      shareHeadline={shareHeadline(firstName, node.title)}
+      shareLessonLine={shareLessonLine(at + 1, flat.length, roadmap.title)}
+      shareUrl={new URL(`/learn/${slug}/${node.slug}`, getSiteUrl()).toString()}
+      shareImagePath={`/api/share-card/${slug}/${node.slug}`}
     />
   );
 }

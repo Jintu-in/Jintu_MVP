@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { BackIcon, BookmarkIcon } from "@/components/ui/icons";
+import { useState, type ReactNode } from "react";
+import { BackIcon, BookmarkIcon, CopyIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 /**
@@ -448,6 +448,16 @@ const ARROW_RIGHT_ICON = (
   </svg>
 );
 
+/** "Share" (V2Done/DeskDone) — an upload-tray mark, not the copy-link icon. */
+const SHARE_UP_ICON = (
+  <svg aria-hidden width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 15V4" />
+    <path d="M8 8l4-4 4 4" />
+    <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+  </svg>
+);
+
+
 export interface LessonDoneScreenProps {
   /** "1" in "Lesson 1 done". */
   lessonNumber: string;
@@ -459,6 +469,14 @@ export interface LessonDoneScreenProps {
   streakDays: number;
   /** e.g. "1 of 12". */
   lessonsLine: string;
+  /** "Asha finished Three places a change can be." — lib/share-card.ts. */
+  shareHeadline: string;
+  /** "Lesson 2 of 12 · Git & GitHub" — lib/share-card.ts. */
+  shareLessonLine: string;
+  /** Absolute — copied/shared text has to resolve outside this tab. */
+  shareUrl: string;
+  /** Relative — same-origin, feeds the preview <img>, Share and Download. */
+  shareImagePath: string;
   next?: {
     lessonNumber: string;
     title: string;
@@ -481,6 +499,10 @@ export function LessonDoneScreen({
   pointsLine,
   streakDays,
   lessonsLine,
+  shareHeadline,
+  shareLessonLine,
+  shareUrl,
+  shareImagePath,
   next,
   onClose,
   onOpenNext,
@@ -513,7 +535,13 @@ export function LessonDoneScreen({
         <StatCard value={lessonsLine} label="lessons" />
       </div>
 
-      <div className="flex-1" />
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pt-6">
+        <h2 className="m-0 font-heading text-[20px] leading-[26px] font-semibold tracking-[-0.01em] text-ink-900">
+          Share your progress
+        </h2>
+        <ShareCard headline={shareHeadline} lessonLine={shareLessonLine} streakDays={streakDays} />
+        <ShareButtons shareUrl={shareUrl} shareImagePath={shareImagePath} shareText={shareHeadline} />
+      </div>
 
       {next ? (
         <div className="flex-none border-t border-ink-100 bg-white px-5 pt-3 pb-5">
@@ -528,6 +556,124 @@ export function LessonDoneScreen({
           </a>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+const STREAK_FLAME = (
+  <svg aria-hidden width={14} height={14} viewBox="0 0 24 24">
+    <path
+      d="M12 2c1 3.6 5 5.6 5 10.2a5 5 0 0 1-10 0c0-1.7.6-3 1.6-4 .3 1.5 1 2.4 2 2.7C10.4 8.4 10.8 5 12 2z"
+      fill="var(--color-amber-500)"
+    />
+  </svg>
+);
+
+/**
+ * V2Done/DeskDone's teal card — brand-500 is the one fill this codebase
+ * lets carry text, via on-brand (#06262c, 6.51:1 — see preset.css's own
+ * note on this exact pairing). Same three lines the downloadable PNG
+ * renders (api/share-card/[slug]/[node]/route.tsx), built from the same
+ * lib/share-card.ts helpers one level up, so this is never out of sync
+ * with what gets shared or saved.
+ */
+function ShareCard({ headline, lessonLine, streakDays }: { headline: string; lessonLine: string; streakDays: number }) {
+  return (
+    <div className="flex min-h-[190px] flex-none flex-col justify-between gap-4 rounded-20 bg-brand-500 p-[18px] text-on-brand">
+      <div className="flex flex-col gap-3">
+        <div className="font-heading text-[17px] leading-[22px] font-semibold tracking-[-0.01em]">jintu</div>
+        <div className="flex flex-col gap-1">
+          <div className="font-heading text-[26px] leading-[30px] font-bold tracking-[-0.02em] text-pretty">{headline}</div>
+          <div className="text-[14px] leading-5 font-medium">{lessonLine}</div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex h-7 items-center gap-1.5 rounded-xl bg-on-brand px-3 text-[12.5px] font-semibold text-white">
+          {STREAK_FLAME}
+          <span>{streakDays} day streak</span>
+        </div>
+        <div className="font-mono text-[12px] leading-[18px] font-medium">jintu.in</div>
+      </div>
+    </div>
+  );
+}
+
+async function copyShareUrl(url: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Share / Copy link — "Download" (DeskDone's third button) is left for
+ * whenever this screen gets its own desktop layout; this is the mobile
+ * V2Done pair, and both buttons already work at any width.
+ *
+ * "Share" tries to attach the actual card image when the browser's Web
+ * Share API supports file attachments (navigator.canShare with files);
+ * falls back to a text+link share, and if there is no Web Share API at
+ * all (most desktop browsers), falls back again to the same clipboard
+ * copy as the button next to it — so the button never does nothing.
+ */
+function ShareButtons({ shareUrl, shareImagePath, shareText }: { shareUrl: string; shareImagePath: string; shareText: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const flashCopied = (ok: boolean) => {
+    if (!ok) return;
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const onShare = async () => {
+    const nav = navigator as Navigator & {
+      share?: (data: ShareData) => Promise<void>;
+      canShare?: (data?: ShareData) => boolean;
+    };
+    if (!nav.share) {
+      flashCopied(await copyShareUrl(shareUrl));
+      return;
+    }
+    try {
+      if (nav.canShare) {
+        try {
+          const res = await fetch(shareImagePath);
+          const file = new File([await res.blob()], "jintu-progress.png", { type: "image/png" });
+          if (nav.canShare({ files: [file] })) {
+            await nav.share({ files: [file], title: "jintu", text: shareText, url: shareUrl });
+            return;
+          }
+        } catch {
+          // No image this time — fall through to a text-only share.
+        }
+      }
+      await nav.share({ title: "jintu", text: shareText, url: shareUrl });
+    } catch {
+      // Covers the user cancelling the share sheet (AbortError) too —
+      // either way there's nothing to recover from.
+    }
+  };
+
+  return (
+    <div className="flex flex-none gap-2.5">
+      <button
+        type="button"
+        onClick={onShare}
+        className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-ink-200 bg-white text-[14.5px] font-semibold text-ink-900"
+      >
+        {SHARE_UP_ICON}
+        <span>Share</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => copyShareUrl(shareUrl).then(flashCopied)}
+        className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-ink-200 bg-white text-[14.5px] font-semibold text-ink-900"
+      >
+        <CopyIcon size={18} />
+        <span>{copied ? "Copied" : "Copy link"}</span>
+      </button>
     </div>
   );
 }

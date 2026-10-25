@@ -77,6 +77,15 @@ export interface LessonRouteProps {
   streakDaysNow: number;
   lessonsLine: string;
   accomplishmentLine: string;
+  /** The done screen's "Share your progress" card (V2Done/DeskDone) — see
+   *  lesson-states.tsx's ShareCard and lib/share-card.ts for why these
+   *  arrive as finished strings rather than being assembled here. */
+  shareHeadline: string;
+  shareLessonLine: string;
+  /** Absolute — what gets copied/shared has to resolve outside this tab. */
+  shareUrl: string;
+  /** Relative — same-origin fetch/<img src>/<a download>, all same tab. */
+  shareImagePath: string;
 }
 
 export default function LessonRoute({
@@ -97,6 +106,10 @@ export default function LessonRoute({
   streakDaysNow,
   lessonsLine,
   accomplishmentLine,
+  shareHeadline,
+  shareLessonLine,
+  shareUrl,
+  shareImagePath,
 }: LessonRouteProps) {
   const router = useRouter();
   const storageKey = `jintu:step:${nodeId}`;
@@ -218,6 +231,10 @@ export default function LessonRoute({
         pointsLine={`+${points}`}
         streakDays={streak?.currentDays ?? streakDaysNow}
         lessonsLine={lessonsLine}
+        shareHeadline={shareHeadline}
+        shareLessonLine={shareLessonLine}
+        shareUrl={shareUrl}
+        shareImagePath={shareImagePath}
         next={next}
         onClose={() => router.push(`/learn/${slug}` as never)}
         onOpenNext={next ? () => router.push(next.href as never) : undefined}
