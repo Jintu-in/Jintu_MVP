@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roadmap status labels</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 1576px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px; padding: 56px 72px; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+<div style="display: flex; flex-direction: column; gap: 8px"><h1 style="margin: 0; font: 700 40px/44px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.025em">Roadmap status, everywhere it shows</h1><p style="margin: 0; max-width: 820px; font-size: 17px; line-height: 26px; color: #45626A">One status per roadmap, set by the publish gate. Three labels, used the same way on the roadmap list, the block page and role pages.</p></div>
+<section style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 24px; background: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="margin: 0; font: 700 22px/28px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">The three labels</h2><p style="margin: 0; font-size: 14.5px; line-height: 21px; color: #45626A">What each one promises. The code value is under each.</p></div>
+<div style="display: flex; gap: 16px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: #EEF3F3"><span style="height: 28px; flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border-radius: 14px; background: #FFF1D1; color: #6B4200; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #F29D00"></span>Self-checked</span><div style="font-size: 14px; line-height: 21px; color: #45626A">Written and tested by the Jintu team, scored 10 of 12 or more on every lesson, finished by three test learners. Not yet checked by someone who does this job.</div><div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">status: self_checked · shown publicly</div></div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: #EEF3F3"><span style="height: 28px; flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border-radius: 14px; background: #DDF4EA; color: #0F6A48; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #2FA57A; color: #FFFFFF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Practitioner-reviewed</span><div style="font-size: 14px; line-height: 21px; color: #45626A">Everything above, plus a named practitioner signed it off: nothing wrong, nothing out of date, how the work is done in India today.</div><div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">status: practitioner_reviewed · reviewer name + date shown</div></div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: #EEF3F3"><span style="height: 28px; flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border-radius: 14px; background: #DCE6E7; color: #45626A; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 2px solid #8BA3A8"></span>Being rebuilt</span><div style="font-size: 14px; line-height: 21px; color: #45626A">A draft. Its lessons are hidden, its URL goes to the holding page, and it is out of the sitemap. The card can still be shown so people can ask to be told.</div><div style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">status: draft · lessons never public</div></div>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 24px; background: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="margin: 0; font: 700 22px/28px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">On the roadmap list</h2><p style="margin: 0; font-size: 14.5px; line-height: 21px; color: #45626A">Open roadmaps start; a roadmap being rebuilt collects a “tell me when”.</p></div>
+<div style="display: flex; gap: 16px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid #DCE6E7; border-radius: 22px; background: #FFFFFF">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><span aria-hidden="true" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: #DDF3F7; color: #0B5567; font: 600 14px/1 'JetBrains Mono', ui-monospace, monospace">Gi</span><span style="height: 24px; flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 0 9px; border-radius: 12px; background: #FFF1D1; color: #6B4200; font-size: 12px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #F29D00"></span>Self-checked</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="font: 700 20px/25px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em; color: #0C2A30">Git &amp; GitHub</div><div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">12 lessons · about 15 min each</div></div>
+<div style="margin-top: auto"><a href="DeskBlock.dc.html" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; background: #43B4C8; color: #06262C; font-size: 15px; font-weight: 600; text-decoration: none"><span>Start</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a></div>
+</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid #DCE6E7; border-radius: 22px; background: #FFFFFF">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><span aria-hidden="true" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: #DDF3F7; color: #0B5567; font: 600 14px/1 'JetBrains Mono', ui-monospace, monospace">Ds</span><span style="height: 24px; flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; border-radius: 12px; background: #DDF4EA; color: #0F6A48; font-size: 12px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #2FA57A; color: #FFFFFF"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Practitioner-reviewed</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="font: 700 20px/25px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em; color: #0C2A30">DSA starter</div><div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">30 lessons · about 15 min each</div><div style="font-size: 13px; line-height: 19px; color: #45626A">Reviewed by [Name], [job title at company]</div></div>
+<div style="margin-top: auto"><a href="DeskBlock.dc.html" style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; background: #43B4C8; color: #06262C; font-size: 15px; font-weight: 600; text-decoration: none"><span>Start</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a></div>
+</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid #DCE6E7; border-radius: 22px; background: #FFFFFF">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><span aria-hidden="true" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: #DDF3F7; color: #0B5567; font: 600 14px/1 'JetBrains Mono', ui-monospace, monospace">Sq</span><span style="height: 24px; flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 0 9px; border-radius: 12px; background: #DCE6E7; color: #45626A; font-size: 12px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 2px solid #8BA3A8"></span>Being rebuilt</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="font: 700 20px/25px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.01em; color: #45626A">SQL for data analysts</div><div style="font: 400 12.5px/18px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">being rebuilt</div></div>
+<div style="margin-top: auto"><a href="DeskHolding.dc.html" style="height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 14px; color: #0C2A30; font-size: 15px; font-weight: 600; text-decoration: none">Tell me when it opens</a></div>
+</div>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 24px; background: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="margin: 0; font: 700 22px/28px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">On the block page</h2><p style="margin: 0; font-size: 14.5px; line-height: 21px; color: #45626A">The label sits under the title. “What does this mean?” opens a short, honest explanation.</p></div>
+<div style="display: flex; gap: 16px; align-items: flex-start">
+<div style="flex: 1.3; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 22px; background: #0A3B46; color: #FFFFFF">
+<div style="font-size: 13px; line-height: 18px; font-weight: 600; color: #7FD6E6">Foundations · block 1</div>
+<div style="font: 700 34px/38px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em">Git &amp; GitHub</div>
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap"><span style="height: 28px; flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border-radius: 14px; background: #FFF1D1; color: #6B4200; font-size: 13px; font-weight: 600; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #F29D00"></span>Self-checked</span><button type="button" aria-expanded="true" style="height: 32px; padding: 0; border: 0; background: transparent; color: #B5EAF3; font: 600 14px/1 Figtree, system-ui, sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer">What does this mean?</button></div>
+</div>
+<div role="dialog" aria-label="What self-checked means" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid #DCE6E7; border-radius: 20px; background: #FFFFFF; box-shadow: 0 10px 28px rgba(12,42,48,0.12)">
+<div style="font: 700 17px/22px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">Self-checked</div>
+<div style="font-size: 14.5px; line-height: 22px; color: #45626A">Written and tested by the Jintu team and three test learners. Nobody who does this job has reviewed it yet. If something looks wrong, tell us from any lesson.</div>
+<a href="DeskContact.dc.html" style="font-size: 14.5px; font-weight: 600">Report a problem</a>
+</div>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 24px; background: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 4px"><h2 style="margin: 0; font: 700 22px/28px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">On role pages: “Where to start”</h2><p style="margin: 0; font-size: 14.5px; line-height: 21px; color: #45626A">The role guide stays open in every case. Only this block changes.</p></div>
+<div style="display: flex; gap: 16px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 20px; background: #EEF3F3"><div style="font: 700 18px/23px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">Start here on Jintu</div><div style="font-size: 14.5px; line-height: 22px; color: #45626A">Git &amp; GitHub is open. Most associate engineer job posts ask for it.</div><div style="margin-top: auto"><a href="DeskBlock.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; background: #43B4C8; color: #06262C; font-size: 15px; font-weight: 600; text-decoration: none"><span>Start Git &amp; GitHub</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a></div></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 20px; background: #EEF3F3"><div style="font: 700 18px/23px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">Roadmap coming</div><div style="font-size: 14.5px; line-height: 22px; color: #45626A">SQL for data analysts is being rebuilt. The rest of this guide stays open.</div><div style="margin-top: auto"><a href="DeskHolding.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 14px; color: #0C2A30; font-size: 15px; font-weight: 600; text-decoration: none">Tell me when it opens</a></div></div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 20px; background: #EEF3F3"><div style="font: 700 18px/23px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">No roadmap yet</div><div style="font-size: 14.5px; line-height: 22px; color: #45626A">Nothing for this role is planned yet. Requests decide what we build next.</div><div style="margin-top: auto"><a href="DeskHolding.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid #C5D5D8; border-radius: 14px; color: #0C2A30; font-size: 15px; font-weight: 600; text-decoration: none">Ask for this roadmap</a></div></div>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1576}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

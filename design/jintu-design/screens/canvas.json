@@ -1079,6 +1079,142 @@
       "w": 390,
       "x": 0,
       "y": 1720
+    },
+    "LogoAll.dc.html": {
+      "h": 440,
+      "page": "logo",
+      "title": "All six side by side",
+      "w": 1600,
+      "x": 0,
+      "y": 0
+    },
+    "LogoTwoDots.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "A · Two dots",
+      "w": 1200,
+      "x": 0,
+      "y": 560
+    },
+    "LogoRoute.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "B · Route j",
+      "w": 1200,
+      "x": 1280,
+      "y": 560
+    },
+    "LogoSpark.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "C · Streak spark",
+      "w": 1200,
+      "x": 2560,
+      "y": 560
+    },
+    "LogoSteps.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "D · Daily steps",
+      "w": 1200,
+      "x": 0,
+      "y": 1440
+    },
+    "LogoPin.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "E · Start here pin",
+      "w": 1200,
+      "x": 1280,
+      "y": 1440
+    },
+    "LogoTile.dc.html": {
+      "h": 760,
+      "page": "logo",
+      "title": "F · Today's tile, refined",
+      "w": 1200,
+      "x": 2560,
+      "y": 1440
+    },
+    "LogoSparkMark.dc.html": {
+      "h": 900,
+      "page": "logo",
+      "title": "Streak spark · the mark",
+      "w": 1600,
+      "x": 0,
+      "y": 2720
+    },
+    "LogoSparkColours.dc.html": {
+      "h": 720,
+      "page": "logo",
+      "title": "Streak spark · colours",
+      "w": 1600,
+      "x": 1680,
+      "y": 2720
+    },
+    "LogoSparkUse.dc.html": {
+      "h": 900,
+      "page": "logo",
+      "title": "Streak spark · sizes and in use",
+      "w": 1600,
+      "x": 0,
+      "y": 3740
+    },
+    "V2Holding.dc.html": {
+      "h": 2267,
+      "page": "plan2",
+      "title": "Roadmap being rebuilt · phone",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "DeskHolding.dc.html": {
+      "h": 1416,
+      "page": "plan2",
+      "title": "Roadmap being rebuilt · desktop",
+      "w": 1440,
+      "x": 470,
+      "y": 0
+    },
+    "StatusKit.dc.html": {
+      "h": 1576,
+      "page": "plan2",
+      "title": "Roadmap status labels",
+      "w": 1440,
+      "x": 1990,
+      "y": 0
+    },
+    "V2Decide.dc.html": {
+      "h": 844,
+      "page": "plan2",
+      "title": "Decide step · choose and explain",
+      "w": 390,
+      "x": 0,
+      "y": 2720
+    },
+    "V2DecideReveal.dc.html": {
+      "h": 1236,
+      "page": "plan2",
+      "title": "Decide step · what really happened",
+      "w": 390,
+      "x": 470,
+      "y": 2720
+    },
+    "DeskDecide.dc.html": {
+      "h": 900,
+      "page": "plan2",
+      "title": "Decide step · desktop",
+      "w": 1440,
+      "x": 940,
+      "y": 2720
+    },
+    "GlossaryKit.dc.html": {
+      "h": 860,
+      "page": "plan2",
+      "title": "Glossary pop-ups · phone and desktop",
+      "w": 1440,
+      "x": 2460,
+      "y": 2720
     }
   },
   "createdOnFiles": {
@@ -1324,6 +1460,42 @@
       "w": 240,
       "x": 0,
       "y": 10820
+    },
+    "logo1": {
+      "kind": "title1",
+      "maxW": 3760,
+      "page": "logo",
+      "text": "Logo ideas: six directions",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "logo2": {
+      "kind": "title1",
+      "maxW": 3280,
+      "page": "logo",
+      "text": "Chosen: streak spark, refined",
+      "w": 240,
+      "x": 0,
+      "y": 2420
+    },
+    "plan2a": {
+      "kind": "title1",
+      "maxW": 3430,
+      "page": "plan2",
+      "text": "Rebuild: holding page and status labels",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "plan2b": {
+      "kind": "title1",
+      "maxW": 3900,
+      "page": "plan2",
+      "text": "New: the Decide step and glossary pop-ups",
+      "w": 240,
+      "x": 0,
+      "y": 2420
     }
   },
   "order": [
@@ -1458,9 +1630,34 @@
     "DeskPairWait.dc.html",
     "DeskAvatar.dc.html",
     "DarkDeskHome.dc.html",
-    "DarkDeskLogin.dc.html"
+    "DarkDeskLogin.dc.html",
+    "LogoAll.dc.html",
+    "LogoTwoDots.dc.html",
+    "LogoRoute.dc.html",
+    "LogoSpark.dc.html",
+    "LogoSteps.dc.html",
+    "LogoPin.dc.html",
+    "LogoTile.dc.html",
+    "LogoSparkMark.dc.html",
+    "LogoSparkColours.dc.html",
+    "LogoSparkUse.dc.html",
+    "V2Holding.dc.html",
+    "DeskHolding.dc.html",
+    "StatusKit.dc.html",
+    "V2Decide.dc.html",
+    "V2DecideReveal.dc.html",
+    "DeskDecide.dc.html",
+    "GlossaryKit.dc.html"
   ],
   "pages": [
+    {
+      "id": "logo",
+      "name": "Logo ideas"
+    },
+    {
+      "id": "plan2",
+      "name": "Build plan additions"
+    },
     {
       "id": "landing",
       "name": "Landing page"

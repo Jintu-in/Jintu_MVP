@@ -1,10 +1,106 @@
-# Design update 2 — what's new since the first pack
+# Design changes
 
-Read this with `HANDOFF.md` (route map, now updated) and `BUILD-PLAN.md` (phases, testing). This file lists **only what changed**, with the behavior each new screen needs and the tests that prove it.
-
-17 new screens and 2 changed ones. Nothing was removed. Any other files that differ from the first pack differ only in how the HTML is saved (`<rect/>` vs `<rect></rect>`, `disabled` vs `disabled=""`), not in how they look. Ignore those.
+Two updates are listed here, newest first. Read this file with `HANDOFF.md` (route map) and `BUILD-PLAN.md` (status, phases, tests). It lists **only what changed**: the behaviour each new screen needs and the tests that prove it.
 
 ---
+
+# Update 3 (26 Oct 2026): relaunch status, Decide step, glossary, logo
+
+7 new screens and the final logo. No existing screen changed.
+
+| New | Size | What it is | Build in |
+|---|---|---|---|
+| `V2Holding` / `DeskHolding` | 390 / 1440 | Holding page for a roadmap that is being rebuilt | P0 item 2 |
+| `StatusKit` | 1440 | Board: the 3 status labels and where each one shows | P0 item 2, P1 item 7 |
+| `V2Decide` / `V2DecideReveal` / `DeskDecide` | 390 / 390 / 1440 | The new **Decide** step type: before and after locking in | Item 13 |
+| `GlossaryKit` | 1440 | Board: tap a term, see its meaning (phone sheet, desktop popover) | With Phase 5 |
+| `logo/*.svg` + `LogoSparkMark`, `LogoSparkColours`, `LogoSparkUse` | — | The final "streak spark" logo, as SVG files and usage boards | P1 item 8 |
+
+## A. Roadmap status and the holding page: `StatusKit`, `V2Holding`, `DeskHolding`
+
+**Status values**, one per roadmap, set by the publish gate:
+
+| Code | Label | Shown | Promise |
+|---|---|---|---|
+| `draft` | Being rebuilt (grey) | Card only; lessons never public | Nothing yet |
+| `self_checked` | Self-checked (amber dot) | Publicly | Every lesson scored 10/12+, finished by 3 test learners, not yet reviewed by a practitioner |
+| `practitioner_reviewed` | Practitioner-reviewed (green) | Publicly, with reviewer name, job title and date | Everything above, plus a named practitioner signed it off |
+
+**Behaves:**
+- Add `roadmaps.status` (enum above, default `draft`) plus `reviewed_by_name`, `reviewed_by_title` and `reviewed_on` (nullable, required when the status is `practitioner_reviewed`). Make it one shared `<StatusLabel status=…>` component used on the roadmap list, the block page and role pages, exactly as on `StatusKit`.
+- **Roadmap list (`/learn`), home, role pages:** a `draft` card shows "Being rebuilt" and **Tell me when it opens** (→ holding page) instead of Start. Counts on the page ("N open") come from the database and count only non-draft roadmaps.
+- **Block page:** label under the title. "What does this mean?" opens the popover text from `StatusKit` (a `<button>` with `aria-expanded`; closes on Esc and outside click).
+- **Role pages, "Where to start"** has 3 states from `StatusKit`: roadmap open → Start; roadmap is `draft` → "Roadmap coming" + Tell me when; no roadmap mapped → "No roadmap yet" + Ask for this roadmap. The rest of the role guide never changes.
+- **Draft URLs:** `/learn/[slug]` and every lesson/day URL under it return a **302** to `/learn/rebuilding?from=<slug>`. The holding page names that roadmap in the headline ("SQL for data analysts is being rebuilt.") and **pre-ticks it** in the list. Without `?from`, the headline is generic and nothing is pre-ticked. If `from` is unknown or not draft, ignore it.
+- Draft roadmaps and their lessons are removed from `sitemap.xml`. The holding page is `noindex`.
+- **Progress is kept.** Enrolment, progress, points and streak history for a roadmap that goes to draft are untouched, and the holding page says so. Test it.
+- **The switch is a setting.** Ship the field with every roadmap set to `self_checked` (today's behaviour) and **ask Saurav** before setting any roadmap to `draft` in production.
+
+**Holding page, "Tell me when these open" form:**
+- Checkbox list = all `draft` roadmaps plus any not yet open, from the database (the 7 names in the design are sample data).
+- Email is required. If signed in, prefill it.
+- The WhatsApp line is an **unticked** opt-in, and the number field appears only when it is ticked. Never pre-tick it.
+- Store `notify_requests(id, email, phone null, roadmap_id, channel 'email'|'whatsapp', consent_text, created_at, sent_at null, unsubscribed_at null)`, one row per roadmap per channel. Unique on (email, roadmap_id, channel), so a second submit doesn't duplicate.
+- Rate-limit by IP, use a honeypot field, and check the email format on the server.
+- The promise on the page is one message per roadmap when it opens, nothing else. So: no marketing use, and every message carries an unsubscribe link that sets `unsubscribed_at`. Sending happens when a roadmap moves from `draft` to an open status (a job or admin action). **Ask Saurav** which email provider, and whether WhatsApp sending is in scope now. If not, store the opt-in and hide nothing.
+- "Opening first" card: the next roadmap due to open (the lowest `open_order` among drafts, or a manual pick). The "Why we took them down" copy is final.
+- "Meanwhile, read what the job involves" links to `/roles`; "60 role guides" is a computed count.
+
+## B. The Decide step: `V2Decide`, `V2DecideReveal`, `DeskDecide`
+
+For judgment roadmaps (Startup finance, entrepreneurship, Amazon seller). There is no right answer and no score.
+
+**Looks / flow:**
+1. **Before** (`V2Decide`): scenario card, 2–4 options (A/B/C), a "Why this one?" text box (one or two lines), and **Lock in and see what happened**, which stays disabled until an option is picked **and** the reason has at least 15 characters. "No score" line under it.
+2. **After** (`V2DecideReveal`, `DeskDecide`): your choice and reason quoted back; **What a real founder did** (dark card) with a source link; **The trade-offs** with a + and − for every option, yours highlighted; **Did your reason cover…** with 2–4 checkboxes the learner ticks themselves; Change my answer; Next step.
+3. Desktop right panel: **Your founder log**: every Decide answer in this roadmap, newest last, the current one highlighted.
+
+**Schema** (zod, added to the step union):
+```ts
+{ type: 'decide', id, prompt, scenario,
+  options: [{ id, label, pro, con }],          // 2–4
+  reasonPrompt?: string,                        // default "Why this one?"
+  realCase: { who, chose, outcome, sourceTitle, sourceUrl },  // all required
+  coverChecklist: string[] }                    // 2–4
+```
+- `realCase` is **required**. The text in square brackets in the design is a placeholder. A real case must come from a named person or business with a linked source. Lesson validation (and the publish gate) **fails** a Decide step without a `sourceUrl`. Never generate one.
+- Storage: `decisions(user_id, roadmap_id, lesson_id, step_id, option_id, reason text, covered text[], created_at, updated_at)`, unique on (user, step). Change my answer updates the row; the log shows the latest. RLS: own rows only.
+- Completing the step counts like any other step for progress and streak; there are no points for which option was picked.
+- Signed-out learners can do the step. Keep the answer in local state and save it on sign-in, the same as other steps.
+
+## C. Glossary pop-ups: `GlossaryKit`
+
+- One file per roadmap, e.g. `content/<roadmap>/glossary.yaml`: `term`, `aliases[]`, `meaning` (25 words at most), `taughtIn` (lesson id). Validate in CI: meaning length, `taughtIn` exists, and no term used in a lesson **before** the lesson that teaches it (that fails the Order lens).
+- In lesson text, mark terms explicitly (e.g. `[[staging area]]` in the content), and don't auto-match. Only the **first** use in a lesson gets the dotted underline.
+- The term is a `<button>` with `aria-haspopup="dialog"` and `aria-expanded`. **Phone:** a bottom sheet. **Desktop:** a popover beside the word. Both close on Esc, an outside tap, or the term again, and focus returns to the term. It shows: term, roadmap tag, meaning, "Taught in lesson N · <title>" (a link), and "Still unclear? Ask about this step" (opens the existing step help).
+- No live AI definitions.
+
+## D. Logo: `logo/`, `LogoSparkMark`, `LogoSparkColours`, `LogoSparkUse`
+
+- Replace the current "j" tile and "jintu" text logo with the SVGs in `logo/`:
+  - `jintu-icon.svg`: app icon / favicon source
+  - `jintu-icon-small.svg`: for 32px and under
+  - `jintu-wordmark-teal.svg`: on light backgrounds
+  - `jintu-wordmark-white.svg`: on teal or dark
+- Generate the favicon set (16, 32, 180 apple-touch, 192/512 manifest) from `jintu-icon.svg`, with a social share image to match.
+- Header: the wordmark inside the home link, `aria-label="jintu home"`, with the SVG `aria-hidden="true"` (this also fixes P1 item 8, "jjintu").
+- Colours: teal `#0A3B46`, amber flame `#FFB627`, cream core `#FFF1D1`. Don't recolour or redraw. `LogoSparkUse` shows the sizes and the streak badge.
+
+## Tests for update 3
+- **Status:** a `draft` roadmap 302s from `/learn/<slug>` and from a lesson URL to `/learn/rebuilding?from=<slug>`, which pre-ticks it. It is absent from `sitemap.xml`. It shows "Being rebuilt" on `/learn` and on its role page. "N open" counts exclude it. Setting it back to `self_checked` restores everything, and the learner's progress is unchanged.
+- **Labels:** each status renders the right label on list, block and role page. `practitioner_reviewed` without reviewer fields fails validation.
+- **Notify form:** WhatsApp is unticked by default and the phone field appears only when it is ticked. A duplicate submit creates no new row. A bad email is rejected on the server. Unsubscribe sets `unsubscribed_at`. The rate limit trips.
+- **Decide:** Lock in is disabled until both an option and a 15+ character reason are given. After locking in, the reveal shows the real case with a working source link. Change my answer updates the same row. The founder log lists decisions in order. Content validation fails a Decide step with no `realCase.sourceUrl`.
+- **Glossary:** only the first use is underlined. Esc closes the popup and focus returns to the term. Keyboard-only use works. CI fails on a term used before its `taughtIn` lesson, and on a meaning over 25 words.
+- **Logo:** the header link's accessible name is "jintu home" (not "jjintu"). The favicons load.
+- Visual check of the 7 new screens at 390px and 1440px against `screenshots/`.
+
+---
+
+# Update 2: account screens, desktop step panels, multi-roadmap Today
+
+17 new screens and 2 changed ones.
+
 
 ## 1. Settings: two new links (changed: `V2Settings`, `DeskSettings`)
 - "You" → **Email and password** now opens the new Email and password screen (`/settings/account`).

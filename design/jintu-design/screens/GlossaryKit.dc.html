@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Glossary term pop-ups</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0B5567}a:hover{color:#0A3B46}
+</style>
+</helmet>
+<div style="width: 1440px; height: 860px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px; padding: 48px 72px; background: #EEF3F3; color: #0C2A30; font-family: Figtree, system-ui, sans-serif">
+<div style="display: flex; flex-direction: column; gap: 6px"><h1 style="margin: 0; font: 700 36px/40px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.025em">Glossary: tap a word you don't know</h1><p style="margin: 0; font-size: 16.5px; line-height: 25px; color: #45626A">A dotted underline marks a term. Tapping it shows the meaning in one line and the lesson that taught it.</p></div>
+<div style="flex: 1; min-height: 0; display: flex; gap: 24px; align-items: flex-start"><div style="width: 390px; height: 700px; flex: none; position: relative; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; border-radius: 36px; border: 1px solid #DCE6E7; background: #EEF3F3">
+<div style="height: 64px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 12px">
+<a href="V2Roadmaps.dc.html" aria-label="Back to the roadmap" style="width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFFFFF; color: #0C2A30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column"><div style="font-size: 15px; line-height: 20px; font-weight: 600">Sample lesson</div><div style="font-size: 12.5px; line-height: 18px; color: #5E777D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Git &amp; GitHub · lesson 3</div></div>
+<div style="height: 32px; flex: none; display: flex; align-items: center; padding: 0 12px; border-radius: 16px; background: #FFFFFF; font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace; color: #0C2A30">4 / 8</div>
+</div>
+<div style="flex: none; display: flex; gap: 4px; padding: 0 20px" role="img" aria-label="Step 4 of 8"><div style="flex: 1; height: 6px; border-radius: 3px; background: #0A3B46"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #0A3B46"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #0A3B46"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #43B4C8"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div><div style="flex: 1; height: 6px; border-radius: 3px; background: #D3DFE1"></div></div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 22px 20px">
+<div style="font: 600 24px/29px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.015em">Commit only what you picked</div>
+<div style="font-size: 16px; line-height: 25px">Run <code style="font: 500 14.5px/1 'JetBrains Mono', ui-monospace, monospace; padding: 2px 6px; border-radius: 6px; background: #FFFFFF">git add notes/asha.md</code> to put one file in the <button type="button" aria-expanded="true" aria-controls="gl-sheet" style="padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-decoration: underline dotted #0B5567; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer">staging area</button>, then commit. The other file stays out.</div>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(6,38,44,0.35)"></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0"><div id="gl-sheet" role="dialog" aria-label="Staging area, meaning" style="display: flex; flex-direction: column; gap: 10px; padding: 8px 20px 22px; border-radius: 24px 24px 0 0; background: #FFFFFF; box-shadow: 0 -10px 30px rgba(12,42,48,0.18)">
+<span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; margin: 4px 0 6px; border-radius: 3px; background: #C5D5D8"></span>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px"><div style="font: 700 21px/26px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">Staging area</div><span style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">Git</span></div>
+<div style="font-size: 15.5px; line-height: 23px">The list of changes you have picked for your next commit. You add to it with <code style="font: 500 14px/1 'JetBrains Mono', ui-monospace, monospace; padding: 2px 6px; border-radius: 6px; background: #EEF3F3">git add</code>.</div>
+<a href="V2Step.dc.html" style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border-radius: 14px; background: #EEF3F3; text-decoration: none; color: #0B5567; font-size: 14.5px; font-weight: 600"><span>Taught in lesson 2 · See what changed</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+<button type="button" style="height: 48px; border: 0; border-radius: 14px; background: #DDF3F7; color: #0B5567; font: 600 14.5px/1 Figtree, system-ui, sans-serif; cursor: pointer">Still unclear? Ask about this step</button>
+</div></div>
+</div><div style="position: relative; flex: 1; min-width: 0; min-height: 420px; box-sizing: border-box; padding: 32px; border-radius: 24px; background: #FFFFFF">
+<div style="font: 700 28px/33px 'Bricolage Grotesque', Figtree, system-ui, sans-serif; letter-spacing: -0.02em; margin-bottom: 14px">Commit only what you picked</div>
+<div style="max-width: 560px; font-size: 17px; line-height: 27px">Run <code style="font: 500 15px/1 'JetBrains Mono', ui-monospace, monospace; padding: 2px 6px; border-radius: 6px; background: #EEF3F3">git add notes/asha.md</code> to put one file in the <button type="button" aria-expanded="true" aria-controls="gl-pop" style="padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-decoration: underline dotted #0B5567; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer">staging area</button>, then commit. The other file stays out.</div>
+<div id="gl-pop" role="dialog" aria-label="Staging area, meaning" style="position: absolute; left: 32px; top: 196px; width: 320px; display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid #DCE6E7; border-radius: 18px; background: #FFFFFF; box-shadow: 0 14px 36px rgba(12,42,48,0.16)">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><div style="font: 700 18px/23px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">Staging area</div><span style="font: 400 12px/16px 'JetBrains Mono', ui-monospace, monospace; color: #5E777D">Git</span></div>
+<div style="font-size: 15px; line-height: 22px">The list of changes you have picked for your next commit. You add to it with <code style="font: 500 13.5px/1 'JetBrains Mono', ui-monospace, monospace; padding: 2px 6px; border-radius: 6px; background: #EEF3F3">git add</code>.</div>
+<a href="DeskBlock.dc.html" style="font-size: 14px; font-weight: 600">Taught in lesson 2 · See what changed</a>
+</div>
+</div><div style="width: 380px; flex: none; display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 24px; background: #FFFFFF">
+<div style="font: 700 20px/26px 'Bricolage Grotesque', Figtree, system-ui, sans-serif">How glossary terms work</div>
+<ul style="margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; line-height: 22px; color: #45626A">
+<li>Each roadmap has its own glossary file, written and reviewed like its lessons. No live AI definitions</li>
+<li>One line per meaning, in plain words, 25 words at most</li>
+<li>Only the first use of a term in a lesson gets the dotted underline</li>
+<li>Every term links back to the lesson that teaches it. A term used before it is taught fails the Order lens</li>
+<li>Phone: a bottom sheet. Desktop: a popover beside the word. Both close on Esc, tap outside, or the term again</li>
+</ul>
+</div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -9,6 +9,7 @@ This folder is the source of truth for the Jintu UI. Build it **pixel-exact**.
 | `screens/*.dc.html` | The real design source, one file per screen. Plain HTML with inline styles — every color, size, radius, font and gap is in there. **Read these for values. Never guess from the PNG.** |
 | `screenshots/*.png` | Each screen rendered at 1×, full height. Use them to check your build visually. |
 | `screens/canvas.json` | Index: each screen's title, frame size and which group (`page`) it belongs to. |
+| `logo/*.svg` | The final logo as SVG files (icon, small icon, wordmark teal and white). Use these files, don't redraw. |
 | `screens/support.js` | The design runtime, only so you can open a `.dc.html` in a browser to preview it. Not for the app. |
 
 ### How to read a `.dc.html` file
@@ -85,8 +86,12 @@ jintu-mvp.vercel.app is in production. The redesign replaces the UI of an app pe
 | Today | `V2Today`, `V2New`, `V2Restart`, `UniToday` | `DeskToday`, `DeskNew`, `DeskRestart`, `DeskUniToday` | `/today` (new; 4 states, the last is two or more roadmaps at once) |
 | Roadmaps | `V2Roadmaps` | `DeskRoadmaps` | `/learn` (existing; the group filter = `?c=`) |
 | Roadmap / block | `V2Block` | `DeskBlock` | `/learn/[slug]` (existing) |
+| Roadmap being rebuilt (holding page) | `V2Holding` | `DeskHolding` | `/learn/rebuilding?from=<slug>` (new). Every `draft` roadmap URL 302s here. `CHANGES.md` update 3 §A |
+| Status labels (list, block, role pages) | `StatusKit` (board) | `StatusKit` | shared `<StatusLabel>` component plus role-page "Where to start" states. Update 3 §A |
 | Lesson | `V2Step`, `V2Turn`, `V2Questions`, `V2Help`, `V2Offline`, `V2Done` | `V2Laptop`, `DeskTurn`, `DeskQuestions`, `DeskHelp`, `DeskOffline`, `DeskDone` | `/learn/[slug]/[lesson]` (check how lessons/days are routed now) |
 | Quiz / review | `V2Quiz`, `V2Review` | `DeskQuiz`, `DeskReview` | in lesson / `/review` |
+| Decide step (judgment roadmaps) | `V2Decide` (before), `V2DecideReveal` (after) | `DeskDecide` (after, with founder log) | lesson step component `type: 'decide'`. Update 3 §B |
+| Glossary pop-up | `GlossaryKit` (board: phone sheet) | `GlossaryKit` (desktop popover) | lesson text component. Update 3 §C |
 | DSA language switch | `V2Dsa` | `DeskDsa` | component in lessons |
 | Step types (any roadmap) | `UniChoose`, `UniFind`, `UniFormula`, `UniNumber`, `UniWrite` | `DeskUniChoose`, `DeskUniFind`, `DeskUniFormula`, `UniDeskStep` (number), `DeskUniWrite`; overview `UniSteps`, `UniCourse` | lesson step components; desktop adds the right-hand "your work" panel per roadmap |
 | Roles | `V2Roles`, `V2Role`, `V2Compare` | `DeskRoles`, `DeskRole`, `DeskCompare` | `/roles`, `/roles/[slug]` (existing), `/roles/compare` (new) |
@@ -102,6 +107,8 @@ jintu-mvp.vercel.app is in production. The redesign replaces the UI of an app pe
 | Pair learning | `V2PairStart`, `V2PairHome`, `V2PairStep`, `V2PairTalk` | `DeskPair`, `DeskPairWait` (waiting), `DeskPairStep` (results differ) | later phase |
 | Dark theme | `DarkHome`, `DarkLogin`, `DarkToday`, `DarkStep` | `DarkDeskHome`, `DarkDeskLogin`, `DarkDesk`, `DarkLaptop` | theme toggle, all pages |
 
+**Logo:** `LogoSparkMark` (construction), `LogoSparkColours` (colour versions), `LogoSparkUse` (sizes, favicon, streak badge). Use the files in `logo/`. Update 3 §D.
+
 **Reference only:**
 - `Mo*` — motion specs. `MoKit` lists the eight movements with timings; the others show them in place (`MoLanding` = home-page parallax). Implement with CSS / Framer Motion and honor `prefers-reduced-motion`.
 - `ArtKit`, `AvatarKit` — the illustration and avatar library.
@@ -109,6 +116,7 @@ jintu-mvp.vercel.app is in production. The redesign replaces the UI of an app pe
 **Ignore:**
 - `Main`, `LessonStep`, `LessonTurn`, `LessonEnd`, `LessonDesktop`, `Block`, `Catalogue` — first draft, old rules (Inter font), superseded.
 - `ScribDeskA/B`, `ScribPhoneA/B` — hand-drawn style exploration, not chosen. Skip unless told.
+- `canvas.json` also lists the logo explorations that weren't chosen (`LogoAll`, `LogoTwoDots`, `LogoRoute`, `LogoSpark`, `LogoSteps`, `LogoPin`, `LogoTile`). They aren't in this folder on purpose.
 
 ## Suggested build order
 Existing pages first (pure restyle, low risk), then new ones.
