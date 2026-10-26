@@ -8,7 +8,7 @@ The designs show behavior too: button labels, empty states, error copy, step cou
 
 ## 0. Working rules
 
-- Branch `redesign` (or one branch per phase off it). Never push to `main`. Every push gets a Vercel preview.
+- Branch `redesign` (or one branch per phase off it). Build on `redesign`, never push WIP straight to `main`; merge to `main` only on explicit go-ahead (done once already, through Phase 6, 26 Oct 2026). Every push gets a Vercel preview.
 - **Read before you write.** Before each phase, read the existing code for that area (routes, Supabase queries, tables, RLS policies, auth) and write down what exists and what's missing.
 - **Plan → OK → build → test → demo.** At the start of each phase, post a short plan (files, tables, edge cases, tests) and wait for an OK. At the end, give the preview link and a checklist to click through by hand.
 - **Database changes only as migrations** in `supabase/migrations/`, reversible, with RLS on every new table. Never edit production data by hand. Show the SQL before applying it to the hosted project.
@@ -18,28 +18,30 @@ The designs show behavior too: button labels, empty states, error copy, step cou
 
 ## 1. Decisions to confirm with Saurav before building (ask, don't assume)
 
-1. **Sign-in method.** The designs show Google + email code + password (`V2Login` → `V2Code` → `V2SetPass` → `V2Join`). The earlier plan was phone OTP (WhatsApp first, SMS fallback, through a Supabase Send SMS Hook). Options: build the email flow as designed, phone OTP instead, or both. `V2Join` already collects a mobile number.
-2. **Lesson content model.** How lessons and steps are stored today vs. what the new step types need (§3.4). Migrate existing roadmaps, or start fresh with Git & GitHub only?
-3. **Which roadmaps are published.** Per the revamp, only published roadmaps should show; Git & GitHub goes first. Is there a `published` flag?
-4. **Domain.** The designs use `jintu.in/u/<name>`; the live site is `jintu-mvp.vercel.app`. Use a config value for the base URL.
-5. **Reminders and emails.** Which provider (Resend's free tier? Supabase SMTP?) and whether to build it now or later.
-6. **Pair learning.** Now, or a later phase? (Suggested: later.)
+1. ~~**Sign-in method.**~~ **Settled.** Email code + password + Google OAuth, as designed (`V2Login` → `V2Code` → `V2SetPass` → `V2Join`) — not phone OTP. Built and live.
+2. ~~**Lesson content model.**~~ **Settled.** Steps are typed JSON (`nodes.steps`, validated with zod — see §3.4), authored as content files and imported via `scripts/import-roadmap.mjs`, not hand-typed in the database. All nine current roadmaps use it, not just Git & GitHub.
+3. ~~**Which roadmaps are published.**~~ **Settled** as a schema question — `roadmaps.status` (`draft`/`published`) has existed since the first migration. **Still open as a content decision**: per the 10 Oct relaunch call (unpublish all nine, republish one at a time), all nine are currently `published`. Whether to actually flip most back to `draft` now is Saurav's call, not a build task — show the exact `UPDATE` before running it against the hosted project, same as any data change.
+4. ~~**Domain.**~~ **Settled.** `jintu.in` is the configured `NEXT_PUBLIC_SITE_URL`, read everywhere via `getSiteUrl()` — not `jintu-mvp.vercel.app`.
+5. **Reminders and emails.** Still open. Which provider (Resend's free tier? Supabase SMTP?) and whether to build it now or later. `reminder_prefs` (the settings row) exists; nothing sends an email yet.
+6. **Pair learning.** Now, or a later phase? (Suggested: later — unchanged.)
 
 ## 2. Phases
 
 Each phase ends with passing tests, a green preview and a demo checklist.
 
-| # | Phase | Screens | Notes |
-|---|---|---|---|
-| 0 | Foundations | — | Tokens, fonts, layout shells (top nav, phone tab bar, desktop sidebar, footer), theme (light/dark/system), test setup (§4), CI. |
-| 1 | Public pages | Home, Pricing, Contact, Legal, 404, Error | Pure restyle, SEO metadata kept. |
-| 2 | Roadmaps & roles (read-only) | `/learn`, `/learn/[slug]`, `/roles`, `/roles/[slug]`, `/roles/compare` | Group filter keeps `?c=`. Readable without an account. |
-| 3 | Auth & account | Login, Code, Password, SetPass, Reset, Join (consent), Settings, Delete | Per decision 1. |
-| 4 | First run | Goal, Need, Avatar | Saves goal and need; sets which screen Home opens on. |
-| 5 | Lesson engine | Step, Turn, Questions, Help, Offline, Done, Quiz, DSA language switch, all `Uni*` step types, desktop lesson | Biggest phase; see §3.4. |
-| 6 | Progress & motivation | Today (3 states), streaks, points, Profile, share card, Saved, Review cards | Server-side rules, §3.5. |
-| 7 | Dark theme + motion | `Dark*`, `Mo*` | Motion respects `prefers-reduced-motion`. |
-| 8 | Pair learning | `V2Pair*`, `DeskPair*` | Only if confirmed. |
+| # | Phase | Status | Screens | Notes |
+|---|---|---|---|---|
+| 0 | Foundations | **Done** | — | Tokens, fonts, layout shells (top nav, phone tab bar, desktop sidebar, footer), theme (light/dark/system), test setup (§4), CI. |
+| 1 | Public pages | **Done** | Home, Pricing, Contact, Legal, 404, Error | Pure restyle, SEO metadata kept. |
+| 2 | Roadmaps & roles (read-only) | **Done** | `/learn`, `/learn/[slug]`, `/roles`, `/roles/[slug]`, `/roles/compare` | Group filter keeps `?c=`. Readable without an account. |
+| 3 | Auth & account | **Done** | Login, Code, Password, SetPass, Reset, Join (consent), Settings, Delete | Per decision 1 (settled, §1). |
+| 4 | First run | **Done** | Goal, Need, Avatar | Saves goal and need; sets which screen Home opens on. |
+| 5 | Lesson engine | **Done** | Step, Turn, Questions, Help, Offline, Done, Quiz, DSA language switch, all `Uni*` step types, desktop lesson | Biggest phase; see §3.4. Share card built here too (lesson-done, not the streak card — see Phase 6). |
+| 6 | Progress & motivation | **Done except two flagged pieces** | Today (3 states + 2-roadmap state), streaks, points, Profile record, Saved, Review cards | Server-side rules, §3.5. **Not built, deliberately deferred:** the public `/u/<handle>` page (needs a new `SECURITY DEFINER` RPC — today's RLS keeps one user's progress invisible to another, so exposing it publicly needs a narrow, deliberate bypass gated on the public-profile toggle, not a policy change); the streak share card on `/today` (needs that same public-profile flow wired into a share button). |
+| 7 | Dark theme + motion | Not started | `Dark*`, `Mo*` | Motion respects `prefers-reduced-motion`. The theme mechanism itself (`ThemeProvider`, `data-theme`, the full dark token palette) was built in Phase 0 and already works — nothing surfaces a toggle yet, and no page has `dark:` classes applied. `HANDOFF.md`: "theme toggle, all pages" — this is the single largest-surface-area phase (every page built so far), not just the seven `Dark*` reference screens; plan to split it into parts (infrastructure + toggle, then page groups) rather than one pass. |
+| 8 | Pair learning | Not started | `V2Pair*`, `DeskPair*` | Only if confirmed. |
+
+Merged to `main` and live through Phase 6 as of 26 Oct 2026.
 
 ## 3. Functional spec by area
 
@@ -74,14 +76,15 @@ Each phase ends with passing tests, a green preview and a demo checklist.
 - DSA language switch: one choice remembered per user, applies to every code block.
 - Done screen: +points, streak, lessons count, share card, next lesson.
 - Content: seed **Git & GitHub** first from a content file in the repo (markdown/JSON), not hand-typed in the database.
+- **Backlog, not yet built:** a **Decide** step type — choose, explain why, then see what really happened — for judgment-heavy roadmaps (startup finance, entrepreneurship) where "choose + find + formula + number + write" don't quite fit. Design the schema shape when it's actually needed for a real roadmap; don't build it speculatively ahead of content that would use it.
 
 ### 3.5 Progress, streaks, points
 - **Streak rules (write them as pure functions, unit-tested heavily):** a day counts when at least one lesson is completed in that day **in the user's timezone**; consecutive days extend the streak; a missed day resets it (`V2Restart`/`DeskRestart` state); store current and best.
 - Edge cases to test: midnight crossings, timezone changes, DST zones, two lessons in one day, completing at 23:59 then 00:01, a user in IST vs UTC.
 - Points: fixed per lesson (+25 shown), granted once, in the same transaction as completion.
 - Today: three states (brand new / streak going / streak restarted) picked from data; the week strip is computed server-side.
-- Profile: public only if the toggle is on; otherwise 404 for others. Shows streak, points, lessons and a 5-week grid.
-- Share card: generate an OG image (`next/og`) for `/u/<name>`; Share uses `navigator.share` with copy-link fallback.
+- Profile: public only if the toggle is on; otherwise 404 for others. Shows streak, points, lessons and a 5-week grid. The owner's own `/profile` record is built; the public `/u/<handle>` page itself is the deferred piece (§2, Phase 6).
+- Streak share card: generate an OG image (`next/og`) for `/u/<name>`; Share uses `navigator.share` with copy-link fallback. Deferred alongside `/u/<handle>` (§2, Phase 6) — distinct from the lesson-done share card (Phase 5), which is built.
 - Saved: save a resource from a lesson; open / mark as read (leaves the list) / remove; shows the source lesson.
 - Review cards: spaced repetition (a simple SM-2 or Leitner variant); hard comes back sooner, easy waits longer; "Nothing due" state.
 
@@ -105,7 +108,7 @@ Set this up in Phase 0 so every later phase adds tests as it goes.
 3. Returning user: sign in → Continue resumes the right step.
 4. Streak: complete on day 1 and day 2 → 2; skip day 3 → restarted state (use a mocked clock).
 5. Saved: save a link in a lesson → appears in Saved → mark as read → gone.
-6. Settings: turn on the public profile → `/u/<name>` visible signed out; turn it off → 404.
+6. Settings: turn on the public profile → `/u/<name>` visible signed out; turn it off → 404. Blocked until `/u/<handle>` itself is built (§2, Phase 6) — the toggle and its consent logging already work (`/profile`'s share flow), just not the page it points at.
 7. Export downloads JSON with the user's data; delete account → can't sign in, and the data is gone.
 8. Offline: open a lesson, go offline, finish a step, come back online → progress is saved.
 
