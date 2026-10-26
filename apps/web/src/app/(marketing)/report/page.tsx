@@ -40,11 +40,11 @@ export default function ReportPage() {
           nobody&apos;s work changes underneath them.
         </p>
         <a
-          href="mailto:contact@tindata.com?subject=Broken%20on%20Jintu"
+          href="mailto:hello@jintu.in?subject=Broken%20on%20Jintu"
           className="flex h-13 items-center justify-center gap-2.5 rounded-2xl bg-night-900 font-mono text-[15px] text-white no-underline"
         >
           <span aria-hidden>{BrokenLinkIcon}</span>
-          <span>contact@tindata.com</span>
+          <span>hello@jintu.in</span>
         </a>
       </div>
     </main>

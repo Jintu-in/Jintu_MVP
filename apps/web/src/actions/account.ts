@@ -231,7 +231,7 @@ export const deleteAccount = actionClient
       // Never pretend. A person told their account is gone, whose account is
       // not gone, has been lied to about the one thing they asked for.
       throw new UserFacingError(
-        "Account deletion is not available right now. Email contact@tindata.com and a person will do it.",
+        "Account deletion is not available right now. Email hello@jintu.in and a person will do it.",
       );
     }
 

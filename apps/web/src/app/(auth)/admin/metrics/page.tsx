@@ -26,7 +26,7 @@ export const dynamic = "force-dynamic";
 
 /** Add a Supabase user id here, in a commit, to grant access. */
 const ALLOWLIST: readonly string[] = [
-  // contact@tindata.com — the owner. Replace with the real uuid; an empty
+  // hello@jintu.in — the owner. Replace with the real uuid; an empty
   // allowlist means nobody, which is the safe default until it is filled.
 ];
 
