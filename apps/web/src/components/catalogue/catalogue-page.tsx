@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { CatalogueSearch } from "@/components/catalogue/catalogue-search";
+import { StatusLabel } from "@/components/roadmap/status-label";
 import {
   applyFilters,
   CATEGORIES,
@@ -73,10 +74,7 @@ function OpenCard({ row }: { row: CatalogueRow }) {
   return (
     <div className="flex flex-col gap-3.5 rounded-[24px] bg-night-900 p-4 text-white sm:p-5">
       <div className="flex flex-wrap items-center gap-2.5">
-        <span className="flex h-[26px] items-center gap-1.5 rounded-xl bg-brand-500/20 px-2.5 text-[12px] font-semibold text-on-night-muted">
-          <span aria-hidden className="size-[7px] rounded-full bg-brand-500" />
-          Open now
-        </span>
+        <StatusLabel status={row.status ?? "self_checked"} />
         <span className="font-mono text-[12.5px] text-on-night-muted-2">
           {CATEGORIES.find((c) => c.key === row.category)?.label}
           {row.weeks ? ` · ${row.weeks} weeks` : null}
@@ -122,22 +120,26 @@ function PlannedCard({ row }: { row: CatalogueRow }) {
         </div>
         <div className="t-card mt-0.5 text-ink-900">{row.title}</div>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
-          <span className="flex h-6 items-center rounded-xl bg-ink-50 px-2.5 text-[12px] font-semibold text-ink-600">
-            Coming soon
-          </span>
+          {row.status === "draft" ? (
+            <StatusLabel status="draft" />
+          ) : (
+            <span className="flex h-6 items-center rounded-xl bg-ink-50 px-2.5 text-[12px] font-semibold text-ink-600">
+              Coming soon
+            </span>
+          )}
           <span className="font-mono text-[12px] text-ink-500">
             {row.level ? row.level[0]!.toUpperCase() + row.level.slice(1) : null}
             {row.weeks ? ` · ${row.weeks} weeks` : null}
           </span>
         </div>
       </div>
-      <button
-        type="button"
+      <Link
+        href={(row.status === "draft" ? `/learn/rebuilding?from=${row.slug}` : "/learn/rebuilding") as Route}
         aria-label={`Tell me when ${row.title} opens`}
-        className="flex size-11 flex-none items-center justify-center rounded-full bg-ink-50 text-link"
+        className="flex size-11 flex-none items-center justify-center rounded-full bg-ink-50 text-link no-underline"
       >
         {BELL_ICON}
-      </button>
+      </Link>
     </div>
   );
 }

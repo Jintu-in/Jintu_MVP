@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/shell/app-shell";
 import { RolePage } from "@/components/roles/role-page";
 import { ROLES, comparisonsMentioning, roleBySlug } from "@/content/roles";
+import { getDraftRoadmaps } from "@/lib/draft-roadmaps";
 import { getMyMomentum } from "@/lib/momentum";
 import { getViewer, initialsFor } from "@/lib/session";
 
@@ -45,10 +46,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const role = roleBySlug(slug);
   if (!role) notFound();
 
-  const [viewer, momentum] = await Promise.all([
+  const [viewer, momentum, drafts] = await Promise.all([
     getViewer().catch(() => null),
     getMyMomentum().catch(() => null),
+    getDraftRoadmaps().catch(() => []),
   ]);
+  // Live, not baked in — getViewer()/getMyMomentum() above already force
+  // this page to render per-request (see this file's own header), so
+  // getDraftRoadmaps() costs nothing extra in architecture, only one more
+  // query alongside the two this page was already making on every visit.
+  const draftSlugs = new Set(drafts.map((d) => d.slug));
 
   return (
     <AppShell
@@ -65,7 +72,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           : null
       }
     >
-      <RolePage role={role} comparisons={comparisonsMentioning(role.slug)} />
+      <RolePage role={role} comparisons={comparisonsMentioning(role.slug)} draftSlugs={draftSlugs} />
     </AppShell>
   );
 }

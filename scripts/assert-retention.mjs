@@ -50,7 +50,7 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 
 // ── fixture ──────────────────────────────────────────────────────────────────
 const rm = (await one(`insert into public.roadmaps (slug, title, summary, difficulty, status)
-  values ('fixture', 'Fixture', 'Test roadmap.', 'beginner', 'published') returning id`)).id;
+  values ('fixture', 'Fixture', 'Test roadmap.', 'beginner', 'self_checked') returning id`)).id;
 const m1 = (await one(`insert into public.modules (roadmap_id, position, title) values ('${rm}', 1, 'M1') returning id`)).id;
 const m2 = (await one(`insert into public.modules (roadmap_id, position, title) values ('${rm}', 2, 'M2') returning id`)).id;
 const node = async (mod, pos, pts, optional = false) =>

@@ -32,7 +32,7 @@ function admin() {
   });
 }
 
-type Kind = "exists_check" | "password_fail";
+type Kind = "exists_check" | "password_fail" | "notify_request";
 
 /** Rows for (kind, hash column) in the last hour, newest first. */
 async function recent(kind: Kind, column: "email_hash" | "ip_hash", hash: string) {
@@ -74,6 +74,20 @@ export async function existsCheckLimited(email: string): Promise<boolean> {
   if (ip) {
     const byIp = await recent("exists_check", "ip_hash", ip);
     if (byIp && byIp.length >= 20) return true;
+  }
+  return false;
+}
+
+/** The holding page's notify-me form — generous limits (one legitimate
+ *  submit ticks several roadmaps at once, all in one request), there
+ *  mainly to stop a script hammering the honeypot-free path. */
+export async function notifyRequestLimited(email: string): Promise<boolean> {
+  const byEmail = await recent("notify_request", "email_hash", sha256(email));
+  if (byEmail && byEmail.length >= 10) return true;
+  const ip = await requestIpHash();
+  if (ip) {
+    const byIp = await recent("notify_request", "ip_hash", ip);
+    if (byIp && byIp.length >= 30) return true;
   }
   return false;
 }

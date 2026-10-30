@@ -1,4 +1,5 @@
 import type { Category } from "@/lib/catalogue-filters";
+import type { DraftRoadmap } from "@/lib/draft-roadmaps";
 import type { RoadmapSummary } from "@/lib/roadmaps";
 
 /**
@@ -38,17 +39,37 @@ export interface CatalogueEntry {
   summary?: string;
   level?: RoadmapSummary["difficulty"];
   weeks?: number | null;
+  /** Present once there is a real row — undefined for a roadmap that
+   *  hasn't been imported at all yet, 'draft' for one that has gone back
+   *  offline, the two public values for an open one. */
+  status?: "draft" | "self_checked" | "practitioner_reviewed";
+  reviewedByName?: string | null;
+  reviewedByTitle?: string | null;
+  reviewedOn?: string | null;
 }
 
 /**
- * Merges the real published catalogue with the planned list, published
- * taking precedence by slug — a roadmap that has gone live is "open" and
- * carries its real summary/level/weeks, never listed twice.
+ * Merges the real published catalogue, the draft roadmaps (StatusKit's
+ * "Being rebuilt" card — a real row, just not public), and the planned
+ * list, in that precedence order by slug — a roadmap that has gone live
+ * carries its real summary/level/weeks; one sent back to draft keeps its
+ * title but loses them (nothing to summarise about a hidden lesson tree);
+ * a never-imported one is `open: false` with no `status` at all.
  */
-export function buildCatalogue(published: RoadmapSummary[]): CatalogueEntry[] {
+export function buildCatalogue(published: RoadmapSummary[], drafts: DraftRoadmap[] = []): CatalogueEntry[] {
   const bySlug = new Map<string, CatalogueEntry>();
   for (const p of PLANNED_ROADMAPS) {
     bySlug.set(p.slug, { slug: p.slug, title: p.title, category: p.category, open: false });
+  }
+  for (const d of drafts) {
+    const existing = bySlug.get(d.slug);
+    bySlug.set(d.slug, {
+      slug: d.slug,
+      title: d.title,
+      category: existing?.category ?? "data",
+      open: false,
+      status: "draft",
+    });
   }
   for (const r of published) {
     bySlug.set(r.slug, {
@@ -59,6 +80,10 @@ export function buildCatalogue(published: RoadmapSummary[]): CatalogueEntry[] {
       summary: r.summary,
       level: r.difficulty,
       weeks: r.estimatedWeeks,
+      status: r.status,
+      reviewedByName: r.reviewedByName,
+      reviewedByTitle: r.reviewedByTitle,
+      reviewedOn: r.reviewedOn,
     });
   }
   return [...bySlug.values()];

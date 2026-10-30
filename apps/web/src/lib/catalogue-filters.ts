@@ -61,6 +61,14 @@ export interface CatalogueRow {
   weeks: number | null;
   /** Real publish status — never inferred from href or progress. */
   open: boolean;
+  /** StatusKit's label — undefined for a planned roadmap with no row yet
+   *  (nothing to label), present and non-draft for every open one. A row
+   *  can be `open: false` with a real `status` too: a roadmap that went
+   *  back to draft after being open, not just one never imported. */
+  status?: "draft" | "self_checked" | "practitioner_reviewed";
+  reviewedByName?: string | null;
+  reviewedByTitle?: string | null;
+  reviewedOn?: string | null;
   /** Display-only, carried through untouched. */
   metaLine: string;
   footLine: string;

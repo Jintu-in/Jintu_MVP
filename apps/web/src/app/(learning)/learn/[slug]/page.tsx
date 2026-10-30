@@ -1,5 +1,5 @@
 import type { Metadata, Route } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/shell/app-shell";
 import RoadmapRoute from "@/components/roadmap/roadmap-route";
 import type {
@@ -7,6 +7,7 @@ import type {
   RoadmapFilterOption,
   RoadmapModule as RoadmapModuleProps,
 } from "@/components/roadmap/roadmap-page";
+import { getDraftRoadmaps } from "@/lib/draft-roadmaps";
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap, type RoadmapNode } from "@/lib/roadmaps";
@@ -70,7 +71,16 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
   const { slug } = await params;
 
   const roadmap = await getRoadmap(slug);
-  if (!roadmap) notFound();
+  if (!roadmap) {
+    // RLS hides a draft roadmap from this same read, so "not found" here
+    // means either of two different things — an unknown slug (404), or a
+    // real roadmap that went back to draft (redirect to the holding page,
+    // CHANGES.md update 3 §A). The service-role list is the only way to
+    // tell them apart.
+    const draft = (await getDraftRoadmaps()).find((d) => d.slug === slug);
+    if (draft) redirect(`/learn/rebuilding?from=${slug}` as Route);
+    notFound();
+  }
 
   const allNodes = roadmap.modules.flatMap((m) => m.nodes);
   const [progress, momentum, viewer] = await Promise.all([
@@ -196,6 +206,10 @@ export default async function RoadmapScreen({ params }: { params: Promise<Params
         breadcrumb={{ list: "Roadmaps", category: roadmap.subjectTags[0] ?? roadmap.difficulty }}
         title={roadmap.title}
         description={roadmap.summary}
+        status={roadmap.status}
+        reviewedByName={roadmap.reviewedByName}
+        reviewedByTitle={roadmap.reviewedByTitle}
+        reviewedOn={roadmap.reviewedOn}
         statChips={statChips}
         progress={{
           daysCount: `${doneTotal} of ${allNodes.length}`,

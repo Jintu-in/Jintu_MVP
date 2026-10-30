@@ -48,7 +48,7 @@ const table = (title, rs, cols) => {
 // ── curriculum ───────────────────────────────────────────────────────────────
 const rm = (
   await one(`insert into public.roadmaps (slug, title, summary, difficulty, status)
-    values ('metrics', 'Metrics fixture', 'Fixture.', 'beginner', 'published') returning id`)
+    values ('metrics', 'Metrics fixture', 'Fixture.', 'beginner', 'self_checked') returning id`)
 ).id;
 const mod = (
   await one(

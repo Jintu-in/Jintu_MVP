@@ -2,7 +2,7 @@ import "server-only";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
 import { createClient } from "@/lib/supabase/server";
-import { getRoadmap } from "@/lib/roadmaps";
+import { getRoadmap, isOpenRoadmapStatus } from "@/lib/roadmaps";
 
 /**
  * The saved queue.
@@ -95,7 +95,7 @@ export async function getSavedQueue(): Promise<SavedQueue | null> {
     ...new Set(
       rows
         .map((r) => r.resources?.nodes?.modules?.roadmaps)
-        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && rm!.status === "published")
+        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && isOpenRoadmapStatus(rm!.status))
         .map((rm) => rm!.slug),
     ),
   ];
@@ -111,9 +111,9 @@ export async function getSavedQueue(): Promise<SavedQueue | null> {
     .map((r) => {
       const res = r.resources!;
       const roadmap = res.nodes?.modules?.roadmaps ?? null;
-      // Only link into a roadmap that is actually published — a link to a
-      // draft would 404 for the person who saved from it.
-      const published = roadmap && roadmap.status === "published" && res.nodes?.slug ? roadmap : null;
+      // Only link into a roadmap that is not a draft — a link to a draft
+      // would 404 for the person who saved from it.
+      const published = roadmap && isOpenRoadmapStatus(roadmap.status) && res.nodes?.slug ? roadmap : null;
       const position = published ? positionByNodeSlug.get(`${published.slug}/${res.nodes!.slug}`) : undefined;
       return {
         resourceId: r.resource_id,

@@ -2,7 +2,7 @@ import "server-only";
 import { countBlocks, minutesLeft } from "@/lib/blocks";
 import { describeSupabaseError } from "@/lib/supabase/errors";
 import { retryRead } from "@/lib/supabase/retry";
-import { getRoadmap } from "@/lib/roadmaps";
+import { getRoadmap, isOpenRoadmapStatus } from "@/lib/roadmaps";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -203,7 +203,7 @@ export async function getDueCards(limit = 20): Promise<DueCard[] | null> {
     ...new Set(
       rows
         .map((r) => r.nodes?.modules?.roadmaps)
-        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && rm!.status === "published")
+        .filter((rm): rm is NonNullable<typeof rm> => Boolean(rm) && isOpenRoadmapStatus(rm!.status))
         .map((rm) => rm!.slug),
     ),
   ];
@@ -216,7 +216,7 @@ export async function getDueCards(limit = 20): Promise<DueCard[] | null> {
 
   return rows.map((c) => {
     const roadmap = c.nodes?.modules?.roadmaps ?? null;
-    const published = roadmap && roadmap.status === "published" && c.nodes?.slug ? roadmap : null;
+    const published = roadmap && isOpenRoadmapStatus(roadmap.status) && c.nodes?.slug ? roadmap : null;
     const position = published ? positionByNodeSlug.get(`${published.slug}/${c.nodes!.slug}`) : undefined;
     return {
       id: c.id,
@@ -319,9 +319,13 @@ export async function getDashboard(): Promise<DashboardData | null> {
     nodes: { slug: string; modules: { roadmaps: { slug: string; status: string } | null } | null } | null;
   };
   const progressRows = (resumeRes.data ?? []) as unknown as ProgressRow[];
+  const isOpenRow = (r: ProgressRow) => {
+    const status = r.nodes?.modules?.roadmaps?.status;
+    return Boolean(status) && isOpenRoadmapStatus(status!);
+  };
   const openRow =
-    progressRows.find((r) => r.status !== "done" && r.nodes?.modules?.roadmaps?.status === "published") ??
-    progressRows.find((r) => r.nodes?.modules?.roadmaps?.status === "published") ??
+    progressRows.find((r) => r.status !== "done" && isOpenRow(r)) ??
+    progressRows.find(isOpenRow) ??
     null;
 
   let resume: ResumeTarget | null = null;
@@ -383,7 +387,7 @@ export async function getDashboard(): Promise<DashboardData | null> {
   type EnrolRow = { roadmaps: { slug: string; title: string; status: string } | null };
   const enrolled = ((enrolRes.data ?? []) as unknown as EnrolRow[])
     .map((e) => e.roadmaps)
-    .filter((r): r is NonNullable<EnrolRow["roadmaps"]> => Boolean(r) && r!.status === "published");
+    .filter((r): r is NonNullable<EnrolRow["roadmaps"]> => Boolean(r) && isOpenRoadmapStatus(r!.status));
 
   const roadmaps: DashboardRoadmap[] = [];
   if (enrolled.length) {

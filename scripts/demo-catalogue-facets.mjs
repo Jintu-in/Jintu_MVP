@@ -67,7 +67,7 @@ for (const r of REAL) {
   const rm = await one(
     `insert into public.roadmaps
        (slug, title, summary, subject_tags, difficulty, estimated_weeks, estimated_hours, status)
-     values ($1, $2, $3, $4, $5, $6, $7, 'published') returning id`,
+     values ($1, $2, $3, $4, $5, $6, $7, 'self_checked') returning id`,
     [r.slug, r.title, `${r.title} — seeded for the facet demo.`, r.tags, r.level, r.weeks, r.hours],
   );
   const mod = await one(

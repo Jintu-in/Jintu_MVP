@@ -52,7 +52,7 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 const expected = [
   "activity_days", "audit_log", "auth_attempts", "colleges", "consent_events",
   "consents", "help_requests", "link_checks", "modules", "nodes", "node_checks", "node_progress",
-  "node_topics", "notifications", "point_events", "profiles",
+  "node_topics", "notifications", "notify_requests", "point_events", "profiles",
   "review_cards", "roadmap_enrollments", "roadmap_prerequisites", "roadmaps",
   "resources", "public_profiles", "reminder_prefs", "saved_resources",
   "streaks", "topic_requests",
@@ -63,7 +63,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the twenty-six baseline tables exist`,
+  `exactly the twenty-seven baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
@@ -94,7 +94,7 @@ console.log("\n── the catalogue is public; drafts are not ──────
 // seed ships one DRAFT roadmap; publish a second one to test both sides.
 const pub = await one(`
   insert into public.roadmaps (slug, title, summary, difficulty, status)
-  values ('spring-boot', 'Spring Boot', 'From servlet to production service.', 'intermediate', 'published')
+  values ('spring-boot', 'Spring Boot', 'From servlet to production service.', 'intermediate', 'self_checked')
   returning id`);
 const mod = await one(
   `insert into public.modules (roadmap_id, position, title) values ($1, 1, 'HTTP and the container') returning id`,
@@ -123,6 +123,75 @@ const anonNodes = await asAnon("select title from public.nodes");
 check(anonNodes.length === 1, "anon reads nodes of published roadmaps only", JSON.stringify(anonNodes));
 const anonResources = await asAnon("select url from public.resources");
 check(anonResources.length === 1, "anon reads resources of published roadmaps only");
+
+let fakeStatus = false;
+try {
+  await db.exec(`update public.roadmaps set status = 'archived' where id = '${pub.id}'`);
+  fakeStatus = true;
+} catch { /* roadmaps_status_check */ }
+check(!fakeStatus, "roadmap status is one of the three fixed levels — no made-up value");
+
+let reviewedWithoutReviewer = false;
+try {
+  await db.exec(`update public.roadmaps set status = 'practitioner_reviewed' where id = '${pub.id}'`);
+  reviewedWithoutReviewer = true;
+} catch { /* roadmaps_review_fields_required_when_reviewed */ }
+check(!reviewedWithoutReviewer, "practitioner_reviewed is refused without a named reviewer and a date");
+
+await db.exec(`
+  update public.roadmaps
+  set status = 'practitioner_reviewed', reviewed_by_name = 'Asha Verma',
+      reviewed_by_title = 'Senior backend engineer', reviewed_on = current_date
+  where id = '${pub.id}'`);
+const reviewedAnon = await asAnon(`select slug from public.roadmaps where id = '${pub.id}'`);
+check(
+  reviewedAnon.length === 1,
+  "practitioner_reviewed is public too — it is not a second draft state",
+);
+
+console.log("\n── the holding page's notify-me form (0035) ────────────────");
+const notifyEmail = "probe-notify@example.org";
+const consent = "Email me once when the roadmaps I picked open.";
+await asAnon(`insert into public.notify_requests (email, roadmap_id, channel, consent_text)
+              values ('${notifyEmail}', '${pub.id}', 'email', '${consent}')`);
+let notifyReadable = false;
+try {
+  await asAnon(`select id from public.notify_requests where email = '${notifyEmail}'`);
+  notifyReadable = true;
+} catch { /* no select grant for anon or authenticated — insert-only */ }
+check(!notifyReadable, "a signed-out visitor can insert a notify request but never read one back");
+
+let duplicateNotify = false;
+try {
+  await db.exec(`insert into public.notify_requests (email, roadmap_id, channel, consent_text)
+                 values ('${notifyEmail}', '${pub.id}', 'email', '${consent}')`);
+  duplicateNotify = true;
+} catch { /* notify_requests unique(email, roadmap_id, channel) */ }
+check(!duplicateNotify, "the same email+roadmap+channel cannot be inserted twice — a duplicate submit adds no row");
+
+let badEmail = false;
+try {
+  await db.exec(`insert into public.notify_requests (email, roadmap_id, channel, consent_text)
+                 values ('not-an-email', '${pub.id}', 'email', '${consent}')`);
+  badEmail = true;
+} catch { /* notify_requests email CHECK */ }
+check(!badEmail, "a malformed email is rejected by the table itself, not just the client form");
+
+let badChannel = false;
+try {
+  await db.exec(`insert into public.notify_requests (email, roadmap_id, channel, consent_text)
+                 values ('channel-probe@example.org', '${pub.id}', 'sms', '${consent}')`);
+  badChannel = true;
+} catch { /* notify_requests channel CHECK */ }
+check(!badChannel, "channel is email or whatsapp only — no made-up value");
+
+let notifyKindRejected = false;
+try {
+  await db.exec(`insert into public.auth_attempts (kind, email_hash) values ('notify_request', repeat('a', 64))`);
+} catch {
+  notifyKindRejected = true;
+}
+check(!notifyKindRejected, "auth_attempts accepts notify_request as a rate-limit kind (0035 widened the CHECK)");
 
 console.log("\n── progress is private per user ────────────────────────────");
 const [ua, ub] = (await rows(

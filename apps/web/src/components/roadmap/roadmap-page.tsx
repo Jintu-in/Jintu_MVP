@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { StatusLabel, type RoadmapStatusValue } from "@/components/roadmap/status-label";
 import { TickIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
@@ -89,6 +90,10 @@ export interface RoadmapPageProps {
   breadcrumb: { list: string; category: string };
   title: string;
   description: string;
+  status: RoadmapStatusValue;
+  reviewedByName?: string | null;
+  reviewedByTitle?: string | null;
+  reviewedOn?: string | null;
   statChips: RoadmapStatChip[];
   progress: {
     /** e.g. "7 of 91" — mono; also the desktop header count. */
@@ -176,6 +181,10 @@ export default function RoadmapPage({
   breadcrumb,
   title,
   description,
+  status,
+  reviewedByName,
+  reviewedByTitle,
+  reviewedOn,
   statChips,
   progress,
   filter,
@@ -198,6 +207,13 @@ export default function RoadmapPage({
           </Link>
           <div className="font-mono text-[13px] leading-[1.4] font-semibold text-link">{breadcrumb.category}</div>
           <h1 className="t-page text-ink-900">{title}</h1>
+          <StatusLabel
+            status={status}
+            explain
+            reviewedByName={reviewedByName}
+            reviewedByTitle={reviewedByTitle}
+            reviewedOn={reviewedOn}
+          />
           <p className="text-[16px] leading-[1.55] text-pretty text-ink-600 lg:text-[17px]">{description}</p>
           <div className="flex flex-wrap gap-2">
             {statChips.map((c) => (

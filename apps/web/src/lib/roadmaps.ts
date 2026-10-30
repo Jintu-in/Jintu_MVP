@@ -105,7 +105,31 @@ export type RoadmapModule = {
   nodes: RoadmapNode[];
 };
 
-export type Roadmap = {
+/** StatusKit's three levels — `draft` never reaches here (RLS hides it from
+ *  the anon/authenticated reads this file uses), so only these two show. */
+export type RoadmapStatus = "self_checked" | "practitioner_reviewed";
+
+/**
+ * Whether a roadmap row (however it was fetched — a raw embedded join
+ * included, not just getRoadmap()/getRoadmapSummaries()) is one a link can
+ * safely point at. Replaced the old `status === "published"` check that
+ * 0034 made permanently false: every roadmap is `self_checked` or
+ * `practitioner_reviewed` now, never the old single value, so "not draft"
+ * is the correct test, not an enumeration that a future status would
+ * silently fall through.
+ */
+export const isOpenRoadmapStatus = (status: string): boolean => status !== "draft";
+
+export type ReviewInfo = {
+  status: RoadmapStatus;
+  /** Set only when status is practitioner_reviewed. */
+  reviewedByName: string | null;
+  reviewedByTitle: string | null;
+  /** YYYY-MM-DD. */
+  reviewedOn: string | null;
+};
+
+export type Roadmap = ReviewInfo & {
   id: string;
   slug: string;
   title: string;
@@ -118,7 +142,7 @@ export type Roadmap = {
   modules: RoadmapModule[];
 };
 
-export type RoadmapSummary = {
+export type RoadmapSummary = ReviewInfo & {
   slug: string;
   title: string;
   summary: string;
@@ -161,7 +185,8 @@ type RawResource = {
 };
 
 const BASE_SUMMARY_COLUMNS = `slug, title, summary, subject_tags, difficulty,
-  estimated_weeks, estimated_hours, created_at, modules ( id, nodes ( id ) )`;
+  estimated_weeks, estimated_hours, created_at, status, reviewed_by_name,
+  reviewed_by_title, reviewed_on, modules ( id, nodes ( id ) )`;
 const FACET_COLUMNS = `category, media_mix, has_free_cert, has_prereqs`;
 
 /**
@@ -235,6 +260,10 @@ export async function listPublishedRoadmaps(): Promise<RoadmapSummary[]> {
     estimated_weeks: number | null;
     estimated_hours: number | null;
     created_at: string;
+    status: RoadmapStatus;
+    reviewed_by_name: string | null;
+    reviewed_by_title: string | null;
+    reviewed_on: string | null;
     modules: { id: string; nodes: { id: string }[] }[];
     category?: RoadmapSummary["category"];
     media_mix?: RoadmapSummary["mediaMix"];
@@ -255,6 +284,10 @@ export async function listPublishedRoadmaps(): Promise<RoadmapSummary[]> {
       moduleCount: r.modules.length,
       nodeCount: r.modules.reduce((n, m) => n + m.nodes.length, 0),
       createdAt: r.created_at,
+      status: r.status,
+      reviewedByName: r.reviewed_by_name,
+      reviewedByTitle: r.reviewed_by_title,
+      reviewedOn: r.reviewed_on,
       category: facetsPresent
         ? (r.category ?? "data")
         : (tags.map((t) => CATEGORY_FROM_TAG[t]).find(Boolean) ?? "data"),
@@ -276,7 +309,7 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
       .from("roadmaps")
       .select(
         `id, slug, title, summary, subject_tags, difficulty, estimated_weeks,
-         estimated_hours, license_note,
+         estimated_hours, license_note, status, reviewed_by_name, reviewed_by_title, reviewed_on,
          modules (
            id, position, title, week_range, objective, deliverable, est_hours,
            nodes (
@@ -309,6 +342,10 @@ export async function getRoadmap(slug: string): Promise<Roadmap | null> {
     estimatedWeeks: data.estimated_weeks,
     estimatedHours: data.estimated_hours,
     licenseNote: data.license_note,
+    status: data.status,
+    reviewedByName: data.reviewed_by_name,
+    reviewedByTitle: data.reviewed_by_title,
+    reviewedOn: data.reviewed_on,
     modules: data.modules
       .map((m) => ({
         id: m.id,

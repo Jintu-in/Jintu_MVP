@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/shell/app-shell";
 import CataloguePage from "@/components/catalogue/catalogue-page";
 import { parseFilters, type CatalogueRow } from "@/lib/catalogue-filters";
+import { getDraftRoadmaps } from "@/lib/draft-roadmaps";
 import { buildCatalogue } from "@/lib/planned-roadmaps";
 import { getRoadmap, listPublishedRoadmaps } from "@/lib/roadmaps";
 import { getMyProgress } from "@/lib/progress";
@@ -43,14 +44,15 @@ export default async function RoadmapsPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [params, published, viewer, momentum] = await Promise.all([
+  const [params, published, drafts, viewer, momentum] = await Promise.all([
     searchParams,
     listPublishedRoadmaps().catch(() => []),
+    getDraftRoadmaps().catch(() => []),
     getViewer().catch(() => null),
     getMyMomentum().catch(() => null),
   ]);
   const filters = parseFilters(params);
-  const catalogue = buildCatalogue(published);
+  const catalogue = buildCatalogue(published, drafts);
 
   // Real per-roadmap progress for whichever roadmaps are actually open —
   // one extra fetch each, cheap while the catalogue holds one open roadmap.
@@ -87,6 +89,10 @@ export default async function RoadmapsPage({
       level: c.level ?? "beginner",
       weeks: c.weeks ?? null,
       open: c.open,
+      status: c.status,
+      reviewedByName: c.reviewedByName,
+      reviewedByTitle: c.reviewedByTitle,
+      reviewedOn: c.reviewedOn,
       metaLine: "",
       footLine: c.weeks ? `~${c.weeks} weeks` : "free · no account needed to read",
       progress: prog && !prog.done ? { pct: prog.pct, line: prog.line } : undefined,

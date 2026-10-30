@@ -425,7 +425,7 @@ if ((spec.requires ?? []).length) {
 
 push(``);
 if (verified) {
-  push(`  update public.roadmaps set status = 'published', reviewed_at = now() where id = rm;`);
+  push(`  update public.roadmaps set status = 'self_checked', reviewed_at = now() where id = rm;`);
 } else {
   push(`  -- stays draft: links were not verified at generation time.`);
 }

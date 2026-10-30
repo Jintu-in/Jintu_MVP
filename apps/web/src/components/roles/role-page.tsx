@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { StatusLabel } from "@/components/roadmap/status-label";
 import type { Comparison, Role } from "@/content/roles";
 
 /**
@@ -19,11 +20,18 @@ import type { Comparison, Role } from "@/content/roles";
  * route file for why the design's 4-tab layout was not built). Two real
  * visual upgrades taken from that design: checkmark bullets for "must
  * have" skills, and a dark "Your path on Jintu" card for where to start.
- * No new data dependency: "Start here" still renders from role.startHere
- * alone, same as before — not the design's live open/"being rebuilt"
- * status per pick, which would mean this page reading the database for
- * the first time ever, breaking the exact thing its own route file calls
- * out as deliberate ("no database read here").
+ *
+ * `draftSlugs` (design pack update 3 §A, StatusKit) names which of
+ * role.startHere's picks have gone back to draft. This component itself
+ * still has no data dependency — the caller (the route file) computes the
+ * set and passes it in, same as it already does for role content. The
+ * route is not actually static despite generateStaticParams/SSG, since the
+ * viewer/momentum reads it makes for the shell already force per-request
+ * rendering (see that file's own header) — getDraftRoadmaps() there costs
+ * nothing extra architecturally, it rides along with those. A pick in the
+ * set draws "Roadmap coming" + a link to the holding page instead of a
+ * live Start link; every other pick, and every existing call site that
+ * hasn't passed the set at all, behaves exactly as before.
  */
 
 function Section({
@@ -78,7 +86,18 @@ const CheckBullets = ({ items }: { items: string[] }) => (
   </ul>
 );
 
-export function RolePage({ role, comparisons }: { role: Role; comparisons: Comparison[] }) {
+export function RolePage({
+  role,
+  comparisons,
+  draftSlugs = new Set(),
+}: {
+  role: Role;
+  comparisons: Comparison[];
+  /** Which of role.startHere's picks have gone back to draft — update 3
+   *  §A's third "Where to start" state. Empty by default: every existing
+   *  call site that doesn't know about this yet behaves exactly as before. */
+  draftSlugs?: Set<string>;
+}) {
   return (
     <main className="mx-auto max-w-[820px] px-5 py-12 sm:px-8 sm:py-16">
       <div className="font-mono text-[11px] leading-none tracking-[.1em] text-ink-500 uppercase">
@@ -221,24 +240,49 @@ export function RolePage({ role, comparisons }: { role: Role; comparisons: Compa
               Your path on Jintu
             </div>
             <ul className="m-0 flex list-none flex-col gap-4 p-0">
-              {role.startHere.picks.map((p, i) => (
-                <li key={p.slug} className="flex items-start gap-3.5">
-                  <span className="mt-0.5 flex size-[22px] flex-none items-center justify-center rounded-full border border-white/45 font-mono text-[11px] text-white">
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/learn/${p.slug}` as Route}
-                      className="text-[16px] leading-[1.4] font-semibold text-white hover:text-on-night-muted"
-                    >
-                      {p.slug.replace(/-/g, " ")} →
-                    </Link>
-                    <p className="mt-1 max-w-[62ch] text-[14.5px] leading-[1.6] text-pretty text-on-night-muted">
-                      {p.note}
-                    </p>
-                  </div>
-                </li>
-              ))}
+              {role.startHere.picks.map((p, i) => {
+                const isDraft = draftSlugs.has(p.slug);
+                return (
+                  <li key={p.slug} className="flex items-start gap-3.5">
+                    <span className="mt-0.5 flex size-[22px] flex-none items-center justify-center rounded-full border border-white/45 font-mono text-[11px] text-white">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      {isDraft ? (
+                        <>
+                          <div className="flex flex-wrap items-center gap-2.5">
+                            <span className="text-[16px] leading-[1.4] font-semibold text-white">
+                              {p.slug.replace(/-/g, " ")}
+                            </span>
+                            <StatusLabel status="draft" />
+                          </div>
+                          <p className="mt-1 max-w-[62ch] text-[14.5px] leading-[1.6] text-pretty text-on-night-muted">
+                            Roadmap coming. {p.note}
+                          </p>
+                          <Link
+                            href={`/learn/rebuilding?from=${p.slug}` as Route}
+                            className="mt-1.5 inline-flex text-[14.5px] font-semibold text-dark-link hover:text-on-night-muted"
+                          >
+                            Tell me when it opens →
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            href={`/learn/${p.slug}` as Route}
+                            className="text-[16px] leading-[1.4] font-semibold text-white hover:text-on-night-muted"
+                          >
+                            {p.slug.replace(/-/g, " ")} →
+                          </Link>
+                          <p className="mt-1 max-w-[62ch] text-[14.5px] leading-[1.6] text-pretty text-on-night-muted">
+                            {p.note}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ) : (

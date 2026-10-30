@@ -53,7 +53,7 @@ test("a saved item links back to the node it came from", () => {
   assert.match(lib, /nodeHref/);
   assert.match(lib, /\/learn\/\$\{published\.slug\}\/\$\{res\.nodes!\.slug\}/);
   // Never into a draft roadmap: that link would 404 for its own owner.
-  assert.match(lib, /roadmap\.status === "published"/);
+  assert.match(lib, /isOpenRoadmapStatus\(roadmap\.status\)/);
 });
 
 test("the provenance line names the roadmap and the node's GLOBAL position, not its per-module one", () => {

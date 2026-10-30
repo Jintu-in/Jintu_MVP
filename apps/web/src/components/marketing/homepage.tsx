@@ -238,8 +238,7 @@ const ON_JINTU = [
 const FREE_INCLUDES = [
   "Every roadmap, in full, readable without an account",
   "Progress, streaks and points across every roadmap you start",
-  "Notes and highlights, private to you, exportable any time",
-  "Every link opened and checked by a person before it shipped",
+  "Every link checked automatically, and dead ones replaced by hand",
   "No adverts, and no selling of anything about you",
 ];
 

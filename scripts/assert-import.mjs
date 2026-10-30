@@ -81,7 +81,7 @@ const pub = await one(`
     (select count(*)::int from public.resources res join public.nodes n on n.id = res.node_id
       join public.modules m on m.id = n.module_id where m.roadmap_id = r.id) resources
   from public.roadmaps r where r.slug = '${spec.slug}'`);
-check(pub?.status === "published", `checked import publishes (${pub?.status})`);
+check(pub?.status === "self_checked", `checked import publishes (${pub?.status})`);
 check(
   pub?.modules === specCounts.modules && pub?.nodes === specCounts.nodes && pub?.resources === specCounts.resources,
   `counts match the spec (${pub?.modules}m/${pub?.nodes}n/${pub?.resources}r)`,

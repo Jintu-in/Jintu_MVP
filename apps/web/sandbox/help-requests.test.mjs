@@ -43,7 +43,7 @@ test("a help request cannot be empty — the message column has a length CHECK",
 
 test("scripts/assert-baseline.mjs expects help_requests among the baseline tables, and covers its RLS", () => {
   assert.match(baseline, /"help_requests"/);
-  assert.match(baseline, /exactly the twenty-six baseline tables exist/);
+  assert.match(baseline, /exactly the twenty-seven baseline tables exist/);
   assert.match(baseline, /RLS stops user A reading user B's help requests/);
   assert.match(baseline, /a help request cannot be edited after the fact, even by its own owner/);
   assert.match(baseline, /a help request cannot be deleted by its own owner/);

@@ -61,7 +61,7 @@ const show = (title, sql, result) => {
 // ── fixture ──────────────────────────────────────────────────────────────────
 const rm = (
   await one(`insert into public.roadmaps (slug, title, summary, difficulty, status)
-  values ('demo', 'Demo', 'Fixture roadmap.', 'beginner', 'published') returning id`)
+  values ('demo', 'Demo', 'Fixture roadmap.', 'beginner', 'self_checked') returning id`)
 ).id;
 const mod = (
   await one(

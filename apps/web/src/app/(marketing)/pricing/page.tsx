@@ -118,8 +118,7 @@ export default function PricingPage() {
           <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
             <Yes>Every roadmap, in full, readable without an account</Yes>
             <Yes>Progress, streaks and points across every roadmap you start</Yes>
-            <Yes>Notes and highlights, private to you, exportable any time</Yes>
-            <Yes>Every link opened and checked by a person before it shipped</Yes>
+            <Yes>Every link checked automatically, and dead ones replaced by hand</Yes>
             <Yes>No adverts, and no selling of anything about you</Yes>
           </ul>
         </section>
