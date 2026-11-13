@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { JintuWordmark } from "@/components/site/jintu-wordmark";
 import { SiteNavMenu } from "@/components/site/site-nav-menu";
 import { cn } from "@/lib/utils";
 
@@ -57,10 +58,6 @@ export function SiteNav({
     ? "text-[14px] leading-none text-white/85 transition-colors hover:text-white [.jscrolled_&]:text-ink-600 [.jscrolled_&]:hover:text-ink-900"
     : "text-[14px] leading-none text-ink-600 transition-colors hover:text-ink-900";
 
-  const strong = overlay
-    ? "text-[16px] leading-none font-medium text-white [.jscrolled_&]:text-brand-700"
-    : "text-[16px] leading-none font-medium text-brand-700";
-
   return (
     <nav
       className={cn(
@@ -69,35 +66,18 @@ export function SiteNav({
         className,
       )}
     >
-      <Link href="/" aria-label="Jintu — home" className={cn("flex items-center gap-2", strong)}>
-        {/* The redesign's header mark is a literal "j" glyph. Drawn here
-            rather than left as real text: axe's label-content-name-mismatch
-            check (WCAG 2.5.3) treats text inside an aria-hidden node as part
-            of the link's VISIBLE label even though it is excluded from the
-            computed accessible NAME — so a literal "j" character here would
-            read as "jjintu" against the "jintu — home" aria-label and fail,
-            on every single page, since this nav is global. A drawn mark has
-            no text node for that check to catch, same colour treatment. */}
-        <span
+      <Link href="/" aria-label="jintu home" className="flex items-center">
+        {/* logo/jintu-wordmark-*.svg (design pack update 3 §D) — no text
+            node in the mark at all, so there is nothing for axe's
+            label-content-name-mismatch check (WCAG 2.5.3) to read as
+            "jjintu" against this aria-label, on every page, since this
+            nav is global. Letter colour follows the page the way the old
+            tile's background used to: white over the transparent/dark
+            hero, night-900 once `.jscrolled` puts a white bar behind it. */}
+        <JintuWordmark
           aria-hidden
-          className={cn(
-            "flex size-[26px] items-center justify-center rounded-[9px]",
-            overlay
-              ? "bg-white/90 [.jscrolled_&]:bg-brand-500"
-              : "bg-brand-500",
-          )}
-        >
-          <svg width={13} height={15} viewBox="0 0 13 15" fill="none">
-            <path
-              d="M9.5 1v8.5a4 4 0 0 1-4 4H2.5"
-              className={overlay ? "stroke-night-900 [.jscrolled_&]:stroke-on-brand" : "stroke-on-brand"}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <circle cx="9.5" cy="1" r="0.2" className={overlay ? "fill-night-900 [.jscrolled_&]:fill-on-brand" : "fill-on-brand"} />
-          </svg>
-        </span>
-        jintu
+          className={cn("h-[17px] w-auto", overlay ? "text-white [.jscrolled_&]:text-night-900" : "text-night-900")}
+        />
       </Link>
 
       <div className="flex-1" />

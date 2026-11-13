@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { JintuWordmark } from "@/components/site/jintu-wordmark";
 import { getSiteUrl } from "@/lib/env";
 
 /**
@@ -41,17 +42,11 @@ export function SiteFooter() {
     <footer className="bg-night-950 px-5 py-14 text-white sm:px-12 lg:py-16">
       <div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-8 lg:flex-row lg:gap-16">
         <div className="flex max-w-[340px] flex-col gap-3">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 text-[22px] leading-none font-medium tracking-[-0.01em] text-white"
-          >
-            <span
-              aria-hidden
-              className="flex size-[30px] items-center justify-center rounded-[10px] bg-brand-500 font-mono text-[15px] font-bold text-on-brand"
-            >
-              j
-            </span>
-            jintu
+          <Link href="/" aria-label="jintu home" className="flex items-center">
+            {/* logo/jintu-wordmark-white.svg (design pack update 3 §D) — see
+                site-nav.tsx's JintuWordmark comment for why this replaced
+                the old literal "j" + "jintu" text pair. */}
+            <JintuWordmark aria-hidden className="h-5 w-auto text-white" />
           </Link>
           <p className="hidden text-[15px] leading-[1.45] text-on-night-muted sm:block">
             Free roadmaps you do with your own hands, one clear step at a time.

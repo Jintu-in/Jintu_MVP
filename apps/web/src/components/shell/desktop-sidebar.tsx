@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IdentityMark } from "@/components/avatar/identity-mark";
+import { JintuWordmark } from "@/components/site/jintu-wordmark";
 import { SettingsNavIcon } from "@/components/ui/icons";
 import { NAV_ITEMS, type NavKey } from "./nav-items";
 
@@ -34,17 +35,12 @@ export function DesktopSidebar({
       aria-label="Main"
       className="flex w-[248px] flex-none flex-col gap-1 bg-night-900 p-4 text-white"
     >
-      <Link
-        href="/"
-        className="mb-4 flex h-12 items-center gap-2.5 px-2 font-heading text-[21px] font-semibold tracking-[-0.01em] text-white"
-      >
-        <span
-          aria-hidden
-          className="flex size-7 items-center justify-center rounded-9 bg-brand-500 font-heading text-base font-bold text-on-brand"
-        >
-          j
-        </span>
-        <span>jintu</span>
+      <Link href="/" aria-label="jintu home" className="mb-4 flex h-12 items-center px-2">
+        {/* logo/jintu-wordmark-white.svg (design pack update 3 §D) — the old
+            literal "j" + "jintu" text pair here had the same
+            label-content-name-mismatch bug site-nav.tsx's own comment
+            explains (JintuWordmark fixes it for every caller at once). */}
+        <JintuWordmark aria-hidden className="h-[19px] w-auto text-white" />
       </Link>
 
       {NAV_ITEMS.map(({ key, label, href, Icon }) => {

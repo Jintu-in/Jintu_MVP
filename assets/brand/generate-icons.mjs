@@ -1,131 +1,87 @@
 /**
- * Regenerates the favicon and PWA icon set from the brand source image.
- * Run it whenever jintu-logo-source.jpeg changes — do not hand-edit the
- * generated PNGs, they will be overwritten.
+ * Regenerates the favicon and PWA icon set from the brand source SVGs.
+ * Run it whenever assets/brand/logo/*.svg changes — do not hand-edit the
+ * generated PNGs or favicon.ico, they will be overwritten.
  *
  *   pnpm icons
+ *
+ * assets/brand/logo/ is this repo's own permanent copy of the final mark
+ * (design pack update 3 §D, originally design/jintu-design/logo/) — kept
+ * here rather than read from the design pack folder directly, since that
+ * folder is reference material for one pass and can be wholesale replaced
+ * by a future one; this pipeline needs a source that doesn't move.
+ *
+ * Supersedes jintu-logo-source.jpeg's flood-fill pipeline (that file is
+ * left in place as history, not read any more): the new source is already
+ * a clean vector with its own rounded-square plate and no background to
+ * key out, so this script is just "render the SVG at each size" plus one
+ * mark-only extraction for the maskable variant.
  *
  * sharp costs nothing here: Next already declares it as an optional
  * dependency at the same version for image optimisation, so pnpm resolves
  * both to one copy in the store.
  */
 import sharp from "sharp";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
-const SRC = path.join(HERE, "jintu-logo-source.jpeg");
 const WEB = path.join(ROOT, "apps/web");
-const WHITE = { r: 255, g: 255, b: 255, alpha: 1 };
-const BG_THRESHOLD = 238; // JPEG noise keeps the "white" ground off 255
+const TEAL = { r: 0x0a, g: 0x3b, b: 0x46, alpha: 1 }; // #0A3B46 — night-900
 
-// 1 ── decode to raw RGBA
-const { data, info } = await sharp(SRC)
-  .ensureAlpha()
-  .raw()
-  .toBuffer({ resolveWithObject: true });
-const { width: W, height: H } = info;
-console.log(`source ${W}x${H}`);
+const iconSvg = await readFile(path.join(HERE, "logo/jintu-icon.svg"), "utf8");
+const wordmarkTealSvg = await readFile(path.join(HERE, "logo/jintu-wordmark-teal.svg"), "utf8");
+// The same mark, without its own rounded-square plate: a maskable icon and
+// the in-page alpha logo both need to supply their own background (an OS
+// shape mask, or "any surface") rather than carry the baked-in rx="26"
+// corners, which would show as a second, wrongly-shaped tile nested inside
+// whatever actually crops it.
+const markOnlySvg = iconSvg.replace(/<rect[^>]*\/>/, "");
 
-// 2 ── flood-fill the ground from the borders. Keying every near-white pixel
-//      would punch holes through the eyes and the book's centre gutter, which
-//      are also white but enclosed by the mark.
-const isPale = (i) =>
-  data[i] > BG_THRESHOLD && data[i + 1] > BG_THRESHOLD && data[i + 2] > BG_THRESHOLD;
-const ground = new Uint8Array(W * H);
-const stack = [];
-for (let x = 0; x < W; x++) {
-  stack.push(x, (H - 1) * W + x);
-}
-for (let y = 0; y < H; y++) {
-  stack.push(y * W, y * W + W - 1);
-}
-while (stack.length) {
-  const p = stack.pop();
-  if (ground[p] || !isPale(p * 4)) continue;
-  ground[p] = 1;
-  const x = p % W;
-  const y = (p / W) | 0;
-  if (x > 0) stack.push(p - 1);
-  if (x < W - 1) stack.push(p + 1);
-  if (y > 0) stack.push(p - W);
-  if (y < H - 1) stack.push(p + W);
+/** Render the full icon tile (its own teal plate included) at `size`. */
+async function emitTile(file, size) {
+  await mkdir(path.dirname(file), { recursive: true });
+  await sharp(Buffer.from(iconSvg))
+    .resize(size, size)
+    .png({ compressionLevel: 9, effort: 10 })
+    .toFile(file);
+  console.log(`  ${path.relative(WEB, file).replace(/\\/g, "/")}  ${size}px`);
 }
 
-// 3 ── punch the ground transparent and measure what is left
-let minX = W, minY = H, maxX = -1, maxY = -1;
-for (let p = 0; p < W * H; p++) {
-  if (ground[p]) {
-    data[p * 4 + 3] = 0;
-    continue;
-  }
-  const x = p % W;
-  const y = (p / W) | 0;
-  if (x < minX) minX = x;
-  if (x > maxX) maxX = x;
-  if (y < minY) minY = y;
-  if (y > maxY) maxY = y;
-}
-const markW = maxX - minX + 1;
-const markH = maxY - minY + 1;
-const groundPct = ((ground.reduce((a, b) => a + b, 0) / (W * H)) * 100).toFixed(1);
-console.log(`ground removed: ${groundPct}%`);
-console.log(`mark bbox: ${markW}x${markH} at (${minX},${minY})`);
-
-// 4 ── crop to the mark, then pad to a square canvas so nothing distorts
-const side = Math.max(markW, markH);
-const square = await sharp(data, { raw: { width: W, height: H, channels: 4 } })
-  .extract({ left: minX, top: minY, width: markW, height: markH })
-  .extend({
-    top: Math.floor((side - markH) / 2),
-    bottom: Math.ceil((side - markH) / 2),
-    left: Math.floor((side - markW) / 2),
-    right: Math.ceil((side - markW) / 2),
-    background: { r: 0, g: 0, b: 0, alpha: 0 },
-  })
-  .png()
-  .toBuffer();
-console.log(`squared to ${side}x${side}`);
-
-/** Render the mark at `inset` of a `size` canvas. Opaque white unless asked. */
-async function emit(file, size, inset, opaque) {
+/** Render just the mark (no plate) inset within a `size` canvas, on a
+ *  plain teal background with no corner rounding of its own — the maskable
+ *  spec's safe zone, left for the OS to shape. Teal-only, not alpha: the
+ *  mark's letter is white, which disappears against anything light, so it
+ *  only ever gets used backed by its own plate or this fixed teal fill. */
+async function emitMark(file, size, inset) {
   const inner = Math.round(size * inset);
   const pad = Math.round((size - inner) / 2);
-  const mark = await sharp(square)
+  const mark = await sharp(Buffer.from(markOnlySvg))
     .resize(inner, inner, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .toBuffer();
   await mkdir(path.dirname(file), { recursive: true });
-  await sharp({
-    create: {
-      width: size,
-      height: size,
-      channels: 4,
-      background: opaque ? WHITE : { r: 0, g: 0, b: 0, alpha: 0 },
-    },
-  })
+  await sharp({ create: { width: size, height: size, channels: 4, background: TEAL } })
     .composite([{ input: mark, top: pad, left: pad }])
-    // Flat two-colour art — a palette PNG is a fraction of the size of
-    // truecolour at no visible cost, and these ship to phones on mobile data.
-    .png({ compressionLevel: 9, palette: true, colors: 128, effort: 10 })
+    .png({ compressionLevel: 9, effort: 10, palette: true, colors: 128 })
     .toFile(file);
   console.log(`  ${path.relative(WEB, file).replace(/\\/g, "/")}  ${size}px  inset ${inset}`);
 }
 
-console.log("\nwriting:");
-// Favicon + PWA icons sit on an opaque white plate matching the manifest's
-// background_color: the mark's outlines are near-black and would vanish
-// against dark browser chrome or a dark launcher.
-await emit(`${WEB}/src/app/icon.png`, 256, 0.92, true);
-await emit(`${WEB}/src/app/apple-icon.png`, 180, 0.84, true);
-await emit(`${WEB}/public/icons/192.png`, 192, 0.92, true);
-await emit(`${WEB}/public/icons/512.png`, 512, 0.92, true);
+console.log("writing:");
+await emitTile(`${WEB}/src/app/icon.png`, 256);
+await emitTile(`${WEB}/src/app/apple-icon.png`, 180);
+await emitTile(`${WEB}/public/icons/192.png`, 192);
+await emitTile(`${WEB}/public/icons/512.png`, 512);
 // Maskable: launchers crop to a circle of ~80% diameter, so the mark has to
-// clear that safe zone or Android will shave the book and the sparkles off.
-await emit(`${WEB}/public/icons/maskable-512.png`, 512, 0.62, true);
-// In-page logo keeps its alpha so it can sit on any surface.
-await emit(`${WEB}/public/logo.png`, 512, 1.0, false);
+// clear that safe zone or Android will shave the flame and the j's hook off.
+await emitMark(`${WEB}/public/icons/maskable-512.png`, 512, 0.62);
+// No public/logo.png from this pass: the old script's alpha-background
+// "sits on any surface" version doesn't work with a white letter (it
+// disappears against anything light), and nothing in the app actually
+// references that file — CHANGES.md's D section asks for the favicon set
+// and nothing beyond it, so a flawed asset nobody uses isn't reintroduced.
 
 /**
  * favicon.ico, because browsers request /favicon.ico regardless of what
@@ -139,16 +95,9 @@ await emit(`${WEB}/public/logo.png`, 512, 1.0, false);
 async function emitIco(file, sizes) {
   const images = [];
   for (const size of sizes) {
-    const inner = Math.round(size * 0.92);
-    const pad = Math.round((size - inner) / 2);
-    const mark = await sharp(square)
-      .resize(inner, inner, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .toBuffer();
     images.push(
-      await sharp({
-        create: { width: size, height: size, channels: 4, background: WHITE },
-      })
-        .composite([{ input: mark, top: pad, left: pad }])
+      await sharp(Buffer.from(iconSvg))
+        .resize(size, size)
         // Truecolour RGBA, NOT palette. ICO decoders — Turbopack's included —
         // reject indexed-colour PNG payloads outright ("The PNG is not in RGBA
         // format"). At 16-48px the palette saving is a few hundred bytes and
@@ -190,3 +139,34 @@ async function emitIco(file, sizes) {
 }
 
 await emitIco(`${WEB}/src/app/favicon.ico`, [16, 32, 48]);
+
+/**
+ * opengraph-image.tsx's wordmark, as a base64 PNG constant rather than the
+ * inline SVG every other caller uses: Satori (next/og's renderer) does not
+ * handle this SVG's nested `scale(1 -1)` group and large negative-coordinate
+ * paths correctly — it renders the five letters collapsed into one
+ * illegible blob instead of "jintu" (confirmed against sharp's own render
+ * of the identical file, which is correct — see this function's own
+ * comment for the byte-for-byte source). A rasterized `<img>` is the
+ * reliable path through Satori's limited SVG support; a generated
+ * TypeScript module, not a loose PNG file, so opengraph-image.tsx needs no
+ * filesystem read of its own and nothing can drift between the two.
+ */
+async function emitWordmarkDataUri() {
+  const png = await sharp(Buffer.from(wordmarkTealSvg))
+    .resize({ height: 160 }) // 2.5x the 64px intrinsic size, for a crisp 1200x630 card
+    .png({ compressionLevel: 9, effort: 10 })
+    .toBuffer();
+  const meta = await sharp(png).metadata();
+  const file = path.join(WEB, "src/lib/brand-assets.generated.ts");
+  await writeFile(
+    file,
+    `// Generated by assets/brand/generate-icons.mjs (\`pnpm icons\`) — do not hand-edit.\n` +
+      `export const WORDMARK_TEAL_PNG = "data:image/png;base64,${png.toString("base64")}";\n` +
+      `export const WORDMARK_TEAL_WIDTH = ${meta.width};\n` +
+      `export const WORDMARK_TEAL_HEIGHT = ${meta.height};\n`,
+  );
+  console.log(`  ${path.relative(WEB, file).replace(/\\/g, "/")}  ${meta.width}x${meta.height}  ${png.length}B`);
+}
+
+await emitWordmarkDataUri();

@@ -20,7 +20,7 @@ const nav = readFileSync(join(SRC, "components", "site", "site-nav.tsx"), "utf8"
 const menu = readFileSync(join(SRC, "components", "site", "site-nav-menu.tsx"), "utf8");
 
 test("the wordmark is hard left and everything else is hard right", () => {
-  const mark = nav.indexOf('href="/" aria-label="Jintu — home"');
+  const mark = nav.indexOf('href="/" aria-label="jintu home"');
   const spacer = nav.indexOf('<div className="flex-1" />');
   const links = nav.indexOf("Roadmaps");
   const account = nav.indexOf("<SiteNavMenu");
@@ -83,9 +83,9 @@ test("the trigger is a real 40px target and says what it does", () => {
 
 test("the overlay variant still inverts on the homepage hero", () => {
   assert.match(menu, /\[\.jscrolled_&\]:text-ink-900/, "the trigger follows the scrolled bar");
-  // The mark is a drawn "j" glyph (an svg path, not text — see the comment
-  // in site-nav.tsx on why), but it still has to invert the same way:
-  // white-badge-on-dark-hero, brand-badge-on-white once the bar scrolls.
-  assert.match(nav, /\[\.jscrolled_&\]:bg-brand-500/, "and so does the mark's fill");
-  assert.match(nav, /\[\.jscrolled_&\]:stroke-on-brand/, "and its glyph");
+  // The mark is the JintuWordmark component (see its own file for why it's
+  // not a literal "j" + "jintu" text pair any more), coloured via
+  // currentColor, so it still has to invert the same way: white over the
+  // dark hero, night-900 once the bar scrolls in behind it.
+  assert.match(nav, /text-white \[\.jscrolled_&\]:text-night-900/, "the wordmark inverts with the bar");
 });

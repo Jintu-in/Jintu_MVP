@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getSiteUrl } from "@/lib/env";
+import { WORDMARK_TEAL_HEIGHT, WORDMARK_TEAL_PNG, WORDMARK_TEAL_WIDTH } from "@/lib/brand-assets.generated";
 
 /**
  * The default social preview for every route that does not generate its own.
@@ -36,7 +37,23 @@ export default async function Image() {
           background: "#FFFFFF",
         }}
       >
-        <div style={{ display: "flex", fontSize: 26, fontWeight: 500, color: "#17758a" }}>
+        {/* logo/jintu-wordmark-teal.svg (design pack update 3 §D), rasterized
+            by assets/brand/generate-icons.mjs into brand-assets.generated.ts
+            rather than inlined as SVG: Satori (next/og's renderer) does not
+            handle this file's nested `scale(1 -1)` transform correctly — it
+            renders the five letters collapsed into an illegible blob
+            instead of "jintu" (confirmed against sharp's own render of the
+            identical source, which is correct). A rasterized `<img>` is the
+            reliable path through Satori's limited SVG support. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/image
+            doesn't run inside ImageResponse; Satori needs a plain <img>. */}
+        <img
+          src={WORDMARK_TEAL_PNG}
+          width={72}
+          height={(72 * WORDMARK_TEAL_HEIGHT) / WORDMARK_TEAL_WIDTH}
+          alt=""
+        />
+        <div style={{ display: "flex", marginTop: 20, fontSize: 26, fontWeight: 500, color: "#17758a" }}>
           {getSiteUrl().host}
         </div>
         <div
