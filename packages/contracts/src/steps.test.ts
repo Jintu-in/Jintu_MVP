@@ -34,8 +34,8 @@ describe("decideStepSchema", () => {
   // sourceUrl, but sourceUrl is the one CLAUDE.md rule 2 cares about most
   // (an unlinked claim is exactly what "never fabricate" exists to catch).
   it("fails without realCase.sourceUrl", () => {
-    const { realCase, ...rest } = validDecide;
-    const { sourceUrl, ...realCaseWithoutSource } = realCase;
+    const { realCase: _realCase, ...rest } = validDecide;
+    const { sourceUrl: _sourceUrl, ...realCaseWithoutSource } = _realCase;
     const result = decideStepSchema.safeParse({ ...rest, realCase: realCaseWithoutSource });
     expect(result.success).toBe(false);
   });
@@ -49,7 +49,7 @@ describe("decideStepSchema", () => {
   });
 
   it("fails without a real case at all", () => {
-    const { realCase, ...rest } = validDecide;
+    const { realCase: _realCase, ...rest } = validDecide;
     expect(decideStepSchema.safeParse(rest).success).toBe(false);
   });
 
