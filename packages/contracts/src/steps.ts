@@ -269,6 +269,71 @@ export const codeMultiStepSchema = z
     { message: "each language may appear at most once in variants", path: ["variants"] },
   );
 
+/**
+ * The Decide step (V2Decide/V2DecideReveal/DeskDecide, design pack update
+ * 3 §B): choose an option, explain why, then see a real case and compare.
+ * For judgment roadmaps (startup finance, entrepreneurship) where there is
+ * no right answer and no score — CLAUDE.md's no-grading rule applies here
+ * exactly as it does to the other kinds, just across a two-part
+ * interaction (lock in, then reveal) instead of a worked example shown
+ * up front.
+ *
+ * Unlike every other kind, there is no `ctaLabel`: the two buttons
+ * ("Lock in and see what happened", then "Next step") are fixed
+ * interaction chrome, not bespoke per-step text.
+ *
+ * No real roadmap authors this yet — same position migration 0033's DSA
+ * language switch shipped from: schema, storage and renderer built and
+ * tested against synthetic fixtures, a real pilot (startup finance or
+ * entrepreneurship) a later, separate content-authoring task. That gap
+ * matters more here than it did for the DSA switch: `realCase` cannot be
+ * filled with a placeholder to unblock shipping, the way code samples
+ * could be — it is a named person or business with a real, checkable
+ * source, same posture as every roadmap resource's own needs_verification
+ * state (CLAUDE.md rule 2). Inventing one to ship this sooner is exactly
+ * the thing that rule exists to stop.
+ */
+const decideOptionSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  /** The one-line case FOR this option — "+ Protects the margin at once". */
+  pro: z.string().min(1),
+  /** The one-line case AGAINST it — "− Some buyers leave...". */
+  con: z.string().min(1),
+});
+
+export const decideStepSchema = z
+  .object({
+    kind: z.literal("decide"),
+    title: z.string().min(1),
+    /** The white context card above the options — "You sell a spice
+     *  blend online..." */
+    scenario: z.string().min(1),
+    options: z.array(decideOptionSchema).min(2).max(4),
+    reasonPrompt: z.string().min(1).default("Why this one? One or two lines"),
+    /** Required in full, never a placeholder — see this schema's own
+     *  header comment. `outcome` is the 2-3 sentence "what happened"
+     *  prose the reveal card shows; `who`/`chose` are short structured
+     *  facts the renderer opens that prose with, not separately
+     *  displayed fields of their own. */
+    realCase: z.object({
+      who: z.string().min(1),
+      chose: z.string().min(1),
+      outcome: z.string().min(1),
+      sourceTitle: z.string().min(1),
+      sourceUrl: z.string().url(),
+    }),
+    /** "Did your reason cover…" — 2-4 self-check prompts the learner ticks
+     *  against their OWN reason, never graded against the content
+     *  (CLAUDE.md: no grading). Persisted so "Change my answer" restores
+     *  the ticks, same as the reason text. */
+    coverChecklist: z.array(z.string().min(1)).min(2).max(4),
+  })
+  .refine((v) => new Set(v.options.map((o) => o.id)).size === v.options.length, {
+    message: "each option id must be unique",
+    path: ["options"],
+  });
+
 export const authoredStepSchema = z.discriminatedUnion("kind", [
   commandStepSchema,
   turnStepSchema,
@@ -278,6 +343,7 @@ export const authoredStepSchema = z.discriminatedUnion("kind", [
   numberStepSchema,
   writeStepSchema,
   codeMultiStepSchema,
+  decideStepSchema,
 ]);
 export const authoredStepsSchema = z.array(authoredStepSchema);
 
@@ -289,6 +355,8 @@ export type FormulaStep = z.infer<typeof formulaStepSchema>;
 export type NumberStep = z.infer<typeof numberStepSchema>;
 export type WriteStep = z.infer<typeof writeStepSchema>;
 export type CodeMultiStep = z.infer<typeof codeMultiStepSchema>;
+export type DecideOption = z.infer<typeof decideOptionSchema>;
+export type DecideStep = z.infer<typeof decideStepSchema>;
 export type AuthoredStep = z.infer<typeof authoredStepSchema>;
 
 export type DotGridPanel = z.infer<typeof dotGridPanelSchema>;

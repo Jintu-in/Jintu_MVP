@@ -40,7 +40,7 @@ test("the mobile header, progress bar and sticky footer all hide at lg — the d
 });
 
 test("the desktop CTA row is a second, lg-only copy of the footer buttons, not the mobile one reflowed", () => {
-  const desktopCta = reader.slice(reader.indexOf('className="flex gap-2.5 lg:mt-1"'), reader.indexOf('className="flex-none border-t'));
+  const desktopCta = reader.slice(reader.indexOf('className="flex items-center gap-2.5 lg:mt-1"'), reader.indexOf('className="flex-none border-t'));
   assert.match(desktopCta, /lg:flex/);
   assert.match(desktopCta, /hidden h-14/);
 });

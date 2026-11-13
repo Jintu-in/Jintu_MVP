@@ -51,7 +51,7 @@ const one = async (q, p = []) => (await rows(q, p))[0];
 // Every table the pivot specifies, nothing the old product left behind.
 const expected = [
   "activity_days", "audit_log", "auth_attempts", "colleges", "consent_events",
-  "consents", "help_requests", "link_checks", "modules", "nodes", "node_checks", "node_progress",
+  "consents", "decisions", "help_requests", "link_checks", "modules", "nodes", "node_checks", "node_progress",
   "node_topics", "notifications", "notify_requests", "point_events", "profiles",
   "review_cards", "roadmap_enrollments", "roadmap_prerequisites", "roadmaps",
   "resources", "public_profiles", "reminder_prefs", "saved_resources",
@@ -63,7 +63,7 @@ const actual = (await rows(
 )).map((r) => r.relname);
 check(
   JSON.stringify(actual) === JSON.stringify(expected),
-  `exactly the twenty-seven baseline tables exist`,
+  `exactly the twenty-eight baseline tables exist`,
   `got: ${actual.join(", ")}`,
 );
 
@@ -262,6 +262,46 @@ await as(ua, `insert into public.review_cards (user_id, node_id, front, back)
 check(
   (await as(ub, "select * from public.review_cards")).length === 0,
   "cards are invisible across users",
+);
+
+console.log("\n── the Decide step's own rows (0036) ────────────────────────");
+await as(ua, `insert into public.decisions (user_id, roadmap_id, node_id, step_id, option_id, reason)
+              values ('${ua}', '${pub.id}', '${node.id}', 'authored-what-a-servlet-is-0', 'a',
+                      'Repeat buyers already trust the taste, and this keeps the margin.')`);
+check(
+  (await as(ub, "select * from public.decisions")).length === 0,
+  "a decision is invisible to another user",
+);
+check(
+  await asFails(ub, `insert into public.decisions (user_id, roadmap_id, node_id, step_id, option_id, reason)
+                     values ('${ua}', '${pub.id}', '${node.id}', 'authored-what-a-servlet-is-0', 'b',
+                             'Not my decision to make, but trying anyway.')`),
+  "nobody can write a decision as someone else",
+);
+let shortReason = false;
+try {
+  await as(ua, `insert into public.decisions (user_id, roadmap_id, node_id, step_id, option_id, reason)
+                values ('${ua}', '${pub.id}', '${node.id}', 'authored-what-a-servlet-is-1', 'a', 'Too short')`);
+  shortReason = true;
+} catch { /* decisions reason length CHECK — mirrors V2Decide's own 15-char CTA gate */ }
+check(!shortReason, "a reason under 15 characters is refused, same floor the client enforces before Lock in");
+// "Change my answer" updates the SAME row — the unique (user, node, step)
+// constraint is what makes that an upsert rather than a second decision.
+let secondDecision = false;
+try {
+  await db.exec(`insert into public.decisions (user_id, roadmap_id, node_id, step_id, option_id, reason)
+                 values ('${ua}', '${pub.id}', '${node.id}', 'authored-what-a-servlet-is-0', 'b',
+                         'A different reason for the exact same step.')`);
+  secondDecision = true;
+} catch { /* decisions_user_id_node_id_step_id_key */ }
+check(!secondDecision, "the same user cannot have two decisions on the same step — Change my answer must update, not insert");
+
+await as(ua, `update public.decisions set option_id = 'c', reason = 'Actually, the smaller jar keeps the price line the same.'
+              where user_id = '${ua}' and node_id = '${node.id}' and step_id = 'authored-what-a-servlet-is-0'`);
+check(
+  (await as(ua, `select option_id from public.decisions where node_id = '${node.id}' and step_id = 'authored-what-a-servlet-is-0'`))[0]
+    ?.option_id === "c",
+  "changing an answer updates the existing row in place",
 );
 
 console.log("\n── the auth v3 surface stays server-side ───────────────────");

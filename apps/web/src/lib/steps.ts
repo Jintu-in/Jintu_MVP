@@ -144,6 +144,20 @@ export type LessonStep = { id: string; railTitle: string } & (
       note?: string;
       ctaLabel: string;
     }
+  | {
+      kind: "decide";
+      scenario: string;
+      options: { id: string; label: string; pro: string; con: string }[];
+      reasonPrompt: string;
+      realCase: { who: string; chose: string; outcome: string; sourceTitle: string; sourceUrl: string };
+      coverChecklist: string[];
+      /** This user's own saved row for this exact step (migration 0036),
+       *  merged in at the page level — buildLessonSteps() itself has no
+       *  user context, so this is always undefined straight out of it.
+       *  Present means "already decided": the reader opens in the reveal
+       *  state instead of the blank form. */
+      existingDecision?: { optionId: string; reason: string; covered: string[] };
+    }
   | { kind: "check"; number: string; question: Rich; answer: Rich[] }
   | { kind: "gotcha"; heading?: string; text: Rich }
   | {
@@ -267,17 +281,29 @@ function authoredToLessonSteps(authored: AuthoredStep[], nodeSlug: string): Less
         panel: a.panel,
       };
     }
+    if (a.kind === "codeMulti") {
+      return {
+        id,
+        railTitle: a.title,
+        kind: "codeMulti",
+        body: a.body,
+        variants: a.variants,
+        outputLabel: a.outputLabel,
+        outputCaption: a.outputCaption,
+        output: a.output,
+        note: a.note,
+        ctaLabel: a.ctaLabel,
+      };
+    }
     return {
       id,
       railTitle: a.title,
-      kind: "codeMulti",
-      body: a.body,
-      variants: a.variants,
-      outputLabel: a.outputLabel,
-      outputCaption: a.outputCaption,
-      output: a.output,
-      note: a.note,
-      ctaLabel: a.ctaLabel,
+      kind: "decide",
+      scenario: a.scenario,
+      options: a.options,
+      reasonPrompt: a.reasonPrompt,
+      realCase: a.realCase,
+      coverChecklist: a.coverChecklist,
     };
   });
 }

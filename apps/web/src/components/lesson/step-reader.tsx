@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import { codeLanguageName, type CodeLanguageKey, type Panel } from "@jintu/contracts";
+import { saveDecision } from "@/actions/decisions";
 import { submitHelpRequest } from "@/actions/help";
+import type { FounderLogEntry } from "@/lib/decisions";
 import { BackIcon, CopyIcon, DocFileIcon, EyeIcon, ExternalIcon, PlayCircleIcon, VideoTileIcon } from "@/components/ui/icons";
 import { VideoFacade } from "@/components/video-facade";
 import type { LessonStep, Rich, TerminalLine } from "@/lib/steps";
@@ -22,6 +24,7 @@ const HELP_ELIGIBLE: ReadonlySet<LessonStep["kind"]> = new Set([
   "formula",
   "number",
   "write",
+  "decide",
 ]);
 
 /**
@@ -72,6 +75,7 @@ const KIND_PILL: Partial<Record<LessonStep["kind"], string>> = {
   formula: "Formula",
   number: "Number",
   write: "Write",
+  decide: "Decide",
 };
 
 /**
@@ -135,6 +139,9 @@ export interface StepReaderProps {
   /** For the help box's submission only — which lesson this step belongs
    *  to. Not used for anything else here. */
   nodeId: string;
+  /** A decide step's own save (migration 0036) needs its roadmap too —
+   *  nothing else in this reader does. */
+  roadmapId: string;
   /** Where "Quiz me first" goes — only ever rendered on a faq step with
    *  hasQuiz true, but always passed down (harmless unused otherwise). */
   quizHref: string;
@@ -156,6 +163,9 @@ export interface StepReaderProps {
    *  lesson stays in sync ("applies to every code block"). */
   codeLanguage: CodeLanguageKey;
   onCodeLanguageChange: (language: CodeLanguageKey) => void;
+  /** DeskDecide's "Your founder log" aside — empty on every lesson without
+   *  a decide step. */
+  founderLog: FounderLogEntry[];
   /** V2Offline/DeskOffline (Phase 5 Part D) — drives the "You are offline"
    *  banner and HelpBox's disabled "Ask needs internet" state. Computed in
    *  lesson-route.tsx (it also needs it, to retry a failed completion once
@@ -177,6 +187,7 @@ export function StepReader({
   roadmapTitle,
   moduleLabel,
   nodeId,
+  roadmapId,
   quizHref,
   steps,
   stepIndex,
@@ -186,6 +197,7 @@ export function StepReader({
   estMinutes,
   codeLanguage,
   onCodeLanguageChange,
+  founderLog,
   online,
   onBack,
   onPrev,
@@ -195,6 +207,62 @@ export function StepReader({
   error,
 }: StepReaderProps) {
   const panel = "panel" in step ? step.panel : undefined;
+
+  // A decide step's "Lock in" / "Next step" is a second, step-owned action
+  // ahead of the generic onContinue (every other kind is a worked example,
+  // always continuable) — so its draft and "locked" state live here,
+  // shared by the footer CTA (both the mobile and desktop copy of it,
+  // below) and DecideBody's own content. Reset on every step change, not
+  // just mount: StepReader is one long-lived instance across the whole
+  // lesson, not remounted per step.
+  const existingDecision = step.kind === "decide" ? step.existingDecision : undefined;
+  const [decideLocked, setDecideLocked] = useState(() => Boolean(existingDecision));
+  const [decideOption, setDecideOption] = useState<string | null>(() => existingDecision?.optionId ?? null);
+  const [decideReason, setDecideReason] = useState(() => existingDecision?.reason ?? "");
+  const [decideCovered, setDecideCovered] = useState<Set<string>>(() => new Set(existingDecision?.covered ?? []));
+  useEffect(() => {
+    setDecideLocked(Boolean(existingDecision));
+    setDecideOption(existingDecision?.optionId ?? null);
+    setDecideReason(existingDecision?.reason ?? "");
+    setDecideCovered(new Set(existingDecision?.covered ?? []));
+    // step.id, not existingDecision — a different step is what this
+    // actually needs to reset on; existingDecision changes right along
+    // with it for any decide step, and chasing it directly would also
+    // mean refiring (and wiping the in-progress draft) after our own
+    // save succeeds, since the parent never re-seeds it mid-lesson.
+  }, [step.id]);
+
+  const { execute: executeSaveDecision, isExecuting: savingDecision } = useAction(saveDecision, {
+    onSuccess: () => setDecideLocked(true),
+  });
+  const saveDecideDraft = (covered: Set<string>) => {
+    if (step.kind !== "decide" || !decideOption) return;
+    executeSaveDecision({
+      roadmapId,
+      nodeId,
+      stepId: step.id,
+      optionId: decideOption,
+      reason: decideReason,
+      covered: [...covered],
+    });
+  };
+  const canLockIn = Boolean(decideOption) && decideReason.trim().length >= 15;
+  const isUnlockedDecide = step.kind === "decide" && !decideLocked;
+  const footerDisabled = isUnlockedDecide ? savingDecision || !canLockIn : Boolean(continuing);
+  const footerLabel = isUnlockedDecide
+    ? savingDecision
+      ? "Saving…"
+      : "Lock in and see what happened"
+    : continuing
+      ? "Saving…"
+      : ctaLabelFor(step, stepIndex, total);
+  const onFooterCta = () => {
+    if (isUnlockedDecide) {
+      saveDecideDraft(decideCovered);
+      return;
+    }
+    onContinue();
+  };
 
   return (
     // min-h-dvh pins the mobile sticky footer near the bottom of a short
@@ -279,13 +347,41 @@ export function StepReader({
             </h1>
           </div>
 
-          <StepBody step={step} codeLanguage={codeLanguage} onCodeLanguageChange={onCodeLanguageChange} />
+          <StepBody
+            step={step}
+            codeLanguage={codeLanguage}
+            onCodeLanguageChange={onCodeLanguageChange}
+            decide={
+              step.kind === "decide"
+                ? {
+                    locked: decideLocked,
+                    option: decideOption,
+                    onOption: setDecideOption,
+                    reason: decideReason,
+                    onReason: setDecideReason,
+                    covered: decideCovered,
+                    onToggleCovered: (item) => {
+                      const next = new Set(decideCovered);
+                      if (next.has(item)) next.delete(item);
+                      else next.add(item);
+                      setDecideCovered(next);
+                      // Already locked in — a checklist change after that
+                      // point is itself a small update, not a fresh Lock
+                      // in, so it saves on its own rather than waiting for
+                      // another button press that no longer exists.
+                      if (decideLocked) saveDecideDraft(next);
+                    },
+                    onChangeAnswer: () => setDecideLocked(false),
+                  }
+                : undefined
+            }
+          />
 
           {HELP_ELIGIBLE.has(step.kind) ? (
             <HelpBox key={step.id} nodeId={nodeId} stepContext={step.railTitle} online={online} />
           ) : null}
 
-          <div className="flex gap-2.5 lg:mt-1">
+          <div className="flex items-center gap-2.5 lg:mt-1">
             {onPrev ? (
               <button
                 type="button"
@@ -306,13 +402,21 @@ export function StepReader({
             ) : null}
             <button
               type="button"
-              disabled={continuing}
-              onClick={onContinue}
-              className="hidden h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600 lg:flex"
+              disabled={footerDisabled}
+              onClick={onFooterCta}
+              className={cn(
+                "hidden h-14 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600 lg:flex",
+                step.kind === "decide" ? "flex-none px-7" : "flex-1",
+              )}
             >
-              <span>{continuing ? "Saving…" : ctaLabelFor(step, stepIndex, total)}</span>
-              {continuing ? null : ARROW_RIGHT}
+              <span>{footerLabel}</span>
+              {footerDisabled ? null : ARROW_RIGHT}
             </button>
+            {step.kind === "decide" ? (
+              <span className="hidden text-[14px] leading-5 text-ink-500 lg:block">
+                No score. You compare your reasoning, not your answer.
+              </span>
+            ) : null}
           </div>
         </div>
 
@@ -343,18 +447,24 @@ export function StepReader({
             ) : null}
             <button
               type="button"
-              disabled={continuing}
-              onClick={onContinue}
+              disabled={footerDisabled}
+              onClick={onFooterCta}
               className="flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 text-[16.5px] font-semibold text-on-brand disabled:bg-ink-100 disabled:text-ink-600"
             >
-              <span>{continuing ? "Saving…" : ctaLabelFor(step, stepIndex, total)}</span>
-              {continuing ? null : ARROW_RIGHT}
+              <span>{footerLabel}</span>
+              {footerDisabled ? null : ARROW_RIGHT}
             </button>
           </div>
+          {isUnlockedDecide ? (
+            <p className="m-0 mt-1.5 text-center text-[12.5px] leading-[18px] text-ink-500">
+              No score. You compare your reasoning, not your answer.
+            </p>
+          ) : null}
         </div>
       </div>
 
       {panel ? <WorkPanel panel={panel} /> : null}
+      {step.kind === "decide" ? <FounderLogAside entries={founderLog} /> : null}
     </div>
   );
 }
@@ -372,13 +482,17 @@ function ctaLabelFor(step: LessonStep, stepIndex: number, total: number): string
   ) {
     return step.ctaLabel;
   }
+  // A LOCKED decide step (StepReader's own pre-lock "Lock in..." label is
+  // computed separately, ahead of this call). "Next step", not "Continue"
+  // — V2DecideReveal/DeskDecide's own fixed copy.
+  if (step.kind === "decide") return stepIndex + 1 === total ? "Finish" : "Next step";
   return stepIndex + 1 === total ? "Finish" : "Continue";
 }
 
 const STEP_GROUPS: { label: string; match: (kind: LessonStep["kind"]) => boolean }[] = [
   {
     label: "Your turn",
-    match: (k) => k === "challenge" || k === "turnRich" || k === "choose" || k === "find" || k === "formula" || k === "number" || k === "write",
+    match: (k) => k === "challenge" || k === "turnRich" || k === "choose" || k === "find" || k === "formula" || k === "number" || k === "write" || k === "decide",
   },
   { label: "Questions", match: (k) => k === "check" },
   { label: "Go deeper", match: (k) => k === "gotcha" },
@@ -517,14 +631,30 @@ function LessonNav({
   );
 }
 
+/** The decide case's own form state, lifted to StepReader — see its own
+ *  comment for why a decide step needs this ahead of StepBody. */
+interface DecideProps {
+  locked: boolean;
+  option: string | null;
+  onOption: (id: string) => void;
+  reason: string;
+  onReason: (reason: string) => void;
+  covered: Set<string>;
+  onToggleCovered: (item: string) => void;
+  onChangeAnswer: () => void;
+}
+
 function StepBody({
   step,
   codeLanguage,
   onCodeLanguageChange,
+  decide,
 }: {
   step: LessonStep;
   codeLanguage: CodeLanguageKey;
   onCodeLanguageChange: (language: CodeLanguageKey) => void;
+  /** Only present (and only read) for a `decide` step. */
+  decide?: DecideProps;
 }) {
   switch (step.kind) {
     case "concept":
@@ -938,6 +1068,9 @@ function StepBody({
         <CodeMultiBody step={step} codeLanguage={codeLanguage} onCodeLanguageChange={onCodeLanguageChange} />
       );
 
+    case "decide":
+      return decide ? <DecideBody step={step} decide={decide} /> : null;
+
     case "check":
       return <CheckStep step={step} />;
 
@@ -1224,6 +1357,47 @@ function WorkPanel({ panel }: { panel: Panel }) {
         <SpreadsheetPanel panel={panel} />
       ) : (
         <ForecastLogPanel panel={panel} />
+      )}
+    </aside>
+  );
+}
+
+/**
+ * DeskDecide's "Your founder log" — every decide step this user has
+ * answered in this roadmap, oldest first, the current one framed. Shares
+ * WorkPanel's own aside chrome (same 380px column) rather than sitting
+ * inside it: a decide step never carries an authored `panel` the way the
+ * five Uni* kinds do (it has its own, user-authored one instead), so the
+ * two are mutually exclusive, never both rendered for the same step.
+ */
+function FounderLogAside({ entries }: { entries: FounderLogEntry[] }) {
+  return (
+    <aside
+      aria-label="Your founder log"
+      className="hidden w-[380px] flex-none flex-col gap-5 overflow-y-auto border-l border-ink-100 bg-white p-6 lg:flex"
+    >
+      <PanelHeading
+        title="Your founder log"
+        subtitle="Every decision you make in this roadmap, kept so you can see how your thinking changes."
+      />
+      {entries.length === 0 ? (
+        <PanelNote note="Lock in your first decision and it starts here." />
+      ) : (
+        <div className="flex flex-col gap-2">
+          {entries.map((e, i) => (
+            <Link
+              key={`${e.nodeHref}-${i}`}
+              href={e.nodeHref as never}
+              className={cn(
+                "flex flex-col gap-1 rounded-2xl p-3.5 no-underline",
+                e.current ? "border-2 border-brand-500 bg-brand-50" : "border-2 border-transparent bg-ink-50",
+              )}
+            >
+              <span className="text-[14px] leading-5 font-semibold text-ink-900">{e.nodeTitle}</span>
+              <span className="font-mono text-[13.5px] leading-5 text-ink-600">You chose: {e.optionLabel}</span>
+            </Link>
+          ))}
+        </div>
       )}
     </aside>
   );
@@ -1521,6 +1695,188 @@ function TerminalCard({
           </div>
         </>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * V2Decide (not locked) / V2DecideReveal+DeskDecide (locked) — design pack
+ * update 3 §B. The two phases of one step, picked by `decide.locked`
+ * (state lives in StepReader, see its own comment on why). Letters
+ * (A/B/C…) are derived from each option's position, never authored —
+ * `options[].id` is a stable key for storage and "your pick" matching,
+ * not display text.
+ *
+ * DeskDecide only ever draws the locked state; the unlocked state's
+ * layout here (scenario → radiogroup → reason) is this reader's own
+ * extension of V2Decide's phone layout to the same column width every
+ * other step kind already uses at lg, not a second drawn screen.
+ */
+function DecideBody({
+  step,
+  decide,
+}: {
+  step: Extract<LessonStep, { kind: "decide" }>;
+  decide: DecideProps;
+}) {
+  const letterFor = (id: string) => {
+    const i = step.options.findIndex((o) => o.id === id);
+    return i === -1 ? "" : String.fromCharCode(65 + i);
+  };
+
+  if (!decide.locked) {
+    return (
+      <div className="flex flex-col gap-3.5">
+        <div className="rounded-3xl bg-white p-4 text-pretty text-[15px] leading-[1.6] text-ink-900">
+          {step.scenario}
+        </div>
+        <div role="radiogroup" aria-label="Your decision" className="flex flex-col gap-2">
+          {step.options.map((opt) => {
+            const checked = decide.option === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                role="radio"
+                aria-checked={checked}
+                onClick={() => decide.onOption(opt.id)}
+                className={cn(
+                  "flex min-h-[56px] items-center gap-3 rounded-2xl border-2 px-3.5 py-2 text-left text-[15px] leading-[21px]",
+                  checked
+                    ? "border-night-900 bg-brand-50 font-semibold text-ink-900"
+                    : "border-ink-50 bg-ink-50 font-medium text-ink-900",
+                )}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "flex size-7 flex-none items-center justify-center rounded-full font-mono text-[13px] font-semibold",
+                    checked ? "bg-night-900 text-white" : "bg-white text-ink-900",
+                  )}
+                >
+                  {letterFor(opt.id)}
+                </span>
+                <span>{opt.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${step.id}-reason`} className="text-[13.5px] leading-[18px] font-semibold text-ink-900">
+            {step.reasonPrompt}
+          </label>
+          <textarea
+            id={`${step.id}-reason`}
+            rows={3}
+            value={decide.reason}
+            onChange={(e) => decide.onReason(e.target.value)}
+            className="resize-none rounded-[14px] border-2 border-link bg-white px-3.5 py-3 text-[15px] leading-[22px] text-ink-900"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const chosenLetter = decide.option ? letterFor(decide.option) : "";
+
+  return (
+    <div className="flex flex-col gap-3.5">
+      <div className="rounded-3xl bg-white p-4">
+        <div className="text-[12.5px] leading-[18px] font-semibold text-ink-500">You chose {chosenLetter}</div>
+        <div className="mt-1 text-pretty text-[15px] leading-[22px] text-ink-900">“{decide.reason}”</div>
+      </div>
+
+      <div className="flex flex-col gap-2.5 rounded-[18px] bg-night-900 p-4 text-white">
+        <div className="font-mono text-[12px] leading-4 font-semibold tracking-[.06em] text-on-night-muted-2 uppercase">
+          What a real founder did
+        </div>
+        <p className="m-0 text-pretty text-[15px] leading-[23px] text-on-night-muted">
+          {step.realCase.who} chose {step.realCase.chose}. {step.realCase.outcome}
+        </p>
+        <a
+          href={step.realCase.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="self-start text-[13.5px] font-semibold text-on-night"
+        >
+          {step.realCase.sourceTitle}
+        </a>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="text-[13.5px] leading-[18px] font-semibold text-ink-900">The trade-offs</div>
+        {step.options.map((opt) => {
+          const isYours = opt.id === decide.option;
+          return (
+            <div
+              key={opt.id}
+              className={cn("flex gap-3 rounded-2xl px-3.5 py-3", isYours ? "bg-brand-50" : "bg-ink-50")}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "flex size-[26px] flex-none items-center justify-center rounded-full font-mono text-[12px] font-semibold",
+                  isYours ? "bg-night-900 text-white" : "bg-white text-ink-900",
+                )}
+              >
+                {letterFor(opt.id)}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-[14px] leading-5">
+                <span className="font-semibold text-ink-900">
+                  {opt.label}
+                  {isYours ? " · your pick" : ""}
+                </span>
+                <span className="text-ok-700">+ {opt.pro}</span>
+                <span className="text-risk-600">− {opt.con}</span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="rounded-3xl bg-white p-4">
+        <div className="mb-2 text-[13.5px] leading-[18px] font-semibold text-ink-900">Did your reason cover…</div>
+        <div className="flex flex-col gap-0.5">
+          {step.coverChecklist.map((item) => {
+            const checked = decide.covered.has(item);
+            return (
+              <label
+                key={item}
+                className="flex min-h-9 cursor-pointer items-center gap-2.5 text-[14.5px] text-ink-900"
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => decide.onToggleCovered(item)}
+                  className="sr-only"
+                />
+                <span
+                  aria-hidden
+                  className={cn(
+                    "flex size-[22px] flex-none items-center justify-center rounded-[7px] border-2",
+                    checked ? "border-night-900 bg-night-900 text-white" : "border-ink-400 bg-white",
+                  )}
+                >
+                  {checked ? (
+                    <svg aria-hidden width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                  ) : null}
+                </span>
+                <span>{item}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={decide.onChangeAnswer}
+        className="self-start rounded-[22px] border border-ink-100 bg-white px-4 py-2.5 text-[14px] font-medium text-ink-900"
+      >
+        Change my answer
+      </button>
     </div>
   );
 }

@@ -108,10 +108,10 @@ test("Git & GitHub's day 2 carries real authored steps, and its old challenge fi
 
 // ── the five Uni* kinds ──────────────────────────────────────────────────
 
-test("all eight authored kinds share one discriminated union in @jintu/contracts (Phase 5 Part C adds codeMulti, the DSA language switch)", () => {
+test("all nine authored kinds share one discriminated union in @jintu/contracts (Phase 5 Part C adds codeMulti, the DSA language switch; update 3 §B adds decide)", () => {
   assert.match(
     contractsSteps,
-    /z\.discriminatedUnion\("kind", \[\s*commandStepSchema,\s*turnStepSchema,\s*chooseStepSchema,\s*findStepSchema,\s*formulaStepSchema,\s*numberStepSchema,\s*writeStepSchema,\s*codeMultiStepSchema,\s*\]\)/,
+    /z\.discriminatedUnion\("kind", \[\s*commandStepSchema,\s*turnStepSchema,\s*chooseStepSchema,\s*findStepSchema,\s*formulaStepSchema,\s*numberStepSchema,\s*writeStepSchema,\s*codeMultiStepSchema,\s*decideStepSchema,\s*\]\)/,
   );
 });
 

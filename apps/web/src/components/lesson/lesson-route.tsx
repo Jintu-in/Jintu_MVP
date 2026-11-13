@@ -8,6 +8,7 @@ import { setCodeLanguage } from "@/actions/account";
 import { setNodeDone, type StreakResult } from "@/actions/progress";
 import { StepReader } from "@/components/lesson/step-reader";
 import { LessonDoneScreen } from "@/components/lesson/lesson-states";
+import type { FounderLogEntry } from "@/lib/decisions";
 import type { LessonStep } from "@/lib/steps";
 
 /**
@@ -72,6 +73,10 @@ export interface LessonRouteProps {
    *  choice ... applies to every code block", so this lives here (shared
    *  across every codeMulti step in the lesson), not as per-step state. */
   initialCodeLanguage: CodeLanguageKey;
+  /** DeskDecide's "Your founder log" aside (migration 0036) — empty on
+   *  every lesson without a decide step, same cost discipline as
+   *  initialCodeLanguage above. */
+  founderLog: FounderLogEntry[];
   next?: { lessonNumber: string; title: string; metaLine: string; href: string };
   /** For the done screen's stat cards. */
   streakDaysNow: number;
@@ -102,6 +107,7 @@ export default function LessonRoute({
   steps,
   estMinutes,
   initialCodeLanguage,
+  founderLog,
   next,
   streakDaysNow,
   lessonsLine,
@@ -247,6 +253,7 @@ export default function LessonRoute({
       roadmapTitle={roadmapTitle}
       moduleLabel={moduleLabel}
       nodeId={nodeId}
+      roadmapId={roadmapId}
       quizHref={`/learn/${slug}/${nodeSlug}/quiz`}
       steps={steps}
       stepIndex={index}
@@ -256,6 +263,7 @@ export default function LessonRoute({
       estMinutes={estMinutes}
       codeLanguage={codeLanguage}
       onCodeLanguageChange={onCodeLanguageChange}
+      founderLog={founderLog}
       online={online}
       onBack={() => router.push(`/learn/${slug}` as never)}
       onPrev={index > 0 ? onPrev : undefined}

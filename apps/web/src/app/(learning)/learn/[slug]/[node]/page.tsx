@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import LessonRoute from "@/components/lesson/lesson-route";
 import { buildLessonSteps } from "@/lib/steps";
 import { getMyCodeLanguage } from "@/lib/code-language";
+import { getFounderLog, getMyDecision } from "@/lib/decisions";
 import { getSiteUrl } from "@/lib/env";
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
@@ -79,6 +80,21 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
     ? await getMyCodeLanguage()
     : DEFAULT_CODE_LANGUAGE;
 
+  // Same "only when this day actually has one" cost discipline as the DSA
+  // switch above — no real roadmap authors a decide step yet either.
+  const decideSteps = steps.filter((s): s is Extract<(typeof steps)[number], { kind: "decide" }> => s.kind === "decide");
+  let founderLog: Awaited<ReturnType<typeof getFounderLog>> = [];
+  if (decideSteps.length > 0) {
+    const existingByStepId = new Map(
+      (await Promise.all(decideSteps.map((s) => getMyDecision(node.id, s.id).then((d) => [s.id, d] as const)))),
+    );
+    for (const s of decideSteps) {
+      const existing = existingByStepId.get(s.id);
+      if (existing) s.existingDecision = existing;
+    }
+    founderLog = await getFounderLog(slug, roadmap.id, decideSteps[decideSteps.length - 1]!.id);
+  }
+
   return (
     <LessonRoute
       slug={slug}
@@ -94,6 +110,7 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
       steps={steps}
       estMinutes={node.estMinutes}
       initialCodeLanguage={codeLanguage}
+      founderLog={founderLog}
       next={
         next
           ? {
