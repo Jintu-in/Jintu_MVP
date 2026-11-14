@@ -69,6 +69,13 @@ jobs:
       - name: Roles
         run: pnpm roles
 
+      # A term used in a lesson before the one its own glossary entry names
+      # as taughtIn sends a reader to a popover about something they have
+      # not reached yet, and a meaning over 25 words is a second paragraph
+      # where a popover should hold one line.
+      - name: Glossary
+        run: pnpm glossary
+
       # A component nothing renders is a second answer to a question the
       # codebase already answered — somebody greps for "the header", finds
       # two, and edits the wrong one.

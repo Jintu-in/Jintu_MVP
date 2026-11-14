@@ -1,5 +1,6 @@
 import type { AuthoredStep, CodeLanguageKey, Panel } from "@jintu/contracts";
 import { resourceMeta, text } from "@/lib/blocks";
+import type { GlossaryTermSegment } from "@/lib/glossary";
 import type { RoadmapNode } from "@/lib/roadmaps";
 
 /**
@@ -34,7 +35,20 @@ import type { RoadmapNode } from "@/lib/roadmaps";
  * attempt against, never a graded input — nothing here stores or scores
  * what a learner typed or picked.
  */
-export type Rich = { kind: "text" | "code" | "mono"; text: string }[];
+/**
+ * The third member, GlossaryTermSegment, is a `[[term]]` marker in
+ * authored prose resolved by lib/glossary.ts's applyGlossary() — never
+ * produced by text()/the generic Rich builders, which know nothing about
+ * any roadmap's glossary. Defined there, not here: glossary.ts is
+ * compiled standalone by scripts/assert-glossary.mjs (same isolation
+ * posture as scripts/assert-roles.mjs), and this file pulls in
+ * lib/blocks.ts and beyond — a dependency direction only this file can
+ * afford, not that validator.
+ */
+export type Rich = (
+  | { kind: "text" | "code" | "mono"; text: string }
+  | GlossaryTermSegment
+)[];
 
 /** A terminal line, carried through from @jintu/contracts' AuthoredStep —
  *  a plain string, or `{ text, highlight }` for the one line that gets

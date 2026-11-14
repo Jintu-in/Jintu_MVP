@@ -113,3 +113,118 @@ describe("StepReader — decide step", () => {
     expect(screen.getAllByRole("button", { name: "Finish" }).length).toBeGreaterThan(0);
   });
 });
+
+const GLOSSARY_STEP: LessonStep = {
+  id: "concept-0",
+  railTitle: "The three places a change can be",
+  kind: "concept",
+  paragraphs: [
+    [
+      { kind: "text", text: "The " },
+      {
+        kind: "glossaryTerm",
+        text: "staging area",
+        meaning: "The list of changes you have picked for your next commit.",
+        roadmapTitle: "Git & GitHub",
+        taughtInLabel: "Taught in lesson 2 · The three places a change can be",
+        taughtInHref: "/learn/git-and-github/the-three-places-a-change-can-be",
+        interactive: true,
+      },
+      { kind: "text", text: " is the single concept that separates confusion from clarity." },
+    ],
+  ],
+};
+
+describe("StepReader — glossary term (GlossaryTerm)", () => {
+  test("renders as a real button with the dotted-underline treatment, closed by default", () => {
+    render(<StepReader {...baseProps(GLOSSARY_STEP)} />);
+    const term = screen.getAllByRole("button", { name: "staging area" })[0]!;
+    expect(term).toHaveAttribute("aria-haspopup", "dialog");
+    expect(term).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  test("opens on click and shows the meaning and the taught-in link", async () => {
+    const user = userEvent.setup();
+    render(<StepReader {...baseProps(GLOSSARY_STEP)} />);
+    await user.click(screen.getAllByRole("button", { name: "staging area" })[0]!);
+
+    const dialogs = screen.getAllByRole("dialog", { name: "staging area, meaning" });
+    expect(dialogs.length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/The list of changes you have picked/).length).toBeGreaterThan(0);
+    const taughtInLinks = screen.getAllByRole("link", { name: /Taught in lesson 2/ });
+    expect(taughtInLinks[0]).toHaveAttribute("href", "/learn/git-and-github/the-three-places-a-change-can-be");
+  });
+
+  test("Esc closes the popover and returns focus to the term", async () => {
+    const user = userEvent.setup();
+    render(<StepReader {...baseProps(GLOSSARY_STEP)} />);
+    const term = screen.getAllByRole("button", { name: "staging area" })[0]!;
+    await user.click(term);
+    expect(screen.queryAllByRole("dialog").length).toBeGreaterThan(0);
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryAllByRole("dialog")).toHaveLength(0);
+    expect(term).toHaveFocus();
+  });
+
+  test("clicking outside closes it, and clicking the term again toggles it shut", async () => {
+    const user = userEvent.setup();
+    render(
+      <div>
+        <StepReader {...baseProps(GLOSSARY_STEP)} />
+        <button>elsewhere on the page</button>
+      </div>,
+    );
+    const term = screen.getAllByRole("button", { name: "staging area" })[0]!;
+
+    await user.click(term);
+    expect(screen.queryAllByRole("dialog").length).toBeGreaterThan(0);
+    await user.click(screen.getByRole("button", { name: "elsewhere on the page" }));
+    expect(screen.queryAllByRole("dialog")).toHaveLength(0);
+
+    await user.click(term);
+    expect(screen.queryAllByRole("dialog").length).toBeGreaterThan(0);
+    await user.click(term);
+    expect(screen.queryAllByRole("dialog")).toHaveLength(0);
+  });
+
+  test("is reachable and operable by keyboard alone — Tab, Enter, Escape", async () => {
+    const user = userEvent.setup();
+    render(<StepReader {...baseProps(GLOSSARY_STEP)} />);
+    const term = screen.getAllByRole("button", { name: "staging area" })[0]!;
+
+    term.focus();
+    expect(term).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(screen.queryAllByRole("dialog").length).toBeGreaterThan(0);
+    await user.keyboard("{Escape}");
+    expect(screen.queryAllByRole("dialog")).toHaveLength(0);
+    expect(term).toHaveFocus();
+  });
+
+  test("a non-interactive (already-used) occurrence renders as plain text, not a second button", () => {
+    const step: LessonStep = {
+      id: "concept-1",
+      railTitle: "Reaching for git add .",
+      kind: "concept",
+      paragraphs: [
+        [
+          { kind: "text", text: "Also mentioned: " },
+          {
+            kind: "glossaryTerm",
+            text: "staging area",
+            meaning: "The list of changes you have picked for your next commit.",
+            roadmapTitle: "Git & GitHub",
+            taughtInLabel: "Taught in lesson 2 · The three places a change can be",
+            taughtInHref: "/learn/git-and-github/the-three-places-a-change-can-be",
+            interactive: false,
+          },
+        ],
+      ],
+    };
+    render(<StepReader {...baseProps(step)} />);
+    expect(screen.queryByRole("button", { name: "staging area" })).not.toBeInTheDocument();
+    expect(screen.getByText("staging area")).toBeInTheDocument();
+  });
+});

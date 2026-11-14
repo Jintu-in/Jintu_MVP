@@ -41,7 +41,8 @@
     "typography": "node scripts/assert-typography.mjs",
     "facets:demo": "node scripts/demo-catalogue-facets.mjs",
     "bundle:budget": "node scripts/assert-bundle-budget.mjs",
-    "roles": "node scripts/assert-roles.mjs"
+    "roles": "node scripts/assert-roles.mjs",
+    "glossary": "node scripts/assert-glossary.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",

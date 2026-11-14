@@ -140,11 +140,11 @@ export default {
             "Stage part of your work and commit only that",
           ],
           whyToday:
-            "The staging area is the single concept that separates people who find Git baffling from people who find it obvious. It is also the one nearly every tutorial rushes past in a sentence.",
+            "The [[staging area]] is the single concept that separates people who find Git baffling from people who find it obvious. It is also the one nearly every tutorial rushes past in a sentence.",
           principle:
             "The staging area exists so that what you commit and what you have been working on can be different things.",
           commonMistake:
-            "Reaching for `git add .` every time, which makes the staging area invisible and eventually commits a debug print, a stray secret, or half of an unrelated change. Staging is a chance to read your own work before you sign it.",
+            "Reaching for `git add .` every time, which makes the [[staging area]] invisible and eventually commits a debug print, a stray secret, or half of an unrelated change. Staging is a chance to read your own work before you sign it.",
           challenge:
             "Make a repository, create two files, and produce a commit that contains only one of them while the other stays uncommitted. Then run `git status` and write down, in your own words, what each of the three sections is telling you.",
           challengeMinutes: 25,

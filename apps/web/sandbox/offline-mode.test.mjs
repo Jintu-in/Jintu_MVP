@@ -59,7 +59,11 @@ test("the banner's saved-location copy differs by breakpoint — \"your phone\" 
 });
 
 test("HelpBox is disabled with the drawn copy when offline, before it even looks at open/sent state", () => {
-  const fn = reader.slice(reader.indexOf("function HelpBox"), reader.indexOf("if (!open)"));
+  // GlossaryTerm (update 3 §C) sits earlier in the file and has its own,
+  // unrelated "if (!open)" inside a useEffect — search from HelpBox's own
+  // start, not from the top of the file, or this slice runs backwards.
+  const helpBoxStart = reader.indexOf("function HelpBox");
+  const fn = reader.slice(helpBoxStart, reader.indexOf("if (!open)", helpBoxStart));
   assert.match(fn, /if \(!online\)/);
   assert.match(fn, /disabled/);
   assert.match(fn, /Ask needs internet/);

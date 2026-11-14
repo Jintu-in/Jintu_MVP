@@ -166,12 +166,19 @@ test("the footer CTA for every Uni* kind is the step's own ctaLabel, not generic
   );
 });
 
-test('no "mine is different" / "Ask about this step" buttons on any Uni* kind — same CHANGES.md item 6 deferral as command/turn', () => {
-  assert.doesNotMatch(reader, /mine is different/i);
-  assert.doesNotMatch(reader, /I picked a different one/);
-  assert.doesNotMatch(reader, /I got something else/);
-  assert.doesNotMatch(reader, /Help me fix mine/);
-  assert.doesNotMatch(reader, /Ask about this step/);
+test('no "mine is different" / its own "Ask about this step" button on any Uni* kind — same CHANGES.md item 6 deferral as command/turn', () => {
+  // Scoped to the five Uni* StepBody cases themselves, not the whole
+  // file: GlossaryTerm (update 3 §C) legitimately has its own "Still
+  // unclear? Ask about this step" button, unrelated to this deferral —
+  // it opens the SAME shared HelpBox by id rather than drawing a second
+  // one, so the string appears in the file without a Uni* kind growing
+  // one of its own.
+  const uniKinds = reader.slice(reader.indexOf('case "choose"'), reader.indexOf('case "codeMulti"'));
+  assert.doesNotMatch(uniKinds, /mine is different/i);
+  assert.doesNotMatch(uniKinds, /I picked a different one/);
+  assert.doesNotMatch(uniKinds, /I got something else/);
+  assert.doesNotMatch(uniKinds, /Help me fix mine/);
+  assert.doesNotMatch(uniKinds, /Ask about this step/);
 });
 
 test("a choose step's correct option is styled with the measured ok-bg/ok-700 pairing, not an unmeasured green", () => {

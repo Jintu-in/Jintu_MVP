@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import { codeLanguageName, type CodeLanguageKey, type Panel } from "@jintu/contracts";
@@ -126,6 +126,14 @@ const RichText = ({ segments, codeClass }: { segments: Rich; codeClass?: string 
         </code>
       ) : s.kind === "mono" ? (
         <span key={i} className="font-mono">{s.text}</span>
+      ) : s.kind === "glossaryTerm" ? (
+        s.interactive ? (
+          <GlossaryTerm key={i} segment={s} />
+        ) : (
+          // Every occurrence after the first in a lesson is plain prose —
+          // GlossaryKit: "only the first use ... gets the dotted underline".
+          <span key={i}>{s.text}</span>
+        )
       ) : (
         <span key={i}>{s.text}</span>
       ),
@@ -1241,6 +1249,120 @@ function FaqAccordion({ items }: { items: { question: string; answer: string }[]
 }
 
 /**
+ * GlossaryKit (design pack update 3 §C) — the term is a real `<button>`
+ * with `aria-haspopup="dialog"`/`aria-expanded`, same disclosure shape as
+ * every other popover this engagement has built (StatusLabel, HelpBox):
+ * Esc, an outside click, or the term again all close it, and focus
+ * returns to the term. Two renders of the SAME state (`open`), not two
+ * components — a phone gets V2's bottom sheet, lg+ gets DeskDecide-style
+ * popover beside the word, picked with plain `lg:hidden`/`hidden lg:…`
+ * rather than a JS viewport check, so there's never a flash of the wrong
+ * shape on resize.
+ */
+function GlossaryTerm({ segment }: { segment: Extract<Rich[number], { kind: "glossaryTerm" }> }) {
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLSpanElement>(null);
+  const dialogLabel = `${segment.text}, meaning`;
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      wrap.current?.querySelector("button")?.focus();
+    };
+    const onClick = (e: MouseEvent) => {
+      if (wrap.current && !wrap.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [open]);
+
+  const askAboutThisStep = () => {
+    setOpen(false);
+    const trigger = document.getElementById("step-help-trigger");
+    trigger?.click();
+    trigger?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  return (
+    <span ref={wrap} className="relative inline">
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="border-0 bg-transparent p-0 text-inherit underline decoration-dotted decoration-2 underline-offset-4 [font:inherit]"
+      >
+        {segment.text}
+      </button>
+
+      {open ? (
+        <>
+          {/* Phone: a bottom sheet over a dim backdrop. */}
+          <span className="fixed inset-0 z-40 lg:hidden" aria-hidden onClick={() => setOpen(false)}>
+            <span className="absolute inset-0 bg-[rgba(6,38,44,0.35)]" />
+          </span>
+          <span
+            role="dialog"
+            aria-label={dialogLabel}
+            className="fixed inset-x-0 bottom-0 z-50 flex flex-col gap-2.5 rounded-t-[24px] bg-white px-5 pt-2 pb-[22px] shadow-[0_-10px_30px_rgba(12,42,48,0.18)] lg:hidden"
+          >
+            <span aria-hidden className="mx-auto my-1.5 h-[5px] w-10 rounded-[3px] bg-ink-100" />
+            <span className="flex items-baseline justify-between gap-2.5">
+              <span className="font-heading text-[21px] leading-[26px] font-bold text-ink-900">{segment.text}</span>
+              <span className="flex-none font-mono text-[12px] leading-4 text-ink-500">{segment.roadmapTitle}</span>
+            </span>
+            <span className="text-[15.5px] leading-[23px] text-ink-900">{segment.meaning}</span>
+            <Link
+              href={segment.taughtInHref as never}
+              className="flex min-h-11 items-center justify-between rounded-2xl bg-ink-50 px-3.5 text-[14.5px] font-semibold text-link no-underline"
+            >
+              <span>{segment.taughtInLabel}</span>
+              <ExternalIcon className="flex-none" />
+            </Link>
+            <button
+              type="button"
+              onClick={askAboutThisStep}
+              className="flex h-12 flex-none items-center justify-center rounded-2xl bg-brand-50 text-[14.5px] font-semibold text-link"
+            >
+              Still unclear? Ask about this step
+            </button>
+          </span>
+
+          {/* Desktop: a popover beside the word. */}
+          <span
+            role="dialog"
+            aria-label={dialogLabel}
+            className="absolute top-full left-0 z-50 mt-2 hidden w-[320px] flex-col gap-2.5 rounded-[18px] border border-ink-100 bg-white p-4.5 text-left shadow-[0_14px_36px_rgba(12,42,48,0.16)] lg:flex"
+          >
+            <span className="flex items-baseline justify-between gap-2.5">
+              <span className="font-heading text-[18px] leading-[23px] font-bold text-ink-900">{segment.text}</span>
+              <span className="flex-none font-mono text-[12px] leading-4 text-ink-500">{segment.roadmapTitle}</span>
+            </span>
+            <span className="text-[15px] leading-[22px] text-ink-900">{segment.meaning}</span>
+            <Link href={segment.taughtInHref as never} className="self-start text-[14px] font-semibold text-link">
+              {segment.taughtInLabel}
+            </Link>
+            <button
+              type="button"
+              onClick={askAboutThisStep}
+              className="self-start bg-transparent p-0 text-[13.5px] font-semibold text-link"
+            >
+              Still unclear? Ask about this step
+            </button>
+          </span>
+        </>
+      ) : null}
+    </span>
+  );
+}
+
+/**
  * "Stuck? Tell us what you see" (V2Help/DeskHelp) — a free-text report,
  * saved to help_requests for someone to read later. Not the mockup's
  * richer list that matches a wrong output to its own canned fix: that
@@ -1282,6 +1404,12 @@ function HelpBox({ nodeId, stepContext, online }: { nodeId: string; stepContext:
     return (
       <button
         type="button"
+        // A stable target for GlossaryTerm's "Still unclear? Ask about
+        // this step" below — it opens THIS box by id rather than through
+        // lifted state, since a glossary term can appear on a step kind
+        // that never renders a HelpBox at all (HELP_ELIGIBLE), and the
+        // two components have no other reason to know about each other.
+        id="step-help-trigger"
         onClick={() => setOpen(true)}
         className="self-start text-[14.5px] font-semibold text-link"
       >

@@ -5,6 +5,7 @@ import { buildLessonSteps } from "@/lib/steps";
 import { getMyCodeLanguage } from "@/lib/code-language";
 import { getFounderLog, getMyDecision } from "@/lib/decisions";
 import { getSiteUrl } from "@/lib/env";
+import { applyGlossary, getGlossary } from "@/lib/glossary";
 import { getMyMomentum } from "@/lib/momentum";
 import { getMyProgress } from "@/lib/progress";
 import { getRoadmap } from "@/lib/roadmaps";
@@ -70,7 +71,14 @@ export default async function DayPage({ params }: { params: Promise<Params> }) {
   const done = progress?.get(node.id) === "done";
   const doneCount = progress ? [...progress.values()].filter((s) => s === "done").length : 0;
 
-  const steps = buildLessonSteps(node);
+  const glossary = getGlossary(slug);
+  const steps = applyGlossary(
+    buildLessonSteps(node),
+    glossary,
+    roadmap.title,
+    slug,
+    flat.map((x) => x.node),
+  );
   const lessonNumber = String(at + 1);
 
   // The DSA language switch's remembered choice — read only when this day
